@@ -1,25 +1,31 @@
-#include "DxLib.h"
+ï»¿#include "DxLib.h"
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	if (DxLib_Init() == -1)		// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+
+	//ç”»é¢ã‚µã‚¤ã‚ºã®å¤‰æ›´
+	SetGraphMode(1920, 1080, 32);
+
+	ChangeWindowMode(true);
+
+	if (DxLib_Init() == -1)		// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–å‡¦ç†
 	{
-		return -1;			// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+		return -1;			// ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
 	}
-	//ƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒ‚[ƒh
+	//ãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ãƒ¢ãƒ¼ãƒ‰
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG time = GetNowHiPerformanceCount();
-		//‰æ–Ê‚ÌƒNƒŠƒA
+		//ç”»é¢ã®ã‚¯ãƒªã‚¢
 		ClearDrawScreen();
 
-		//— ‰æ–Ê‚Æ•\‰æ–Ê‚ğ“ü‚ê‘Ö‚¦‚é
+		//è£ç”»é¢ã¨è¡¨ç”»é¢ã‚’å…¥ã‚Œæ›¿ãˆã‚‹
 		ScreenFlip();
 
-		//fps‚ğ60‚ÉŒÅ’è
+		//fpsã‚’60ã«å›ºå®š
 		while (GetNowHiPerformanceCount() - time < 16667)
 		{
 
@@ -34,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 
-	DxLib_End();				// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠg—p‚ÌI—¹ˆ—
+	DxLib_End();				// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã®çµ‚äº†å‡¦ç†
 
-	return 0;				// ƒ\ƒtƒg‚ÌI—¹ 
+	return 0;				// ã‚½ãƒ•ãƒˆã®çµ‚äº† 
 }
