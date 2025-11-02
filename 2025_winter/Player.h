@@ -11,5 +11,7 @@ public:
 	virtual void Draw() override;
 private:
 	void Move();//動きの入力
+private:
+	int m_frame;
 };
 

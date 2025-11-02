@@ -14,7 +14,8 @@ namespace
 }
 
 
-Player::Player()
+Player::Player():
+	m_frame(0)
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
@@ -30,6 +31,7 @@ void Player::Init()
 
 void Player::Update()
 {
+	m_frame++;
 	Move();
 	Character::Update();
 }
@@ -37,17 +39,18 @@ void Player::Update()
 void Player::Draw()
 {
 	//Character::Draw();
+	int charaIdx = (m_frame / 8) % 5;
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x, m_pos.y,
-		player_cut_w * 0, player_cut_h * 0,//切り取り左上
+		player_cut_w * charaIdx, player_cut_h * 0,//切り取り左上
 		player_cut_w, player_cut_h,//切り取りの幅
 		player_scale, 0.0f, m_handle, true);
 	}
 	else
 	{
 		DrawRectRotaGraph(m_pos.x, m_pos.y,
-		player_cut_w * 0, player_cut_h * 0,//切り取り左上
+		player_cut_w * charaIdx, player_cut_h * 0,//切り取り左上
 		player_cut_w, player_cut_h,//切り取りの幅
 		player_scale, 0.0f, m_handle, true,true);
 	}
