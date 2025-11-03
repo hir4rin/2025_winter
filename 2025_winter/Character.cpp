@@ -14,6 +14,8 @@ Character::Character():
 	m_handle(-1),
 	m_isRight(true),
 	m_isGround(false),
+	m_isJumpPreparing(false),
+	m_jumpFrame(0),
 	m_x(0),
 	m_y(0),
 	m_pos(m_x,m_y),

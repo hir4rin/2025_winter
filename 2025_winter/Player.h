@@ -11,6 +11,7 @@ public:
 	virtual void Draw() override;
 private:
 	void Move();//動きの入力
+	void Jump();//ジャンプ
 private:
 	int m_frame;
 };

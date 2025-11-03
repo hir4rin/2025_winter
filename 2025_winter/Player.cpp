@@ -11,6 +11,12 @@ namespace
 	constexpr int player_cut_h = 100;
 	constexpr float  player_scale = 1.0f;
 
+	constexpr float kJumpPower = 20.0f;//ジャンプ力
+
+	constexpr float kSmallJumpFrame = 8;//小ジャンプのフレーム
+
+	constexpr float kBigJumpHeight = 1.0f;//大ジャンプの高さ
+
 }
 
 
@@ -77,4 +83,29 @@ void Player::Move()
 	{
 		m_vel.x = 0.0f;
 	}
+}
+void Player::Jump()
+{
+	//ジャンプ中はスキップ
+	if (!m_isGround) return;
+
+	if (Pad::IsTrigger(PAD_INPUT_1))
+	{
+		m_isJumpPreparing = true;
+
+	}
+
+	if (!m_isJumpPreparing) return;
+	m_jumpFrame++;
+
+	float jumpHeight = kJumpPower;//ジャンプの高さを決める
+
+	//ボタンを離した瞬間にジャンプする
+	if (!Pad::IsRelease(PAD_INPUT_1)) return;
+
+	if (m_jumpFrame < kSmallJumpFrame)
+	{
+		jumpHeight = kBigJumpHeight;
+	}
+
 }
