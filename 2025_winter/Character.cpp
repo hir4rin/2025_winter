@@ -39,6 +39,11 @@ void Character::Update()
 	{
 		m_pos.y = kGround;
 		m_isGround = true;
+
+		if (m_isJumpPreparing)return;
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+		
 	}
 
 }
