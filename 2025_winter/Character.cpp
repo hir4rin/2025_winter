@@ -19,7 +19,8 @@ Character::Character():
 	m_x(0),
 	m_y(0),
 	m_pos(m_x,m_y),
-	m_vel(0,0)
+	m_vel(0,0),
+	zero(0,0)
 {
 }
 
@@ -43,6 +44,7 @@ void Character::Update()
 		if (m_isJumpPreparing)return;
 		m_jumpFrame = 0;
 		m_vel.y = 0.0f;
+		
 		
 	}
 

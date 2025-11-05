@@ -7,7 +7,8 @@ enum class Anim
 	Idle,
 	Walk,
 	Jump,
-	Attack
+	Attack,
+	Ability,
 
 };
 
@@ -23,9 +24,16 @@ public:
 private:
 	void Move();//動きの入力
 	void Jump();//ジャンプ
+	void Attack();//攻撃
+	void AbilityGet();//剣を掲げるモーション
 	void AnimSelect(const Anim& anim );//アニメーション
 private:
 	int m_frame;
 	Anim _anim;
+	int m_animframe;
+	int charaIdx;
+	int charaIdy;
+	bool isNomove;
+	
 };
 

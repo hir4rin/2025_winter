@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Character.h"
 #include "Pad.h"
+#include "Vec2.h"
 
 namespace
 {
@@ -20,12 +21,19 @@ namespace
 
 	constexpr float kBigJumpHeight = 1.5f;//大ジャンプの高さ
 
+	constexpr float kGravity = 1.5f;//重力
+	constexpr float kGround = 900.0f;//地面位置
+
 }
 
 
 
 Player::Player():
-	m_frame(0)
+	m_frame(0),
+	charaIdx(0),
+	charaIdy(0),
+	m_animframe(0),
+	isNomove(false)
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
@@ -43,26 +51,70 @@ void Player::Init()
 void Player::Update()
 {
 	m_frame++;
+	m_animframe++;
+
+	//アニメーションの終了
+	
+	
 	Move();
 	Jump();
-	Character::Update();
+	Character::Gravity();
+
+	//着地時にアニメーションを帰るところ
+
+	m_pos += m_vel;
+	if (m_pos.y > kGround)
+	{
+		m_pos.y = kGround;
+		m_isGround = true;
+
+		if (m_isJumpPreparing)return;
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+		if (_anim == Anim::Jump)
+		{
+			AnimSelect(Anim::Idle);
+		}
+	}
+	AbilityGet();
+	Attack();
+	
+	
 }
 
 void Player::Draw()
 {
+	
 	//Character::Draw();
-	int charaIdx = 0;
-	int charaIdy = 0;
+	
 
 	switch (_anim)
 	{
 	case  Anim::Idle : 
-		 charaIdx = (m_frame / 6) % 6;
+		 charaIdx = (m_animframe / 6) % 6;
 		 charaIdy = 0;
 		break;
 	case Anim::Walk : 
-		 charaIdx = (m_frame / 8) % 8;
+		 charaIdx = (m_animframe / 8) % 8;
 		 charaIdy = 1;
+		 break;
+	case Anim::Jump :
+		if (charaIdx == 5)
+		{
+			charaIdx = 5;
+			charaIdy = 3;
+		}
+		else
+		{
+			charaIdx = (m_animframe / 1024) % 2 + 4;
+			charaIdy = 3;
+		}
+		break;
+	case Anim::Attack :
+		
+		charaIdx = (m_animframe / 7) % 7;
+			charaIdy = 2;
+			break;
 	}
 	if (m_isRight)
 	{
@@ -88,24 +140,37 @@ void Player::Draw()
 
 void Player::Move()
 {
+	AnimSelect(_anim);
+	if (isNomove)return;
 	//ここに処理を追加していく
 	if (Pad::IsPress(PAD_INPUT_LEFT))
 	{
 		m_vel.x = -kSpeed;
 		m_isRight = false;
-		AnimSelect(Anim::Walk);
+	
 
 	}
 	else if (Pad::IsPress(PAD_INPUT_RIGHT))
 	{
 		m_vel.x = kSpeed;
 		m_isRight = true;
-		AnimSelect(Anim::Walk);
+	
 	}
 	else
 	{
 		m_vel.x = 0.0f;
-		AnimSelect(Anim::Idle);
+		
+	}
+	if (_anim != Anim::Jump)
+	{
+		if (m_vel.x > 0.1f || m_vel.x < -0.1f)
+		{
+			AnimSelect(Anim::Walk);
+		}
+		else
+		{
+			AnimSelect(Anim::Idle);
+		}
 	}
 }
 void Player::Jump()
@@ -139,15 +204,49 @@ void Player::Jump()
 	m_vel.y = -kJumpPower * jumpHeight;
 	m_isGround = false;
 	m_isJumpPreparing = false;
+	AnimSelect(Anim::Jump);
 
+}
+
+void Player::Attack()
+{
+	if (Pad::IsTrigger(PAD_INPUT_2))
+	{
+		isNomove = true;
+		m_vel = zero;
+		//アニメーション
+		AnimSelect(Anim::Attack);
+		//判定をつける
+
+	}
+}
+
+void Player::AbilityGet()
+{
+	if (Pad::IsTrigger(PAD_INPUT_3))
+	{
+		//アニメーションの処理を書く
+	}
 }
 
 void Player::AnimSelect(const Anim&  anim)
 {
+
+	if (_anim == Anim::Attack && charaIdx == 6)
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+
+	}
+
+	if (_anim == Anim::Attack)return;
+
 	if (_anim != anim)
 	{
 		_anim = anim;
-
+		m_animframe = 0;
+		charaIdx = 0;
+		charaIdy = 0;
 	}
 	return;
 }

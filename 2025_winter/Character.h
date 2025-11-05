@@ -25,6 +25,7 @@ protected:
 
 	Vec2 m_pos;
 	Vec2 m_vel;
+	 Vec2 zero;
 	
 };
 
