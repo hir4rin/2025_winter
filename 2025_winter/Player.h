@@ -11,6 +11,13 @@ enum class Anim
 	Ability,
 
 };
+enum class PlayerState
+{
+	Normal,
+	Attack,
+	Copy
+
+};
 
 class Player : public Character
 {
@@ -22,6 +29,13 @@ public:
 	virtual void Update() override;
 	virtual void Draw() override;
 private:
+	void InputUpdate();//入力の更新
+	void NormalUpdate();//通常時の更新
+	void JumpUpdate();//ジャンプ時の更新
+	void AttackUpdate();//攻撃時の更新
+	void CopyUpdate();//コピー時の更新
+	 
+
 	void Move();//動きの入力
 	void Jump();//ジャンプ
 	void Attack();//攻撃
@@ -30,6 +44,7 @@ private:
 private:
 	int m_frame;
 	Anim _anim;
+	PlayerState _state;
 	int m_animframe;
 	int charaIdx;
 	int charaIdy;

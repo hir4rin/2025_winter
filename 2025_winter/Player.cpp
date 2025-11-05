@@ -38,6 +38,7 @@ Player::Player():
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
 	 _anim = Anim::Idle;
+	 _state = PlayerState::Normal;
 }
 Player::~Player()
 {
@@ -53,32 +54,26 @@ void Player::Update()
 	m_frame++;
 	m_animframe++;
 
-	//アニメーションの終了
-	
-	
-	Move();
-	Jump();
-	Character::Gravity();
+	AnimSelect(_anim);
 
-	//着地時にアニメーションを帰るところ
-
-	m_pos += m_vel;
-	if (m_pos.y > kGround)
+	InputUpdate();//特殊行動の入力検知
+	switch (_state)
 	{
-		m_pos.y = kGround;
-		m_isGround = true;
-
-		if (m_isJumpPreparing)return;
-		m_jumpFrame = 0;
-		m_vel.y = 0.0f;
-		if (_anim == Anim::Jump)
-		{
-			AnimSelect(Anim::Idle);
-		}
+	case PlayerState::Normal:
+		NormalUpdate();
+		break;
+	case PlayerState::Attack:
+		AttackUpdate();
+		break;
+	case PlayerState::Copy:
+		CopyUpdate();
+		break;
 	}
-	AbilityGet();
-	Attack();
 	
+	
+
+
+	AbilityGet();
 	
 }
 
@@ -106,7 +101,7 @@ void Player::Draw()
 		}
 		else
 		{
-			charaIdx = (m_animframe / 1024) % 2 + 4;
+			charaIdx = (m_animframe / 10) % 2 + 4;
 			charaIdy = 3;
 		}
 		break;
@@ -136,6 +131,76 @@ void Player::Draw()
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです" ,charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです" ,charaIdy);
 #endif
+}
+
+void Player::InputUpdate()
+{
+	//特殊行動の入力検知
+	if (Pad::IsTrigger(PAD_INPUT_2))
+	{
+		_state = PlayerState::Attack;
+	}
+	if (Pad::IsTrigger(PAD_INPUT_3))
+	{
+		_state = PlayerState::Copy;
+	}
+}
+
+void Player::NormalUpdate()
+{
+	Move();
+	Jump();
+	Character::Gravity();
+	m_pos += m_vel;
+	//着地時にアニメーションを帰るところ
+	if (m_pos.y > kGround)
+	{
+		m_pos.y = kGround;
+		m_isGround = true;
+
+		if (m_isJumpPreparing)return;
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+		if (_anim == Anim::Jump)
+		{
+			AnimSelect(Anim::Idle);
+		}
+	}
+}
+
+void Player::JumpUpdate()
+{
+	Jump();
+	Character::Gravity();
+	m_pos += m_vel;
+	
+}
+
+void Player::AttackUpdate()
+{
+	Character::Gravity();
+	m_pos += m_vel;
+	Attack();
+	//着地時にアニメーションを帰るところ
+	if (m_pos.y > kGround)
+	{
+		m_pos.y = kGround;
+		m_isGround = true;
+
+		if (m_isJumpPreparing)return;
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+		if (_anim == Anim::Jump)
+		{
+			AnimSelect(Anim::Idle);
+		}
+	}
+}
+
+void Player::CopyUpdate()
+{
+	Character::Gravity();
+	m_pos += m_vel;
 }
 
 void Player::Move()
@@ -210,15 +275,14 @@ void Player::Jump()
 
 void Player::Attack()
 {
-	if (Pad::IsTrigger(PAD_INPUT_2))
-	{
+
 		isNomove = true;
 		m_vel = zero;
 		//アニメーション
 		AnimSelect(Anim::Attack);
 		//判定をつける
 
-	}
+	
 }
 
 void Player::AbilityGet()
@@ -236,6 +300,7 @@ void Player::AnimSelect(const Anim&  anim)
 	{
 		_anim = Anim::Idle;
 		isNomove = false;
+		_state = PlayerState::Normal;
 
 	}
 
