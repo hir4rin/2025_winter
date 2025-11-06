@@ -8,7 +8,7 @@ enum class Anim
 	Walk,
 	Jump,
 	Attack,
-	Ability,
+	Copy,
 
 };
 enum class PlayerState
@@ -39,7 +39,8 @@ private:
 	void Move();//動きの入力
 	void Jump();//ジャンプ
 	void Attack();//攻撃
-	void AbilityGet();//剣を掲げるモーション
+
+	void Copy();//剣を掲げるモーション
 	void AnimSelect(const Anim& anim );//アニメーション
 private:
 	int m_frame;

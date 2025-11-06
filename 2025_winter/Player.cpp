@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "Pad.h"
 #include "Vec2.h"
+#include <cassert> // ←assert用
 
 namespace
 {
@@ -73,7 +74,7 @@ void Player::Update()
 	
 
 
-	AbilityGet();
+
 	
 }
 
@@ -110,6 +111,15 @@ void Player::Draw()
 		charaIdx = (m_animframe / 7) % 7;
 			charaIdy = 2;
 			break;
+	case Anim::Copy :
+		charaIdx = (m_animframe / 10) % 6;
+		charaIdy = 4;
+		break;
+	default:
+		// ここに来たら想定外！
+		//assert(false && "Unknown animation type in switch(_anim)");
+		break;
+
 	}
 	if (m_isRight)
 	{
@@ -200,6 +210,7 @@ void Player::AttackUpdate()
 void Player::CopyUpdate()
 {
 	Character::Gravity();
+	Copy();
 	m_pos += m_vel;
 }
 
@@ -281,16 +292,15 @@ void Player::Attack()
 		//アニメーション
 		AnimSelect(Anim::Attack);
 		//判定をつける
-
-	
 }
 
-void Player::AbilityGet()
+void Player::Copy()
 {
-	if (Pad::IsTrigger(PAD_INPUT_3))
-	{
-		//アニメーションの処理を書く
-	}
+	isNomove = true;
+	m_vel = zero;
+	//アニメーション
+	AnimSelect(Anim::Copy);
+	//判定をつける
 }
 
 void Player::AnimSelect(const Anim&  anim)
@@ -303,8 +313,17 @@ void Player::AnimSelect(const Anim&  anim)
 		_state = PlayerState::Normal;
 
 	}
+	if (_anim == Anim::Copy && charaIdx == 5)
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
 
 	if (_anim == Anim::Attack)return;
+	if (_anim == Anim::Copy)return;
+	
 
 	if (_anim != anim)
 	{
