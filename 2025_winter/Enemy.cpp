@@ -1,5 +1,5 @@
 ﻿#include "Enemy.h"
-
+#include "DxLib.h"
 namespace
 {
 	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
@@ -11,8 +11,8 @@ namespace
 
 Enemy::Enemy()
 {
-	m_pos = kInitPos;
-	m_handle = LoadGraph("data/player.png");
+	
+	
 }
 
 Enemy::~Enemy()
@@ -26,9 +26,12 @@ void Enemy::Init()
 }
 void Enemy::Update()
 {
+	//重力、地面の判定、当たり判定の更新
+	::Character::Update();
 
 }
 void Enemy::Draw()
 {
-
+	//当たり判定の描画
+	Character::Draw();
 }

@@ -9,6 +9,7 @@ namespace
 {
 	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
 	constexpr float kSpeed = 20.0f;//移動速度
+	constexpr float kCharaSize = 64.0f;//キャラクターサイズ
 	constexpr int player_cut_w = 100;
 	constexpr int player_cut_h = 100;
 	constexpr float  player_scale = 3.0f;
@@ -29,7 +30,7 @@ namespace
 
 
 
-Player::Player():
+Player::Player() :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -38,8 +39,8 @@ Player::Player():
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
-	 _anim = Anim::Idle;
-	 _state = PlayerState::Normal;
+	_anim = Anim::Idle;
+	_state = PlayerState::Normal;
 }
 Player::~Player()
 {
@@ -54,6 +55,9 @@ void Player::Update()
 {
 	m_frame++;
 	m_animframe++;
+
+	//当たり判定更新
+	Character::SetRect();
 
 	AnimSelect(_anim);
 
@@ -70,31 +74,33 @@ void Player::Update()
 		CopyUpdate();
 		break;
 	}
-	
-	
 
 
 
-	
+
+
+
 }
 
 void Player::Draw()
 {
-	
-	//Character::Draw();
-	
+#ifdef _DEBUG
+	//当たり判定の描画
+	Character::Draw();
+	m_attackRect.Draw(GetColor(0, 255, 0), false);
+#endif
 
 	switch (_anim)
 	{
-	case  Anim::Idle : 
-		 charaIdx = (m_animframe / 6) % 6;
-		 charaIdy = 0;
+	case  Anim::Idle:
+		charaIdx = (m_animframe / 6) % 6;
+		charaIdy = 0;
 		break;
-	case Anim::Walk : 
-		 charaIdx = (m_animframe / 8) % 8;
-		 charaIdy = 1;
-		 break;
-	case Anim::Jump :
+	case Anim::Walk:
+		charaIdx = (m_animframe / 8) % 8;
+		charaIdy = 1;
+		break;
+	case Anim::Jump:
 		if (charaIdx == 5)
 		{
 			charaIdx = 5;
@@ -106,12 +112,12 @@ void Player::Draw()
 			charaIdy = 3;
 		}
 		break;
-	case Anim::Attack :
-		
+	case Anim::Attack:
+
 		charaIdx = (m_animframe / 7) % 7;
-			charaIdy = 2;
-			break;
-	case Anim::Copy :
+		charaIdy = 2;
+		break;
+	case Anim::Copy:
 		charaIdx = (m_animframe / 10) % 6;
 		charaIdy = 4;
 		break;
@@ -133,13 +139,13 @@ void Player::Draw()
 		DrawRectRotaGraph(m_pos.x, m_pos.y,
 		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
 		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true,true);
+		player_scale, 0.0f, m_handle, true, true);
 	}
-	
+
 #ifdef _DEBUG
-	DrawFormatString(10, 10, GetColor(255, 0, 0), "_animは%dです" ,_anim);
-	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです" ,charaIdx);
-	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです" ,charaIdy);
+	DrawFormatString(10, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
+	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
+	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
 #endif
 }
 
@@ -183,11 +189,12 @@ void Player::JumpUpdate()
 	Jump();
 	Character::Gravity();
 	m_pos += m_vel;
-	
+
 }
 
 void Player::AttackUpdate()
 {
+
 	Character::Gravity();
 	m_pos += m_vel;
 	Attack();
@@ -205,6 +212,7 @@ void Player::AttackUpdate()
 			AnimSelect(Anim::Idle);
 		}
 	}
+	//攻撃判定が当たったときの処理を書く
 }
 
 void Player::CopyUpdate()
@@ -223,19 +231,19 @@ void Player::Move()
 	{
 		m_vel.x = -kSpeed;
 		m_isRight = false;
-	
+
 
 	}
 	else if (Pad::IsPress(PAD_INPUT_RIGHT))
 	{
 		m_vel.x = kSpeed;
 		m_isRight = true;
-	
+
 	}
 	else
 	{
 		m_vel.x = 0.0f;
-		
+
 	}
 	if (_anim != Anim::Jump)
 	{
@@ -287,11 +295,15 @@ void Player::Jump()
 void Player::Attack()
 {
 
-		isNomove = true;
-		m_vel = zero;
-		//アニメーション
-		AnimSelect(Anim::Attack);
-		//判定をつける
+	isNomove = true;
+	m_vel = zero;
+	//アニメーション
+	AnimSelect(Anim::Attack);
+	//判定をつける
+
+	m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -70.0f), m_pos.y - kCharaSize, 60.0f, 80.0f);
+
+
 }
 
 void Player::Copy()
@@ -303,7 +315,7 @@ void Player::Copy()
 	//判定をつける
 }
 
-void Player::AnimSelect(const Anim&  anim)
+void Player::AnimSelect(const Anim& anim)
 {
 
 	if (_anim == Anim::Attack && charaIdx == 6)
@@ -323,7 +335,7 @@ void Player::AnimSelect(const Anim&  anim)
 
 	if (_anim == Anim::Attack)return;
 	if (_anim == Anim::Copy)return;
-	
+
 
 	if (_anim != anim)
 	{

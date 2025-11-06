@@ -6,7 +6,7 @@ namespace
 {
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
-	
+	constexpr float kCharaSize = 64.0f;//キャラクターサイズ
 }
 
 
@@ -22,6 +22,7 @@ Character::Character():
 	m_vel(0,0),
 	zero(0,0)
 {
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 }
 
 Character::~Character()
@@ -34,7 +35,11 @@ void Character::Init()
 
 void Character::Update()
 {
+	//重力処理
 	Gravity();
+	//当たり判定更新
+	SetRect();
+
 	m_pos += m_vel;
 	if (m_pos.y > kGround)
 	{
@@ -52,10 +57,19 @@ void Character::Update()
 
 void Character::Draw()
 {
-	//DrawGraphF(m_pos.x, m_pos.y, m_handle, true);
+#ifdef _DEBUG
+	//当たり判定の描画
+	m_colRect.Draw(GetColor(255, 0, 0), false);
+
+#endif 
 }
 
 void Character::Gravity()
 {
 	m_vel.y += 1.5f;
+}
+
+void Character::SetRect()
+{
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 }

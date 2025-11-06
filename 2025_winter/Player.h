@@ -28,6 +28,14 @@ public:
 	virtual void Init() override;
 	virtual void Update() override;
 	virtual void Draw() override;
+
+	/// <summary>
+	/// 攻撃時の当たり判定を取得
+	/// </summary>
+	/// <returns></returns>
+	Rect GetColAttackRect() { return m_attackRect; }//攻撃判定を取得
+	PlayerState GetState() { return _state; }//Playerの状態を取得
+	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
 private:
 	void InputUpdate();//入力の更新
 	void NormalUpdate();//通常時の更新
@@ -50,6 +58,8 @@ private:
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;
+
+	Rect m_attackRect;//攻撃判定
 	
 };
 

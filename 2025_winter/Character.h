@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Vec2.h"
+#include "Rect.h"
 class Character
 {
 public:
@@ -10,7 +11,17 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
+	/// <summary>
+	/// 当たり判定を取得
+	/// </summary>
+	/// <returns>当たり判定情報</returns>
+	Rect GetColRect() const { return m_colRect; }
+
 	void Gravity();
+	/// <summary>
+	/// 当たり判定をセットする
+	/// </summary>
+	void SetRect();
 protected:
 	int m_handle;
 	
@@ -26,6 +37,8 @@ protected:
 	Vec2 m_pos;
 	Vec2 m_vel;
 	 Vec2 zero;
+
+	 Rect m_colRect;//当たり判定用の矩形
 	
 };
 
