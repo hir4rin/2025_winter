@@ -4,6 +4,7 @@
 #include "Pad.h"
 #include "Vec2.h"
 #include <cassert> // ←assert用
+#include "Input.h"
 
 namespace
 {
@@ -53,6 +54,10 @@ void Player::Init()
 
 void Player::Update()
 {
+}
+
+void Player::Update(Input& input)
+{
 	m_frame++;
 	m_animframe++;
 
@@ -61,11 +66,12 @@ void Player::Update()
 
 	AnimSelect(_anim);
 
-	InputUpdate();//特殊行動の入力検知
+	InputUpdate(input);//特殊行動の入力検知
+
 	switch (_state)
 	{
 	case PlayerState::Normal:
-		NormalUpdate();
+		NormalUpdate(input);
 		break;
 	case PlayerState::Attack:
 		AttackUpdate();
@@ -88,6 +94,7 @@ void Player::Draw()
 	//当たり判定の描画
 	Character::Draw();
 	m_attackRect.Draw(GetColor(0, 255, 0), false);
+	m_copyRect.Draw(GetColor(0, 255, 0), false);
 #endif
 
 	switch (_anim)
@@ -149,23 +156,23 @@ void Player::Draw()
 #endif
 }
 
-void Player::InputUpdate()
+void Player::InputUpdate(Input& input)
 {
 	//特殊行動の入力検知
-	if (Pad::IsTrigger(PAD_INPUT_2))
+	if (input.IsTriggered("Attack"))
 	{
 		_state = PlayerState::Attack;
 	}
-	if (Pad::IsTrigger(PAD_INPUT_3))
+	if (input.IsTriggered("Copy"))
 	{
 		_state = PlayerState::Copy;
 	}
 }
 
-void Player::NormalUpdate()
+void Player::NormalUpdate(Input& input)
 {
-	Move();
-	Jump();
+	Move(input);
+	Jump(input);
 	Character::Gravity();
 	m_pos += m_vel;
 	//着地時にアニメーションを帰るところ
@@ -184,9 +191,9 @@ void Player::NormalUpdate()
 	}
 }
 
-void Player::JumpUpdate()
+void Player::JumpUpdate(Input& input)
 {
-	Jump();
+	Jump(input);
 	Character::Gravity();
 	m_pos += m_vel;
 
@@ -222,7 +229,7 @@ void Player::CopyUpdate()
 	m_pos += m_vel;
 }
 
-void Player::Move()
+void Player::Move(Input& input)
 {
 	AnimSelect(_anim);
 	if (isNomove)return;
@@ -257,7 +264,7 @@ void Player::Move()
 		}
 	}
 }
-void Player::Jump()
+void Player::Jump(Input& input)
 {
 	//ジャンプ中はスキップ
 	if (!m_isGround) return;
@@ -313,6 +320,7 @@ void Player::Copy()
 	//アニメーション
 	AnimSelect(Anim::Copy);
 	//判定をつける
+	m_copyRect.SetCenter(m_pos.x, m_pos.y - kCharaSize/2, 80.0f, 100.0f);
 }
 
 void Player::AnimSelect(const Anim& anim)

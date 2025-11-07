@@ -1,14 +1,21 @@
-#include "Input.h"
+ï»¿#include "Input.h"
 #include "Dxlib.h"
 
 Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
 {
-    //ƒCƒxƒ“ƒg–¼‚ğ“Y‚¦š‚É‚µ‚ÄA‰E•Ó’l‚ÉÀÛ‚Ì“ü—Íí•Ê‚Æ“ü—ÍƒR[ƒh‚Ì”z—ñ‚ğ‚¨‚­
+    //ã‚¤ãƒ™ãƒ³ãƒˆåã‚’æ·»ãˆå­—ã«ã—ã¦ã€å³è¾ºå€¤ã«å®Ÿéš›ã®å…¥åŠ›ç¨®åˆ¥ã¨å…¥åŠ›ã‚³ãƒ¼ãƒ‰ã®é…åˆ—ã‚’ãŠã
     inputTable_["ok"] = { { PeripheralType::keyboard,KEY_INPUT_RETURN },
-                          { PeripheralType::pad1,PAD_INPUT_L } };//SELECTƒL[
+                          { PeripheralType::pad1,PAD_INPUT_L } };//SELECTã‚­ãƒ¼
 
-    inputTable_["shot"] = { { PeripheralType::keyboard,KEY_INPUT_Z },
-                          { PeripheralType::pad1,PAD_INPUT_C } };//PAD‚ÌXƒ{ƒ^ƒ“
+    inputTable_["Attack"] = { { PeripheralType::keyboard,KEY_INPUT_X },
+                          { PeripheralType::pad1,PAD_INPUT_A } };//PADã®Aãƒœã‚¿ãƒ³
+
+    inputTable_["Copy"] = { { PeripheralType::keyboard,KEY_INPUT_C },
+                          { PeripheralType::pad1,PAD_INPUT_X } };//PADã®Aãƒœã‚¿ãƒ³
+
+    
+
+
 
     inputTable_["up"] = { { PeripheralType::keyboard,KEY_INPUT_UP },
                           { PeripheralType::pad1,PAD_INPUT_UP} };
@@ -19,8 +26,8 @@ Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
     inputTable_["right"] = { { PeripheralType::keyboard,KEY_INPUT_RIGHT },
                              { PeripheralType::pad1,PAD_INPUT_RIGHT} };
 
-    // ‚ ‚ç‚©‚¶‚ß˜g‚ğŠJ‚¯‚Ä‚¨‚­
-    //‚±‚±‚Å˜g‚ğŠJ‚¯‚Ä‚¨‚©‚È‚¢‚ÆAƒ`ƒFƒbƒN‚ÌÛ‚ÉAtŠÖ”‚ÅƒNƒ‰ƒbƒVƒ…‚·‚é‰Â”\«‚ª‚ ‚é
+    // ã‚ã‚‰ã‹ã˜ã‚æ ã‚’é–‹ã‘ã¦ãŠã
+    //ã“ã“ã§æ ã‚’é–‹ã‘ã¦ãŠã‹ãªã„ã¨ã€ãƒã‚§ãƒƒã‚¯ã®éš›ã«Até–¢æ•°ã§ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã™ã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹
     for (const auto& inputInfo : inputTable_) {
         inputData_[inputInfo.first] = false;
         lastInputData_[inputInfo.first] = false;
@@ -29,39 +36,39 @@ Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
 
 void Input::Update()
 {
-    // ‚Ü‚¸Œ»İ‚Ì“ü—Íî•ñ‚ğæ“¾
+    // ã¾ãšç¾åœ¨ã®å…¥åŠ›æƒ…å ±ã‚’å–å¾—
     char keyState[256];
-    GetHitKeyStateAll(keyState);//¶‚ÌƒL[ƒ{[ƒhî•ñ
-    int padState = GetJoypadInputState(DX_INPUT_PAD1);//¶‚ÌPAD1î•ñ
-    lastInputData_ = inputData_;//’¼‘O‚ÌƒtƒŒ[ƒ€‚ğXV(‘O‚ÌƒtƒŒ[ƒ€î•ñ‚ğƒRƒs[)
+    GetHitKeyStateAll(keyState);//ç”Ÿã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æƒ…å ±
+    int padState = GetJoypadInputState(DX_INPUT_PAD1);//ç”Ÿã®PAD1æƒ…å ±
+    lastInputData_ = inputData_;//ç›´å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’æ›´æ–°(å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã‚’ã‚³ãƒ”ãƒ¼)
 
-    // ‚·‚×‚Ä‚Ì“ü—ÍƒCƒxƒ“ƒg‚ğƒ`ƒFƒbƒN‚µ‚Ü‚·
-    //‚±‚±‚ÅInputData_‚ªXV‚³‚ê‚é
-    //inputTable_‚ğ‰ñ‚µ‚ÄŠeƒCƒxƒ“ƒg‚ğƒ`ƒFƒbƒN‚·‚é
+    // ã™ã¹ã¦ã®å…¥åŠ›ã‚¤ãƒ™ãƒ³ãƒˆã‚’ãƒã‚§ãƒƒã‚¯ã—ã¾ã™
+    //ã“ã“ã§InputData_ãŒæ›´æ–°ã•ã‚Œã‚‹
+    //inputTable_ã‚’å›ã—ã¦å„ã‚¤ãƒ™ãƒ³ãƒˆã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
     for (const auto&inputInfo : inputTable_)
     {
-        auto& input=inputData_[inputInfo.first];//inputInfo.first‚É‚Í"ok"“™‚ª“ü‚Á‚Ä‚¢‚é
-        //input‚ğ‘‚«Š·‚¦‚é‚ÆAinputData_‚Ì‚»‚ÌƒCƒxƒ“ƒg‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğ
-        //‘‚«Š·‚¦‚é‚±‚Æ‚É‚È‚é
-        //InputState‚ÌƒxƒNƒ^‚ğ‰ñ‚·
+        auto& input=inputData_[inputInfo.first];//inputInfo.firstã«ã¯"ok"ç­‰ãŒå…¥ã£ã¦ã„ã‚‹
+        //inputã‚’æ›¸ãæ›ãˆã‚‹ã¨ã€inputData_ã®ãã®ã‚¤ãƒ™ãƒ³ãƒˆãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’
+        //æ›¸ãæ›ãˆã‚‹ã“ã¨ã«ãªã‚‹
+        //InputStateã®ãƒ™ã‚¯ã‚¿ã‚’å›ã™
         for (const auto& state : inputInfo.second){
-            //‚±‚Ìƒ‹[ƒv‚ÍInputState”z—ñ‚Ìƒ‹[ƒv‚È‚Ì‚Å
-            //‚Ü‚¸A“ü—Íí•Ê‚ğƒ`ƒFƒbƒN‚µ‚Ü‚·
+            //ã“ã®ãƒ«ãƒ¼ãƒ—ã¯InputStateé…åˆ—ã®ãƒ«ãƒ¼ãƒ—ãªã®ã§
+            //ã¾ãšã€å…¥åŠ›ç¨®åˆ¥ã‚’ãƒã‚§ãƒƒã‚¯ã—ã¾ã™
             switch (state.type)
             {
-            case PeripheralType::keyboard://ƒL[ƒ{[ƒh‚¾‚Á‚½‚ç
-                //GethitKeyStateAll‚Å‚Æ‚Á‚Ä‚«‚½”z—ñ‚Ì’†g‚ğŒ©‚Ä
-                //“ü—Í‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN‚µ‚Ü‚·
+            case PeripheralType::keyboard://ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã ã£ãŸã‚‰
+                //GethitKeyStateAllã§ã¨ã£ã¦ããŸé…åˆ—ã®ä¸­èº«ã‚’è¦‹ã¦
+                //å…¥åŠ›ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã—ã¾ã™
                 input = keyState[state.id];
                 break;
             case PeripheralType::pad1:
-                //GethitKeyStateAll‚Å‚Æ‚Á‚Ä‚«‚½ƒrƒbƒgî•ñ‚ğŒ©‚Ä
-                //“o˜^‚³‚ê‚Ä‚¢‚éƒrƒbƒgî•ñ‚Æ&‚ğ‚Æ‚èA‚»‚Ìƒrƒbƒg‚ª—§‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN
+                //GethitKeyStateAllã§ã¨ã£ã¦ããŸãƒ“ãƒƒãƒˆæƒ…å ±ã‚’è¦‹ã¦
+                //ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ãƒ“ãƒƒãƒˆæƒ…å ±ã¨&ã‚’ã¨ã‚Šã€ãã®ãƒ“ãƒƒãƒˆãŒç«‹ã£ã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
                 input = (padState & state.id);
                 break;
             }
-            if (input) {//•K{!
-                break;//‚±‚±‚Åbreak‚µ‚È‚¢‚ÆAÅŒã‚Ìƒ`ƒFƒbƒN‚Å‰Ÿ‚³‚ê‚Ä‚¢‚È‚¢‚Æfalse‚É‚È‚é
+            if (input) {//å¿…é ˆ!
+                break;//ã“ã“ã§breakã—ãªã„ã¨ã€æœ€å¾Œã®ãƒã‚§ãƒƒã‚¯ã§æŠ¼ã•ã‚Œã¦ã„ãªã„ã¨falseã«ãªã‚‹
             }
         }
     }
@@ -70,13 +77,13 @@ void Input::Update()
 
 bool Input::IsPressed(const char* name) const
 {
-    //‚à‚µu‚È‚¢vƒCƒxƒ“ƒg‚ğ‘—‚ç‚ê‚é‚ÆƒNƒ‰ƒbƒVƒ…‚µ‚Ü‚·
-    //ƒNƒ‰ƒbƒVƒ…‚ª‚¢‚â‚¾‚Á‚½‚ç
+    //ã‚‚ã—ã€Œãªã„ã€ã‚¤ãƒ™ãƒ³ãƒˆã‚’é€ã‚‰ã‚Œã‚‹ã¨ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã—ã¾ã™
+    //ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ãŒã„ã‚„ã ã£ãŸã‚‰
     //if (inputData_.contains(name))
     //{
-    //    return false;//‚±‚ê‚Å‰ñ”ğ‚Å‚«‚Ü‚·
+    //    return false;//ã“ã‚Œã§å›é¿ã§ãã¾ã™
     //}
-    return inputData_.at(name);//constŠÖ”“à•”‚È‚Ì‚Å[]‚Å‚Í‚È‚­at‚ğg—p‚µ‚Ä‚¢‚é
+    return inputData_.at(name);//consté–¢æ•°å†…éƒ¨ãªã®ã§[]ã§ã¯ãªãatã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹
 }
 
 bool Input::IsTriggered(const char* name) const

@@ -3,10 +3,12 @@
 #include "Player.h"
 #include "EnemyWizard.h"
 #include "DxLib.h"
+
 SceneMain::SceneMain()
 {
 	m_pPlayer = new Player;
 	m_pEnemyWizard = new EnemyWizard;
+	
 }
 
 SceneMain::~SceneMain()
@@ -15,11 +17,12 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {
-
+	
 }
 void SceneMain::Update()
 {
-	m_pPlayer->Update();
+	input.Update();
+	m_pPlayer->Update(input);
 	if (m_pEnemyWizard) m_pEnemyWizard->Update();
 	CheckHit();
 }

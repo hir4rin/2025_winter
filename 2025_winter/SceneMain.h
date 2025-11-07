@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Input.h"
 
 class Player;
 class EnemyWizard;
@@ -16,7 +17,7 @@ public:
 private:
 	Player* m_pPlayer;
 	EnemyWizard* m_pEnemyWizard;
-
+	Input input;
 
 };
 

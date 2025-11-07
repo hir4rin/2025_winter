@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Character.h"
 
-
+class Input;
 enum class Anim
 {
 	Idle,
@@ -27,6 +27,7 @@ public:
 
 	virtual void Init() override;
 	virtual void Update() override;
+	virtual void Update(Input& input);
 	virtual void Draw() override;
 
 	/// <summary>
@@ -37,15 +38,15 @@ public:
 	PlayerState GetState() { return _state; }//Playerの状態を取得
 	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
 private:
-	void InputUpdate();//入力の更新
-	void NormalUpdate();//通常時の更新
-	void JumpUpdate();//ジャンプ時の更新
+	void InputUpdate(Input& input);//入力の更新
+	void NormalUpdate(Input& input);//通常時の更新
+	void JumpUpdate(Input& input);//ジャンプ時の更新
 	void AttackUpdate();//攻撃時の更新
 	void CopyUpdate();//コピー時の更新
 	 
 
-	void Move();//動きの入力
-	void Jump();//ジャンプ
+	void Move(Input& input);//動きの入力
+	void Jump(Input& input);//ジャンプ
 	void Attack();//攻撃
 
 	void Copy();//剣を掲げるモーション
@@ -60,6 +61,7 @@ private:
 	bool isNomove;
 
 	Rect m_attackRect;//攻撃判定
+	Rect m_copyRect;//コピー判定
 	
 };
 
