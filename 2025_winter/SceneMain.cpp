@@ -2,13 +2,14 @@
 #include "Character.h"
 #include "Player.h"
 #include "EnemyWizard.h"
+#include "Item.h"
 #include "DxLib.h"
 
 SceneMain::SceneMain()
 {
 	m_pPlayer = new Player;
 	m_pEnemyWizard = new EnemyWizard;
-	
+	m_pItem = new Item;
 }
 
 SceneMain::~SceneMain()
@@ -24,12 +25,14 @@ void SceneMain::Update()
 	input.Update();
 	m_pPlayer->Update(input);
 	if (m_pEnemyWizard) m_pEnemyWizard->Update();
+	m_pItem->Update();
 	CheckHit();
 }
 void SceneMain::Draw()
 {
 	m_pPlayer->Draw();
 	if (m_pEnemyWizard) m_pEnemyWizard->Draw();
+	m_pItem->Draw();
 
 }
 

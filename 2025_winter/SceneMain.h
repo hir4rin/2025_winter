@@ -3,6 +3,7 @@
 
 class Player;
 class EnemyWizard;
+class Item;
 
 class SceneMain
 {
@@ -17,6 +18,10 @@ public:
 private:
 	Player* m_pPlayer;
 	EnemyWizard* m_pEnemyWizard;
+	Item* m_pItem;
+
+
+
 	Input input;
 
 };
