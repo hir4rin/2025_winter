@@ -18,21 +18,21 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {
-	
+
 }
 void SceneMain::Update()
 {
 	input.Update();
 	m_pPlayer->Update(input);
 	if (m_pEnemyWizard) m_pEnemyWizard->Update();
-	m_pItem->Update();
+	if (m_pItem) m_pItem->Update();
 	CheckHit();
 }
 void SceneMain::Draw()
 {
 	m_pPlayer->Draw();
 	if (m_pEnemyWizard) m_pEnemyWizard->Draw();
-	m_pItem->Draw();
+	if (m_pItem) m_pItem->Draw();
 
 }
 
@@ -52,7 +52,27 @@ void SceneMain::CheckHit()
 				m_pEnemyWizard = nullptr;
 			}
 		}
-		
 	}
-	
+	if (m_pItem)
+	{
+		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Copy )
+		{
+			if (m_pPlayer->GetAnimIdx() > 3)
+			{
+				//プレイヤーの当たり判定とアイテムの当たり判定をチェック
+				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(m_pItem->GetColRect());
+				if (isHitItem)
+				{
+					//ここにアイテムを取得したときの処理を書く
+					delete m_pItem;
+					m_pItem = nullptr;
+					m_pPlayer->ChangeArcher();
+				}
+			}
+			
+		}
+
+	}
+
 }

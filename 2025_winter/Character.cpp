@@ -59,7 +59,7 @@ void Character::Draw()
 {
 #ifdef _DEBUG
 	//当たり判定の描画
-	m_colRect.Draw(GetColor(255, 0, 0), false);
+	m_colRect.Draw(GetColor(0, 255, 255), false);
 
 #endif 
 }

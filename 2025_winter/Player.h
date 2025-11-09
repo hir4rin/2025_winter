@@ -19,6 +19,14 @@ enum class PlayerState
 
 };
 
+enum class PlayerType
+{
+	Normal,
+	Burning,
+	Frozen,
+	Archer
+};;
+
 class Player : public Character
 {
 public:
@@ -35,8 +43,12 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	Rect GetColAttackRect() { return m_attackRect; }//攻撃判定を取得
+	Rect GetColCopyRect() { return m_copyRect; }//攻撃判定を取得
 	PlayerState GetState() { return _state; }//Playerの状態を取得
 	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
+	void ChangeBurning();//外部から変身の変更
+	void ChangeFrozen();//外部から変身の変更
+	void ChangeArcher();//外部から変身の変更
 private:
 	void InputUpdate(Input& input);//入力の更新
 	void NormalUpdate(Input& input);//通常時の更新
@@ -51,10 +63,13 @@ private:
 
 	void Copy();//剣を掲げるモーション
 	void AnimSelect(const Anim& anim );//アニメーション
+
+	
 private:
 	int m_frame;
 	Anim _anim;
 	PlayerState _state;
+	PlayerType _type;
 	int m_animframe;
 	int charaIdx;
 	int charaIdy;

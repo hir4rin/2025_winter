@@ -13,6 +13,7 @@ namespace
 
 Item::Item()
 {
+
 	m_pos = kInitPos;
 }
 

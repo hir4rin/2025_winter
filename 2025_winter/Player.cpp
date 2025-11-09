@@ -42,6 +42,7 @@ Player::Player() :
 	m_handle = LoadGraph("data/player.png");
 	_anim = Anim::Idle;
 	_state = PlayerState::Normal;
+	_type = PlayerType::Normal;
 }
 Player::~Player()
 {
@@ -150,7 +151,9 @@ void Player::Draw()
 	}
 
 #ifdef _DEBUG
-	DrawFormatString(10, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
+	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
+	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", _state);
+	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", _type);
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
 #endif
@@ -326,14 +329,14 @@ void Player::Copy()
 void Player::AnimSelect(const Anim& anim)
 {
 
-	if (_anim == Anim::Attack && charaIdx == 6)
+	if (_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
 	{
 		_anim = Anim::Idle;
 		isNomove = false;
 		_state = PlayerState::Normal;
 
 	}
-	if (_anim == Anim::Copy && charaIdx == 5)
+	if (_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
 	{
 		_anim = Anim::Idle;
 		isNomove = false;
@@ -353,4 +356,34 @@ void Player::AnimSelect(const Anim& anim)
 		charaIdy = 0;
 	}
 	return;
+}
+
+void Player::ChangeBurning()
+{
+	// 1. 現在の画像を解放
+	DeleteGraph(m_handle);
+
+	// 2. 新しい画像を読み込む
+	m_handle = LoadGraph("data/Burning.png");
+	_type = PlayerType::Burning;
+}
+
+void Player::ChangeFrozen()
+{
+	// 1. 現在の画像を解放
+	DeleteGraph(m_handle);
+
+	// 2. 新しい画像を読み込む
+	m_handle = LoadGraph("data/Frozen.png");
+	_type = PlayerType::Frozen;
+}
+
+void Player::ChangeArcher()
+{
+	// 1. 現在の画像を解放
+	DeleteGraph(m_handle);
+
+	// 2. 新しい画像を読み込む
+	m_handle = LoadGraph("data/Archer.png");
+	_type = PlayerType::Archer;
 }
