@@ -3,8 +3,8 @@
 
 Arrow::Arrow():
 	isAlive(false),
-	m_dir(1,0),
-	m_speed(3)
+	m_dir(1,0)
+	
 {
 	m_handle = LoadGraph("data/Arrow.png");
 
@@ -45,7 +45,7 @@ void Arrow::Draw()
 			static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
 			kScale, 1.0f,
 			0.0f, m_handle,
-			FALSE, FALSE);
+			true, FALSE);
 	}
 
 

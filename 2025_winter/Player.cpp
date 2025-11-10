@@ -38,7 +38,8 @@ Player::Player() :
 	charaIdy(0),
 	m_animframe(0),
 	isNomove(false),
-	arrowFrame(0)
+	arrowFrame(-1),
+	isArrowAttack(false)
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
@@ -63,6 +64,11 @@ void Player::Update(Input& input)
 {
 	m_frame++;
 	m_animframe++;
+	if (arrowFrame >= 0)
+	{
+		arrowFrame--;
+	}
+	DrawFormatString(10, 40, GetColor(255, 0, 0), "arrowFrameは%dです", arrowFrame);
 
 	//当たり判定更新
 	Character::SetRect();
@@ -146,8 +152,10 @@ void Player::InputUpdate(Input& input)
 	{
 		if (_type == PlayerType::Archer)
 		{
+			if (arrowFrame >= 0)return;
 			//矢を回す
 			arrowFrame = arrowtime;
+
 		}
 		_state = PlayerState::Attack;
 	}
@@ -189,10 +197,7 @@ void Player::JumpUpdate(Input& input)
 
 void Player::AttackUpdate()
 {
-	if (arrowFrame > 0)
-	{
-	arrowFrame--;
-	}
+	
 	
 	Character::Gravity();
 	m_pos += m_vel;
@@ -630,7 +635,7 @@ void Player::ArcherAnim()
 		}
 		break;
 	case Anim::Attack:
-
+		if (m_animframe == 27) isArrowAttack = true;//chraIdxが9になった瞬間に矢を発射する//9 * 3;
 		charaIdx = (m_animframe / 3) % 12;
 		charaIdy = 3;
 		break;
@@ -683,12 +688,16 @@ void Player::ShotArrow(std::vector<Arrow>& _arrow)
 {
 	for (int i = 0; i < Arrow::Num; i++)
 	{
-		// 矢の発射位置をセット、プレイヤーの中心にする
-		_arrow[i].pos = m_pos;
+		// 弾が画面上にでていない場合はその弾を画面に出す
+		if (_arrow[i].isAlive == false)
+		{
+			// 矢の発射位置をセット、プレイヤーの中心にする
+			_arrow[i].GetPosition() = m_pos;
 
-		// 矢が撃たれたので、存在状態を保持する変数にtrueを代入する
-		_arrow[i].isAlive = true;
+			// 矢が撃たれたので、存在状態を保持する変数にtrueを代入する
+			_arrow[i].isAlive = true;
 
-		break;	// 一発撃ったら抜ける
+			break;	// 一発撃ったら抜ける
+		}
 	}
 }

@@ -11,6 +11,7 @@ SceneMain::SceneMain()
 	m_pPlayer = new Player;
 	m_pEnemyWizard = new EnemyWizard;
 	m_pItem = new Item;
+	_arrow.resize(Arrow::Num);
 }
 
 SceneMain::~SceneMain()
@@ -25,12 +26,18 @@ void SceneMain::Update()
 {
 	input.Update();
 	m_pPlayer->Update(input);
-	if (m_pPlayer->arrowFrame == 0)
+	if (m_pPlayer->isArrowAttack)
 	{
-		//m_pPlayer->ShotArrow()
+		m_pPlayer->ShotArrow(_arrow);
+		m_pPlayer->isArrowAttack = false;
+
 	}
 	if (m_pEnemyWizard) m_pEnemyWizard->Update();
 	if (m_pItem) m_pItem->Update();
+	for (auto& arrow : _arrow)
+	{
+		arrow.Update();
+	}
 	CheckHit();
 }
 void SceneMain::Draw()
@@ -38,6 +45,10 @@ void SceneMain::Draw()
 	m_pPlayer->Draw();
 	if (m_pEnemyWizard) m_pEnemyWizard->Draw();
 	if (m_pItem) m_pItem->Draw();
+	for (auto& arrow : _arrow)
+	{
+		arrow.Draw();
+	}
 
 }
 
@@ -96,8 +107,8 @@ void SceneMain::CheckHit()
 					delete m_pItem;
 					m_pItem = nullptr;
 					//m_pPlayer->ChangeBurning();
-					m_pPlayer->ChangeFrozen();
-					//m_pPlayer->ChangeArcher();
+					//m_pPlayer->ChangeFrozen();
+					m_pPlayer->ChangeArcher();
 					
 				}
 			}

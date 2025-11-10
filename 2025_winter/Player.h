@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Character.h"
+#include "vector"
 
 class Input;
 class Arrow;
@@ -69,6 +70,7 @@ public:
 
 	void ShotArrow(std::vector<Arrow>& _arrow);//矢を発射させる
 	int arrowFrame;//矢が発射するまでの時間
+	bool isArrowAttack;//矢を撃ったかどうか
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -137,7 +139,8 @@ private:
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;
-	const int arrowtime = 4;
+	const int arrowtime = 30;//発射クールタイム
+	
 
 	//ノーマル
 	Rect m_attackRect;//攻撃判定

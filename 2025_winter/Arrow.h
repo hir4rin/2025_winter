@@ -11,12 +11,13 @@ public:
 	void Init()override;
 	void Update()override;
 	void Draw()override;
-	const int Num = 5;
+	constexpr static int Num = 10;
+	Vec2& GetPosition() { return m_pos; }
 public:
 	bool isAlive;
 	Vec2 m_dir;
 private:
-	float m_speed;
+	const float m_speed = 10;
 	float	AliveLimitX = 1920.0f;
 	const int kCharaSize = 100;
 	

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Input.h"
 
+
 class Player;
 class EnemyWizard;
 class Item;
@@ -20,7 +21,7 @@ private:
 	Player* m_pPlayer;
 	EnemyWizard* m_pEnemyWizard;
 	Item* m_pItem;
-	//std::vector<Arrow> _arrow(Arrow::Num)
+	std::vector<Arrow> _arrow;
 
 
 	Input input;
