@@ -5,6 +5,7 @@
 #include "Vec2.h"
 #include <cassert> // ←assert用
 #include "Input.h"
+#include "Arrow.h"
 
 namespace
 {
@@ -36,7 +37,8 @@ Player::Player() :
 	charaIdx(0),
 	charaIdy(0),
 	m_animframe(0),
-	isNomove(false)
+	isNomove(false),
+	arrowFrame(0)
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
@@ -71,20 +73,16 @@ void Player::Update(Input& input)
 
 	switch (_state)
 	{
-	case PlayerState::Normal:
+	case PlayerState::Normal://アップデートの遷移
 		NormalUpdate(input);
 		break;
-	case PlayerState::Attack:
+	case PlayerState::Attack://アップデートの遷移
 		AttackUpdate();
 		break;
-	case PlayerState::Copy:
+	case PlayerState::Copy://アップデートの遷移
 		CopyUpdate();
 		break;
 	}
-
-
-
-
 
 
 }
@@ -95,46 +93,28 @@ void Player::Draw()
 	//当たり判定の描画
 	Character::Draw();
 	m_attackRect.Draw(GetColor(0, 255, 0), false);
+	m_burningRect.Draw(GetColor(0, 255, 0), false);
+	m_frozenRect.Draw(GetColor(0, 255, 0), false);
+	m_archerRect.Draw(GetColor(0, 255, 0), false);
 	m_copyRect.Draw(GetColor(0, 255, 0), false);
 #endif
-
-	switch (_anim)
+	switch (_type)
 	{
-	case  Anim::Idle:
-		charaIdx = (m_animframe / 6) % 6;
-		charaIdy = 0;
+	case PlayerType::Normal:;//アニメーションの遷移
+		NormalAnim();
 		break;
-	case Anim::Walk:
-		charaIdx = (m_animframe / 8) % 8;
-		charaIdy = 1;
+	case PlayerType::Burning:;//アニメーションの遷移
+		BurningAnim();
 		break;
-	case Anim::Jump:
-		if (charaIdx == 5)
-		{
-			charaIdx = 5;
-			charaIdy = 3;
-		}
-		else
-		{
-			charaIdx = (m_animframe / 10) % 2 + 4;
-			charaIdy = 3;
-		}
+	case PlayerType::Frozen:;//アニメーションの遷移
+		FrozenAnim();
 		break;
-	case Anim::Attack:
-
-		charaIdx = (m_animframe / 7) % 7;
-		charaIdy = 2;
-		break;
-	case Anim::Copy:
-		charaIdx = (m_animframe / 10) % 6;
-		charaIdy = 4;
-		break;
-	default:
-		// ここに来たら想定外！
-		//assert(false && "Unknown animation type in switch(_anim)");
+	case PlayerType::Archer:;//アニメーションの遷移
+		ArcherAnim();
 		break;
 
 	}
+	
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x, m_pos.y,
@@ -164,6 +144,11 @@ void Player::InputUpdate(Input& input)
 	//特殊行動の入力検知
 	if (input.IsTriggered("Attack"))
 	{
+		if (_type == PlayerType::Archer)
+		{
+			//矢を回す
+			arrowFrame = arrowtime;
+		}
 		_state = PlayerState::Attack;
 	}
 	if (input.IsTriggered("Copy"))
@@ -204,10 +189,15 @@ void Player::JumpUpdate(Input& input)
 
 void Player::AttackUpdate()
 {
-
+	if (arrowFrame > 0)
+	{
+	arrowFrame--;
+	}
+	
 	Character::Gravity();
 	m_pos += m_vel;
 	Attack();
+	
 	//着地時にアニメーションを帰るところ
 	if (m_pos.y > kGround)
 	{
@@ -311,7 +301,25 @@ void Player::Attack()
 	AnimSelect(Anim::Attack);
 	//判定をつける
 
-	m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -70.0f), m_pos.y - kCharaSize, 60.0f, 80.0f);
+	switch (_type)
+	{
+	case PlayerType::Normal:
+		//Normalの攻撃アニメーション
+		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -70.0f), m_pos.y - kCharaSize, 60.0f, 80.0f);
+		break;
+	case PlayerType::Burning:
+		m_burningRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);
+		break;
+	case PlayerType::Frozen:
+		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);
+		break;
+	case PlayerType::Archer:
+		m_archerRect.SetLT(0,0,0,0);
+		break;
+	default:
+		break;
+	}
+	
 
 
 }
@@ -323,12 +331,35 @@ void Player::Copy()
 	//アニメーション
 	AnimSelect(Anim::Copy);
 	//判定をつける
-	m_copyRect.SetCenter(m_pos.x, m_pos.y - kCharaSize/2, 80.0f, 100.0f);
+	m_copyRect.SetCenter(m_pos.x, m_pos.y - kCharaSize / 2, 80.0f, 100.0f);
 }
 
 void Player::AnimSelect(const Anim& anim)
 {
+	switch (_type)
+	{
+	case PlayerType::Normal://アニメーションの切り替わりの遷移
+		AnimSelectNormal(anim);
+		break;
+	case PlayerType::Burning://アニメーションの切り替わりの遷移
+		AnimSelectBurning(anim);
+		break;
+	case PlayerType::Frozen://アニメーションの切り替わりの遷移
+		AnimSelectFrozen(anim);
+		break;
+	case PlayerType::Archer://アニメーションの切り替わりの遷移
+		AnimSelectArcher(anim);
+		break;
+	default:
+		assert(false && "存在しないタイプです");
+		break;
+	}
+	
+	return;
+}
 
+void Player::AnimSelectNormal(const Anim& anim)
+{
 	if (_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
 	{
 		_anim = Anim::Idle;
@@ -358,6 +389,263 @@ void Player::AnimSelect(const Anim& anim)
 	return;
 }
 
+void Player::AnimSelectBurning(const Anim& anim)
+{
+	if (_anim == Anim::Attack && charaIdx == 7)//攻撃アニメーション終了
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
+	if (_anim == Anim::Copy && charaIdx == 7)//コピーアニメーション終了
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
+
+	if (_anim == Anim::Attack)return;
+	if (_anim == Anim::Copy)return;
+
+
+	if (_anim != anim)
+	{
+		_anim = anim;
+		m_animframe = 0;
+		charaIdx = 0;
+		charaIdy = 0;
+	}
+	return;
+}
+
+void Player::AnimSelectFrozen(const Anim& anim)
+{
+	if (_anim == Anim::Attack && charaIdx == 14)//攻撃アニメーション終了
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
+	if (_anim == Anim::Copy && charaIdx == 14)//コピーアニメーション終了
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
+
+	if (_anim == Anim::Attack)return;
+	if (_anim == Anim::Copy)return;
+
+
+	if (_anim != anim)
+	{
+		_anim = anim;
+		m_animframe = 0;
+		charaIdx = 0;
+		charaIdy = 0;
+	}
+	return;
+}
+
+void Player::AnimSelectArcher(const Anim& anim)
+{
+	if (_anim == Anim::Attack && charaIdx == 11)//攻撃アニメーション終了
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
+	if (_anim == Anim::Copy && charaIdx == 8)//コピーアニメーション終了
+	{
+		_anim = Anim::Idle;
+		isNomove = false;
+		_state = PlayerState::Normal;
+
+	}
+
+	if (_anim == Anim::Attack)return;
+	if (_anim == Anim::Copy)return;
+
+
+	if (_anim != anim)
+	{
+		_anim = anim;
+		m_animframe = 0;
+		charaIdx = 0;
+		charaIdy = 0;
+	}
+	return;
+}
+
+
+
+void Player::NormalAnim()
+{
+	switch (_anim)
+	{
+	case  Anim::Idle:
+		charaIdx = (m_animframe / 6) % 6;
+		charaIdy = 0;
+		break;
+	case Anim::Walk:
+		charaIdx = (m_animframe / 8) % 8;
+		charaIdy = 1;
+		break;
+	case Anim::Jump:
+		if (charaIdx == 5)
+		{
+			charaIdx = 5;
+			charaIdy = 3;
+		}
+		else
+		{
+			charaIdx = (m_animframe / 10) % 2 + 4;
+			charaIdy = 3;
+		}
+		break;
+	case Anim::Attack:
+
+		charaIdx = (m_animframe / 7) % 7;
+		charaIdy = 2;
+		break;
+	case Anim::Copy:
+		charaIdx = (m_animframe / 10) % 6;
+		charaIdy = 4;
+		break;
+	default:
+		// ここに来たら想定外！
+		//assert(false && "Unknown animation type in switch(_anim)");
+		break;
+	}
+}
+void Player::BurningAnim()
+{
+	switch (_anim)
+	{
+	case  Anim::Idle:
+		charaIdx = (m_animframe / 4) % 6;
+		charaIdy = 0;
+		break;
+	case Anim::Walk:
+		charaIdx = (m_animframe / 4) % 8;
+		charaIdy = 1;
+		break;
+	case Anim::Jump:
+		if (charaIdx == 3)
+		{
+			charaIdx = 3;
+			charaIdy = 1;
+		}
+		else
+		{
+			charaIdx = (m_animframe / 10) % 3 + 0;
+			charaIdy = 1;
+		}
+		break;
+	case Anim::Attack:
+
+		charaIdx = (m_animframe / 5) % 8;
+		charaIdy = 5;
+		break;
+	case Anim::Copy:
+		charaIdx = (m_animframe / 10) % 8;//【注意】切り替わった直後のアニメーションはここが流れてる
+		charaIdy = 5;
+		break;
+	default:
+		// ここに来たら想定外！
+		//assert(false && "Unknown animation type in switch(_anim)");
+		break;
+
+	}
+}
+
+void Player::FrozenAnim()
+{
+	switch (_anim)
+	{
+	case  Anim::Idle:
+		charaIdx = (m_animframe / 6) % 6;
+		charaIdy = 0;
+		break;
+	case Anim::Walk:
+		charaIdx = (m_animframe / 8) % 8;
+		charaIdy = 1;
+		break;
+	case Anim::Jump:
+		if (charaIdx == 3)
+		{
+			charaIdx = 3;
+			charaIdy = 6;
+		}
+		else
+		{
+			charaIdx = (m_animframe / 2) % 4 + 0;
+			charaIdy = 6;
+		}
+		break;
+	case Anim::Attack:
+
+		charaIdx = (m_animframe / 4) % 15;
+		charaIdy = 2;
+		break;
+	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
+		charaIdx = (m_animframe / 10) % 15 + 4;
+		charaIdy = 4;
+		break;
+	default:
+		// ここに来たら想定外！
+		//assert(false && "Unknown animation type in switch(_anim)");
+		break;
+
+	}
+}
+
+void Player::ArcherAnim()
+{
+	switch (_anim)
+	{
+	case  Anim::Idle:
+		charaIdx = (m_animframe / 6) % 6;
+		charaIdy = 0;
+		break;
+	case Anim::Walk:
+		charaIdx = (m_animframe / 8) % 8;
+		charaIdy = 1;
+		break;
+	case Anim::Jump:
+		if (charaIdx == 2)
+		{
+			charaIdx = 2;
+			charaIdy = 1;
+		}
+		else
+		{
+			charaIdx = (m_animframe / 10) % 3 + 0;
+			charaIdy = 1;
+		}
+		break;
+	case Anim::Attack:
+
+		charaIdx = (m_animframe / 3) % 12;
+		charaIdy = 3;
+		break;
+	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
+		charaIdx = (m_animframe / 3) % 9;
+		charaIdy = 2;
+		break;
+	default:
+		// ここに来たら想定外！
+		//assert(false && "Unknown animation type in switch(_anim)");
+		break;
+
+	}
+}
+
 void Player::ChangeBurning()
 {
 	// 1. 現在の画像を解放
@@ -366,6 +654,7 @@ void Player::ChangeBurning()
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/Burning.png");
 	_type = PlayerType::Burning;
+	_state = PlayerState::Normal;
 }
 
 void Player::ChangeFrozen()
@@ -376,6 +665,7 @@ void Player::ChangeFrozen()
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/Frozen.png");
 	_type = PlayerType::Frozen;
+	_state = PlayerState::Normal;
 }
 
 void Player::ChangeArcher()
@@ -386,4 +676,19 @@ void Player::ChangeArcher()
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/Archer.png");
 	_type = PlayerType::Archer;
+	_state = PlayerState::Normal;
+}
+
+void Player::ShotArrow(std::vector<Arrow>& _arrow)
+{
+	for (int i = 0; i < Arrow::Num; i++)
+	{
+		// 矢の発射位置をセット、プレイヤーの中心にする
+		_arrow[i].pos = m_pos;
+
+		// 矢が撃たれたので、存在状態を保持する変数にtrueを代入する
+		_arrow[i].isAlive = true;
+
+		break;	// 一発撃ったら抜ける
+	}
 }

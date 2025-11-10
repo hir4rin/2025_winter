@@ -2,6 +2,7 @@
 #include "Character.h"
 
 class Input;
+class Arrow;
 enum class Anim
 {
 	Idle,
@@ -35,20 +36,40 @@ public:
 
 	virtual void Init() override;
 	virtual void Update() override;
-	virtual void Update(Input& input);
-	virtual void Draw() override;
+	virtual void Update(Input& input);//すべてのプレイヤーの動き
+	virtual void Draw() override;//すべてのプレイヤーの描画
 
 	/// <summary>
-	/// 攻撃時の当たり判定を取得
+	/// 攻撃時の当たり判定を取得(Normal)
 	/// </summary>
 	/// <returns></returns>
 	Rect GetColAttackRect() { return m_attackRect; }//攻撃判定を取得
+	/// <summary>
+	/// 攻撃時の当たり判定を取得(Burning)
+	/// </summary>
+	/// <returns></returns>
+	Rect GetColBurningRect() { return m_burningRect; }
+	/// <summary>
+	/// 攻撃時の当たり判定を取得(Frozen)
+	/// </summary>
+	/// <returns></returns>
+	Rect GetColFrozenRect() { return m_frozenRect; }
+	/// <summary>
+	/// 攻撃時の当たり判定を取得(Archer)
+	/// </summary>
+	/// <returns></returns>
+	Rect GetColArcherRect() { return m_archerRect; }
+
 	Rect GetColCopyRect() { return m_copyRect; }//攻撃判定を取得
 	PlayerState GetState() { return _state; }//Playerの状態を取得
 	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
 	void ChangeBurning();//外部から変身の変更
 	void ChangeFrozen();//外部から変身の変更
 	void ChangeArcher();//外部から変身の変更
+
+	void ShotArrow(std::vector<Arrow>& _arrow);//矢を発射させる
+	int arrowFrame;//矢が発射するまでの時間
+
 private:
 	void InputUpdate(Input& input);//入力の更新
 	void NormalUpdate(Input& input);//通常時の更新
@@ -57,13 +78,55 @@ private:
 	void CopyUpdate();//コピー時の更新
 	 
 
-	void Move(Input& input);//動きの入力
-	void Jump(Input& input);//ジャンプ
-	void Attack();//攻撃
+	void Move(Input& input);//動きの入力の処理内容
+	void Jump(Input& input);//ジャンプの処理内容
+	void Attack();//攻撃のとこの処理内容
 
 	void Copy();//剣を掲げるモーション
+	/// <summary>
+	/// アニメーションが変わるところ
+	/// </summary>
+	/// <param name="anim"></param>
 	void AnimSelect(const Anim& anim );//アニメーション
+	/// <summary>
+	/// Normalのアニメーションが変わるところ
+	/// </summary>
+	/// <param name="anim"></param>
+	void AnimSelectNormal(const Anim& anim);
+	/// <summary>
+	/// Burningのアニメーションが変わるところ
+	/// </summary>
+	/// <param name="anim"></param>
+	void AnimSelectBurning(const Anim& anim);
+	/// <summary>
+	/// Frozenのアニメーションが変わるところ
+	/// </summary>
+	/// <param name="anim"></param>
+	void AnimSelectFrozen(const Anim& anim);
+	/// <summary>
+	/// Archerのアニメーションが変わるところ
+	/// </summary>
+	/// <param name="anim"></param>
+	void AnimSelectArcher(const Anim& anim);
 
+	/// <summary>
+	/// Normalのアニメーションを表示するところ
+	/// </summary>
+	void NormalAnim();
+	/// <summary>
+	/// Burningのアニメーションを表示するところ
+	/// </summary>
+	void BurningAnim();
+	/// <summary>
+	/// Frozenのアニメーションを表示するところ
+	/// </summary>
+	void FrozenAnim();
+	/// <summary>
+	/// Archerのアニメーションを表示するところ
+	/// </summary>
+	void ArcherAnim();
+
+	
 	
 private:
 	int m_frame;
@@ -74,9 +137,17 @@ private:
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;
+	const int arrowtime = 4;
 
+	//ノーマル
 	Rect m_attackRect;//攻撃判定
 	Rect m_copyRect;//コピー判定
+	//バーニング
+	Rect m_burningRect;//攻撃判定
+	//フローズン
+	Rect m_frozenRect;//攻撃判定
+	//アーチャー
+	Rect m_archerRect;//攻撃判定
 	
 };
 

@@ -4,6 +4,7 @@
 class Player;
 class EnemyWizard;
 class Item;
+class Arrow;
 
 class SceneMain
 {
@@ -19,7 +20,7 @@ private:
 	Player* m_pPlayer;
 	EnemyWizard* m_pEnemyWizard;
 	Item* m_pItem;
-
+	//std::vector<Arrow> _arrow(Arrow::Num)
 
 
 	Input input;

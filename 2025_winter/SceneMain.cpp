@@ -4,6 +4,7 @@
 #include "EnemyWizard.h"
 #include "Item.h"
 #include "DxLib.h"
+#include "Arrow.h"
 
 SceneMain::SceneMain()
 {
@@ -24,6 +25,10 @@ void SceneMain::Update()
 {
 	input.Update();
 	m_pPlayer->Update(input);
+	if (m_pPlayer->arrowFrame == 0)
+	{
+		//m_pPlayer->ShotArrow()
+	}
 	if (m_pEnemyWizard) m_pEnemyWizard->Update();
 	if (m_pItem) m_pItem->Update();
 	CheckHit();
@@ -45,12 +50,35 @@ void SceneMain::CheckHit()
 		{
 			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pEnemyWizard->GetColRect());
 
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(m_pEnemyWizard->GetColRect());
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(m_pEnemyWizard->GetColRect());
+			bool isHitArcher = m_pPlayer->GetColArcherRect().IsCollision(m_pEnemyWizard->GetColRect());//本来は弓矢
 			if (isHitAttack)
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				delete m_pEnemyWizard;
 				m_pEnemyWizard = nullptr;
 			}
+			else if (isHitBurning)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				delete m_pEnemyWizard;
+				m_pEnemyWizard = nullptr;
+			}
+			else if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				delete m_pEnemyWizard;
+				m_pEnemyWizard = nullptr;
+			}
+			else if (isHitArcher)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				delete m_pEnemyWizard;
+				m_pEnemyWizard = nullptr;
+			}
+
+
 		}
 	}
 	if (m_pItem)
@@ -67,7 +95,10 @@ void SceneMain::CheckHit()
 					//ここにアイテムを取得したときの処理を書く
 					delete m_pItem;
 					m_pItem = nullptr;
-					m_pPlayer->ChangeArcher();
+					//m_pPlayer->ChangeBurning();
+					m_pPlayer->ChangeFrozen();
+					//m_pPlayer->ChangeArcher();
+					
 				}
 			}
 			
