@@ -1,5 +1,7 @@
 ﻿#include "Arrow.h"
 #include "DxLib.h"
+#include "Rect.h"
+#include "EnemyWizard.h"
 
 Arrow::Arrow():
 	isAlive(false),
@@ -28,8 +30,21 @@ void Arrow::Update()
 		if (m_pos.x > AliveLimitX || m_pos.x < 0)
 		{
 			isAlive = false;
+			return;
 		}
-	}
+		for (auto& num : _enemyWizard)
+		{
+			bool isHit = m_colRect.IsCollision(num->GetColRect());
+			if (isHit)
+			{
+				//当たった敵を消す
+				hitEnemy = num;
+				//矢を消す
+				isAlive = false;
+				break;
+			}
+		}
+	}	
 
 }
 void Arrow::Draw()
@@ -49,4 +64,10 @@ void Arrow::Draw()
 	}
 
 
+}
+
+void Arrow::SetEnemyWizard(std::vector<EnemyWizard*>& wizards)
+{
+
+	_enemyWizard = wizards;
 }

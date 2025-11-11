@@ -73,3 +73,5 @@ void EnemyWizard::Draw()
 		enemy_scale, 0.0f, m_handle, true, true);
 	}
 }
+
+

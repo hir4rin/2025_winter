@@ -17,11 +17,12 @@ public:
 	void Update();
 	void Draw();
 	void CheckHit();
+	void CheckArrowHit();
 private:
 	Player* m_pPlayer;
-	EnemyWizard* m_pEnemyWizard;
+	std::vector<EnemyWizard*> m_pEnemyWizard;
 	Item* m_pItem;
-	std::vector<Arrow> _arrow;
+	std::vector<Arrow*> _arrow;
 
 
 	Input input;

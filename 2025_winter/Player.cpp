@@ -28,6 +28,8 @@ namespace
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
 
+	constexpr float kBurningSpeed = 10.0f;//バーニングのスピード
+
 }
 
 
@@ -197,7 +199,10 @@ void Player::JumpUpdate(Input& input)
 
 void Player::AttackUpdate()
 {
-	
+	if (_type == PlayerType::Burning)
+	{
+		m_vel.x += kBurningSpeed;
+	}
 	
 	Character::Gravity();
 	m_pos += m_vel;
@@ -684,18 +689,18 @@ void Player::ChangeArcher()
 	_state = PlayerState::Normal;
 }
 
-void Player::ShotArrow(std::vector<Arrow>& _arrow)
+void Player::ShotArrow(std::vector<Arrow*>& _arrow)
 {
 	for (int i = 0; i < Arrow::Num; i++)
 	{
 		// 弾が画面上にでていない場合はその弾を画面に出す
-		if (_arrow[i].isAlive == false)
+		if (_arrow[i]->isAlive == false)
 		{
 			// 矢の発射位置をセット、プレイヤーの中心にする
-			_arrow[i].GetPosition() = m_pos;
+			_arrow[i]->GetPosition() = m_pos;
 
 			// 矢が撃たれたので、存在状態を保持する変数にtrueを代入する
-			_arrow[i].isAlive = true;
+			_arrow[i]->isAlive = true;
 
 			break;	// 一発撃ったら抜ける
 		}
