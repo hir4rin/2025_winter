@@ -58,7 +58,7 @@ void SceneMain::Update()
 	{
 		if (num) num->Update();
 	}
-	
+
 	if (m_pItem) m_pItem->Update();
 	for (auto& arrow : _arrow)
 	{
@@ -84,48 +84,22 @@ void SceneMain::Draw()
 
 void SceneMain::CheckHit()
 {
-	for (auto& num : m_pEnemyWizard)
+	switch (m_pPlayer->GetType())
 	{
-		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
-		{
-			if (num == nullptr)continue;
-			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
-
-			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
-			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
-			//矢の処理は別の場所(CheckhitArrow)
-		
-			if (isHitAttack)
-			{
-				//ここに敵が攻撃されたときの処理を書く
-				delete num;
-				num = nullptr;
-			}
-			else if (isHitBurning)
-			{
-				//ここに敵が攻撃されたときの処理を書く
-				delete num;
-				num = nullptr;
-			}
-			else if (isHitFrozen)
-			{
-				//ここに敵が攻撃されたときの処理を書く
-				delete num;
-				num = nullptr;
-			}
-			
-
-
-		}
+		case PlayerType::Normal:
+			CheckHitNormal(m_pEnemyWizard);
+			break;
+		case PlayerType::Burning:
+			CheckHitBurning(m_pEnemyWizard);
+			break;
+		case PlayerType::Frozen:
+			CheckHitFrozen(m_pEnemyWizard);
+			break;
 	}
-	
-		
-	
 	if (m_pItem)
 	{
 		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Copy )
+		if (m_pPlayer->GetState() == PlayerState::Copy)
 		{
 			if (m_pPlayer->GetAnimIdx() > 3)
 			{
@@ -136,13 +110,13 @@ void SceneMain::CheckHit()
 					//ここにアイテムを取得したときの処理を書く
 					delete m_pItem;
 					m_pItem = nullptr;
-					m_pPlayer->ChangeBurning();
+					//m_pPlayer->ChangeBurning();
 					//m_pPlayer->ChangeFrozen();
-					//m_pPlayer->ChangeArcher();
-					
+					m_pPlayer->ChangeArcher();
+
 				}
 			}
-			
+
 		}
 
 	}
@@ -169,5 +143,75 @@ void SceneMain::CheckArrowHit()
 		}
 		//矢のヒット情報をリセット
 		num->hitEnemy = nullptr;
+	}
+}
+
+void SceneMain::CheckHitNormal(std::vector<EnemyWizard*>& enemyWizards)
+{
+	for (auto& num : m_pEnemyWizard)
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			if (num == nullptr)continue;
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
+
+		
+			//矢の処理は別の場所(CheckhitArrow)
+
+			if (isHitAttack)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				delete num;
+				num = nullptr;
+			}
+		
+		}
+	}
+}
+
+void SceneMain::CheckHitBurning(std::vector<EnemyWizard*>& enemyWizards)
+{
+	for (auto& num : m_pEnemyWizard)
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
+		{
+			if (num == nullptr)continue;
+
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
+
+			if (isHitBurning)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				delete num;
+				num = nullptr;
+			}
+
+		}
+	}
+}
+
+void SceneMain::CheckHitFrozen(std::vector<EnemyWizard*>& enemyWizards)
+{
+	for (auto& num : m_pEnemyWizard)
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			if (num == nullptr)continue;
+
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
+			//矢の処理は別の場所(CheckhitArrow)
+
+
+			if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				delete num;
+				num = nullptr;
+			}
+
+		}
 	}
 }

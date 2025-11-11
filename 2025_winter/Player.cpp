@@ -28,7 +28,7 @@ namespace
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
 
-	constexpr float kBurningSpeed = 10.0f;//バーニングのスピード
+	constexpr float kBurningSpeed = 15.0f;//バーニングのスピード
 
 }
 
@@ -201,7 +201,8 @@ void Player::AttackUpdate()
 {
 	if (_type == PlayerType::Burning)
 	{
-		m_vel.x += kBurningSpeed;
+		if (m_isRight)m_vel.x += kBurningSpeed;
+		else m_vel.x -= kBurningSpeed;
 	}
 	
 	Character::Gravity();
@@ -630,7 +631,7 @@ void Player::ArcherAnim()
 	case Anim::Jump:
 		if (charaIdx == 2)
 		{
-			charaIdx = 2;
+			charaIdx = 2;[[]]
 			charaIdy = 1;
 		}
 		else
