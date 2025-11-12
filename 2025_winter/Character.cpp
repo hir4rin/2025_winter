@@ -58,7 +58,7 @@ void Character::Update()
 void Character::Draw()
 {
 #ifdef _DEBUG
-	//当たり判定の描画
+	//当たり判定の描画//スクロール対応をする
 	m_colRect.Draw(GetColor(0, 255, 255), false);
 
 #endif 

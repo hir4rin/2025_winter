@@ -16,6 +16,15 @@ public:
 	/// <param name="isFill"></param>
 	void Draw(unsigned int Color, bool isFill);
 	/// <summary>
+/// スクロール情報を適用した矩形の描画
+/// </summary>
+/// <param name="scrollX">横スクロール</param>
+/// <param name="scrollY">縦スクロール</param>
+/// <param name="color">矩形の色</param>
+/// <param name="isFill">太さ</param>
+	void DrawScroll(int scrollX, int scrollY, unsigned int color, bool isFill);
+
+	/// <summary>
 	/// 左上座標と幅高さを指定
 	/// </summary>
 	/// <param name="left"></param>
@@ -73,14 +82,6 @@ public:
 	/// <param name="rect">矩形情報</param>
 	/// <returns>当たってるかどうか</returns>
 	bool IsCollision(const Rect& rect);
-	/// <summary>
-	/// スクロール情報を適用した矩形の描画
-	/// </summary>
-	/// <param name="scrollX">横スクロール</param>
-	/// <param name="scrollY">縦スクロール</param>
-	/// <param name="color">矩形の色</param>
-	/// <param name="isFill">太さ</param>
-	void DrawScroll(int scrollX, int scrollY, unsigned int color, bool isFill);
 
 public:
 	float m_left; //左上のX座標

@@ -5,6 +5,7 @@
 #include "Item.h"
 #include "DxLib.h"
 #include "Arrow.h"
+#include "Bg.h"
 
 SceneMain::SceneMain()
 {
@@ -22,7 +23,11 @@ SceneMain::SceneMain()
 		num = new Arrow;
 		//敵の情報を送る
 		num->SetEnemyWizard(m_pEnemyWizard);
+		num->SetPlayer(m_pPlayer);
 	}
+
+	m_pBg = new Bg(m_pPlayer);
+	m_pPlayer->SetBgPointer(m_pBg);
 }
 
 SceneMain::~SceneMain()
@@ -37,7 +42,7 @@ SceneMain::~SceneMain()
 	{
 		delete num;
 	}
-
+	delete m_pBg;
 }
 
 void SceneMain::Init()
@@ -46,6 +51,8 @@ void SceneMain::Init()
 }
 void SceneMain::Update()
 {
+
+	m_pBg->Update();
 	input.Update();
 	m_pPlayer->Update(input);
 	if (m_pPlayer->isArrowAttack)
@@ -66,9 +73,13 @@ void SceneMain::Update()
 	}
 	CheckHit();
 	CheckArrowHit();
+
+
 }
 void SceneMain::Draw()
 {
+	m_pBg->Draw();
+
 	m_pPlayer->Draw();
 	for (auto& num : m_pEnemyWizard)
 	{

@@ -6,6 +6,7 @@ class Player;
 class EnemyWizard;
 class Item;
 class Arrow;
+class Bg;
 
 class SceneMain
 {
@@ -48,6 +49,7 @@ private:
 	Item* m_pItem;
 	std::vector<Arrow*> _arrow;
 
+	Bg* m_pBg;
 
 	Input input;
 

@@ -2,10 +2,14 @@
 #include "DxLib.h"
 #include "Rect.h"
 #include "EnemyWizard.h"
+#include "Player.h"
+
 
 Arrow::Arrow():
 	isAlive(false),
-	m_dir(1,0)
+	m_dir(1,0),
+	m_pPlayer(nullptr),
+	m_playerdir(false)
 	
 {
 	m_handle = LoadGraph("data/Arrow.png");
@@ -24,7 +28,7 @@ void Arrow::Update()
 {
 	if (isAlive)
 	{
-		Vec2 shotVel = m_dir * m_speed;
+		Vec2 shotVel = m_dir * (m_playerdir ? m_speed : -m_speed);
 		m_pos += shotVel;
 
 		if (m_pos.x > AliveLimitX || m_pos.x < 0)
@@ -60,7 +64,7 @@ void Arrow::Draw()
 			static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
 			kScale, 1.0f,
 			0.0f, m_handle,
-			true, FALSE);
+			true, m_playerdir ? false : true);
 	}
 
 

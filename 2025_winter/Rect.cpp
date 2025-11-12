@@ -20,6 +20,7 @@ void Rect::Draw(unsigned int color, bool isFill)
 	DrawBox(static_cast<int>(m_left), static_cast<int>(m_top), static_cast<int>(m_right), static_cast<int>(m_bottom),color,isFill);
 }
 
+
 void Rect::SetLT(float left, float top, float width, float height)
 {
 	m_left = left;

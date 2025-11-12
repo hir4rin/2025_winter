@@ -6,6 +6,7 @@
 #include <cassert> // ←assert用
 #include "Input.h"
 #include "Arrow.h"
+#include "Bg.h"
 
 namespace
 {
@@ -41,7 +42,8 @@ Player::Player() :
 	m_animframe(0),
 	isNomove(false),
 	arrowFrame(-1),
-	isArrowAttack(false)
+	isArrowAttack(false),
+	m_pBg(nullptr)
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
@@ -97,14 +99,20 @@ void Player::Update(Input& input)
 
 void Player::Draw()
 {
+	float drawX = m_pos.x - m_pBg->GetScrollX();
+	float drawY = m_pos.y - m_pBg->GetScrollY();
+
+
+
+
 #ifdef _DEBUG
 	//当たり判定の描画
 	Character::Draw();
-	m_attackRect.Draw(GetColor(0, 255, 0), false);
-	m_burningRect.Draw(GetColor(0, 255, 0), false);
-	m_frozenRect.Draw(GetColor(0, 255, 0), false);
-	m_archerRect.Draw(GetColor(0, 255, 0), false);
-	m_copyRect.Draw(GetColor(0, 255, 0), false);
+	m_attackRect.DrawScroll(m_pBg->GetScrollX(),m_pBg->GetScrollY(),GetColor(0,255,0), false);
+	m_burningRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+	m_frozenRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+	m_archerRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+	m_copyRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
 #endif
 	switch (_type)
 	{
@@ -125,14 +133,14 @@ void Player::Draw()
 	
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x, m_pos.y,
+		DrawRectRotaGraph(drawX, drawY,
 		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
 		player_cut_w, player_cut_h,//切り取りの幅
 		player_scale, 0.0f, m_handle, true);
 	}
 	else
 	{
-		DrawRectRotaGraph(m_pos.x, m_pos.y,
+		DrawRectRotaGraph(drawX, drawY,
 		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
 		player_cut_w, player_cut_h,//切り取りの幅
 		player_scale, 0.0f, m_handle, true, true);
@@ -702,7 +710,7 @@ void Player::ShotArrow(std::vector<Arrow*>& _arrow)
 
 			// 矢が撃たれたので、存在状態を保持する変数にtrueを代入する
 			_arrow[i]->isAlive = true;
-
+			_arrow[i]->m_playerdir = m_isRight;
 			break;	// 一発撃ったら抜ける
 		}
 	}

@@ -16,6 +16,7 @@ public:
 	/// </summary>
 	/// <returns>当たり判定情報</returns>
 	Rect GetColRect() const { return m_colRect; }
+	Vec2 GetPos()const { return m_pos; }
 
 	void Gravity();
 	/// <summary>
