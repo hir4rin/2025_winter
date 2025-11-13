@@ -25,9 +25,11 @@ SceneMain::SceneMain()
 		num->SetEnemyWizard(m_pEnemyWizard);
 		num->SetPlayer(m_pPlayer);
 	}
+	m_pCharacter = new Character;
 
 	m_pBg = new Bg(m_pPlayer);
 	m_pPlayer->SetBgPointer(m_pBg);
+	m_pCharacter->SetBgPointer(m_pBg);
 }
 
 SceneMain::~SceneMain()
@@ -42,6 +44,7 @@ SceneMain::~SceneMain()
 	{
 		delete num;
 	}
+	delete m_pCharacter;
 	delete m_pBg;
 }
 
@@ -121,9 +124,9 @@ void SceneMain::CheckHit()
 					//ここにアイテムを取得したときの処理を書く
 					delete m_pItem;
 					m_pItem = nullptr;
-					//m_pPlayer->ChangeBurning();
+					m_pPlayer->ChangeBurning();
 					//m_pPlayer->ChangeFrozen();
-					m_pPlayer->ChangeArcher();
+					//m_pPlayer->ChangeArcher();
 
 				}
 			}

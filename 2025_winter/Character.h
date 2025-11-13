@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Vec2.h"
 #include "Rect.h"
+
+class Bg;
 class Character
 {
 public:
@@ -23,6 +25,8 @@ public:
 	/// 当たり判定をセットする
 	/// </summary>
 	void SetRect();
+
+	void SetBgPointer(Bg* pBg) { m_pBg = pBg; }
 protected:
 	int m_handle;
 	
@@ -40,6 +44,9 @@ protected:
 	 Vec2 zero;
 
 	 Rect m_colRect;//当たり判定用の矩形
+
+	 //背景のポインタ(その分ずらすため)
+	 Bg* m_pBg;
 	
 };
 
