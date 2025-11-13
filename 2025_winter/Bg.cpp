@@ -1,6 +1,8 @@
 ﻿#include "Bg.h"
 #include "DxLib.h"
 #include "Player.h"
+#include <fstream>
+#include <sstream>
 
 namespace
 {
@@ -10,6 +12,12 @@ namespace
 	constexpr int kScreenSizeHeight = 1080;
 	const int graphHalfW = kScreenSizeWidth / 2;
 	const int graphHalfH = kScreenSizeWidth / 2;
+
+	constexpr int kChipNumX = 60;//チップの数X
+	constexpr int kChipNumY = 17;//チップの数Y
+
+	constexpr int kChipSize = 16/3;		// マップチップ1つのサイズ
+	constexpr float kChipScale = 4.0f; 	// マップチップ拡大率
 }
 
 Bg::Bg():
@@ -19,11 +27,29 @@ Bg::Bg():
 }
 Bg::~Bg()
 {
+	DeleteGraph(m_bgH);
+	DeleteGraph(m_mapH);
 }
 Bg::Bg(Player* pPlayer):
-	m_pPlayer(pPlayer)
+	m_pPlayer(pPlayer),
+	m_graphChipNumX(0),
+	m_graphChipNumY(0),
+	m_chipData()
+	
 {
 	m_bgH = LoadGraph("data/background.png");
+	m_mapH = LoadGraph("data/map.png");
+
+	// 画像のマップチップ数を数える
+	int graphW = 0;
+	int graphH = 0;
+	GetGraphSize(m_mapH, &graphW, &graphH);
+
+	m_graphChipNumX = graphW / kChipSize/3;
+	m_graphChipNumY = graphH / kChipSize/3;
+
+	// マップデータを読み込む
+	LoadMapData();
 }
 
 int Bg::GetScrollX()
@@ -69,6 +95,7 @@ void Bg::Update()
 void Bg::Draw()
 {
 	DrawBg();
+	DrawMapChip();
 }
 
 void Bg::DrawBg()
@@ -90,3 +117,67 @@ void Bg::DrawBg()
 		false,// 透過描画フラグ（TRUEで透明色有効）
 		false, false);      // 左右反転フラグ（TRUEで反転）
 }
+
+void Bg::LoadMapData()
+{
+	std::ifstream file("data/tutorial.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::DrawMapChip()
+{
+	// マップチップの描画
+	for (int y = 0; y < kChipNumY; y++)
+	{
+		for (int x = 0; x < kChipNumX; x++)
+		{
+			int posX = static_cast<int>(x * kChipSize * kChipScale - GetScrollX());
+			int posY = static_cast<int>(y * kChipSize * kChipScale - GetScrollY());
+
+			// 画面外は描画しない
+			if (posX < 0 - kChipSize) continue;
+			if (posX > kScreenSizeWidth) continue;
+			if (posY < 0 - kChipSize) continue;
+			if (posY > kScreenSizeHeight) continue;
+
+			// 設置するチップ
+			int chipNo = m_chipData[x][y];
+			//if (chipNo == 5) continue; // チップ番号5は空白なので描画しない
+
+			// マップチップのグラフィック切り出し座標
+			int srcX = kChipSize * (chipNo % m_graphChipNumX);
+			int srcY = kChipSize * (chipNo % m_graphChipNumX);
+
+			DrawRectRotaGraph(
+				static_cast<int>(posX + kChipSize * kChipScale * 0.5f),
+				static_cast<int>(posY + kChipSize * kChipScale * 0.5f),
+				srcX, srcY,
+				kChipSize, kChipSize,
+				kChipScale, 0.0f,
+				m_mapH, true);
+
+#ifdef _DEBUG
+			// 当たり判定
+			DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale, 0x00ff00, false);
+#endif
+		}
+	}
+}
+

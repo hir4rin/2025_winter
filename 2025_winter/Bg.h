@@ -18,16 +18,30 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	int GetScrollY();
-	
+
 	void Init();
 	void Update();
 	void Draw();
 
 	void DrawBg();
+	void LoadMapData();
+	/// <summary>
+	/// マップチップ表示
+	/// </summary>
+	void DrawMapChip();
 private:
 	int m_bgH;
+	int m_mapH;
 	Vec2 m_pos;
 	Player* m_pPlayer;
+	int m_mapData;//マップデータ
+
+	int m_chipData[60][17];//チップデータ
+
+	// 画像に含まれるマップチップの数
+	int m_graphChipNumX;
+	int m_graphChipNumY;
+
 	struct Size
 	{
 		int width;
