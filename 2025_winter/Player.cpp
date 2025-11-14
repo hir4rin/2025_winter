@@ -29,7 +29,7 @@ namespace
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
 
-	constexpr float kBurningSpeed = 15.0f;//バーニングのスピード
+	constexpr float kBurningSpeed = 1.0f;//バーニングのスピード
 
 }
 
@@ -42,8 +42,8 @@ Player::Player() :
 	m_animframe(0),
 	isNomove(false),
 	arrowFrame(-1),
-	isArrowAttack(false),
-	m_pBg(nullptr)
+	isArrowAttack(false)
+	//m_pBg(nullptr)
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
@@ -66,6 +66,7 @@ void Player::Update()
 
 void Player::Update(Input& input)
 {
+
 	m_frame++;
 	m_animframe++;
 	if (arrowFrame >= 0)
@@ -73,6 +74,11 @@ void Player::Update(Input& input)
 		arrowFrame--;
 	}
 	DrawFormatString(10, 40, GetColor(255, 0, 0), "arrowFrameは%dです", arrowFrame);
+
+	Rect chipRect;
+
+	CheckHitMap(chipRect);
+
 
 	//当たり判定更新
 	Character::SetRect();
@@ -180,12 +186,10 @@ void Player::NormalUpdate(Input& input)
 	Move(input);
 	Jump(input);
 	Character::Gravity();
-	m_pos += m_vel;
+	
 	//着地時にアニメーションを帰るところ
-	if (m_pos.y > kGround)
+	if (m_isGround)
 	{
-		m_pos.y = kGround;
-		m_isGround = true;
 
 		if (m_isJumpPreparing)return;
 		m_jumpFrame = 0;
@@ -201,7 +205,7 @@ void Player::JumpUpdate(Input& input)
 {
 	Jump(input);
 	Character::Gravity();
-	m_pos += m_vel;
+	
 
 }
 
@@ -214,7 +218,7 @@ void Player::AttackUpdate()
 	}
 	
 	Character::Gravity();
-	m_pos += m_vel;
+	
 	Attack();
 	
 	//着地時にアニメーションを帰るところ
@@ -238,7 +242,7 @@ void Player::CopyUpdate()
 {
 	Character::Gravity();
 	Copy();
-	m_pos += m_vel;
+	
 }
 
 void Player::Move(Input& input)
@@ -315,7 +319,7 @@ void Player::Attack()
 {
 
 	isNomove = true;
-	m_vel = zero;
+	
 	//アニメーション
 	AnimSelect(Anim::Attack);
 	//判定をつける

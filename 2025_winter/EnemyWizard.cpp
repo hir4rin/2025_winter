@@ -1,5 +1,6 @@
 ﻿#include "EnemyWizard.h"
 #include "DxLib.h"
+#include "Bg.h"
 
 namespace
 {

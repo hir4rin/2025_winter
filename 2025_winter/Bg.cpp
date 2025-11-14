@@ -3,6 +3,9 @@
 #include "Player.h"
 #include <fstream>
 #include <sstream>
+#include "Rect.h"
+
+
 
 namespace
 {
@@ -16,7 +19,7 @@ namespace
 	constexpr int kChipNumX = 60;//チップの数X
 	constexpr int kChipNumY = 17;//チップの数Y
 
-	constexpr int kChipSize = 16/3;		// マップチップ1つのサイズ
+	constexpr int kChipSize = 16;		// マップチップ1つのサイズ
 	constexpr float kChipScale = 4.0f; 	// マップチップ拡大率
 }
 
@@ -45,8 +48,8 @@ Bg::Bg(Player* pPlayer):
 	int graphH = 0;
 	GetGraphSize(m_mapH, &graphW, &graphH);
 
-	m_graphChipNumX = graphW / kChipSize/3;
-	m_graphChipNumY = graphH / kChipSize/3;
+	m_graphChipNumX = graphW / kChipSize;
+	m_graphChipNumY = graphH / kChipSize;
 
 	// マップデータを読み込む
 	LoadMapData();
@@ -120,7 +123,7 @@ void Bg::DrawBg()
 
 void Bg::LoadMapData()
 {
-	std::ifstream file("data/tutorial.csv");
+	std::ifstream file("data/map1.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -163,7 +166,7 @@ void Bg::DrawMapChip()
 
 			// マップチップのグラフィック切り出し座標
 			int srcX = kChipSize * (chipNo % m_graphChipNumX);
-			int srcY = kChipSize * (chipNo % m_graphChipNumX);
+			int srcY = kChipSize * (chipNo / m_graphChipNumX);//???
 
 			DrawRectRotaGraph(
 				static_cast<int>(posX + kChipSize * kChipScale * 0.5f),
@@ -179,5 +182,39 @@ void Bg::DrawMapChip()
 #endif
 		}
 	}
+}
+
+bool Bg::IsCollision(Rect rect, Rect& chipRect)
+{
+	for (int y = 0; y < kChipNumY; y++)
+	{
+		for (int x = 0; x < kChipNumX; x++)
+		{
+			// マップチップ0番は当たり判定がないため飛ばす
+			if (m_chipData[x][y] == 5) continue;
+
+			int chipLeft = static_cast<int>(x * kChipSize * kChipScale);
+			int chipRight = static_cast<int>(chipLeft + kChipSize * kChipScale);
+			int chipTop = static_cast<int>(y * kChipSize * kChipScale);
+			int chipBottom = static_cast<int>(chipTop + kChipSize * kChipScale);
+
+			// 絶対に当たらない場合
+			if (chipLeft > rect.GetRight()) continue;
+			if (chipTop > rect.GetBottom()) continue;
+			if (chipRight < rect.Getleft()) continue;
+			if (chipBottom < rect.GetTop()) continue;
+
+			// ぶつかったマップチップの矩形を設定する
+			chipRect.m_left = static_cast<float>(chipLeft);
+			chipRect.m_right = static_cast<float>(chipRight);
+			chipRect.m_top = static_cast<float>(chipTop);
+			chipRect.m_bottom = static_cast<float>(chipBottom);
+
+			// いずれかのチップに当たっていたら終了する
+			return true;
+		}
+	}
+	return false;
+
 }
 

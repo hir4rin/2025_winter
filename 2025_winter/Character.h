@@ -26,7 +26,10 @@ public:
 	/// </summary>
 	void SetRect();
 
-	void SetBgPointer(Bg* pBg) { m_pBg = pBg; }
+	void SetBgPointer(Bg* pBg)
+	{
+		m_pBg = pBg;
+	}
 protected:
 	int m_handle;
 	
@@ -47,6 +50,12 @@ protected:
 
 	 //背景のポインタ(その分ずらすため)
 	 Bg* m_pBg;
+
+	 /// <summary>
+	/// マップチップとの当たり判定処理
+	/// </summary>
+	/// <param name="chipRect">マップチップの当たり判定</param>
+	 void CheckHitMap(Rect& chipRect);
 	
 };
 

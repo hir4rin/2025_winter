@@ -7,29 +7,32 @@
 #include "Arrow.h"
 #include "Bg.h"
 
-SceneMain::SceneMain()
+SceneMain::SceneMain():
+	input{}
 {
+	
 	m_pPlayer = new Player;
+	m_pBg = new Bg(m_pPlayer);
 	m_pEnemyWizard.resize(2);
-	for (auto& num : m_pEnemyWizard)
+	for (auto& enemy : m_pEnemyWizard)
 	{
-		num = new EnemyWizard;
+		enemy = new EnemyWizard;
+		enemy->SetBgPointer(m_pBg);
 	}
 	m_pEnemyWizard[1]->GetPos().x += 100;
 	m_pItem = new Item;
-	_arrow.resize(Arrow::Num);
-	for (auto& num : _arrow)
+	m_arrows.reserve(Arrow::Num);
+	for (auto& arrow : m_arrows)
 	{
-		num = new Arrow;
+		arrow = new Arrow;
 		//敵の情報を送る
-		num->SetEnemyWizard(m_pEnemyWizard);
-		num->SetPlayer(m_pPlayer);
+		arrow->SetEnemyWizard(m_pEnemyWizard);
+		arrow->SetPlayer(m_pPlayer);
 	}
-	m_pCharacter = new Character;
 
-	m_pBg = new Bg(m_pPlayer);
+	
 	m_pPlayer->SetBgPointer(m_pBg);
-	m_pCharacter->SetBgPointer(m_pBg);
+	m_pItem->SetBgPointer(m_pBg);
 }
 
 SceneMain::~SceneMain()
@@ -40,7 +43,7 @@ SceneMain::~SceneMain()
 	{
 		delete num;
 	}
-	for (auto& num : _arrow)
+	for (auto& num : m_arrows)
 	{
 		delete num;
 	}
@@ -60,7 +63,7 @@ void SceneMain::Update()
 	m_pPlayer->Update(input);
 	if (m_pPlayer->isArrowAttack)
 	{
-		m_pPlayer->ShotArrow(_arrow);
+		m_pPlayer->ShotArrow(m_arrows);
 		m_pPlayer->isArrowAttack = false;
 
 	}
@@ -70,7 +73,7 @@ void SceneMain::Update()
 	}
 
 	if (m_pItem) m_pItem->Update();
-	for (auto& arrow : _arrow)
+	for (auto& arrow : m_arrows)
 	{
 		arrow->Update();
 	}
@@ -89,7 +92,7 @@ void SceneMain::Draw()
 		if (num) num->Draw();
 	}
 	if (m_pItem) m_pItem->Draw();
-	for (auto& arrow : _arrow)
+	for (auto& arrow : m_arrows)
 	{
 		arrow->Draw();
 	}
@@ -139,7 +142,7 @@ void SceneMain::CheckHit()
 
 void SceneMain::CheckArrowHit()
 {
-	for (auto& num : _arrow)
+	for (auto& num : m_arrows)
 	{
 		if (num == nullptr || !num->hitEnemy)continue;
 

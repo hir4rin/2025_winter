@@ -81,7 +81,6 @@ public:
 
 	bool Getm_isRight() { return m_isRight; }
 
-	void SetBgPointer(Bg* pBg) { m_pBg = pBg; }
 private:
 	void InputUpdate(Input& input);//入力の更新
 	void NormalUpdate(Input& input);//通常時の更新
@@ -161,8 +160,5 @@ private:
 	Rect m_frozenRect;//攻撃判定
 	//アーチャー
 	Rect m_archerRect;//攻撃判定
-
-	Bg* m_pBg;
-	
 };
 

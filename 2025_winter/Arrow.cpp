@@ -53,6 +53,7 @@ void Arrow::Update()
 }
 void Arrow::Draw()
 {
+	//まだDrawScrollのやつしてない
 	Character::SetRect();
 	if (isAlive == true)
 	{

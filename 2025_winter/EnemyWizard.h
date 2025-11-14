@@ -4,7 +4,7 @@
 #include <vector>
 
 
-
+class Bg;
 
 class EnemyWizard : public Enemy
 {
@@ -26,8 +26,6 @@ private:
 	int m_animframe;
 	EnemyState _state;
 	void CheckHit();
-	
-	
 	
 };
 

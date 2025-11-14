@@ -1,6 +1,7 @@
 ﻿#include "DxLib.h"
 #include "Character.h"
-
+#include "Bg.h"
+#include "cassert"
 
 namespace
 {
@@ -37,13 +38,15 @@ void Character::Update()
 {
 	//重力処理
 	Gravity();
-	//当たり判定更新
-	SetRect();
+	
 
-	m_pos += m_vel;
-	if (m_pos.y > kGround)
+	Rect chipRect;//当たったマップチップの矩形
+	CheckHitMap(chipRect);
+
+	
+	if (m_isGround)
 	{
-		m_pos.y = kGround;
+		
 		m_isGround = true;
 
 		if (m_isJumpPreparing)return;
@@ -72,4 +75,45 @@ void Character::Gravity()
 void Character::SetRect()
 {
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
+}
+
+void Character::CheckHitMap(Rect& chipRect)
+{
+	
+	//assert(m_pBg && "入っていない");
+	// 横から当たったかチェックする
+	m_pos.x += m_vel.x;
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
+
+	if (m_pBg->IsCollision(m_colRect, chipRect))
+	{
+		if (m_vel.x > 0.0f)
+		{
+			m_pos.x = chipRect.Getleft() - kCharaSize * 0.5f;
+		}
+		else if (m_vel.x < 0.0f)
+		{
+			m_pos.x = chipRect.GetRight() + kCharaSize * 0.5f;
+		}
+		m_vel.x = 0.0f;
+	}
+
+	// 縦から当たったかチェックする
+	m_pos.y += m_vel.y;
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
+
+	if (m_pBg->IsCollision(m_colRect, chipRect))
+	{
+		if (m_vel.y > 0.0f)
+		{
+			m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
+			m_vel.y = 0.0f;
+			m_isGround = true;
+		}
+		else if (m_vel.y < 0.0f)
+		{
+			m_pos.y = chipRect.GetBottom() + kCharaSize * 0.5f;
+			m_vel.y *= -1.0f;
+		}
+	}
 }

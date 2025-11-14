@@ -1,5 +1,6 @@
 ﻿#include "Enemy.h"
 #include "DxLib.h"
+#include "EnemyWizard.h"
 namespace
 {
 	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
@@ -34,4 +35,9 @@ void Enemy::Draw()
 {
 	//当たり判定の描画
 	Character::Draw();
+}
+
+void Enemy::DropItem(EnemyWizard* enemy)
+{
+	//HitWizard = this;
 }

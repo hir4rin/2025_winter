@@ -48,7 +48,7 @@ private:
 	Player* m_pPlayer;
 	std::vector<EnemyWizard*> m_pEnemyWizard;
 	Item* m_pItem;
-	std::vector<Arrow*> _arrow;
+	std::vector<Arrow*> m_arrows;
 
 	Bg* m_pBg;
 	Character* m_pCharacter;
