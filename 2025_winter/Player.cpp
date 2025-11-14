@@ -29,7 +29,9 @@ namespace
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
 
-	constexpr float kBurningSpeed = 1.0f;//バーニングのスピード
+	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
+	float burningTime = 18.f;  //バーニングの移動時間//使うかは未定
+	float burningTimer = 0.0f;//使うかは未定
 
 }
 
@@ -77,7 +79,7 @@ void Player::Update(Input& input)
 
 	Rect chipRect;
 
-	CheckHitMap(chipRect);
+	
 
 
 	//当たり判定更新
@@ -99,7 +101,7 @@ void Player::Update(Input& input)
 		CopyUpdate();
 		break;
 	}
-
+	CheckHitMapPlayer(chipRect);
 
 }
 
@@ -174,6 +176,10 @@ void Player::InputUpdate(Input& input)
 
 		}
 		_state = PlayerState::Attack;
+		if (_type == PlayerType::Burning)
+		{
+			burningTimer = burningTime;
+		}
 	}
 	if (input.IsTriggered("Copy"))
 	{
@@ -199,6 +205,7 @@ void Player::NormalUpdate(Input& input)
 			AnimSelect(Anim::Idle);
 		}
 	}
+	m_pos += m_vel;
 }
 
 void Player::JumpUpdate(Input& input)
@@ -211,16 +218,23 @@ void Player::JumpUpdate(Input& input)
 
 void Player::AttackUpdate()
 {
-	if (_type == PlayerType::Burning)
+	burningTimer--;
+	if (burningTimer >= 0.0f)
 	{
-		if (m_isRight)m_vel.x += kBurningSpeed;
-		else m_vel.x -= kBurningSpeed;
+		if (_type == PlayerType::Burning)
+		{
+			if (m_isRight)m_pos.x += kBurningSpeed;
+			else m_pos.x -= kBurningSpeed;
+		}
 	}
-	
-	Character::Gravity();
-	
-	Attack();
-	
+	else
+	{
+		if (_type == PlayerType::Burning)
+		{
+			if (m_isRight)m_pos.x += kBurningSpeed/3;
+			else m_pos.x -= kBurningSpeed/3;
+		}
+	}
 	//着地時にアニメーションを帰るところ
 	if (m_pos.y > kGround)
 	{
@@ -235,13 +249,20 @@ void Player::AttackUpdate()
 			AnimSelect(Anim::Idle);
 		}
 	}
-	//攻撃判定が当たったときの処理を書く
+	
+	
+	Character::Gravity();
+	m_pos += m_vel;
+	
+	Attack();
 }
 
 void Player::CopyUpdate()
 {
 	Character::Gravity();
 	Copy();
+	m_pos += m_vel;
+
 	
 }
 

@@ -163,6 +163,23 @@ void SceneMain::CheckArrowHit()
 	}
 }
 
+void SceneMain::CheckItemWizard()
+{
+	for (auto& wizard : m_pEnemyWizard)
+	{
+		if (wizard == nullptr)continue;
+		if (wizard->HitWizard)
+		{
+			//アイテムを落とす処理
+			m_pItem = new Item;//新しくアイテムを生成//push_backでやりたい
+			m_pItem->SetBgPointer(m_pBg);
+			m_pItem->GetPos() = wizard->GetPos();
+			//敵のヒット情報をリセット
+			wizard->HitWizard = nullptr;
+		}
+	}
+}
+
 void SceneMain::CheckHitNormal(std::vector<EnemyWizard*>& enemyWizards)
 {
 	for (auto& num : m_pEnemyWizard)

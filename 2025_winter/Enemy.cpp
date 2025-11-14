@@ -39,5 +39,6 @@ void Enemy::Draw()
 
 void Enemy::DropItem(EnemyWizard* enemy)
 {
-	//HitWizard = this;
+	HitWizard = enemy;
+	//SceneMainに渡してアイテムを探して出させる
 }

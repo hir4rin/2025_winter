@@ -149,6 +149,8 @@ private:
 	int charaIdy;
 	bool isNomove;
 	const int arrowtime = 30;//発射クールタイム
+
+	
 	
 
 	//ノーマル

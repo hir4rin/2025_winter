@@ -62,7 +62,7 @@ void Character::Draw()
 {
 #ifdef _DEBUG
 	//当たり判定の描画//スクロール対応をする
-	m_colRect.Draw(GetColor(0, 255, 255), false);
+	m_colRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(),GetColor(0, 255, 255), false);
 
 #endif 
 }
@@ -100,6 +100,49 @@ void Character::CheckHitMap(Rect& chipRect)
 
 	// 縦から当たったかチェックする
 	m_pos.y += m_vel.y;
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
+
+	if (m_pBg->IsCollision(m_colRect, chipRect))
+	{
+		if (m_vel.y > 0.0f)
+		{
+			m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
+			m_vel.y = 0.0f;
+			m_isGround = true;
+		}
+		else if (m_vel.y < 0.0f)
+		{
+			m_pos.y = chipRect.GetBottom() + kCharaSize * 0.5f;
+			m_vel.y *= -1.0f;
+		}
+	}
+}
+
+void Character::CheckHitMapPlayer(Rect& chipRect)
+{
+
+	//assert(m_pBg && "入っていない");
+	// 横から当たったかチェックする
+	//m_pos.x += m_vel.x;これはなし
+	
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
+
+	if (m_pBg->IsCollision(m_colRect, chipRect))
+	{
+		if (m_vel.x > 0.0f)
+		{
+			m_pos.x = chipRect.Getleft() - kCharaSize * 0.5f;
+		}
+		else if (m_vel.x < 0.0f)
+		{
+			m_pos.x = chipRect.GetRight() + kCharaSize * 0.5f;
+		}
+		m_vel.x = 0.0f;
+	}
+
+	// 縦から当たったかチェックする
+	//m_pos.y += m_vel.y;これはなし
+
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
 	if (m_pBg->IsCollision(m_colRect, chipRect))

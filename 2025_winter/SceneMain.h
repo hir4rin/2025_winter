@@ -26,6 +26,8 @@ public:
 	/// 矢の当たり判定チェック
 	/// </summary>
 	void CheckArrowHit();
+
+	void CheckItemWizard();
 public:
 	//-------------------------------------------------敵の数だけ引数が違うコンストラクタをつくる
 	/// <summary>

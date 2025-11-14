@@ -56,6 +56,13 @@ protected:
 	/// </summary>
 	/// <param name="chipRect">マップチップの当たり判定</param>
 	 void CheckHitMap(Rect& chipRect);
+
+
+	 /// <summary>
+	 /// プレイヤーでのマップチップとの当たり判定処理
+	 /// </summary>
+	 /// <param name="chipRect"></param>
+	 void CheckHitMapPlayer(Rect& chipRect);
 	
 };
 
