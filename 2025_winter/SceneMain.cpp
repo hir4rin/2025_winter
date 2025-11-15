@@ -56,6 +56,7 @@ void SceneMain::Init()
 }
 void SceneMain::Update()
 {
+
 	UpdateCamera(camera, m_pPlayer);
 
 
@@ -66,7 +67,6 @@ void SceneMain::Update()
 	{
 		m_pPlayer->ShotArrow(m_arrows);
 		m_pPlayer->isArrowAttack = false;
-
 	}
 	for (auto& num : m_pEnemyWizards)
 	{
@@ -81,9 +81,8 @@ void SceneMain::Update()
 	CheckHit();
 	CheckArrowHit();
 	CheckItemWizard();
-
-
 }
+
 void SceneMain::Draw()
 {
 	m_pBg->Draw();
@@ -129,8 +128,8 @@ void SceneMain::CheckHit()
 					//ここにアイテムを取得したときの処理を書く
 				
 					m_pItems = nullptr;
-					m_pPlayer->ChangeBurning();
-					//m_pPlayer->ChangeFrozen();
+					//m_pPlayer->ChangeBurning();
+					m_pPlayer->ChangeFrozen();
 					//m_pPlayer->ChangeArcher();
 
 				}
@@ -141,6 +140,8 @@ void SceneMain::CheckHit()
 	}
 
 }
+
+
 
 void SceneMain::CheckArrowHit()
 {

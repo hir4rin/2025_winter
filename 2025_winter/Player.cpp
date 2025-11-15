@@ -31,7 +31,7 @@ namespace
 	constexpr float kGround = 900.0f;//地面位置
 
 	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
-	float burningTime = 18.f;  //バーニングの移動時間
+	float burningTime = 18.0f;  //バーニングの移動時間
 	float burningTimer = 0.0f;
 
 }

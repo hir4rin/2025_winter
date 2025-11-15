@@ -6,6 +6,8 @@
 
 class Bg;
 
+//EnemyStateはEnemy.hで定義済み
+
 class EnemyWizard : public Enemy
 {
 public:
@@ -17,15 +19,20 @@ public:
 	void Draw()override;
 
 
-	
-	
-
 private:
 	int charaIdx;
 	int charaIdy;
 	int m_animframe;
 	EnemyState _state;
 	void CheckHit();
+
+	void AnimChange(const EnemyState state);
+
+	void NormalUpdate();
+	void WalkUpdate();
+	void AttackUpdate();
+
+	void Attack();//実際に攻撃をする処理
 	
 };
 

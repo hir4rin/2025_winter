@@ -6,6 +6,7 @@ class EnemyWizard;
 enum class EnemyState
 {
 	Normal,
+	Walk,
 	Attack,
 	Damage
 };

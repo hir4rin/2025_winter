@@ -26,7 +26,7 @@ namespace
 Bg::Bg():
 	m_pos(0,0)
 {
-	m_bgH = LoadGraph("data/background.png");
+	//m_bgH = LoadGraph("data/background.png");
 }
 Bg::~Bg()
 {
@@ -103,7 +103,7 @@ void Bg::Draw()
 
 void Bg::DrawBg()
 {
-//	DrawGraph(m_pos.x, m_pos.y, m_bgH, true);
+	DrawGraph(m_pos.x, m_pos.y, m_bgH, true);
 	//画像サイズを取得
 	//Bgのサイズ
 	Size bgSize = { 0,0 };
