@@ -24,6 +24,8 @@ public:
 /// <param name="isFill">太さ</param>
 	void DrawScroll(int scrollX, int scrollY, unsigned int color, bool isFill);
 
+
+	void DrawCamera(int cameraX, int cameraY, unsigned int color, bool isFill);
 	/// <summary>
 	/// 左上座標と幅高さを指定
 	/// </summary>

@@ -6,6 +6,7 @@ class Input;
 class Arrow;
 
 class Bg;
+class Camera;
 enum class Anim
 {
 	Idle,
@@ -41,6 +42,7 @@ public:
 	virtual void Update() override;
 	virtual void Update(Input& input);//すべてのプレイヤーの動き
 	virtual void Draw() override;//すべてのプレイヤーの描画
+	virtual void Draw(Camera& camera) ;//すべてのプレイヤーの描画(カメラ動かし)
 
 	/// <summary>
 	/// 座標の取得
@@ -71,6 +73,7 @@ public:
 	PlayerState GetState() { return _state; }//Playerの状態を取得
 	PlayerType GetType() { return _type; }//Playerの変身タイプを取得
 	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
+	void ChangeNormal();//外部から変身の変更
 	void ChangeBurning();//外部から変身の変更
 	void ChangeFrozen();//外部から変身の変更
 	void ChangeArcher();//外部から変身の変更

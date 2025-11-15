@@ -121,6 +121,13 @@ void Character::CheckHitMap(Rect& chipRect)
 void Character::CheckHitMapPlayer(Rect& chipRect)
 {
 
+
+	//m_isGroundをセットする
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
+	//マップと当たっていなかったらm_isGroundをfalseにする
+	if (!(m_pBg->IsCollision(m_colRect, chipRect))) m_isGround = false;
+	
+
 	//assert(m_pBg && "入っていない");
 	// 横から当たったかチェックする
 	//m_pos.x += m_vel.x;これはなし
@@ -159,4 +166,9 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 			m_vel.y *= -1.0f;
 		}
 	}
+	
+	
+
+	
+
 }

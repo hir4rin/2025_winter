@@ -1,6 +1,7 @@
 ﻿#include "Enemy.h"
 #include "DxLib.h"
 #include "EnemyWizard.h"
+#include <memory>
 namespace
 {
 	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
@@ -37,7 +38,7 @@ void Enemy::Draw()
 	Character::Draw();
 }
 
-void Enemy::DropItem(EnemyWizard* enemy)
+void Enemy::DropItem(std::shared_ptr<EnemyWizard> enemy)
 {
 	HitWizard = enemy;
 	//SceneMainに渡してアイテムを探して出させる

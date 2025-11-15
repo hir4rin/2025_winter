@@ -16,7 +16,7 @@ public:
 	void Update()override;
 	void Draw()override;
 
-	Vec2& GetPos() { return m_pos; }
+
 	
 	
 

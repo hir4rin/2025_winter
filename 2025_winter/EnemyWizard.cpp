@@ -40,7 +40,8 @@ void EnemyWizard::Update()
 
 void EnemyWizard::Draw()
 {
-
+	float drawX = m_pos.x - m_pBg->GetScrollX();
+	float drawY = m_pos.y - m_pBg->GetScrollY();
 
 	//当たり判定の描画
 	Character::Draw();
@@ -61,14 +62,14 @@ void EnemyWizard::Draw()
 	}
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x, m_pos.y,
+		DrawRectRotaGraph(drawX, drawY,
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f, m_handle, true);
 	}
 	else
 	{
-		DrawRectRotaGraph(m_pos.x, m_pos.y,
+		DrawRectRotaGraph(drawX, drawY,
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f, m_handle, true, true);

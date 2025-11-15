@@ -71,7 +71,7 @@ void Arrow::Draw()
 
 }
 
-void Arrow::SetEnemyWizard(std::vector<EnemyWizard*>& wizards)
+void Arrow::SetEnemyWizard(std::vector<std::shared_ptr<EnemyWizard>>& wizards)
 {
 
 	_enemyWizard = wizards;

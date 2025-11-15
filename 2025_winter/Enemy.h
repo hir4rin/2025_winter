@@ -18,8 +18,8 @@ public :
 	void Init() override;
 	void Update()override;
 	void Draw()override;
-	void DropItem(EnemyWizard* enemy);
+	void DropItem(std::shared_ptr<EnemyWizard> enemy);
 
-	EnemyWizard* HitWizard = nullptr;//SceneMainに渡してアイテムを出させる
+	std::shared_ptr<EnemyWizard> HitWizard = nullptr;//SceneMainに渡してアイテムを出させる
 };
 

@@ -5,6 +5,7 @@
 #include "Vec2.h"
 #include <cassert> // ←assert用
 #include "Input.h"
+#include "Camera.h"
 #include "Arrow.h"
 #include "Bg.h"
 
@@ -30,8 +31,8 @@ namespace
 	constexpr float kGround = 900.0f;//地面位置
 
 	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
-	float burningTime = 18.f;  //バーニングの移動時間//使うかは未定
-	float burningTimer = 0.0f;//使うかは未定
+	float burningTime = 18.f;  //バーニングの移動時間
+	float burningTimer = 0.0f;
 
 }
 
@@ -79,7 +80,7 @@ void Player::Update(Input& input)
 
 	Rect chipRect;
 
-	
+
 
 
 	//当たり判定更新
@@ -116,7 +117,7 @@ void Player::Draw()
 #ifdef _DEBUG
 	//当たり判定の描画
 	Character::Draw();
-	m_attackRect.DrawScroll(m_pBg->GetScrollX(),m_pBg->GetScrollY(),GetColor(0,255,0), false);
+	m_attackRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
 	m_burningRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
 	m_frozenRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
 	m_archerRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
@@ -138,7 +139,7 @@ void Player::Draw()
 		break;
 
 	}
-	
+
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(drawX, drawY,
@@ -163,8 +164,67 @@ void Player::Draw()
 #endif
 }
 
+void Player::Draw(Camera& camera)
+{
+	float drawX = m_pos.x - m_pBg->GetScrollX();
+	float drawY = m_pos.y - m_pBg->GetScrollY();
+
+
+
+
+#ifdef _DEBUG
+	//当たり判定の描画
+	Character::Draw();
+	m_attackRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+	m_burningRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+	m_frozenRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+	m_archerRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+	m_copyRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+#endif
+	switch (_type)
+	{
+	case PlayerType::Normal:;//アニメーションの遷移
+		NormalAnim();
+		break;
+	case PlayerType::Burning:;//アニメーションの遷移
+		BurningAnim();
+		break;
+	case PlayerType::Frozen:;//アニメーションの遷移
+		FrozenAnim();
+		break;
+	case PlayerType::Archer:;//アニメーションの遷移
+		ArcherAnim();
+		break;
+
+	}
+
+	if (m_isRight)
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
+		player_cut_w, player_cut_h,//切り取りの幅
+		player_scale, 0.0f, m_handle, true);
+	}
+	else
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
+		player_cut_w, player_cut_h,//切り取りの幅
+		player_scale, 0.0f, m_handle, true, true);
+	}
+
+#ifdef _DEBUG
+	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
+	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", _state);
+	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", _type);
+	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
+	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
+#endif
+}
+
 void Player::InputUpdate(Input& input)
 {
+	if (isNomove)return;
 	//特殊行動の入力検知
 	if (input.IsTriggered("Attack"))
 	{
@@ -185,6 +245,16 @@ void Player::InputUpdate(Input& input)
 	{
 		_state = PlayerState::Copy;
 	}
+
+	if (input.IsTriggered("CopyOut"))
+	{
+		if (!(_type == PlayerType::Normal))
+		{
+			ChangeNormal();
+
+
+		}
+	}
 }
 
 void Player::NormalUpdate(Input& input)
@@ -192,7 +262,7 @@ void Player::NormalUpdate(Input& input)
 	Move(input);
 	Jump(input);
 	Character::Gravity();
-	
+
 	//着地時にアニメーションを帰るところ
 	if (m_isGround)
 	{
@@ -212,7 +282,7 @@ void Player::JumpUpdate(Input& input)
 {
 	Jump(input);
 	Character::Gravity();
-	
+
 
 }
 
@@ -231,8 +301,8 @@ void Player::AttackUpdate()
 	{
 		if (_type == PlayerType::Burning)
 		{
-			if (m_isRight)m_pos.x += kBurningSpeed/3;
-			else m_pos.x -= kBurningSpeed/3;
+			if (m_isRight)m_pos.x += kBurningSpeed / 3;
+			else m_pos.x -= kBurningSpeed / 3;
 		}
 	}
 	//着地時にアニメーションを帰るところ
@@ -249,11 +319,11 @@ void Player::AttackUpdate()
 			AnimSelect(Anim::Idle);
 		}
 	}
-	
-	
+
+
 	Character::Gravity();
 	m_pos += m_vel;
-	
+
 	Attack();
 }
 
@@ -263,7 +333,7 @@ void Player::CopyUpdate()
 	Copy();
 	m_pos += m_vel;
 
-	
+
 }
 
 void Player::Move(Input& input)
@@ -340,7 +410,7 @@ void Player::Attack()
 {
 
 	isNomove = true;
-	
+
 	//アニメーション
 	AnimSelect(Anim::Attack);
 	//判定をつける
@@ -358,12 +428,12 @@ void Player::Attack()
 		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);
 		break;
 	case PlayerType::Archer:
-		m_archerRect.SetLT(0,0,0,0);
+		m_archerRect.SetLT(0, 0, 0, 0);
 		break;
 	default:
 		break;
 	}
-	
+
 
 
 }
@@ -398,7 +468,7 @@ void Player::AnimSelect(const Anim& anim)
 		assert(false && "存在しないタイプです");
 		break;
 	}
-	
+
 	return;
 }
 
@@ -664,8 +734,8 @@ void Player::ArcherAnim()
 	case Anim::Jump:
 		if (charaIdx == 2)
 		{
-			charaIdx = 2;[[]]
-			charaIdy = 1;
+			charaIdx = 2; [[]]
+				charaIdy = 1;
 		}
 		else
 		{
@@ -688,6 +758,17 @@ void Player::ArcherAnim()
 		break;
 
 	}
+}
+
+void Player::ChangeNormal()
+{
+	// 1. 現在の画像を解放
+	DeleteGraph(m_handle);
+
+	// 2. 新しい画像を読み込む
+	m_handle = LoadGraph("data/player.png");
+	_type = PlayerType::Normal;
+	_state = PlayerState::Normal;
 }
 
 void Player::ChangeBurning()

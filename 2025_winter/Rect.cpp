@@ -77,3 +77,12 @@ void Rect::DrawScroll(int scrollX, int scrollY, unsigned int color, bool isFill)
 	int drawB = static_cast<int>(m_bottom) - scrollY;
 	DrawBox(drawL, drawT, drawR, drawB, color, isFill);
 }
+
+void Rect::DrawCamera(int cameraX, int cameraY, unsigned int color, bool isFill)
+{
+	int drawL = static_cast<int>(m_left) + cameraX;
+	int drawT = static_cast<int>(m_top) + cameraY;
+	int drawR = static_cast<int>(m_right) + cameraX;
+	int drawB = static_cast<int>(m_bottom) + cameraY;
+	DrawBox(drawL, drawT, drawR, drawB, color, isFill);
+}

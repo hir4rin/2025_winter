@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "Input.h"
+#include "Camera.h"
+#include <memory>
 
 
 class Player;
@@ -34,21 +36,22 @@ public:
 	/// 通常状態の当たり判定チェック
 	/// </summary>
 	/// <param name="enemyWizards"></param>
-	void CheckHitNormal(std::vector<EnemyWizard*>& enemyWizards);
+	void CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
 	/// <summary>
 	/// バーニングでの当たり判定チェック
 	/// </summary>
 	/// <param name="enemyWizards"></param>
-	void CheckHitBurning(std::vector<EnemyWizard*>& enemyWizards);
+	void CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
 	/// <summary>
 	/// フローズンでの当たり判定チェック
 	/// </summary>
 	/// <param name="enemyWizards"></param>
-	void CheckHitFrozen(std::vector<EnemyWizard*>& enemyWizards);
+	void CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
 
 private:
-	Player* m_pPlayer;
-	std::vector<EnemyWizard*> m_pEnemyWizard;
+	std::shared_ptr<Player> m_pPlayer;
+	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
+	std::shared_ptr<Item> m_pItems;
 	Item* m_pItem;
 	std::vector<Arrow*> m_arrows;
 
@@ -57,6 +60,7 @@ private:
 
 
 	Input input;
+	Camera camera;//カメラのためのオブジェクト
 
 };
 

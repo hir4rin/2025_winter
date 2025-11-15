@@ -33,7 +33,7 @@ Bg::~Bg()
 	DeleteGraph(m_bgH);
 	DeleteGraph(m_mapH);
 }
-Bg::Bg(Player* pPlayer):
+Bg::Bg(std::shared_ptr<Player> pPlayer):
 	m_pPlayer(pPlayer),
 	m_graphChipNumX(0),
 	m_graphChipNumY(0),

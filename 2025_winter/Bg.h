@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Vec2.h"
+#include <memory>
 class Player;
 class Rect;
 class Bg
@@ -7,7 +8,7 @@ class Bg
 public:
 	Bg();
 	virtual ~Bg();
-	Bg(Player* pPlayer);
+	Bg(std::shared_ptr<Player> pPlayer);
 	/// <summary>
 	/// 横のスクロール量を決定する
 	/// </summary>
@@ -40,7 +41,7 @@ private:
 	int m_bgH;
 	int m_mapH;
 	Vec2 m_pos;
-	Player* m_pPlayer;
+	std::shared_ptr<Player>  m_pPlayer;
 	int m_mapData;//マップデータ
 
 	int m_chipData[60][17];//チップデータ

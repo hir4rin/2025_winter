@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Pad.h"
 
+
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -20,8 +21,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetDrawScreen(DX_SCREEN_BACK);
 
 	Input input;//入力のためのオブジェクト
+	
 	SceneMain* pSceneMain = new SceneMain;
 	pSceneMain->Init();
+	
 	
 	while (ProcessMessage() == 0)
 	{
@@ -30,6 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ClearDrawScreen();
 		Pad::Update();
 		input.Update();
+		
 
 		pSceneMain->Update();
 		pSceneMain->Draw();

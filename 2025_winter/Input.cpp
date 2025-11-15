@@ -12,6 +12,8 @@ Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
 
     inputTable_["Copy"] = { { PeripheralType::keyboard,KEY_INPUT_C },
                           { PeripheralType::pad1,PAD_INPUT_X } };//PADのAボタン
+    inputTable_["CopyOut"] = { { PeripheralType::keyboard,KEY_INPUT_V },
+                          { PeripheralType::pad1,PAD_INPUT_6 } };//PADのSボタン
 
     
 

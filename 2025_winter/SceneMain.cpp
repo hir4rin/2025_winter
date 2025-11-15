@@ -1,4 +1,5 @@
 ﻿#include "SceneMain.h"
+#include "Camera.h"
 #include "Character.h"
 #include "Player.h"
 #include "EnemyWizard.h"
@@ -11,38 +12,35 @@ SceneMain::SceneMain():
 	input{}
 {
 	
-	m_pPlayer = new Player;
+	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
-	m_pEnemyWizard.resize(2);
-	for (auto& enemy : m_pEnemyWizard)
+	m_pEnemyWizards.resize(2);
+	for (auto& enemy : m_pEnemyWizards)
 	{
-		enemy = new EnemyWizard;
+		enemy = std::make_shared<EnemyWizard>();
 		enemy->SetBgPointer(m_pBg);
 	}
-	m_pEnemyWizard[1]->GetPos().x += 100;
-	m_pItem = new Item;
+	m_pEnemyWizards[1]->AddPos(Vec2{ 100.0f,0.0f });
+	//m_pItems = std::make_shared<Item>();
 	m_arrows.reserve(Arrow::Num);
 	for (auto& arrow : m_arrows)
 	{
 		arrow = new Arrow;
 		//敵の情報を送る
-		arrow->SetEnemyWizard(m_pEnemyWizard);
+		arrow->SetEnemyWizard(m_pEnemyWizards);
 		arrow->SetPlayer(m_pPlayer);
 	}
 
 	
 	m_pPlayer->SetBgPointer(m_pBg);
-	m_pItem->SetBgPointer(m_pBg);
+	//m_pItems->SetBgPointer(m_pBg);
 }
 
 SceneMain::~SceneMain()
 {
-	delete m_pPlayer;
-	delete m_pItem;
-	for (auto& num : m_pEnemyWizard)
-	{
-		delete num;
-	}
+	
+	
+	
 	for (auto& num : m_arrows)
 	{
 		delete num;
@@ -53,10 +51,13 @@ SceneMain::~SceneMain()
 
 void SceneMain::Init()
 {
-
+	
+	InitCamera(camera);
 }
 void SceneMain::Update()
 {
+	UpdateCamera(camera, m_pPlayer);
+
 
 	m_pBg->Update();
 	input.Update();
@@ -67,18 +68,19 @@ void SceneMain::Update()
 		m_pPlayer->isArrowAttack = false;
 
 	}
-	for (auto& num : m_pEnemyWizard)
+	for (auto& num : m_pEnemyWizards)
 	{
 		if (num) num->Update();
 	}
 
-	if (m_pItem) m_pItem->Update();
+	if (m_pItems) m_pItems->Update();
 	for (auto& arrow : m_arrows)
 	{
 		arrow->Update();
 	}
 	CheckHit();
 	CheckArrowHit();
+	CheckItemWizard();
 
 
 }
@@ -86,12 +88,12 @@ void SceneMain::Draw()
 {
 	m_pBg->Draw();
 
-	m_pPlayer->Draw();
-	for (auto& num : m_pEnemyWizard)
+	m_pPlayer->Draw(camera);
+	for (auto& num : m_pEnemyWizards)
 	{
 		if (num) num->Draw();
 	}
-	if (m_pItem) m_pItem->Draw();
+	if (m_pItems) m_pItems->Draw();
 	for (auto& arrow : m_arrows)
 	{
 		arrow->Draw();
@@ -104,16 +106,16 @@ void SceneMain::CheckHit()
 	switch (m_pPlayer->GetType())
 	{
 		case PlayerType::Normal:
-			CheckHitNormal(m_pEnemyWizard);
+			CheckHitNormal(m_pEnemyWizards);
 			break;
 		case PlayerType::Burning:
-			CheckHitBurning(m_pEnemyWizard);
+			CheckHitBurning(m_pEnemyWizards);
 			break;
 		case PlayerType::Frozen:
-			CheckHitFrozen(m_pEnemyWizard);
+			CheckHitFrozen(m_pEnemyWizards);
 			break;
 	}
-	if (m_pItem)
+	if (m_pItems)
 	{
 		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Copy)
@@ -121,12 +123,12 @@ void SceneMain::CheckHit()
 			if (m_pPlayer->GetAnimIdx() > 3)
 			{
 				//プレイヤーの当たり判定とアイテムの当たり判定をチェック
-				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(m_pItem->GetColRect());
+				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(m_pItems->GetColRect());
 				if (isHitItem)
 				{
 					//ここにアイテムを取得したときの処理を書く
-					delete m_pItem;
-					m_pItem = nullptr;
+				
+					m_pItems = nullptr;
 					m_pPlayer->ChangeBurning();
 					//m_pPlayer->ChangeFrozen();
 					//m_pPlayer->ChangeArcher();
@@ -146,14 +148,14 @@ void SceneMain::CheckArrowHit()
 	{
 		if (num == nullptr || !num->hitEnemy)continue;
 
-		EnemyWizard* enemy = num->hitEnemy;
+		std::shared_ptr<EnemyWizard> enemy = num->hitEnemy;
 
 		//敵リストから一致するやつを探して削除
-		for (auto& e : m_pEnemyWizard)
+		for (auto& e : m_pEnemyWizards)
 		{
 			if (e == enemy)
 			{
-				delete e;
+				
 				e = nullptr;
 				break;
 			}
@@ -165,24 +167,26 @@ void SceneMain::CheckArrowHit()
 
 void SceneMain::CheckItemWizard()
 {
-	for (auto& wizard : m_pEnemyWizard)
+	for (auto& wizard : m_pEnemyWizards)
 	{
-		if (wizard == nullptr)continue;
-		if (wizard->HitWizard)
-		{
+		if ( wizard == nullptr || !wizard->HitWizard)continue;
+		
 			//アイテムを落とす処理
-			m_pItem = new Item;//新しくアイテムを生成//push_backでやりたい
-			m_pItem->SetBgPointer(m_pBg);
-			m_pItem->GetPos() = wizard->GetPos();
+			m_pItems = std::make_shared<Item>();//新しくアイテムを生成
+			m_pItems->SetBgPointer(m_pBg);
+			m_pItems->ChangePos() = wizard->GetPos();
 			//敵のヒット情報をリセット
 			wizard->HitWizard = nullptr;
-		}
+
+
+			
+			wizard = nullptr;
 	}
 }
 
-void SceneMain::CheckHitNormal(std::vector<EnemyWizard*>& enemyWizards)
+void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizard)
+	for (auto& num : m_pEnemyWizards)
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
@@ -195,18 +199,18 @@ void SceneMain::CheckHitNormal(std::vector<EnemyWizard*>& enemyWizards)
 
 			if (isHitAttack)
 			{
+				num->DropItem(num);
 				//ここに敵が攻撃されたときの処理を書く
-				delete num;
-				num = nullptr;
+				
 			}
 		
 		}
 	}
 }
 
-void SceneMain::CheckHitBurning(std::vector<EnemyWizard*>& enemyWizards)
+void SceneMain::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizard)
+	for (auto& num : m_pEnemyWizards)
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
@@ -218,7 +222,7 @@ void SceneMain::CheckHitBurning(std::vector<EnemyWizard*>& enemyWizards)
 			if (isHitBurning)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				delete num;
+			
 				num = nullptr;
 			}
 
@@ -226,9 +230,9 @@ void SceneMain::CheckHitBurning(std::vector<EnemyWizard*>& enemyWizards)
 	}
 }
 
-void SceneMain::CheckHitFrozen(std::vector<EnemyWizard*>& enemyWizards)
+void SceneMain::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizard)
+	for (auto& num : m_pEnemyWizards)
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
@@ -242,7 +246,7 @@ void SceneMain::CheckHitFrozen(std::vector<EnemyWizard*>& enemyWizards)
 			if (isHitFrozen)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				delete num;
+				
 				num = nullptr;
 			}
 
