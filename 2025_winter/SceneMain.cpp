@@ -19,6 +19,7 @@ SceneMain::SceneMain():
 	{
 		enemy = std::make_shared<EnemyWizard>();
 		enemy->SetBgPointer(m_pBg);
+		enemy->SetPlayer(m_pPlayer);
 	}
 	m_pEnemyWizards[1]->AddPos(Vec2{ 100.0f,0.0f });
 	//m_pItems = std::make_shared<Item>();

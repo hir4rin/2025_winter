@@ -1,6 +1,7 @@
 ﻿#include "EnemyWizard.h"
 #include "DxLib.h"
 #include "Bg.h"
+#include "Player.h"
 
 namespace
 {
@@ -11,9 +12,11 @@ namespace
 	constexpr float  enemy_scale = 3.0f;
 
 
-	constexpr float kAttackSpeed = 0.0f;//攻撃時の速度
-	float attackTime = 15.f;  //攻撃の時間
+	constexpr float kAttackSpeed = 3.0f;//攻撃時の速度
+	float attackTime = 30.f;  //攻撃の時間
 	float attackTimer = 0.0f;//攻撃を計るタイマー
+
+	float catchDistance = 200.0f;//プレイヤーを見つける距離
 }
 
 
@@ -25,7 +28,7 @@ EnemyWizard::EnemyWizard():
 	m_handle = LoadGraph("data/Penguin.png");
 	m_pos = kInitPos;
 	m_isRight = false;
-	_state = EnemyState::Walk;
+	_state = EnemyState::Attack;
 }
 
 EnemyWizard::~EnemyWizard()
@@ -53,7 +56,7 @@ void EnemyWizard::Update()
 		WalkUpdate();
 		break;
 	case EnemyState::Attack:
-		AnimChange(EnemyState::Attack);
+		
 		//Attackのアップデート
 		AttackUpdate();
 		break;
@@ -75,22 +78,32 @@ void EnemyWizard::Draw()
 
 	switch (_state)
 	{
-		case EnemyState::Normal:
-		charaIdx = (m_animframe / 5) % 2;
+	case EnemyState::Normal://Idle
+		charaIdx = (m_animframe / 8) % 2;
 		charaIdy = 0;
 		drawY -= enemy_cut_h / 2;
 		break;
-		case EnemyState::Walk:
+	case EnemyState::Walk://Walk
 			charaIdx = (m_animframe / 10) % 6;
 			charaIdy = 3;
 			drawY += enemy_cut_h / 3 * 2;
 			break;
-		case EnemyState::Attack:
-			charaIdx = (m_animframe / 5) % 7;
-			charaIdy = 2;
-			drawY += enemy_cut_h / 4;
+	case EnemyState::Attack://Attack
+			if (isAttack == true)
+			{
+				charaIdx = (m_animframe / 5) % 7;
+				charaIdy = 2;
+				drawY += enemy_cut_h / 4;
+			}
+			else//Idle状態にする
+			{
+				charaIdx = (m_animframe / 8) % 2;
+				charaIdy = 0;
+				drawY -= enemy_cut_h / 2;
+			}
+			
 			break;
-		case EnemyState::Damage:
+	case EnemyState::Damage://Damage
 			break;
 		default:
 			break;
@@ -109,13 +122,15 @@ void EnemyWizard::Draw()
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f, m_handle, true, false);
 	}
+
+	//キャラとプレイヤーとの距離を表示
+	DrawBox(m_pos.x + catchDistance, 0, m_pos.x - catchDistance, 1080, GetColor(0, 0, 255), false);
 }
 
 void EnemyWizard::AnimChange(const EnemyState state)
 {
-	//攻撃モーション終了条件
-
-	if (_state == EnemyState::Attack)return;
+	
+	if (isAttack)return;
 
 	if (_state != state)
 	{
@@ -140,7 +155,20 @@ void EnemyWizard::WalkUpdate()
 void EnemyWizard::AttackUpdate()
 {
 	//ぷれいやーのとの距離が近くなったら攻撃を出す
-	//プレイヤーのポインタをSceneMainからもらう必要があるところ
+	float distance = m_pPlayer->GetPos().x - m_pos.x;
+	if (distance < 0)distance = -distance;//絶対値にする
+	if (distance < catchDistance)
+	{
+		isAttack = true;
+		attackTimer = attackTime;
+		AnimChange(EnemyState::Attack);
+	}
+	if (isAttack == true)
+	{
+		m_vel.x = -kAttackSpeed;
+		Attack();
+		
+	}
 
 }
 void EnemyWizard::Attack()
@@ -149,8 +177,10 @@ void EnemyWizard::Attack()
 	attackTimer--;
 	if (attackTimer <= 0)
 	{
-		_state = EnemyState::Normal;
+		//_state = EnemyState::Normal;
 		attackTimer = attackTime;
+		isAttack = false;
+		m_vel = zero;
 	}
 }
 

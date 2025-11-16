@@ -34,5 +34,7 @@ private:
 
 	void Attack();//実際に攻撃をする処理
 	
+	bool isAttack;//攻撃しているかどうか
+
 };
 
