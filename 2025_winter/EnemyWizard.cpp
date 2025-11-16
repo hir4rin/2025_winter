@@ -13,7 +13,7 @@ namespace
 
 
 	constexpr float kAttackSpeed = 3.0f;//攻撃時の速度
-	float attackTime = 30.f;  //攻撃の時間
+	float attackTime = 90.0f;  //攻撃の時間
 	float attackTimer = 0.0f;//攻撃を計るタイマー
 
 	float catchDistance = 200.0f;//プレイヤーを見つける距離
@@ -23,7 +23,8 @@ namespace
 EnemyWizard::EnemyWizard():
 	charaIdx(0),
 	charaIdy(0),
-	m_animframe(0)
+	m_animframe(0),
+	isAttack(false)
 {
 	m_handle = LoadGraph("data/Penguin.png");
 	m_pos = kInitPos;
@@ -157,15 +158,18 @@ void EnemyWizard::AttackUpdate()
 	//ぷれいやーのとの距離が近くなったら攻撃を出す
 	float distance = m_pPlayer->GetPos().x - m_pos.x;
 	if (distance < 0)distance = -distance;//絶対値にする
-	if (distance < catchDistance)
+	if (distance < catchDistance && !isAttack)
 	{
 		isAttack = true;
 		attackTimer = attackTime;
 		AnimChange(EnemyState::Attack);
+		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+		dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
 	}
 	if (isAttack == true)
 	{
-		m_vel.x = -kAttackSpeed;
+		//敵はプレイヤーの向きに攻撃する
+		
 		Attack();
 		
 	}
