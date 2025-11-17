@@ -137,7 +137,6 @@ void Player::Draw()
 	case PlayerType::Archer:;//アニメーションの遷移
 		ArcherAnim();
 		break;
-
 	}
 
 	if (m_isRight)

@@ -103,7 +103,7 @@ void Bg::Draw()
 
 void Bg::DrawBg()
 {
-	DrawGraph(m_pos.x, m_pos.y, m_bgH, true);
+	
 	//画像サイズを取得
 	//Bgのサイズ
 	Size bgSize = { 0,0 };

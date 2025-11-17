@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Character.h"
+
+class Camera;
+
 class Item :public Character
 {
 public:
@@ -8,6 +11,7 @@ public:
 	virtual void Init() override;
 	virtual void Update() override;
 	virtual void Draw() override;
+	virtual void Draw(Camera& camera);
 
 };
 

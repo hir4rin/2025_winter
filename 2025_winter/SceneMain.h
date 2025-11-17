@@ -10,6 +10,8 @@ class Item;
 class Arrow;
 class Bg;
 class Character;
+class Frozen;
+class BurningObject;
 
 class SceneMain
 {
@@ -28,6 +30,16 @@ public:
 	/// 矢の当たり判定チェック
 	/// </summary>
 	void CheckArrowHit();
+
+	/// <summary>
+	/// 氷(物理)の当たり判定チェック
+	/// </summary>
+	void CheckFrozenHit();
+
+	/// <summary>
+	/// バーニング(能力)に当たった時の敵の演出
+	/// </summary>
+	void ReactionBurning();
 
 	void CheckItemWizard();
 public:
@@ -48,12 +60,16 @@ public:
 	/// <param name="enemyWizards"></param>
 	void CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
 
+
 private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
 	std::shared_ptr<Item> m_pItems;
 	Item* m_pItem;
 	std::vector<Arrow*> m_arrows;
+
+	std::shared_ptr<Frozen> m_pFrozen;
+	std::shared_ptr<BurningObject> m_pBurningObject;
 
 	Bg* m_pBg;
 	Character* m_pCharacter;

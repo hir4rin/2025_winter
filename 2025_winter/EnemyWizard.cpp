@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Bg.h"
 #include "Player.h"
+#include "Camera.h"
 
 namespace
 {
@@ -16,7 +17,10 @@ namespace
 	float attackTime = 90.0f;  //攻撃の時間
 	float attackTimer = 0.0f;//攻撃を計るタイマー
 
-	float catchDistance = 200.0f;//プレイヤーを見つける距離
+	float coolTimer = 0.0f;//クールダウンを図るタイマー
+	float coolTime = 180.0f;//クールタイム
+
+	float catchDistance = 250.0f;//プレイヤーを見つける距離
 }
 
 
@@ -125,7 +129,68 @@ void EnemyWizard::Draw()
 	}
 
 	//キャラとプレイヤーとの距離を表示
-	DrawBox(m_pos.x + catchDistance, 0, m_pos.x - catchDistance, 1080, GetColor(0, 0, 255), false);
+	DrawBox(m_pos.x - catchDistance /2, 0, m_pos.x + catchDistance/2, 1080, GetColor(0, 0, 255), false);
+}
+void EnemyWizard::Draw(Camera& camera)
+{
+	float drawX = m_pos.x - m_pBg->GetScrollX();
+	float drawY = m_pos.y - m_pBg->GetScrollY();
+
+	//当たり判定の描画
+	Character::Draw();
+	DrawFormatString(100, 150, GetColor(255, 0, 0), "敵のposは%5fです", m_pos.x);
+
+
+	switch (_state)
+	{
+	case EnemyState::Normal://Idle
+		charaIdx = (m_animframe / 8) % 2;
+		charaIdy = 0;
+		drawY -= enemy_cut_h / 2;
+		break;
+	case EnemyState::Walk://Walk
+			charaIdx = (m_animframe / 10) % 6;
+			charaIdy = 3;
+			drawY += enemy_cut_h / 3 * 2;
+			break;
+	case EnemyState::Attack://Attack
+			if (isAttack == true)
+			{
+				charaIdx = (m_animframe / 5) % 7;
+				charaIdy = 2;
+				drawY += enemy_cut_h / 4;
+			}
+			else//Idle状態にする
+			{
+				charaIdx = (m_animframe / 8) % 2;
+				charaIdy = 0;
+				drawY -= enemy_cut_h / 2;
+			}
+			
+			break;
+	case EnemyState::Damage://Damage
+			break;
+		default:
+			break;
+	}
+	if (m_isRight)
+	{
+		DrawRectRotaGraph(drawX,drawY,
+		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
+		enemy_cut_w, enemy_cut_h,//切り取りの幅
+		enemy_scale, 0.0f, m_handle, true,true);
+	}
+	else
+	{
+		DrawRectRotaGraph(drawX, drawY,
+		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
+		enemy_cut_w, enemy_cut_h,//切り取りの幅
+		enemy_scale, 0.0f, 
+			m_handle, true, false);
+	}
+
+	//キャラとプレイヤーとの距離を表示
+	DrawBox(m_pos.x - catchDistance /2+ camera.drawOffset.x, 0, m_pos.x + catchDistance/2 + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 }
 
 void EnemyWizard::AnimChange(const EnemyState state)
@@ -155,16 +220,20 @@ void EnemyWizard::WalkUpdate()
 }
 void EnemyWizard::AttackUpdate()
 {
+	coolTimer--;
 	//ぷれいやーのとの距離が近くなったら攻撃を出す
 	float distance = m_pPlayer->GetPos().x - m_pos.x;
 	if (distance < 0)distance = -distance;//絶対値にする
 	if (distance < catchDistance && !isAttack)
 	{
+		if (coolTimer <= 0)//クールタイムが0になったら
+		{
 		isAttack = true;
 		attackTimer = attackTime;
 		AnimChange(EnemyState::Attack);
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
+		}
 	}
 	if (isAttack == true)
 	{
@@ -185,6 +254,7 @@ void EnemyWizard::Attack()
 		attackTimer = attackTime;
 		isAttack = false;
 		m_vel = zero;
+		coolTimer = coolTime;
 	}
 }
 

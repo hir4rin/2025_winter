@@ -6,7 +6,15 @@
 #include "Item.h"
 #include "DxLib.h"
 #include "Arrow.h"
+#include "Frozen.h"
+#include "BurningObject.h"
 #include "Bg.h"
+
+namespace
+{
+	constexpr int kScreenWidth = 1920;
+	constexpr int kScreenHeight = 1080;
+}
 
 SceneMain::SceneMain():
 	input{}
@@ -14,14 +22,16 @@ SceneMain::SceneMain():
 	
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
-	m_pEnemyWizards.resize(2);
+	m_pEnemyWizards.resize(3);
 	for (auto& enemy : m_pEnemyWizards)
 	{
+		static float x = 0.0f;
 		enemy = std::make_shared<EnemyWizard>();
 		enemy->SetBgPointer(m_pBg);
 		enemy->SetPlayer(m_pPlayer);
+		enemy->AddPos(Vec2{ x,0.0f });
+		x += 200;
 	}
-	m_pEnemyWizards[1]->AddPos(Vec2{ 100.0f,0.0f });
 	//m_pItems = std::make_shared<Item>();
 	m_arrows.reserve(Arrow::Num);
 	for (auto& arrow : m_arrows)
@@ -31,7 +41,7 @@ SceneMain::SceneMain():
 		arrow->SetEnemyWizard(m_pEnemyWizards);
 		arrow->SetPlayer(m_pPlayer);
 	}
-
+	
 	
 	m_pPlayer->SetBgPointer(m_pBg);
 	//m_pItems->SetBgPointer(m_pBg);
@@ -79,25 +89,29 @@ void SceneMain::Update()
 	{
 		arrow->Update();
 	}
+	if (m_pFrozen) m_pFrozen->Update();
 	CheckHit();
 	CheckArrowHit();
 	CheckItemWizard();
+	CheckFrozenHit();
 }
 
 void SceneMain::Draw()
 {
 	m_pBg->Draw();
 
+	if (m_pFrozen) m_pFrozen->Draw(camera);
 	m_pPlayer->Draw(camera);
 	for (auto& num : m_pEnemyWizards)
 	{
-		if (num) num->Draw();
+		if (num) num->Draw(camera);
 	}
-	if (m_pItems) m_pItems->Draw();
+	if (m_pItems) m_pItems->Draw(camera);
 	for (auto& arrow : m_arrows)
 	{
-		arrow->Draw();
+		arrow->Draw(camera);
 	}
+	
 
 }
 
@@ -167,6 +181,57 @@ void SceneMain::CheckArrowHit()
 	}
 }
 
+void SceneMain::CheckFrozenHit()
+{
+	if (!m_pFrozen)return;
+	//プレイヤーと当たった時の反応
+	bool isHitFrozen = m_pPlayer->GetColRect().IsCollision(m_pFrozen->GetColRect());
+	if (isHitFrozen)
+	{
+		bool dir = m_pPlayer->GetPos().x < m_pFrozen->GetPos().x;
+		Vec2 add = { dir ? 5.0f : -5.0f,   0 };
+		m_pFrozen->AddVel(add);
+
+		m_pFrozen->isMove = true;
+	}
+	if (m_pFrozen->isMove)
+	{
+		//動いているときに敵と当たる
+		for (auto& enemyWizard : m_pEnemyWizards)
+		{
+			if (!enemyWizard) continue;
+			bool isHitEnemy = enemyWizard->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+			if (isHitEnemy)
+			{
+				enemyWizard = nullptr;
+			}
+
+		}
+	}
+}
+
+void SceneMain::ReactionBurning()
+{
+	if (!m_pBurningObject) return;
+	//カメラの外だったらnullptrにする
+	float posX = m_pBurningObject->GetPos().x + camera.drawOffset.x;
+	float posY = m_pBurningObject->GetPos().y + camera.drawOffset.y;
+
+	if (posX < 0 || posX > kScreenWidth)
+	{
+		m_pBurningObject = nullptr;
+	}
+	
+
+	if (posY < 0 || posY > kScreenHeight)
+	{
+		m_pBurningObject = nullptr;
+	}
+
+
+}
+
 void SceneMain::CheckItemWizard()
 {
 	for (auto& wizard : m_pEnemyWizards)
@@ -224,6 +289,7 @@ void SceneMain::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 			if (isHitBurning)
 			{
 				//ここに敵が攻撃されたときの処理を書く
+				m_pBurningObject = std::make_shared<BurningObject>(num);
 			
 				num = nullptr;
 			}
@@ -248,6 +314,7 @@ void SceneMain::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 			if (isHitFrozen)
 			{
 				//ここに敵が攻撃されたときの処理を書く
+				m_pFrozen = std::make_shared<Frozen>(num);
 				
 				num = nullptr;
 			}

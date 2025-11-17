@@ -22,6 +22,8 @@ public:
 	Vec2 GetPos()const { return m_pos; }
 	void  AddPos(Vec2 add) { m_pos += add;}
 	Vec2& ChangePos() { return m_pos; }
+	void AddVel(Vec2 add) { m_vel += add; }
+	Vec2& ChangeVel() { return m_vel; }
 
 	void Gravity();
 	/// <summary>

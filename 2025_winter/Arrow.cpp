@@ -3,6 +3,7 @@
 #include "Rect.h"
 #include "EnemyWizard.h"
 #include "Player.h"
+#include "Camera.h"
 
 
 Arrow::Arrow():
@@ -26,6 +27,9 @@ void Arrow::Init()
 }
 void Arrow::Update()
 {
+	//当たり判定をセット
+	Character::SetRect();
+
 	if (isAlive)
 	{
 		Vec2 shotVel = m_dir * (m_playerdir ? m_speed : -m_speed);
@@ -53,7 +57,7 @@ void Arrow::Update()
 }
 void Arrow::Draw()
 {
-	//まだDrawScrollのやつしてない
+	
 	Character::SetRect();
 	if (isAlive == true)
 	{
@@ -67,6 +71,27 @@ void Arrow::Draw()
 			0.0f, m_handle,
 			true, m_playerdir ? false : true);
 	}
+
+
+}
+void Arrow::Draw(Camera& camera)
+{
+	
+	Character::SetRect();
+	if (isAlive == true)
+	{
+		// 弾を描画する
+		const float shotHalfW = kCharaSize * 0.5f;
+		const float shotHalfH = kCharaSize * 0.5f;
+		DrawRotaGraph3(static_cast<int>(m_pos.x)+ camera.drawOffset.x,
+			static_cast<int>(m_pos.y) + camera.drawOffset.y,
+			static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
+			kScale, 1.0f,
+			0.0f, m_handle,
+			true, m_playerdir ? false : true);
+	}
+
+	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 
 
 }

@@ -5,6 +5,7 @@
 
 
 class Bg;
+class Camera;
 
 //EnemyStateはEnemy.hで定義済み
 
@@ -17,6 +18,7 @@ public:
 	void Init() override;
 	void Update()override;
 	void Draw()override;
+	void Draw(Camera& camera);
 
 
 private:

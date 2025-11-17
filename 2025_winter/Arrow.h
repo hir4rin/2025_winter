@@ -3,8 +3,10 @@
 #include <vector>
 #include <memory>
 
+
 class EnemyWizard;
 class Player;
+class Camera;
 class Arrow :public Character
 {
 
@@ -14,6 +16,7 @@ public:
 	void Init()override;
 	void Update()override;
 	void Draw()override;
+	void Draw(Camera& camera);
 	constexpr static int Num = 10;
 	Vec2& GetPosition() { return m_pos; }
 	
