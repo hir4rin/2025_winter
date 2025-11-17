@@ -6,6 +6,12 @@
 #include "Camera.h"
 
 
+namespace
+{
+	const float kArrowWidth = 32.0f;//Arrowの幅
+	const float kArrowHeight = 32.0f;//Arrowの高さ
+}
+
 Arrow::Arrow():
 	isAlive(false),
 	m_dir(1,0),
@@ -28,7 +34,8 @@ void Arrow::Init()
 void Arrow::Update()
 {
 	//当たり判定をセット
-	Character::SetRect();
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kArrowWidth, kArrowHeight);
+
 
 	if (isAlive)
 	{
@@ -58,7 +65,7 @@ void Arrow::Update()
 void Arrow::Draw()
 {
 	
-	Character::SetRect();
+	
 	if (isAlive == true)
 	{
 		// 弾を描画する
@@ -77,7 +84,6 @@ void Arrow::Draw()
 void Arrow::Draw(Camera& camera)
 {
 	
-	Character::SetRect();
 	if (isAlive == true)
 	{
 		// 弾を描画する

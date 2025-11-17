@@ -68,8 +68,9 @@ private:
 	Item* m_pItem;
 	std::vector<Arrow*> m_arrows;
 
-	std::shared_ptr<Frozen> m_pFrozen;
-	std::shared_ptr<BurningObject> m_pBurningObject;
+	std::vector<std::shared_ptr<Frozen>> m_pFrozens;
+	std::vector<std::shared_ptr<BurningObject>> m_pBurningObjects;
+	 
 
 	Bg* m_pBg;
 	Character* m_pCharacter;
