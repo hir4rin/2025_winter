@@ -3,12 +3,14 @@
 #include "Character.h"
 #include "Player.h"
 #include "EnemyWizard.h"
+#include "EnemyRider.h"
 #include "Item.h"
 #include "DxLib.h"
 #include "Arrow.h"
 #include "Frozen.h"
 #include "BurningObject.h"
 #include "Bg.h"
+
 
 namespace
 {
@@ -22,7 +24,7 @@ SceneMain::SceneMain():
 	
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
-	m_pEnemyWizards.resize(3);
+	m_pEnemyWizards.resize(3);//ペンギンの数
 	for (auto& enemy : m_pEnemyWizards)
 	{
 		static float x = 0.0f;
@@ -32,15 +34,25 @@ SceneMain::SceneMain():
 		enemy->AddPos(Vec2{ x,0.0f });
 		x += 200;
 	}
-	//m_pItems = std::make_shared<Item>();
-	m_arrows.reserve(Arrow::Num);
-	for (auto& arrow : m_arrows)
+	m_pEnemyRiders.resize(2);//ライダーの数
+	for (auto& enemy : m_pEnemyRiders)
 	{
-		arrow = new Arrow;
-		//敵の情報を送る
-		arrow->SetEnemyWizard(m_pEnemyWizards);
-		arrow->SetPlayer(m_pPlayer);
+		static float x = 0.0f;
+		enemy = std::make_shared<EnemyRider>();
+		enemy->SetBgPointer(m_pBg);
+		enemy->SetPlayer(m_pPlayer);
+		enemy->AddPos(Vec2{ x,0.0f });
+		x += 200;
 	}
+
+	//m_pItems = std::make_shared<Item>();
+	
+	
+	//後で張り付ける
+		////敵の情報を送る
+		//arrow->SetEnemyWizard(m_pEnemyWizards);
+		//arrow->SetPlayer(m_pPlayer);
+	
 	
 	
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -51,11 +63,6 @@ SceneMain::~SceneMain()
 {
 	
 	
-	
-	for (auto& num : m_arrows)
-	{
-		delete num;
-	}
 	delete m_pCharacter;
 	delete m_pBg;
 }
@@ -77,12 +84,22 @@ void SceneMain::Update()
 	m_pPlayer->Update(input);
 	if (m_pPlayer->isArrowAttack)
 	{
-		m_pPlayer->ShotArrow(m_arrows);
+		//ポインタを作ってその座標を入れる
+		std::shared_ptr<Arrow> arrow = m_pPlayer->ShotArrow();
+	
+		//それをpush_backする
+		m_arrows.push_back(arrow);
+
 		m_pPlayer->isArrowAttack = false;
 	}
-	for (auto& num : m_pEnemyWizards)
+	for (auto& enemy : m_pEnemyWizards)
 	{
-		if (num) num->Update();
+		if (enemy) enemy->Update();
+	}
+
+	for (auto& enemy : m_pEnemyRiders)
+	{
+		if (enemy) enemy->Update();
 	}
 
 	if (m_pItems) m_pItems->Update();
@@ -98,24 +115,29 @@ void SceneMain::Update()
 	{
 		if (m_pBurningObject) m_pBurningObject->Update();
 	}
-	CheckHit();
+	CheckHit();//当たり判定
 	CheckArrowHit();
 	CheckItemWizard();
+	CheckItemOrcRider();
 	CheckFrozenHit();
 }
 
 void SceneMain::Draw()
 {
-	m_pBg->Draw();
+	m_pBg->Draw(camera);
 
 	for (auto& m_pFrozen : m_pFrozens)
 	{
 		if (m_pFrozen) m_pFrozen->Draw(camera);
 	}
 	m_pPlayer->Draw(camera);
-	for (auto& num : m_pEnemyWizards)
+	for (auto& enemy : m_pEnemyWizards)
 	{
-		if (num) num->Draw(camera);
+		if (enemy) enemy->Draw(camera);
+	}
+	for (auto& enemy : m_pEnemyRiders)
+	{
+		if (enemy) enemy->Draw(camera);
 	}
 	if (m_pItems) m_pItems->Draw(camera);
 	for (auto& arrow : m_arrows)
@@ -128,6 +150,8 @@ void SceneMain::Draw()
 	}
 	ReactionBurning();
 }
+
+
 
 void SceneMain::CheckHit()
 {
@@ -157,9 +181,9 @@ void SceneMain::CheckHit()
 					//ここにアイテムを取得したときの処理を書く
 				
 					m_pItems = nullptr;
-					m_pPlayer->ChangeBurning();
+					//m_pPlayer->ChangeBurning();
 					//m_pPlayer->ChangeFrozen();
-					//m_pPlayer->ChangeArcher();
+					m_pPlayer->ChangeArcher();
 
 				}
 			}
@@ -291,9 +315,48 @@ void SceneMain::CheckItemWizard()
 	}
 }
 
+void SceneMain::CheckItemOrcRider()
+{
+	for (auto& rider : m_pEnemyRiders)
+	{
+		if (rider == nullptr || !rider->HitRider)continue;
+
+		//アイテムを落とす処理
+		m_pItems = std::make_shared<Item>();//新しくアイテムを生成//別のアイテムを渡す
+		m_pItems->SetBgPointer(m_pBg);
+		m_pItems->ChangePos() = rider->GetPos();
+		//敵のヒット情報をリセット
+		rider->HitRider = nullptr;
+
+
+
+		rider = nullptr;
+	}
+}
+
 void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizards)
+	for (auto& num : m_pEnemyWizards)//ペンギン
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			if (num == nullptr)continue;
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
+
+		
+			//矢の処理は別の場所(CheckhitArrow)
+
+			if (isHitAttack)
+			{
+				num->DropItem(num);
+				//ここに敵が攻撃されたときの処理を書く
+				
+			}
+		
+		}
+	}
+	for (auto& num : m_pEnemyRiders)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
@@ -317,7 +380,25 @@ void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 void SceneMain::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizards)
+	for (auto& num : m_pEnemyWizards)//ペンギン
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
+		{
+			if (num == nullptr)continue;
+
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
+
+			if (isHitBurning)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pBurningObjects.push_back(std::make_shared<BurningObject>(num));
+				num = nullptr;
+			}
+
+		}
+	}
+	for (auto& num : m_pEnemyRiders)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
@@ -339,7 +420,27 @@ void SceneMain::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 
 void SceneMain::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizards)
+	for (auto& num : m_pEnemyWizards)//ペンギン
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			if (num == nullptr)continue;
+
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
+			//矢の処理は別の場所(CheckhitArrow)
+
+
+			if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pFrozens.push_back(std::make_shared<Frozen>(num));
+				num = nullptr;
+			}
+
+		}
+	}
+	for (auto& num : m_pEnemyRiders)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)

@@ -1,6 +1,7 @@
 ﻿#include "Enemy.h"
 #include "DxLib.h"
 #include "EnemyWizard.h"
+#include "EnemyRider.h"
 #include <memory>
 namespace
 {
@@ -41,5 +42,10 @@ void Enemy::Draw()
 void Enemy::DropItem(std::shared_ptr<EnemyWizard> enemy)
 {
 	HitWizard = enemy;
+	//SceneMainに渡してアイテムを探して出させる
+}
+void Enemy::DropItem(std::shared_ptr<EnemyRider> enemy)
+{
+	HitRider = enemy;
 	//SceneMainに渡してアイテムを探して出させる
 }

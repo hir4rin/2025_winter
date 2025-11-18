@@ -5,10 +5,12 @@
 
 class Camera;
 class EnemyWizard;
+class EnemyRider;
 class Frozen :public Character
 {
 public:
 	Frozen(std::shared_ptr<EnemyWizard> _enemyWiz);
+	Frozen(std::shared_ptr<EnemyRider> _enemyRiders);
 	virtual ~Frozen();
 	void Init()override;
 	void Update()override;

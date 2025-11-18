@@ -35,6 +35,9 @@ public:
 	{
 		m_pBg = pBg;
 	}
+
+	bool Getm_isRight() { return m_isRight; }
+
 protected:
 	int m_handle;
 	

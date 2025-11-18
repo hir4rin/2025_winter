@@ -1,24 +1,20 @@
 ﻿#pragma once
 #include "Enemy.h"
-#include "Arrow.h"
-#include <vector>
-
 
 class Camera;
 
 //EnemyStateはEnemy.hで定義済み
 
-class EnemyWizard : public Enemy
+class EnemyRider : public Enemy
 {
 public:
-	EnemyWizard();
-	virtual ~EnemyWizard();
+	EnemyRider();
+	virtual ~EnemyRider();
 
-	void Init() override;
+	void Init()override;
 	void Update()override;
 	void Draw()override;
 	void Draw(Camera& camera);
-
 
 private:
 	int charaIdx;
@@ -34,8 +30,9 @@ private:
 	void AttackUpdate();
 
 	void Attack();//実際に攻撃をする処理
-	
+
 	bool isAttack;//攻撃しているかどうか
+
 
 };
 

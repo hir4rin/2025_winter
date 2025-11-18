@@ -2,6 +2,7 @@
 #include "BurningObject.h"
 #include "Camera.h"
 #include "EnemyWizard.h"
+#include "EnemyRider.h"
 
 
 namespace
@@ -16,6 +17,13 @@ BurningObject::BurningObject(std::shared_ptr<EnemyWizard> _enemyWiz):
 {
 	m_handle = LoadGraph("data/BurningBox.png");
 	m_pos = _enemyWiz->GetPos();
+	m_vel.y = -10.0f;
+}
+BurningObject::BurningObject(std::shared_ptr<EnemyRider> _enemyRiders):
+	m_burningObjectDir(false)
+{
+	m_handle = LoadGraph("data/BurningBox.png");
+	m_pos = _enemyRiders->GetPos();
 	m_vel.y = -10.0f;
 }
 

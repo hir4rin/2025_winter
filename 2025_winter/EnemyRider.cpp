@@ -1,14 +1,15 @@
-﻿#include "EnemyWizard.h"
+﻿#include "EnemyRider.h"
 #include "DxLib.h"
 #include "Player.h"
 #include "Camera.h"
 
+
 namespace
 {
-	const Vec2 kInitPos = { 1000.0f,100.0f };//初期位置
+	const Vec2 kInitPos = { 1500.0f,100.0f };//初期位置
 	constexpr float kSpeed = 2.0f;//移動速度
-	constexpr int enemy_cut_w = 64;
-	constexpr int enemy_cut_h = 64;
+	constexpr int enemy_cut_w = 100;
+	constexpr int enemy_cut_h = 100;
 	constexpr float  enemy_scale = 3.0f;
 
 
@@ -19,32 +20,37 @@ namespace
 	float coolTimer = 0.0f;//クールダウンを図るタイマー
 	float coolTime = 180.0f;//クールタイム
 
-	float catchDistance = 250.0f;//プレイヤーを見つける距離
+	float catchDistance = 500.0f;//プレイヤーを見つける距離
 }
 
 
-EnemyWizard::EnemyWizard():
+EnemyRider::EnemyRider():
 	charaIdx(0),
 	charaIdy(0),
 	m_animframe(0),
 	isAttack(false)
 {
-	m_handle = LoadGraph("data/Penguin.png");
+	m_handle = LoadGraph("data/OrcRider.png");
 	m_pos = kInitPos;
 	m_isRight = false;
 	_state = EnemyState::Attack;
 }
 
-EnemyWizard::~EnemyWizard()
+EnemyRider::~EnemyRider()
 {
 }
 
-void EnemyWizard::Init()
+void EnemyRider::Init()
 {
-}
 
-void EnemyWizard::Update()
+}
+void EnemyRider::Update()
 {
+	if (!isAttack)
+	{
+		
+		//m_isRight
+	}
 	m_animframe++;
 	Character::Update();
 	switch (_state)
@@ -60,7 +66,7 @@ void EnemyWizard::Update()
 		WalkUpdate();
 		break;
 	case EnemyState::Attack:
-		
+
 		//Attackのアップデート
 		AttackUpdate();
 		break;
@@ -69,15 +75,12 @@ void EnemyWizard::Update()
 	}
 
 }
-
-void EnemyWizard::Draw()
+void EnemyRider::Draw()
 {
-	
 
 }
-void EnemyWizard::Draw(Camera& camera)
+void EnemyRider::Draw(Camera& camera)
 {
-	
 	//当たり判定の描画
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
 	float drawX = 0;
@@ -86,60 +89,60 @@ void EnemyWizard::Draw(Camera& camera)
 	switch (_state)
 	{
 	case EnemyState::Normal://Idle
-		charaIdx = (m_animframe / 8) % 2;
+		charaIdx = (m_animframe / 8) % 6;
 		charaIdy = 0;
-		drawY -= enemy_cut_h / 2;
+		drawY += enemy_cut_h / 8;
 		break;
 	case EnemyState::Walk://Walk
-			charaIdx = (m_animframe / 10) % 6;
-			charaIdy = 3;
-			drawY += enemy_cut_h / 3 * 2;
-			break;
+		charaIdx = (m_animframe / 5) % 8;
+		charaIdy = 1;
+		drawY += enemy_cut_h / 8;
+		break;
 	case EnemyState::Attack://Attack
-			if (isAttack == true)
-			{
-				charaIdx = (m_animframe / 5) % 7;
-				charaIdy = 2;
-				drawY += enemy_cut_h / 4;
-			}
-			else//Idle状態にする
-			{
-				charaIdx = (m_animframe / 8) % 2;
-				charaIdy = 0;
-				drawY -= enemy_cut_h / 2;
-			}
-			
-			break;
+		if (isAttack == true)
+		{
+			charaIdx = (m_animframe / 5) % 11;
+			charaIdy = 4;
+			drawY += enemy_cut_h / 8;
+		}
+		else//Idle状態にする
+		{
+			charaIdx = (m_animframe / 8) % 6;
+			charaIdy = 0;
+			drawY += enemy_cut_h / 8;
+		}
+
+		break;
 	case EnemyState::Damage://Damage
-			break;
-		default:
-			break;
+		break;
+	default:
+		break;
 	}
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x+ drawX,
-			m_pos.y + camera.drawOffset.y+ drawY,
-		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
-		enemy_cut_w, enemy_cut_h,//切り取りの幅
-		enemy_scale, 0.0f, m_handle, true,true);
-	}
-	else
-	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x+ drawX,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX,
 			m_pos.y + camera.drawOffset.y + drawY,
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
-		enemy_scale, 0.0f, 
-			m_handle, true, false);
+		enemy_scale, 0.0f, m_handle, true, false);
+	}
+	else
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX,
+			m_pos.y + camera.drawOffset.y + drawY,
+		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
+		enemy_cut_w, enemy_cut_h,//切り取りの幅
+		enemy_scale, 0.0f,
+			m_handle, true, true);
 	}
 
 	//キャラとプレイヤーとの距離を表示
-	DrawBox(m_pos.x - catchDistance /2+ camera.drawOffset.x, 0, m_pos.x + catchDistance/2 + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
+	DrawBox(m_pos.x - catchDistance / 2 + camera.drawOffset.x, 0, m_pos.x + catchDistance / 2 + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 }
 
-void EnemyWizard::AnimChange(const EnemyState state)
+void EnemyRider::AnimChange(const EnemyState state)
 {
-	
+
 	if (isAttack)return;
 
 	if (_state != state)
@@ -150,19 +153,19 @@ void EnemyWizard::AnimChange(const EnemyState state)
 		charaIdy = 0;
 	}
 	return;
-	
+
 }
 
-void EnemyWizard::NormalUpdate()
+void EnemyRider::NormalUpdate()
 {
 }
 
-void EnemyWizard::WalkUpdate()
+void EnemyRider::WalkUpdate()
 {
 	m_vel.x = -kSpeed;
-	
+
 }
-void EnemyWizard::AttackUpdate()
+void EnemyRider::AttackUpdate()
 {
 	coolTimer--;
 	//ぷれいやーのとの距離が近くなったら攻撃を出す
@@ -172,23 +175,23 @@ void EnemyWizard::AttackUpdate()
 	{
 		if (coolTimer <= 0)//クールタイムが0になったら
 		{
-		isAttack = true;
-		attackTimer = attackTime;
-		AnimChange(EnemyState::Attack);
-		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
-		dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
+			isAttack = true;
+			attackTimer = attackTime;
+			AnimChange(EnemyState::Attack);
+			bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+			dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
 		}
 	}
 	if (isAttack == true)
 	{
 		//敵はプレイヤーの向きに攻撃する
-		
+
 		Attack();
-		
+
 	}
 
 }
-void EnemyWizard::Attack()
+void EnemyRider::Attack()
 {
 	//実際に攻撃をする処理
 	attackTimer--;

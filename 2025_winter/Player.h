@@ -78,11 +78,11 @@ public:
 	void ChangeFrozen();//外部から変身の変更
 	void ChangeArcher();//外部から変身の変更
 
-	void ShotArrow(std::vector<Arrow*>& _arrow);//矢を発射させる
+	std::shared_ptr<Arrow> ShotArrow();//矢を発射させる
 	int arrowFrame;//矢が発射するまでの時間
 	bool isArrowAttack;//矢を撃ったかどうか
 
-	bool Getm_isRight() { return m_isRight; }
+
 
 private:
 	void InputUpdate(Input& input);//入力の更新

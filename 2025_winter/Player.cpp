@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Arrow.h"
 #include "Bg.h"
+#include <cmath>
 
 namespace
 {
@@ -106,7 +107,7 @@ void Player::Update(Input& input)
 
 }
 
-void Player::Draw()
+void Player::Draw()//使わない
 {
 	float drawX = m_pos.x - m_pBg->GetScrollX();
 	float drawY = m_pos.y - m_pBg->GetScrollY();
@@ -173,7 +174,7 @@ void Player::Draw(Camera& camera)
 
 #ifdef _DEBUG
 	//当たり判定の描画
-	Character::Draw();
+	m_colRect.DrawCamera(camera.drawOffset.x,camera.drawOffset.y,GetColor(0,0,255),false);
 	m_attackRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 	m_burningRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 	m_frozenRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
@@ -803,20 +804,15 @@ void Player::ChangeArcher()
 	_state = PlayerState::Normal;
 }
 
-void Player::ShotArrow(std::vector<Arrow*>& _arrow)
+std::shared_ptr<Arrow> Player::ShotArrow()
 {
-	for (int i = 0; i < Arrow::Num; i++)
-	{
-		// 弾が画面上にでていない場合はその弾を画面に出す
-		if (_arrow[i]->isAlive == false)
-		{
-			// 矢の発射位置をセット、プレイヤーの中心にする
-			_arrow[i]->GetPosition() = m_pos;
+	std::shared_ptr<Arrow> arrow;
+	
+	arrow->ChangePos() = m_pos;
 
-			// 矢が撃たれたので、存在状態を保持する変数にtrueを代入する
-			_arrow[i]->isAlive = true;
-			_arrow[i]->m_playerdir = m_isRight;
-			break;	// 一発撃ったら抜ける
-		}
-	}
+	arrow->m_playerdir = m_isRight;
+		
+
+		return arrow;
+	
 }

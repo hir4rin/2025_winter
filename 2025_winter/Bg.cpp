@@ -1,6 +1,7 @@
 ﻿#include "Bg.h"
 #include "DxLib.h"
 #include "Player.h"
+#include "Camera.h"
 #include <fstream>
 #include <sstream>
 #include "Rect.h"
@@ -95,13 +96,13 @@ void Bg::Update()
 {
 
 }
-void Bg::Draw()
+void Bg::Draw(Camera& camera)
 {
-	DrawBg();
-	DrawMapChip();
+	DrawBg(camera);
+	DrawMapChip(camera);
 }
 
-void Bg::DrawBg()
+void Bg::DrawBg(Camera& camera)
 {
 	
 	//画像サイズを取得
@@ -111,8 +112,8 @@ void Bg::DrawBg()
 	GetGraphSize(m_bgH, &bgSize.width, &bgSize.height);
 
 
-	int scrollBg = GetScrollX() % (bgSize.width * 10);
-	DrawRectRotaGraph(graphHalfW - scrollBg , graphHalfH,  // 描画位置（中心座標）
+	
+	DrawRectRotaGraph(graphHalfW + camera.drawOffset.x , graphHalfH + camera.drawOffset.y,  // 描画位置（中心座標）
 		0, 0, // 元画像の切り取り開始位置（左上）
 		bgSize.width, bgSize.height,  // 切り取るサイズ（幅・高さ）
 		10.0, 0, // 拡大率（1.0で等倍）// 回転角度（ラジアン）
@@ -153,6 +154,45 @@ void Bg::DrawMapChip()
 		{
 			int posX = static_cast<int>(x * kChipSize * kChipScale - GetScrollX());
 			int posY = static_cast<int>(y * kChipSize * kChipScale - GetScrollY());
+
+			// 画面外は描画しない
+			if (posX < 0 - kChipSize) continue;
+			if (posX > kScreenSizeWidth) continue;
+			if (posY < 0 - kChipSize) continue;
+			if (posY > kScreenSizeHeight) continue;
+
+			// 設置するチップ
+			int chipNo = m_chipData[x][y];
+			//if (chipNo == 5) continue; // チップ番号5は空白なので描画しない
+
+			// マップチップのグラフィック切り出し座標
+			int srcX = kChipSize * (chipNo % m_graphChipNumX);
+			int srcY = kChipSize * (chipNo / m_graphChipNumX);//???
+
+			DrawRectRotaGraph(
+				static_cast<int>(posX + kChipSize * kChipScale * 0.5f),
+				static_cast<int>(posY + kChipSize * kChipScale * 0.5f),
+				srcX, srcY,
+				kChipSize, kChipSize,
+				kChipScale, 0.0f,
+				m_mapH, true);
+
+#ifdef _DEBUG
+			// 当たり判定
+			DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale, 0x00ff00, false);
+#endif
+		}
+	}
+}
+void Bg::DrawMapChip(Camera& camera)
+{
+	// マップチップの描画
+	for (int y = 0; y < kChipNumY; y++)
+	{
+		for (int x = 0; x < kChipNumX; x++)
+		{
+			int posX = static_cast<int>(x * kChipSize * kChipScale +camera.drawOffset.x);
+			int posY = static_cast<int>(y * kChipSize * kChipScale +camera.drawOffset.y);
 
 			// 画面外は描画しない
 			if (posX < 0 - kChipSize) continue;

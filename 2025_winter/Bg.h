@@ -3,6 +3,7 @@
 #include <memory>
 class Player;
 class Rect;
+class Camera;
 class Bg
 {
 public:
@@ -22,14 +23,18 @@ public:
 
 	void Init();
 	void Update();
-	void Draw();
+	void Draw(Camera& camera);
 
-	void DrawBg();
+	void DrawBg(Camera& camera);
 	void LoadMapData();
 	/// <summary>
 	/// マップチップ表示
 	/// </summary>
 	void DrawMapChip();
+	/// <summary>
+	/// マップチップ表示
+	/// </summary>
+	void DrawMapChip(Camera& camera);
 	/// <summary>
 	/// 指定した矩形と当たっているか判定する
 	/// </summary>

@@ -6,6 +6,7 @@
 
 class Player;
 class EnemyWizard;
+class EnemyRider;
 class Item;
 class Arrow;
 class Bg;
@@ -41,7 +42,15 @@ public:
 	/// </summary>
 	void ReactionBurning();
 
+	/// <summary>
+	/// Wizardが落とすアイテム
+	/// </summary>
 	void CheckItemWizard();
+
+	/// <summary>
+	/// OrcRiderが落とすアイテム
+	/// </summary>
+	void CheckItemOrcRider();
 public:
 	//-------------------------------------------------敵の数だけ引数が違うコンストラクタをつくる
 	/// <summary>
@@ -64,9 +73,10 @@ public:
 private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
+	std::vector<std::shared_ptr<EnemyRider>>  m_pEnemyRiders;
 	std::shared_ptr<Item> m_pItems;
 	Item* m_pItem;
-	std::vector<Arrow*> m_arrows;
+	std::vector<std::shared_ptr<Arrow>> m_arrows;
 
 	std::vector<std::shared_ptr<Frozen>> m_pFrozens;
 	std::vector<std::shared_ptr<BurningObject>> m_pBurningObjects;
