@@ -105,6 +105,7 @@ void SceneMain::Update()
 	if (m_pItems) m_pItems->Update();
 	for (auto& arrow : m_arrows)
 	{
+		if (!arrow) continue;
 		arrow->Update();
 	}
 	for (auto& m_pFrozen : m_pFrozens)
@@ -142,6 +143,7 @@ void SceneMain::Draw()
 	if (m_pItems) m_pItems->Draw(camera);
 	for (auto& arrow : m_arrows)
 	{
+		//if (arrow) continue;
 		arrow->Draw(camera);
 	}
 	for (auto& m_pBurningObject : m_pBurningObjects)

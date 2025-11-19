@@ -33,7 +33,7 @@ private:
 	const int kCharaSize = 100;
 	
 	const float kScale = 3;
-	std::vector<std::shared_ptr<EnemyWizard>> _enemyWizard;
+	std::vector<std::shared_ptr<EnemyWizard>> _enemyWizard;//敵と当たったら消す用
 	std::shared_ptr<Player> m_pPlayer;
 
 };

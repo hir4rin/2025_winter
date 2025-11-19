@@ -37,8 +37,7 @@ void Arrow::Update()
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kArrowWidth, kArrowHeight);
 
 
-	if (isAlive)
-	{
+	
 		Vec2 shotVel = m_dir * (m_playerdir ? m_speed : -m_speed);
 		m_pos += shotVel;
 
@@ -47,7 +46,7 @@ void Arrow::Update()
 			isAlive = false;
 			return;
 		}
-		for (auto& num : _enemyWizard)
+		for (auto& num : _enemyWizard)//敵と当たったら消す処理
 		{
 			bool isHit = m_colRect.IsCollision(num->GetColRect());
 			if (isHit)
@@ -59,15 +58,14 @@ void Arrow::Update()
 				break;
 			}
 		}
-	}	
+	
 
 }
 void Arrow::Draw()
 {
 	
 	
-	if (isAlive == true)
-	{
+	
 		// 弾を描画する
 		const float shotHalfW = kCharaSize * 0.5f;
 		const float shotHalfH = kCharaSize * 0.5f;
@@ -77,15 +75,14 @@ void Arrow::Draw()
 			kScale, 1.0f,
 			0.0f, m_handle,
 			true, m_playerdir ? false : true);
-	}
+	
 
 
 }
 void Arrow::Draw(Camera& camera)
 {
 	
-	if (isAlive == true)
-	{
+	
 		// 弾を描画する
 		const float shotHalfW = kCharaSize * 0.5f;
 		const float shotHalfH = kCharaSize * 0.5f;
@@ -95,7 +92,7 @@ void Arrow::Draw(Camera& camera)
 			kScale, 1.0f,
 			0.0f, m_handle,
 			true, m_playerdir ? false : true);
-	}
+	
 
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 

@@ -9,6 +9,7 @@
 #include "Arrow.h"
 #include "Bg.h"
 #include <cmath>
+#include <memory>
 
 namespace
 {
@@ -807,6 +808,7 @@ void Player::ChangeArcher()
 std::shared_ptr<Arrow> Player::ShotArrow()
 {
 	std::shared_ptr<Arrow> arrow;
+	arrow = std::make_shared<Arrow>();
 	
 	arrow->ChangePos() = m_pos;
 
