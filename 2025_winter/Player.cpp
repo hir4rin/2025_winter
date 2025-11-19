@@ -110,77 +110,101 @@ void Player::Update(Input& input)
 
 void Player::Draw()//使わない
 {
-	float drawX = m_pos.x - m_pBg->GetScrollX();
-	float drawY = m_pos.y - m_pBg->GetScrollY();
-
-
-
-
-#ifdef _DEBUG
-	//当たり判定の描画
-	Character::Draw();
-	m_attackRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-	m_burningRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-	m_frozenRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-	m_archerRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-	m_copyRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-#endif
-	switch (_type)
-	{
-	case PlayerType::Normal:;//アニメーションの遷移
-		NormalAnim();
-		break;
-	case PlayerType::Burning:;//アニメーションの遷移
-		BurningAnim();
-		break;
-	case PlayerType::Frozen:;//アニメーションの遷移
-		FrozenAnim();
-		break;
-	case PlayerType::Archer:;//アニメーションの遷移
-		ArcherAnim();
-		break;
-	}
-
-	if (m_isRight)
-	{
-		DrawRectRotaGraph(drawX, drawY,
-		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true);
-	}
-	else
-	{
-		DrawRectRotaGraph(drawX, drawY,
-		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true, true);
-	}
-
-#ifdef _DEBUG
-	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
-	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", _state);
-	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", _type);
-	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
-	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
-#endif
+//	float drawX = m_pos.x - m_pBg->GetScrollX();
+//	float drawY = m_pos.y - m_pBg->GetScrollY();
+//
+//
+//
+//
+//#ifdef _DEBUG
+//	//当たり判定の描画
+//	Character::Draw();
+//	m_attackRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+//	m_burningRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+//	m_frozenRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+//	m_archerRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+//	m_copyRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
+//#endif
+//	switch (_type)
+//	{
+//	case PlayerType::Normal:;//アニメーションの遷移
+//		NormalAnim();
+//		break;
+//	case PlayerType::Burning:;//アニメーションの遷移
+//		BurningAnim();
+//		break;
+//	case PlayerType::Frozen:;//アニメーションの遷移
+//		FrozenAnim();
+//		break;
+//	case PlayerType::Archer:;//アニメーションの遷移
+//		ArcherAnim();
+//		break;
+//	}
+//
+//	if (m_isRight)
+//	{
+//		DrawRectRotaGraph(drawX, drawY,
+//		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
+//		player_cut_w, player_cut_h,//切り取りの幅
+//		player_scale, 0.0f, m_handle, true);
+//	}
+//	else
+//	{
+//		DrawRectRotaGraph(drawX, drawY,
+//		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
+//		player_cut_w, player_cut_h,//切り取りの幅
+//		player_scale, 0.0f, m_handle, true, true);
+//	}
+//
+//#ifdef _DEBUG
+//	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
+//	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", _state);
+//	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", _type);
+//	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
+//	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
+//#endif
 }
 
 void Player::Draw(Camera& camera)
 {
-	float drawX = m_pos.x - m_pBg->GetScrollX();
-	float drawY = m_pos.y - m_pBg->GetScrollY();
-
-
-
-
+	
 #ifdef _DEBUG
 	//当たり判定の描画
+	//当たり判定の描画(変身攻撃など)
+	switch (_state)
+	{
+	case PlayerState::Normal://アップデートの遷移
+	
+		break;
+	case PlayerState::Attack://アップデートの遷移
+		switch (_type)
+		{
+		case PlayerType::Normal://Normalの攻撃判定
+			m_attackRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+			break;
+		case PlayerType::Burning://バーニングの攻撃判定
+			m_burningRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+			break;
+		case PlayerType::Frozen://フローズンの攻撃判定
+			m_frozenRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+			break;
+		case PlayerType::Archer://アーチャーの攻撃判定
+			m_archerRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+			break;
+
+		}
+		
+		break;
+	case PlayerState::Copy://アップデートの遷移
+		m_copyRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+		break;
+	}
 	m_colRect.DrawCamera(camera.drawOffset.x,camera.drawOffset.y,GetColor(0,0,255),false);
-	m_attackRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-	m_burningRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-	m_frozenRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-	m_archerRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-	m_copyRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+	
+	
+	
+	
+	
 #endif
 	switch (_type)
 	{
@@ -420,13 +444,13 @@ void Player::Attack()
 	{
 	case PlayerType::Normal:
 		//Normalの攻撃アニメーション
-		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -70.0f), m_pos.y - kCharaSize, 60.0f, 80.0f);
+		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -70.0f), m_pos.y - kCharaSize, 60.0f, 80.0f);//50
 		break;
 	case PlayerType::Burning:
-		m_burningRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);
+		m_burningRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);//80
 		break;
 	case PlayerType::Frozen:
-		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);
+		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -120.0f), m_pos.y - kCharaSize, 110.0f, 80.0f);//100
 		break;
 	case PlayerType::Archer:
 		m_archerRect.SetLT(0, 0, 0, 0);

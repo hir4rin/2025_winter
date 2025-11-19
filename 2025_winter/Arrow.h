@@ -5,6 +5,7 @@
 
 
 class EnemyWizard;
+class EnemyRider;
 class Player;
 class Camera;
 class Arrow :public Character
@@ -15,14 +16,22 @@ public:
 	virtual ~Arrow();
 	void Init()override;
 	void Update()override;
+	
 	void Draw()override;
 	void Draw(Camera& camera);
+
+	void CheckEnemys(std::vector<std::shared_ptr<EnemyWizard>> _enemyWiz);
+	void CheckEnemys(std::vector<std::shared_ptr<EnemyRider>> _enemyRiders);
+
 	constexpr static int Num = 10;
 	Vec2& GetPosition() { return m_pos; }
 	
-	void SetEnemyWizard(std::vector<std::shared_ptr<EnemyWizard>>& wizards);//敵のポインタを渡す
-	void SetPlayer(std::shared_ptr<Player> pPlayer) { m_pPlayer = pPlayer;}
-	std::shared_ptr<EnemyWizard>  hitEnemy = nullptr;//当たって敵を一時保存
+	//void SetEnemyWizard(std::vector<std::shared_ptr<EnemyWizard>>& wizards);//敵のポインタを渡す
+	//void SetPlayer(std::shared_ptr<Player> pPlayer) { m_pPlayer = pPlayer;}
+	
+	//ほんとは矢に当たり判定ではなく、SceneMainにそれをやらせたい
+	std::shared_ptr<EnemyWizard>  hitEnemyWizard = nullptr;//矢に当たった敵を一時保存
+	std::shared_ptr<EnemyRider>  hitEnemyRider = nullptr;//矢に当たった敵を一時保存
 public:
 	bool isAlive;
 	Vec2 m_dir;
@@ -33,8 +42,8 @@ private:
 	const int kCharaSize = 100;
 	
 	const float kScale = 3;
-	std::vector<std::shared_ptr<EnemyWizard>> _enemyWizard;//敵と当たったら消す用
-	std::shared_ptr<Player> m_pPlayer;
+	
+	
 
 };
 

@@ -145,6 +145,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyArcher.cpp" />
     <ClCompile Include="EnemyRider.cpp" />
     <ClCompile Include="EnemyWizard.cpp" />
     <ClCompile Include="Frozen.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyArcher.h" />
     <ClInclude Include="EnemyRider.h" />
     <ClInclude Include="EnemyWizard.h" />
     <ClInclude Include="Frozen.h" />

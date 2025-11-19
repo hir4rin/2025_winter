@@ -202,7 +202,7 @@ void Bg::DrawMapChip(Camera& camera)
 
 			// 設置するチップ
 			int chipNo = m_chipData[x][y];
-			//if (chipNo == 5) continue; // チップ番号5は空白なので描画しない
+			if (chipNo == 5) continue; // チップ番号5は空白なので描画しない
 
 			// マップチップのグラフィック切り出し座標
 			int srcX = kChipSize * (chipNo % m_graphChipNumX);

@@ -42,19 +42,12 @@ public:
 	/// </summary>
 	void ReactionBurning();
 
-	/// <summary>
-	/// Wizardが落とすアイテム
-	/// </summary>
-	void CheckItemWizard();
-
-	/// <summary>
-	/// OrcRiderが落とすアイテム
-	/// </summary>
-	void CheckItemOrcRider();
+	
 public:
 	//-------------------------------------------------敵の数だけ引数が違うコンストラクタをつくる
 	/// <summary>
-	/// 通常状態の当たり判定チェック
+	/// 通常状態の当たり判定チェック,
+	/// アイテムもここで落ちる
 	/// </summary>
 	/// <param name="enemyWizards"></param>
 	void CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);

@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Rect.h"
 #include "EnemyWizard.h"
+#include "EnemyRider.h"
 #include "Player.h"
 #include "Camera.h"
 
@@ -13,9 +14,8 @@ namespace
 }
 
 Arrow::Arrow():
-	isAlive(false),
+	isAlive(true),
 	m_dir(1,0),
-	m_pPlayer(nullptr),
 	m_playerdir(false)
 	
 {
@@ -46,20 +46,43 @@ void Arrow::Update()
 			isAlive = false;
 			return;
 		}
-		for (auto& num : _enemyWizard)//敵と当たったら消す処理
+	//敵と当たったら消す処理は別
+	
+
+}
+void Arrow::CheckEnemys(std::vector<std::shared_ptr<EnemyWizard>> _enemyWiz)
+{
+		for (auto& num : _enemyWiz)//敵と当たったら消す処理
 		{
+			if (!num) continue;
 			bool isHit = m_colRect.IsCollision(num->GetColRect());
 			if (isHit)
 			{
 				//当たった敵を消す
-				hitEnemy = num;
+				hitEnemyWizard = num;
 				//矢を消す
 				isAlive = false;
+				//このとき、矢をけす方法を考える
 				break;
 			}
 		}
-	
-
+}
+void Arrow::CheckEnemys(std::vector<std::shared_ptr<EnemyRider>> _enemyRiders)
+{
+		for (auto& num : _enemyRiders)//敵と当たったら消す処理
+		{
+			if (!num) continue;
+			bool isHit = m_colRect.IsCollision(num->GetColRect());
+			if (isHit)
+			{
+				//当たった敵を消す
+				hitEnemyRider = num;
+				//矢を消す
+				isAlive = false;
+				//このとき、矢をけす方法を考える
+				break;
+			}
+		}
 }
 void Arrow::Draw()
 {
@@ -99,8 +122,3 @@ void Arrow::Draw(Camera& camera)
 
 }
 
-void Arrow::SetEnemyWizard(std::vector<std::shared_ptr<EnemyWizard>>& wizards)
-{
-
-	_enemyWizard = wizards;
-}

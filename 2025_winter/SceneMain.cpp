@@ -105,8 +105,17 @@ void SceneMain::Update()
 	if (m_pItems) m_pItems->Update();
 	for (auto& arrow : m_arrows)
 	{
+
 		if (!arrow) continue;
+		if (arrow->isAlive == false)//矢が消えてるサインが出たらけす
+		{
+			arrow = nullptr;
+			continue;
+		}
+		//敵を渡すようにする
 		arrow->Update();
+		arrow->CheckEnemys(m_pEnemyWizards);
+		arrow->CheckEnemys(m_pEnemyRiders);
 	}
 	for (auto& m_pFrozen : m_pFrozens)
 	{
@@ -118,8 +127,8 @@ void SceneMain::Update()
 	}
 	CheckHit();//当たり判定
 	CheckArrowHit();
-	CheckItemWizard();
-	CheckItemOrcRider();
+	//CheckItemWizard();
+	//CheckItemOrcRider();
 	CheckFrozenHit();
 }
 
@@ -143,7 +152,7 @@ void SceneMain::Draw()
 	if (m_pItems) m_pItems->Draw(camera);
 	for (auto& arrow : m_arrows)
 	{
-		//if (arrow) continue;
+		if (!arrow) continue;
 		arrow->Draw(camera);
 	}
 	for (auto& m_pBurningObject : m_pBurningObjects)
@@ -181,11 +190,29 @@ void SceneMain::CheckHit()
 				if (isHitItem)
 				{
 					//ここにアイテムを取得したときの処理を書く
+					if (m_pItems->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
+					{
+
+						m_pPlayer->ChangeBurning();
+						m_pItems = nullptr;
+						
+					}
+					else if (m_pItems->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
+					{
+
+						m_pPlayer->ChangeFrozen();
+						m_pItems = nullptr;
+						
+					}
+					else if (m_pItems->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
+					{
+
+						m_pPlayer->ChangeArcher();
+						m_pItems = nullptr;
+						
+					}
 				
-					m_pItems = nullptr;
-					//m_pPlayer->ChangeBurning();
-					//m_pPlayer->ChangeFrozen();
-					m_pPlayer->ChangeArcher();
+					
 
 				}
 			}
@@ -202,9 +229,9 @@ void SceneMain::CheckArrowHit()
 {
 	for (auto& num : m_arrows)
 	{
-		if (num == nullptr || !num->hitEnemy)continue;
+		if (num == nullptr || !num->hitEnemyWizard)continue;
 
-		std::shared_ptr<EnemyWizard> enemy = num->hitEnemy;
+		std::shared_ptr<EnemyWizard> enemy = num->hitEnemyWizard;
 
 		//敵リストから一致するやつを探して削除
 		for (auto& e : m_pEnemyWizards)
@@ -217,7 +244,26 @@ void SceneMain::CheckArrowHit()
 			}
 		}
 		//矢のヒット情報をリセット
-		num->hitEnemy = nullptr;
+		num->hitEnemyWizard = nullptr;
+	}
+	for (auto& num : m_arrows)
+	{
+		if (num == nullptr || !num->hitEnemyRider)continue;
+
+		std::shared_ptr<EnemyRider> enemy = num->hitEnemyRider;
+
+		//敵リストから一致するやつを探して削除
+		for (auto& e : m_pEnemyRiders)
+		{
+			if (e == enemy)
+			{
+				
+				e = nullptr;
+				break;
+			}
+		}
+		//矢のヒット情報をリセット
+		num->hitEnemyRider = nullptr;
 	}
 }
 
@@ -230,6 +276,8 @@ void SceneMain::CheckFrozenHit()
 		bool isHitFrozen = m_pPlayer->GetColRect().IsCollision(m_pFrozen->GetColRect());
 		if (isHitFrozen)
 		{
+			//プレイヤーが攻撃モーションのときは氷は動かせない
+			if (m_pPlayer->GetState() == PlayerState::Attack)return;
 			bool dir = m_pPlayer->GetPos().x < m_pFrozen->GetPos().x;
 			Vec2 add = { dir ? 5.0f : -5.0f,   0 };
 			m_pFrozen->AddVel(add);
@@ -238,7 +286,7 @@ void SceneMain::CheckFrozenHit()
 		}
 		if (m_pFrozen->isMove)
 		{
-			//動いているときに敵と当たる
+			//動いているときに敵と当たる//ペンギン
 			for (auto& enemyWizard : m_pEnemyWizards)
 			{
 				if (!enemyWizard) continue;
@@ -250,7 +298,20 @@ void SceneMain::CheckFrozenHit()
 				}
 
 			}
+			//動いているときに敵と当たる//オークライダー
+			for (auto& enemyRider : m_pEnemyRiders)
+			{
+				if (!enemyRider) continue;
+				bool isHitEnemy = enemyRider->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+				if (isHitEnemy)
+				{
+					enemyRider = nullptr;
+				}
+
+			}
 		}
+		
 		//ついでにカメラの外に出たら消す処理
 		
 		//カメラの外だったらnullptrにする
@@ -298,43 +359,7 @@ void SceneMain::ReactionBurning()
 
 }
 
-void SceneMain::CheckItemWizard()
-{
-	for (auto& wizard : m_pEnemyWizards)
-	{
-		if ( wizard == nullptr || !wizard->HitWizard)continue;
-		
-			//アイテムを落とす処理
-			m_pItems = std::make_shared<Item>();//新しくアイテムを生成
-			m_pItems->SetBgPointer(m_pBg);
-			m_pItems->ChangePos() = wizard->GetPos();
-			//敵のヒット情報をリセット
-			wizard->HitWizard = nullptr;
 
-
-			
-			wizard = nullptr;
-	}
-}
-
-void SceneMain::CheckItemOrcRider()
-{
-	for (auto& rider : m_pEnemyRiders)
-	{
-		if (rider == nullptr || !rider->HitRider)continue;
-
-		//アイテムを落とす処理
-		m_pItems = std::make_shared<Item>();//新しくアイテムを生成//別のアイテムを渡す
-		m_pItems->SetBgPointer(m_pBg);
-		m_pItems->ChangePos() = rider->GetPos();
-		//敵のヒット情報をリセット
-		rider->HitRider = nullptr;
-
-
-
-		rider = nullptr;
-	}
-}
 
 void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
@@ -351,7 +376,16 @@ void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 			if (isHitAttack)
 			{
-				num->DropItem(num);
+				//num->DropItem(num);
+				//アイテムを落とす処理
+				m_pItems = std::make_shared<Item>(num);//新しくアイテムを生成
+				m_pItems->SetBgPointer(m_pBg);
+				m_pItems->ChangePos() = num->GetPos();
+				////敵のヒット情報をリセット
+				//wizard->HitWizard = nullptr;
+
+
+				num = nullptr;
 				//ここに敵が攻撃されたときの処理を書く
 				
 			}
@@ -371,8 +405,18 @@ void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 			if (isHitAttack)
 			{
-				num->DropItem(num);
+				//num->DropItem(num);
 				//ここに敵が攻撃されたときの処理を書く
+				//if (num == nullptr || !rider->HitRider)continue;
+
+				//アイテムを落とす処理
+				m_pItems = std::make_shared<Item>(num);//新しくアイテムを生成//別のアイテムを渡す
+				m_pItems->SetBgPointer(m_pBg);
+				m_pItems->ChangePos() = num->GetPos();
+				//敵のヒット情報をリセット
+				//num->HitRider = nullptr;
+
+				num = nullptr;
 				
 			}
 		

@@ -1,17 +1,32 @@
 ﻿#pragma once
 #include "Character.h"
-
+#include <memory>
 class Camera;
+class EnemyWizard;
+class EnemyRider;
+
+enum class ItemState
+{
+	Burning,
+	Frozen,
+	Archer
+
+};
 
 class Item :public Character
 {
 public:
-	Item();
+	Item(std::shared_ptr<EnemyWizard> _enemyWiz);
+	Item(std::shared_ptr<EnemyRider> _enemyRiders);
 	virtual ~Item();
 	virtual void Init() override;
 	virtual void Update() override;
 	virtual void Draw() override;
 	virtual void Draw(Camera& camera);
 
+	ItemState GetItemState() const { return m_state; }
+
+private:
+	ItemState m_state;
 };
 

@@ -34,6 +34,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		Pad::Update();
 		input.Update();
 		
+		if (CheckHitKey(KEY_INPUT_R))
+		{
+			if (pSceneMain != nullptr)
+			{
+				delete pSceneMain;
+				pSceneMain = nullptr;
+				pSceneMain = new SceneMain;
+				pSceneMain->Init();
+			}
+		}
 
 		pSceneMain->Update();
 		pSceneMain->Draw();
