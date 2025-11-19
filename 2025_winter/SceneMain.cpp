@@ -4,12 +4,14 @@
 #include "Player.h"
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
+#include "EnemyArcher.h"
 #include "Item.h"
 #include "DxLib.h"
 #include "Arrow.h"
 #include "Frozen.h"
 #include "BurningObject.h"
 #include "Bg.h"
+
 
 
 namespace
@@ -25,24 +27,35 @@ SceneMain::SceneMain():
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
 	m_pEnemyWizards.resize(3);//ペンギンの数
-	for (auto& enemy : m_pEnemyWizards)
+	for (int i = 0; i < m_pEnemyWizards.size(); i++)
 	{
-		static float x = 0.0f;
-		enemy = std::make_shared<EnemyWizard>();
-		enemy->SetBgPointer(m_pBg);
-		enemy->SetPlayer(m_pPlayer);
-		enemy->AddPos(Vec2{ x,0.0f });
-		x += 200;
+		float  distance = i * 200;
+		m_pEnemyWizards[i] = std::make_shared<EnemyWizard>();
+		m_pEnemyWizards[i]->SetBgPointer(m_pBg);
+		m_pEnemyWizards[i]->SetPlayer(m_pPlayer);
+		m_pEnemyWizards[i]->AddPos(Vec2{ distance,0.0f });
+		
 	}
 	m_pEnemyRiders.resize(2);//ライダーの数
-	for (auto& enemy : m_pEnemyRiders)
+	for (int i = 0; i <  m_pEnemyRiders.size(); i++)
 	{
-		static float x = 0.0f;
-		enemy = std::make_shared<EnemyRider>();
-		enemy->SetBgPointer(m_pBg);
-		enemy->SetPlayer(m_pPlayer);
-		enemy->AddPos(Vec2{ x,0.0f });
-		x += 200;
+		float  distance = i * 200;
+		m_pEnemyRiders[i] = std::make_shared<EnemyRider>();
+		m_pEnemyRiders[i]->SetBgPointer(m_pBg);
+		m_pEnemyRiders[i]->SetPlayer(m_pPlayer);
+		m_pEnemyRiders[i]->AddPos(Vec2{ distance,0.0f });
+		
+	}
+
+	m_pEnemyArchers.resize(3);
+	for (int i = 0; i < m_pEnemyArchers.size(); i++)
+	{
+		float  distance = i * 200;
+		m_pEnemyArchers[i] = std::make_shared<EnemyArcher>();
+		m_pEnemyArchers[i]->SetBgPointer(m_pBg);
+		m_pEnemyArchers[i]->SetPlayer(m_pPlayer);
+		m_pEnemyArchers[i]->AddPos(Vec2{ distance,0.0f });
+		i * 200;
 	}
 
 	//m_pItems = std::make_shared<Item>();
@@ -92,12 +105,16 @@ void SceneMain::Update()
 
 		m_pPlayer->isArrowAttack = false;
 	}
-	for (auto& enemy : m_pEnemyWizards)
+	for (auto& enemy : m_pEnemyWizards)//ペンギン
 	{
 		if (enemy) enemy->Update();
 	}
 
-	for (auto& enemy : m_pEnemyRiders)
+	for (auto& enemy : m_pEnemyRiders)//オークライダー
+	{
+		if (enemy) enemy->Update();
+	}
+	for (auto& enemy : m_pEnemyArchers)//狙撃手
 	{
 		if (enemy) enemy->Update();
 	}
@@ -141,11 +158,15 @@ void SceneMain::Draw()
 		if (m_pFrozen) m_pFrozen->Draw(camera);
 	}
 	m_pPlayer->Draw(camera);
-	for (auto& enemy : m_pEnemyWizards)
+	for (auto& enemy : m_pEnemyWizards)//ペンギン
 	{
 		if (enemy) enemy->Draw(camera);
 	}
-	for (auto& enemy : m_pEnemyRiders)
+	for (auto& enemy : m_pEnemyRiders)//オークライダー
+	{
+		if (enemy) enemy->Draw(camera);
+	}
+	for (auto& enemy : m_pEnemyArchers)//狙撃手
 	{
 		if (enemy) enemy->Draw(camera);
 	}
@@ -161,6 +182,8 @@ void SceneMain::Draw()
 	}
 	ReactionBurning();
 }
+
+
 
 
 
@@ -211,9 +234,6 @@ void SceneMain::CheckHit()
 						m_pItems = nullptr;
 						
 					}
-				
-					
-
 				}
 			}
 
@@ -307,6 +327,18 @@ void SceneMain::CheckFrozenHit()
 				if (isHitEnemy)
 				{
 					enemyRider = nullptr;
+				}
+
+			}
+			//動いているときに敵と当たる//どくろアーチャー
+			for (auto& enemyArcher : m_pEnemyArchers)
+			{
+				if (!enemyArcher) continue;
+				bool isHitEnemy = enemyArcher->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+				if (isHitEnemy)
+				{
+					enemyArcher = nullptr;
 				}
 
 			}
@@ -422,11 +454,59 @@ void SceneMain::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 		
 		}
 	}
+	for (auto& num : m_pEnemyArchers)//どくろアーチャー
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			if (num == nullptr)continue;
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
+
+		
+			//矢の処理は別の場所(CheckhitArrow)
+
+			if (isHitAttack)
+			{
+				//num->DropItem(num);
+				//ここに敵が攻撃されたときの処理を書く
+				//if (num == nullptr || !rider->HitRider)continue;
+
+				//アイテムを落とす処理
+				m_pItems = std::make_shared<Item>(num);//新しくアイテムを生成//別のアイテムを渡す
+				m_pItems->SetBgPointer(m_pBg);
+				m_pItems->ChangePos() = num->GetPos();
+				//敵のヒット情報をリセット
+				//num->HitRider = nullptr;
+
+				num = nullptr;
+				
+			}
+		
+		}
+	}
 }
 
 void SceneMain::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
 	for (auto& num : m_pEnemyWizards)//ペンギン
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() >= 0)
+		{
+			if (num == nullptr)continue;
+
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
+
+			if (isHitBurning)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pBurningObjects.push_back(std::make_shared<BurningObject>(num));
+				num = nullptr;
+			}
+
+		}
+	}
+	for (auto& num : m_pEnemyRiders)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
@@ -444,7 +524,7 @@ void SceneMain::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 
 		}
 	}
-	for (auto& num : m_pEnemyRiders)//オークライダー
+	for (auto& num : m_pEnemyArchers)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
@@ -487,6 +567,26 @@ void SceneMain::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 		}
 	}
 	for (auto& num : m_pEnemyRiders)//オークライダー
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			if (num == nullptr)continue;
+
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
+			//矢の処理は別の場所(CheckhitArrow)
+
+
+			if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pFrozens.push_back(std::make_shared<Frozen>(num));
+				num = nullptr;
+			}
+
+		}
+	}
+	for (auto& num : m_pEnemyRiders)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)

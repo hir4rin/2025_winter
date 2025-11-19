@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
+#include "EnemyArcher.h"
 
 
 namespace
@@ -22,6 +23,11 @@ Frozen::Frozen(std::shared_ptr<EnemyRider> _enemyRiders)
 {
 	m_handle = LoadGraph("data/icebox.png");
 	m_pos = _enemyRiders->GetPos();
+}
+Frozen::Frozen(std::shared_ptr<EnemyArcher> _enemyArchers)
+{
+	m_handle = LoadGraph("data/icebox.png");
+	m_pos = _enemyArchers->GetPos();
 }
 
 Frozen::~Frozen()

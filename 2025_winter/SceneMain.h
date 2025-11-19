@@ -7,6 +7,7 @@
 class Player;
 class EnemyWizard;
 class EnemyRider;
+class EnemyArcher;
 class Item;
 class Arrow;
 class Bg;
@@ -67,6 +68,9 @@ private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
 	std::vector<std::shared_ptr<EnemyRider>>  m_pEnemyRiders;
+	std::vector < std::shared_ptr<EnemyArcher>> m_pEnemyArchers;
+
+	//アイテムは今のところ一つだけ
 	std::shared_ptr<Item> m_pItems;
 	Item* m_pItem;
 	std::vector<std::shared_ptr<Arrow>> m_arrows;

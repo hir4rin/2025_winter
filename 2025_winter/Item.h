@@ -4,6 +4,7 @@
 class Camera;
 class EnemyWizard;
 class EnemyRider;
+class EnemyArcher;
 
 enum class ItemState
 {
@@ -18,6 +19,7 @@ class Item :public Character
 public:
 	Item(std::shared_ptr<EnemyWizard> _enemyWiz);
 	Item(std::shared_ptr<EnemyRider> _enemyRiders);
+	Item(std::shared_ptr<EnemyArcher> _enemyArchers);
 	virtual ~Item();
 	virtual void Init() override;
 	virtual void Update() override;

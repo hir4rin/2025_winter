@@ -3,6 +3,7 @@
 #include "Rect.h"
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
+#include "EnemyArcher.h"
 #include "Player.h"
 #include "Camera.h"
 
@@ -40,7 +41,7 @@ void Arrow::Update()
 	
 		Vec2 shotVel = m_dir * (m_playerdir ? m_speed : -m_speed);
 		m_pos += shotVel;
-
+		//カメラとつないで消す処理を行う必要がある
 		if (m_pos.x > AliveLimitX || m_pos.x < 0)
 		{
 			isAlive = false;
@@ -77,6 +78,23 @@ void Arrow::CheckEnemys(std::vector<std::shared_ptr<EnemyRider>> _enemyRiders)
 			{
 				//当たった敵を消す
 				hitEnemyRider = num;
+				//矢を消す
+				isAlive = false;
+				//このとき、矢をけす方法を考える
+				break;
+			}
+		}
+}
+void Arrow::CheckEnemys(std::vector<std::shared_ptr<EnemyArcher>> _enemyArchers)
+{
+		for (auto& num : _enemyArchers)//敵と当たったら消す処理
+		{
+			if (!num) continue;
+			bool isHit = m_colRect.IsCollision(num->GetColRect());
+			if (isHit)
+			{
+				//当たった敵を消す
+				hitEnemyArcher = num;
 				//矢を消す
 				isAlive = false;
 				//このとき、矢をけす方法を考える

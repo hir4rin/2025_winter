@@ -6,11 +6,13 @@
 class Camera;
 class EnemyWizard;
 class EnemyRider;
+class EnemyArcher;
 class BurningObject:public Character
 {
 public:
 	BurningObject(std::shared_ptr<EnemyWizard> _enemyWiz);
 	BurningObject(std::shared_ptr<EnemyRider> _enemyRiders);
+	BurningObject(std::shared_ptr<EnemyArcher> _enemyArchers);
 	virtual ~BurningObject();
 
 	void Init()override;

@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Camera.h"
 #include "EnemyWizard.h"
+#include "EnemyArcher.h"
 
 namespace
 {
@@ -29,6 +30,12 @@ Item::Item(std::shared_ptr<EnemyRider> _enemyRiders)
 	m_handle = LoadGraph("data/BurningCard.png");
 	m_pos = kInitPos;
 	m_state = ItemState::Burning;
+}
+Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers)
+{
+	m_handle = LoadGraph("data/BurningCard.png");
+	m_pos = kInitPos;
+	m_state = ItemState::Archer;
 }
 
 Item::~Item()
@@ -75,9 +82,9 @@ void Item::Draw(Camera& camera)
 	else if (m_state == ItemState::Archer)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		player_cut_w * 0, player_cut_h * 0,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true);
+		burning_cut_w * 0, burning_cut_h * 0,//切り取り左上
+		burning_cut_w, burning_cut_h,//切り取りの幅
+		burning_scale, 0.0f, m_handle, true);
 	}
 
 	
