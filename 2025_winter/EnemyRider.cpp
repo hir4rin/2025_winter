@@ -14,13 +14,7 @@ namespace
 
 
 	constexpr float kAttackSpeed = 3.0f;//攻撃時の速度
-	float attackTime = 90.0f;  //攻撃の時間
-	float attackTimer = 0.0f;//攻撃を計るタイマー
 
-	float coolTimer = 0.0f;//クールダウンを図るタイマー
-	float coolTime = 180.0f;//クールタイム
-
-	float catchDistance = 500.0f;//プレイヤーを見つける距離
 }
 
 
@@ -175,9 +169,10 @@ void EnemyRider::AttackUpdate()
 	{
 		if (coolTimer <= 0)//クールタイムが0になったら
 		{
+			AnimChange(EnemyState::Attack);
 			isAttack = true;
 			attackTimer = attackTime;
-			AnimChange(EnemyState::Attack);
+			
 			bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 			dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
 		}

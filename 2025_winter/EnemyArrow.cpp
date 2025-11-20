@@ -13,6 +13,8 @@ namespace
 
 EnemyArrow::EnemyArrow():
 	isAlive(true),
+
+
 	m_dir(1, 0),
 	m_enemydir(false)
 {
@@ -52,7 +54,7 @@ void EnemyArrow::Draw()
 }
 void EnemyArrow::CheckPlayer(std::shared_ptr<Player> m_pPlayer)
 {
-	if (!m_pPlayer) return;
+	//if (!m_pPlayer) return;
 
 	//自分と当たった時の処理(未解決)
 

@@ -33,6 +33,14 @@ private:
 
 	bool isAttack;//攻撃しているかどうか
 
+	float attackTime = 90.0f;  //攻撃の時間
+	float attackTimer = 0.0f;//攻撃を計るタイマー
+
+	float coolTimer = 0.0f;//クールダウンを図るタイマー
+	float coolTime = 180.0f;//クールタイム
+
+	float catchDistance = 500.0f;//プレイヤーを見つける距離
+
 
 };
 

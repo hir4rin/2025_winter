@@ -40,6 +40,12 @@ private:
 	void Attack();//実際に攻撃をする処理
 
 	bool isAttack;//攻撃しているかどうか
+
+	float attackTime = 46.0f;  //攻撃の時間
+	float attackTimer = 0.0f;//攻撃を計るタイマー
+
+	float coolTimer = 0.0f;//クールダウンを図るタイマー
+	float coolTime = 180.0f;//クールタイム
 	
 };
 

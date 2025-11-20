@@ -15,11 +15,7 @@ namespace
 
 
 	constexpr float kAttackSpeed = 3.0f;//攻撃時の速度
-	float attackTime = 90.0f;  //攻撃の時間
-	float attackTimer = 0.0f;//攻撃を計るタイマー
-
-	float coolTimer = 0.0f;//クールダウンを図るタイマー
-	float coolTime = 180.0f;//クールタイム
+	
 
 	float catchDistance = 400.0f;//プレイヤーを見つける距離
 }
@@ -101,7 +97,7 @@ void EnemyArcher::Draw(Camera& camera)
 	case EnemyState::Attack://Attack
 		if (isAttack == true)
 		{
-			if (m_animframe == 10)
+			if (m_animframe == 35)
 			{
 				isArrowAttack = true;//矢を発射
 			}
@@ -141,13 +137,21 @@ void EnemyArcher::Draw(Camera& camera)
 	}
 
 	//キャラとプレイヤーとの距離を表示
-	DrawBox(m_pos.x - catchDistance / 2 + camera.drawOffset.x, 0, m_pos.x + catchDistance / 2 + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
+	DrawBox(m_pos.x - catchDistance  + camera.drawOffset.x, 0, m_pos.x + catchDistance + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 }
 
 void EnemyArcher::AnimChange(const EnemyState state)
 {
 
-	if (isAttack)return;
+	if (isAttack)
+	{
+		if (m_animframe = 45)//アニメーションが終わったら
+		{
+			isAttack = false;
+			//return;
+		}
+		
+	}
 
 	if (_state != state)
 	{
@@ -173,6 +177,7 @@ void EnemyArcher::AttackUpdate()
 {
 
 	coolTimer--;
+	if (coolTimer > 0)return;
 	//ぷれいやーのとの距離が近くなったら攻撃を出す
 	float distance = m_pPlayer->GetPos().x - m_pos.x;
 	if (distance < 0)distance = -distance;//絶対値にする
@@ -180,9 +185,11 @@ void EnemyArcher::AttackUpdate()
 	{
 		if (coolTimer <= 0)//クールタイムが0になったら
 		{
+			AnimChange(EnemyState::Attack);
 			isAttack = true;
 			attackTimer = attackTime;
-			AnimChange(EnemyState::Attack);
+			
+			m_animframe = 0;//アニメーションを最初からにする
 			//弓矢が移動するかはまだ検討中
 			/*bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 			dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;*/
@@ -193,6 +200,7 @@ void EnemyArcher::AttackUpdate()
 		//敵はプレイヤーの向きに攻撃する
 
 		Attack();
+		//AnimChange(EnemyState::Attack);
 
 	}
 
@@ -204,7 +212,7 @@ void EnemyArcher::Attack()
 	if (attackTimer <= 0)
 	{
 		//_state = EnemyState::Normal;
-		attackTimer = attackTime;
+		//attackTimer = attackTime;
 		isAttack = false;
 		m_vel = zero;
 		coolTimer = coolTime;
