@@ -285,6 +285,25 @@ void SceneMain::CheckArrowHit()
 		//矢のヒット情報をリセット
 		num->hitEnemyRider = nullptr;
 	}
+	for (auto& num : m_arrows)//どくろアーチャー
+	{
+		if (num == nullptr || !num->hitEnemyArcher)continue;
+
+		std::shared_ptr<EnemyArcher> enemy = num->hitEnemyArcher;
+
+		//敵リストから一致するやつを探して削除
+		for (auto& e : m_pEnemyArchers)
+		{
+			if (e == enemy)
+			{
+				
+				e = nullptr;
+				break;
+			}
+		}
+		//矢のヒット情報をリセット
+		num->hitEnemyArcher = nullptr;
+	}
 }
 
 void SceneMain::CheckFrozenHit()
@@ -586,7 +605,7 @@ void SceneMain::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 		}
 	}
-	for (auto& num : m_pEnemyRiders)//どくろアーチャー
+	for (auto& num : m_pEnemyArchers)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
