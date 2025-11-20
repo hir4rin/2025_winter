@@ -8,6 +8,7 @@
 #include "Item.h"
 #include "DxLib.h"
 #include "Arrow.h"
+#include "EnemyArrow.h"
 #include "Frozen.h"
 #include "BurningObject.h"
 #include "Bg.h"
@@ -95,7 +96,7 @@ void SceneMain::Update()
 	m_pBg->Update();
 	input.Update();
 	m_pPlayer->Update(input);
-	if (m_pPlayer->isArrowAttack)
+	if (m_pPlayer->isArrowAttack)//矢の出現
 	{
 		//ポインタを作ってその座標を入れる
 		std::shared_ptr<Arrow> arrow = m_pPlayer->ShotArrow();
@@ -105,6 +106,23 @@ void SceneMain::Update()
 
 		m_pPlayer->isArrowAttack = false;
 	}
+	for (auto& m_pEnemyArcher : m_pEnemyArchers)//敵の矢の出現
+	{
+		if (!m_pEnemyArcher)continue;
+		if (m_pEnemyArcher->isArrowAttack)
+		{
+			//ポインタを作ってその座標を入れる
+			std::shared_ptr<EnemyArrow> arrow = m_pEnemyArcher->ShotArrow();
+
+			//それをpush_backする
+			m_pEnemyArrows.push_back(arrow);
+
+			m_pEnemyArcher->isArrowAttack = false;
+		}
+
+	}
+	
+
 	for (auto& enemy : m_pEnemyWizards)//ペンギン
 	{
 		if (enemy) enemy->Update();
@@ -120,7 +138,7 @@ void SceneMain::Update()
 	}
 
 	if (m_pItems) m_pItems->Update();
-	for (auto& arrow : m_arrows)
+	for (auto& arrow : m_arrows)//矢のアップデート
 	{
 
 		if (!arrow) continue;
@@ -133,6 +151,21 @@ void SceneMain::Update()
 		arrow->Update();
 		arrow->CheckEnemys(m_pEnemyWizards);
 		arrow->CheckEnemys(m_pEnemyRiders);
+		arrow->CheckEnemys(m_pEnemyArchers);
+	}
+	for (auto& arrow : m_pEnemyArrows)//敵の矢のアップデート
+	{
+
+		if (!arrow) continue;
+		if (arrow->isAlive == false)//矢が消えてるサインが出たらけす
+		{
+			arrow = nullptr;
+			continue;
+		}
+		//敵を渡すようにする
+		arrow->Update();
+		arrow->CheckPlayer(m_pPlayer);
+		
 	}
 	for (auto& m_pFrozen : m_pFrozens)
 	{
@@ -171,7 +204,12 @@ void SceneMain::Draw()
 		if (enemy) enemy->Draw(camera);
 	}
 	if (m_pItems) m_pItems->Draw(camera);
-	for (auto& arrow : m_arrows)
+	for (auto& arrow : m_arrows)//弓矢
+	{
+		if (!arrow) continue;
+		arrow->Draw(camera);
+	}
+	for (auto& arrow : m_pEnemyArrows)//敵の矢
 	{
 		if (!arrow) continue;
 		arrow->Draw(camera);

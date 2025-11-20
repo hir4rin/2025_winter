@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Enemy.h"
-#include "Arrow.h"
+#include "EnemyArrow.h"
 #include <vector>
 
 class Camera;
@@ -19,6 +19,11 @@ public:
 	void Draw(Camera& camera);
 
 	//矢はプレイヤーと同じようにさせる
+
+	//関数
+	std::shared_ptr<EnemyArrow> ShotArrow();//矢を発射させる
+
+	bool isArrowAttack;//矢を撃ったかどうか
 private:
 	int charaIdx;
 	int charaIdy;
@@ -35,5 +40,6 @@ private:
 	void Attack();//実際に攻撃をする処理
 
 	bool isAttack;//攻撃しているかどうか
+	
 };
 

@@ -10,6 +10,7 @@ class EnemyRider;
 class EnemyArcher;
 class Item;
 class Arrow;
+class EnemyArrow;
 class Bg;
 class Character;
 class Frozen;
@@ -74,6 +75,7 @@ private:
 	std::shared_ptr<Item> m_pItems;
 	Item* m_pItem;
 	std::vector<std::shared_ptr<Arrow>> m_arrows;
+	std::vector<std::shared_ptr<EnemyArrow>> m_pEnemyArrows;
 
 	std::vector<std::shared_ptr<Frozen>> m_pFrozens;
 	std::vector<std::shared_ptr<BurningObject>> m_pBurningObjects;

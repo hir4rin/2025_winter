@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Player.h"
 #include "Camera.h"
+#include "EnemyArrow.h"
 
 
 namespace
@@ -29,12 +30,13 @@ EnemyArcher::EnemyArcher():
 	charaIdx(0),
 	charaIdy(0),
 	m_animframe(0),
-	isAttack(false)
+	isAttack(false),
+	isArrowAttack(false)
 {
 	m_handle = LoadGraph("data/EnemyArcher.png");
 	m_pos = kInitPos;
 	m_isRight = false;
-	_state = EnemyState::Walk;
+	_state = EnemyState::Attack;
 }
 
 EnemyArcher::~EnemyArcher()
@@ -99,6 +101,10 @@ void EnemyArcher::Draw(Camera& camera)
 	case EnemyState::Attack://Attack
 		if (isAttack == true)
 		{
+			if (m_animframe == 10)
+			{
+				isArrowAttack = true;//矢を発射
+			}
 			charaIdx = (m_animframe / 5) % 9;
 			charaIdy = 2;
 			drawY += enemy_cut_h / 8;
@@ -203,5 +209,19 @@ void EnemyArcher::Attack()
 		m_vel = zero;
 		coolTimer = coolTime;
 	}
+}
+
+std::shared_ptr<EnemyArrow> EnemyArcher::ShotArrow()
+{
+	std::shared_ptr<EnemyArrow> arrow;
+	arrow = std::make_shared<EnemyArrow>();
+
+	arrow->ChangePos() = m_pos;
+
+	arrow->m_enemydir = m_isRight;
+
+
+	return arrow;
+
 }
 
