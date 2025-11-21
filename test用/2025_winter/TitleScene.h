@@ -1,26 +1,25 @@
-#pragma once
+ï»¿#pragma once
 #include "Scene.h"
-class TitleScene :  public Scene	// Scene‚©‚çŒp³‚µ‚½TitleScene
+class TitleScene :  public Scene	// Sceneã‹ã‚‰ç¶™æ‰¿ã—ãŸTitleScene
 {
 private:
-	int titleH_;	// ƒ^ƒCƒgƒ‹‰æ‘œƒnƒ“ƒhƒ‹
-	int titleLogoH_;	// ƒ^ƒCƒgƒ‹ƒƒSƒnƒ“ƒhƒ‹
-	int frame_;	// Œo‰ßƒtƒŒ[ƒ€
+	
+	int frame_;	// çµŒéãƒ•ãƒ¬ãƒ¼ãƒ 
 
-	// ƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^‚ğg—p‚µ‚Ä“à•”ó‘Ô‚ğ‘‚«Š·‚¦‚é
-	// updateŠÖ”‚ÆdrawŠÖ”‚ğAŒ»İ‚ÌTitleScene‚Ìó‘Ô‚É‡‚í‚¹‚Ä
-	// Ø‚è‘Ö‚¦‚Ä‚¢‚­
-	void FadeInUpdate(Input&);	// ƒtƒF[ƒhƒCƒ“Update
-	void NormalUpdate(Input&);	// ’ÊíUpdate
-	void FadeOutUpdate(Input&);	// ƒtƒF[ƒhƒAƒEƒgUpdate
+	// ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿ã‚’ä½¿ç”¨ã—ã¦å†…éƒ¨çŠ¶æ…‹ã‚’æ›¸ãæ›ãˆã‚‹
+	// updateé–¢æ•°ã¨drawé–¢æ•°ã‚’ã€ç¾åœ¨ã®TitleSceneã®çŠ¶æ…‹ã«åˆã‚ã›ã¦
+	// åˆ‡ã‚Šæ›¿ãˆã¦ã„ã
+	void FadeInUpdate(Input&);	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³Update
+	void NormalUpdate(Input&);	// é€šå¸¸Update
+	void FadeOutUpdate(Input&);	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆUpdate
 	using UpdateFunc_t = void(TitleScene::*)(Input&);
-	UpdateFunc_t update_;	// Updateƒƒ“ƒoŠÖ”‚ğ‘ã“ü‚Å‚«‚éƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	UpdateFunc_t update_;	// Updateãƒ¡ãƒ³ãƒé–¢æ•°ã‚’ä»£å…¥ã§ãã‚‹ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 
 
-	void NormalDraw();	// ’ÊíDraw
-	void FadeDraw();	// ƒtƒF[ƒhDraw
+	void NormalDraw();	// é€šå¸¸Draw
+	void FadeDraw();	// ãƒ•ã‚§ãƒ¼ãƒ‰Draw
 	using DrawFunc_t = void(TitleScene::*)();
-	DrawFunc_t draw_;	// Drawƒƒ“ƒoŠÖ”‚ğ‘ã“ü‚Å‚«‚éƒƒ“ƒoŠÖ”ƒ|ƒCƒ“ƒ^
+	DrawFunc_t draw_;	// Drawãƒ¡ãƒ³ãƒé–¢æ•°ã‚’ä»£å…¥ã§ãã‚‹ãƒ¡ãƒ³ãƒé–¢æ•°ãƒã‚¤ãƒ³ã‚¿
 
 public:
 	TitleScene(SceneController& controller);

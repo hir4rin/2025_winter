@@ -5,8 +5,8 @@
 #include "SceneMain.h"
 #include "Input.h"
 #include "Pad.h"
-//#include "Scene/SceneController.h"
-//#include "Scene/TitleScene.h"
+#include "../SceneController.h"
+#include "../TitleScene.h"
 
 constexpr int default_window_width = 1920;	// デフォルトウィンドウ幅
 constexpr int default_window_height = 1080;	// デフォルトウィンドウ高
@@ -51,10 +51,11 @@ void Application::Run()
 
 	Input input;//入力のためのオブジェクト
 
-	SceneMain* pSceneMain = new SceneMain;
-	pSceneMain->Init();
+	/*SceneMain* pSceneMain = new SceneMain;
+	pSceneMain->Init();*/
 
-
+	SceneController controller;
+	controller.ChangeScene(std::make_shared<TitleScene>(controller));
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG time = GetNowHiPerformanceCount();
@@ -65,17 +66,20 @@ void Application::Run()
 
 		if (CheckHitKey(KEY_INPUT_R))
 		{
-			if (pSceneMain != nullptr)
+			//Rキーでシーンリセット
+			/*if (pSceneMain != nullptr)
 			{
 				delete pSceneMain;
 				pSceneMain = nullptr;
 				pSceneMain = new SceneMain;
 				pSceneMain->Init();
-			}
+			}*/
 		}
+		controller.Update(input);
+		controller.Draw();
 
-		pSceneMain->Update();
-		pSceneMain->Draw();
+		/*pSceneMain->Update();
+		pSceneMain->Draw();*/
 
 
 		//裏画面と表画面を入れ替える
