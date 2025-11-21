@@ -33,8 +33,7 @@ namespace
 	constexpr float kGround = 900.0f;//地面位置
 
 	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
-	float burningTime = 18.0f;  //バーニングの移動時間
-	float burningTimer = 0.0f;
+	
 
 }
 
@@ -263,7 +262,11 @@ void Player::InputUpdate(Input& input)
 		_state = PlayerState::Attack;
 		if (_type == PlayerType::Burning)
 		{
+			if (coolTimer <= 0)
+			{
 			burningTimer = burningTime;
+			isBurningAttack = true;
+			}
 		}
 	}
 	if (input.IsTriggered("Copy"))
@@ -314,6 +317,7 @@ void Player::JumpUpdate(Input& input)
 void Player::AttackUpdate()
 {
 	burningTimer--;
+	coolTimer--;
 	if (burningTimer >= 0.0f)
 	{
 		if (_type == PlayerType::Burning)
@@ -345,8 +349,8 @@ void Player::AttackUpdate()
 		}
 	}
 
-
-	Character::Gravity();
+	
+	//Character::Gravity();
 	m_pos += m_vel;
 
 	Attack();
@@ -501,9 +505,14 @@ void Player::AnimSelectNormal(const Anim& anim)
 {
 	if (_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
 	{
+		if (_type == PlayerType::Burning)
+		{
+			coolTimer = coolTime;
+		}
 		_anim = Anim::Idle;
 		isNomove = false;
 		_state = PlayerState::Normal;
+		
 
 	}
 	if (_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
