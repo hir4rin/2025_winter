@@ -1,40 +1,40 @@
 ﻿#include "TitleScene.h"
 #include "DxLib.h"
 #include "../input.h"
-//#include "GameScene.h"
+#include "GameScene.h"
 #include "SceneController.h"
-//#include "../Application.h"
+#include "../Application.h"
 
 constexpr int fade_interval = 60;
 
 void TitleScene::FadeInUpdate(Input&)
 {
-	/*if (frame_-- <= 0)
+	if (frame_-- <= 0)
 	{
 		update_ = &TitleScene::NormalUpdate;
 		draw_ = &TitleScene::NormalDraw;
 		return;
-	}*/
+	}
 }
 
 void TitleScene::NormalUpdate(Input& input)
 {
-	//if (input.IsTriggered("ok"))
-	//{
-	//	update_ = &TitleScene::FadeOutUpdate;
-	//	draw_ = &TitleScene::FadeDraw;
-	//	frame_ = 0;	// フェードアウトの最初
-	//	return;
-	//}
+	if (input.IsTriggered("ok"))
+	{
+		update_ = &TitleScene::FadeOutUpdate;
+		draw_ = &TitleScene::FadeDraw;
+		frame_ = 0;	// フェードアウトの最初
+		return;
+	}
 }
 
 void TitleScene::FadeOutUpdate(Input&)
 {
-	//if (frame_++ >= fade_interval)
-	//{
-	//	controller_.ChangeScene(std::make_shared<GameScene>(controller_));
-	//	return;
-	//}
+	if (frame_++ >= fade_interval)
+	{
+		controller_.ChangeScene(std::make_shared<SceneMain>(controller_));
+		return;
+	}
 }
 
 void TitleScene::NormalDraw()
