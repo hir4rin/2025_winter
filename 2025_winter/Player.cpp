@@ -254,6 +254,7 @@ void Player::InputUpdate(Input& input)
 	{
 		_state = PlayerState::Attack;
 		m_vel.x = 0;//攻撃中は動けないようにするため
+		m_vel.y = 0;
 
 		if (_type == PlayerType::Archer)
 		{
@@ -325,8 +326,21 @@ void Player::AttackUpdate()
 	{
 		if (_type == PlayerType::Burning)
 		{
-			if (m_isRight)m_pos.x += kBurningSpeed;
-			else m_pos.x -= kBurningSpeed;
+			float dist = (m_isRight) ? kBurningSpeed : -kBurningSpeed;
+			bool hit = MoveWithCollisionX(dist);//衝突判定付きで少しずつ移動(少しずつの間当たり判定)
+			if (hit)
+			{
+				//衝突したので追加の処理
+				//攻撃終了
+
+				burningTimer = 0;
+				isBurningAttack = false;
+				_state = PlayerState::Normal;
+				//isNomove = false;
+			}
+			/*if (m_isRight)m_pos.x += kBurningSpeed;
+			else m_pos.x -= kBurningSpeed;*/
+			
 		}
 	}
 	else
@@ -795,6 +809,45 @@ void Player::ArcherAnim()
 		break;
 
 	}
+}
+
+bool Player::MoveWithCollisionX(float distance)
+{
+	if (distance == 0.0f) return false;
+
+	//1ステップ当たりの移動量
+	const float stepSize = 4.0f;
+	int steps = static_cast<int>(std::ceil(std::abs((distance)) / stepSize));
+	if (steps <= 0) steps = 1;
+
+	//1ステップの実際の移動量
+	float stepDelta = distance / static_cast<float>(steps);
+
+	Rect chipRect;
+	for (int i = 0; i < steps; ++i)
+	{
+		m_pos.x += stepDelta;
+		//衝突チェック
+		bool collided = Character::CheckHitMapPlayer_(chipRect);
+		if (collided)
+		{
+			if (m_isRight)
+			{
+				m_pos.x = m_colRect.Getleft() -  kCharaSize / 2;
+			}
+			else
+			{
+				m_pos.x = m_colRect.GetRight() + kCharaSize / 2;
+			}
+			//衝突したのでこれ以上進まない
+			return true;
+		}
+
+	}
+
+
+	//衝突なし
+	return false;
 }
 
 void Player::ChangeNormal()

@@ -51,7 +51,7 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 		camerafuture = ScreenWidth * 0.5f;
 		//camera.pos.x = ScreenWidth * 0.5f;
 	}
-	else if (pPlayer->GetPos().x > 5000.0f - ScreenWidth * 0.5f)
+	else if (pPlayer->GetPos().x > 15000.0f - ScreenWidth * 0.5f)
 	{
 		camerafuture = ScreenWidth * 0.5f;
 		//camera.pos.x = 5000.0f - ScreenWidth * 0.5f;
@@ -72,7 +72,7 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 	{
 		camera.pos.x = 5000.0f - ScreenWidth * 0.5f;
 	}*/
-
+	DrawFormatString(camera.pos.x, camera.pos.y, GetColor(255, 0, 0), "camera.pos.x:%f", camera.pos.x);
 
 	//camera.pos.y = pPlayer->GetPos().y;
 

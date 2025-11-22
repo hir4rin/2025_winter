@@ -172,3 +172,15 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 	
 
 }
+
+bool Character::CheckHitMapPlayer_(Rect& chipRect)
+{
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
+
+	if (m_pBg->IsCollision(m_colRect, chipRect))
+	{
+		return true;
+	}
+
+	return false;
+}

@@ -26,11 +26,18 @@ public:
 	void Draw(Camera& camera);
 
 	void DrawBg(Camera& camera);
+	/// <summary>
+	/// マップの読み込み
+	/// </summary>
 	void LoadMapData();
+	/// <summary>
+	/// マップの読み込み(stage0)
+	/// </summary>
+	void LoadMapData0();
 	/// <summary>
 	/// マップチップ表示
 	/// </summary>
-	void DrawMapChip();
+	void DrawMapChip0(Camera& camera);
 	/// <summary>
 	/// マップチップ表示
 	/// </summary>
@@ -50,6 +57,7 @@ private:
 	int m_mapData;//マップデータ
 
 	int m_chipData[60][17];//チップデータ
+	int m_chipData0[300][17];//チップデータ
 
 	// 画像に含まれるマップチップの数
 	int m_graphChipNumX;

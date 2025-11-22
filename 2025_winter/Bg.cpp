@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include <fstream>
 #include <sstream>
+#include <cassert>
 #include "Rect.h"
 
 
@@ -17,11 +18,13 @@ namespace
 	const int graphHalfW = kScreenSizeWidth / 2;
 	const int graphHalfH = kScreenSizeWidth / 2;
 
-	constexpr int kChipNumX = 60;//チップの数X
+	constexpr int kChipNumX = 300;//チップの数X
 	constexpr int kChipNumY = 17;//チップの数Y
 
 	constexpr int kChipSize = 16;		// マップチップ1つのサイズ
 	constexpr float kChipScale = 4.0f; 	// マップチップ拡大率
+
+	constexpr int num = 0;//stage選択用//0:stage0 1:最初のマップ//お試し
 }
 
 Bg::Bg():
@@ -41,8 +44,22 @@ Bg::Bg(std::shared_ptr<Player> pPlayer):
 	m_chipData()
 	
 {
+	//一旦試す
+	
+	switch (num)
+	{
+		case 0:
+			m_mapH = LoadGraph("data/map.png");
+			break;
+		case 1:
+			m_mapH = LoadGraph("data/map.png");
+			break;
+		default:
+			assert(false && "Bgの画像読み込みに失敗");
+			break;
+	}
+
 	m_bgH = LoadGraph("data/background.png");
-	m_mapH = LoadGraph("data/map.png");
 
 	// 画像のマップチップ数を数える
 	int graphW = 0;
@@ -53,7 +70,20 @@ Bg::Bg(std::shared_ptr<Player> pPlayer):
 	m_graphChipNumY = graphH / kChipSize;
 
 	// マップデータを読み込む
-	LoadMapData();
+
+	switch(num)
+	{
+	case 0://stage0
+			LoadMapData0();
+			break;
+	case 1://最初のマップ
+			LoadMapData();
+			break;
+		default:
+			assert(false && "Bgのマップデータ読み込みに失敗");
+			break;
+	}
+	
 }
 
 int Bg::GetScrollX()
@@ -99,7 +129,19 @@ void Bg::Update()
 void Bg::Draw(Camera& camera)
 {
 	DrawBg(camera);
-	DrawMapChip(camera);
+
+	switch (num)
+	{
+		case 0://stage0
+			DrawMapChip0(camera);
+			break;
+		case 1://最初のマップ
+			DrawMapChip(camera);
+			break;
+		default:
+			assert(false && "Bgのマップチップ描画に失敗");
+			break;
+	}
 }
 
 void Bg::DrawBg(Camera& camera)
@@ -145,15 +187,38 @@ void Bg::LoadMapData()
 		y++;
 	}
 }
-void Bg::DrawMapChip()
+void Bg::LoadMapData0()
+{
+	std::ifstream file("data/stage0.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData0[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::DrawMapChip0(Camera& camera)
 {
 	// マップチップの描画
 	for (int y = 0; y < kChipNumY; y++)
 	{
 		for (int x = 0; x < kChipNumX; x++)
 		{
-			int posX = static_cast<int>(x * kChipSize * kChipScale - GetScrollX());
-			int posY = static_cast<int>(y * kChipSize * kChipScale - GetScrollY());
+			int posX = static_cast<int>(x * kChipSize * kChipScale + camera.drawOffset.x);
+			int posY = static_cast<int>(y * kChipSize * kChipScale + camera.drawOffset.y);
 
 			// 画面外は描画しない
 			if (posX < 0 - kChipSize) continue;
@@ -162,8 +227,8 @@ void Bg::DrawMapChip()
 			if (posY > kScreenSizeHeight) continue;
 
 			// 設置するチップ
-			int chipNo = m_chipData[x][y];
-			//if (chipNo == 5) continue; // チップ番号5は空白なので描画しない
+			int chipNo = m_chipData0[x][y];
+			if (chipNo == 0) continue; // チップ番号5は空白なので描画しない
 
 			// マップチップのグラフィック切り出し座標
 			int srcX = kChipSize * (chipNo % m_graphChipNumX);
@@ -231,7 +296,8 @@ bool Bg::IsCollision(Rect rect, Rect& chipRect)
 		for (int x = 0; x < kChipNumX; x++)
 		{
 			// マップチップ0番は当たり判定がないため飛ばす
-			if (m_chipData[x][y] == 5) continue;
+			if (m_chipData0[x][y] == 5) continue;
+			if (m_chipData0[x][y] == 0) continue;
 
 			int chipLeft = static_cast<int>(x * kChipSize * kChipScale);
 			int chipRight = static_cast<int>(chipLeft + kChipSize * kChipScale);

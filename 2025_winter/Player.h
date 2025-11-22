@@ -142,6 +142,8 @@ private:
 	/// </summary>
 	void ArcherAnim();
 
+	bool MoveWithCollisionX(float distance);
+
 	
 	
 private:
@@ -155,7 +157,7 @@ private:
 	bool isNomove;
 	const int arrowtime = 30;//発射クールタイム
 
-	bool isBurningAttack = false;
+	bool isBurningAttack = false;///今のところ用途不明
 
 	float burningTime = 18.0f;  //バーニングの移動時間
 	float burningTimer = 0.0f;
