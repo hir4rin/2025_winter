@@ -15,7 +15,7 @@ namespace
 {
 	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
 	constexpr float kSpeed = 20.0f;//移動速度
-	constexpr float kCharaSize = 64.0f;//キャラクターサイズ
+	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
 	constexpr int player_cut_w = 100;
 	constexpr int player_cut_h = 100;
 	constexpr float  player_scale = 3.0f;
@@ -207,16 +207,16 @@ void Player::Draw(Camera& camera)
 #endif
 	switch (_type)
 	{
-	case PlayerType::Normal:;//アニメーションの遷移
+	case PlayerType::Normal://アニメーションの遷移
 		NormalAnim();
 		break;
-	case PlayerType::Burning:;//アニメーションの遷移
+	case PlayerType::Burning://アニメーションの遷移
 		BurningAnim();
 		break;
-	case PlayerType::Frozen:;//アニメーションの遷移
+	case PlayerType::Frozen://アニメーションの遷移
 		FrozenAnim();
 		break;
-	case PlayerType::Archer:;//アニメーションの遷移
+	case PlayerType::Archer://アニメーションの遷移
 		ArcherAnim();
 		break;
 
@@ -833,13 +833,15 @@ bool Player::MoveWithCollisionX(float distance)
 		{
 			if (m_isRight)
 			{
-				m_pos.x = m_colRect.Getleft() -  kCharaSize / 2;
+				//m_pos.x = m_colRect.Getleft() -  kCharaSize / 2;
+			
 			}
 			else
 			{
-				m_pos.x = m_colRect.GetRight() + kCharaSize / 2;
+				//m_pos.x = m_colRect.GetRight() + kCharaSize / 2;
 			}
 			//衝突したのでこれ以上進まない
+			m_pos.x -= stepDelta;
 			return true;
 		}
 

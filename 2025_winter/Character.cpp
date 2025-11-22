@@ -179,7 +179,10 @@ bool Character::CheckHitMapPlayer_(Rect& chipRect)
 
 	if (m_pBg->IsCollision(m_colRect, chipRect))
 	{
+		
+
 		return true;
+		
 	}
 
 	return false;
