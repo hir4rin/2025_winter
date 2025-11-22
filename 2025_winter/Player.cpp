@@ -252,6 +252,9 @@ void Player::InputUpdate(Input& input)
 	//特殊行動の入力検知
 	if (input.IsTriggered("Attack"))
 	{
+		_state = PlayerState::Attack;
+		m_vel.x = 0;//攻撃中は動けないようにするため
+
 		if (_type == PlayerType::Archer)
 		{
 			if (arrowFrame >= 0)return;
@@ -259,7 +262,7 @@ void Player::InputUpdate(Input& input)
 			arrowFrame = arrowtime;
 
 		}
-		_state = PlayerState::Attack;
+		
 		if (_type == PlayerType::Burning)
 		{
 			if (coolTimer <= 0)

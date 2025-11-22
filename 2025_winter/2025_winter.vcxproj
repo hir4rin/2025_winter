@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bg.cpp" />
     <ClCompile Include="BurningObject.cpp" />
@@ -150,6 +151,8 @@
     <ClCompile Include="EnemyRider.cpp" />
     <ClCompile Include="EnemyWizard.cpp" />
     <ClCompile Include="Frozen.cpp" />
+    <ClCompile Include="GameOverScene.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
@@ -163,6 +166,7 @@
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="Arrow.h" />
     <ClInclude Include="Bg.h" />
     <ClInclude Include="BurningObject.h" />
@@ -174,6 +178,8 @@
     <ClInclude Include="EnemyRider.h" />
     <ClInclude Include="EnemyWizard.h" />
     <ClInclude Include="Frozen.h" />
+    <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Pad.h" />
