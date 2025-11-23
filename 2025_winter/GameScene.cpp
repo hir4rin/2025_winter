@@ -34,35 +34,39 @@ GameScene::GameScene(SceneController& controller):
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Archer, Vec2(600.0f,300.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(1500.0f,300.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2100.0f,300.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2500.0f,300.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(3000.0f,300.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(4000.0f,300.0f), false });
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	frame_ = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
-	m_pEnemyWizards.resize(3);//ペンギンの数
-	for (int i = 0; i < m_pEnemyWizards.size(); i++)
-	{
-		float  distance = i * 200;
-		m_pEnemyWizards[i] = std::make_shared<EnemyWizard>();
-		m_pEnemyWizards[i]->SetBgPointer(m_pBg);
-		m_pEnemyWizards[i]->SetPlayer(m_pPlayer);
-		m_pEnemyWizards[i]->AddPos(Vec2{ distance,0.0f });
+	//m_pEnemyWizards.resize(3);//ペンギンの数
+	//for (int i = 0; i < m_pEnemyWizards.size(); i++)
+	//{
+	//	float  distance = i * 200;
+	//	m_pEnemyWizards[i] = std::make_shared<EnemyWizard>();
+	//	m_pEnemyWizards[i]->SetBgPointer(m_pBg);
+	//	m_pEnemyWizards[i]->SetPlayer(m_pPlayer);
+	//	m_pEnemyWizards[i]->AddPos(Vec2{ distance,0.0f });
 
-	}
-	m_pEnemyRiders.resize(2);//ライダーの数
-	for (int i = 0; i < m_pEnemyRiders.size(); i++)
-	{
-		float  distance = i * 200;
-		m_pEnemyRiders[i] = std::make_shared<EnemyRider>();
-		m_pEnemyRiders[i]->SetBgPointer(m_pBg);
-		m_pEnemyRiders[i]->SetPlayer(m_pPlayer);
-		m_pEnemyRiders[i]->AddPos(Vec2{ distance,0.0f });
+	//}
+	//m_pEnemyRiders.resize(2);//ライダーの数
+	//for (int i = 0; i < m_pEnemyRiders.size(); i++)
+	//{
+	//	float  distance = i * 200;
+	//	m_pEnemyRiders[i] = std::make_shared<EnemyRider>();
+	//	m_pEnemyRiders[i]->SetBgPointer(m_pBg);
+	//	m_pEnemyRiders[i]->SetPlayer(m_pPlayer);
+	//	m_pEnemyRiders[i]->AddPos(Vec2{ distance,0.0f });
 
-	}
+	//}
 
-	m_pEnemyArchers.resize(3);
+	/*m_pEnemyArchers.resize(3);
 	for (int i = 0; i < m_pEnemyArchers.size(); i++)
 	{
 		float  distance = i * 200;
@@ -71,7 +75,7 @@ GameScene::GameScene(SceneController& controller):
 		m_pEnemyArchers[i]->SetPlayer(m_pPlayer);
 		m_pEnemyArchers[i]->AddPos(Vec2{ distance,0.0f });
 		i * 200;
-	}
+	}*/
 
 	//m_pItems = std::make_shared<Item>();
 
@@ -561,6 +565,7 @@ void GameScene::NormalUpdate(Input& input)
 			{
 				auto enemy = std::make_shared<EnemyWizard>();
 				enemy->SetBgPointer(m_pBg);
+
 				enemy->SetPlayer(m_pPlayer);
 				enemy->AddPos(spawn.pos);
 				m_pEnemyWizards.push_back(enemy);

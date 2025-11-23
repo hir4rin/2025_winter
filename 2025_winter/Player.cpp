@@ -324,7 +324,7 @@ void Player::AttackUpdate()
 	coolTimer--;
 	if (burningTimer >= 0.0f)
 	{
-		if (_type == PlayerType::Burning)
+		if (_type == PlayerType::Burning)//バーニングの攻撃処理
 		{
 			float dist = (m_isRight) ? kBurningSpeed : -kBurningSpeed;
 			bool hit = MoveWithCollisionX(dist);//衝突判定付きで少しずつ移動(少しずつの間当たり判定)
