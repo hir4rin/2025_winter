@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Input.h"
 #include "Camera.h"
+#include "Enemy.h"
 #include <memory>
 
 class Player;
@@ -15,6 +16,7 @@ class Bg;
 class Character;
 class Frozen;
 class BurningObject;
+
 
 class GameScene : public Scene
 {
@@ -77,6 +79,12 @@ private:
 	void NormalDraw();
 	using DrawFunc_t = void(GameScene::*)();
 	DrawFunc_t draw_;	// Draw系を受け取るメンバ関数ポインタ
+
+
+	//敵の位置情報のベクター(type,pos,spawned)
+	std::vector<EnemySpawn> m_enemySpawns;
+	//敵を生成するunique_ptrのベクター
+	std::vector<std::unique_ptr<Enemy>> m_enemies;
 
 private:
 	int frame_ = 0;	// フェードインアウト用

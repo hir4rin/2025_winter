@@ -12,6 +12,22 @@ enum class EnemyState
 	Attack,
 	Damage
 };
+
+enum class EnemyType
+{
+	Wizard,
+	Rider,
+	Archer
+};
+
+struct EnemySpawn
+{
+	EnemyType type;
+	Vec2 pos;
+	bool spawned = false;
+};;
+
+
 class Enemy :public Character
 {
 public :
@@ -31,9 +47,15 @@ public :
 
 	void SetPlayer(std::shared_ptr<Player> player){m_pPlayer = player;}	
 
+	Vec2& SetInitialID() { return m_initialID; }
+	Vec2 GetInitialID() { return m_initialID; }
+
 	std::shared_ptr<EnemyWizard> HitWizard = nullptr;//SceneMainに渡してアイテムを出させる
 	std::shared_ptr<EnemyRider> HitRider = nullptr;//SceneMainに渡してアイテムを出させる
 	std::shared_ptr<Player> m_pPlayer;
+
+protected:
+	Vec2 m_initialID;
 
 };
 

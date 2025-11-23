@@ -33,6 +33,11 @@ GameScene::GameScene(SceneController& controller):
 	draw_(&GameScene::FadeDraw)
 
 {
+	//実質Initの使い方
+	m_enemySpawns.push_back({ EnemyType::Archer, Vec2(600.0f,300.0f), false });
+
+	InitCamera(camera);//カメラの初期化
+	//-----------------------------------------------------------------
 	frame_ = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
@@ -533,9 +538,12 @@ void GameScene::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 void GameScene::FadeInUpdate(Input&)
 {
+
+
+
 	if (frame_-- <= 0)
 	{
-		InitCamera(camera);//カメラの初期化
+		
 		update_ = &GameScene::NormalUpdate;
 		draw_ = &GameScene::NormalDraw;
 		return;
@@ -544,6 +552,41 @@ void GameScene::FadeInUpdate(Input&)
 
 void GameScene::NormalUpdate(Input& input)
 {
+	for (auto& spawn : m_enemySpawns)
+	{
+		if (!spawn.spawned)
+		{
+			spawn.spawned = true;
+			if (spawn.type == EnemyType::Wizard)
+			{
+				auto enemy = std::make_shared<EnemyWizard>();
+				enemy->SetBgPointer(m_pBg);
+				enemy->SetPlayer(m_pPlayer);
+				enemy->AddPos(spawn.pos);
+				m_pEnemyWizards.push_back(enemy);
+			}
+			else if (spawn.type == EnemyType::Rider)
+			{
+				auto enemy = std::make_shared<EnemyRider>();
+				enemy->SetBgPointer(m_pBg);
+				enemy->SetPlayer(m_pPlayer);
+				enemy->AddPos(spawn.pos);
+				m_pEnemyRiders.push_back(enemy);
+			}
+			else if (spawn.type == EnemyType::Archer)
+			{
+				auto enemy = std::make_shared<EnemyArcher>();
+				enemy->SetBgPointer(m_pBg);
+				enemy->SetPlayer(m_pPlayer);
+				enemy->AddPos(spawn.pos);
+				m_pEnemyArchers.push_back(enemy);
+			}
+		}
+	}
+
+
+
+
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 
