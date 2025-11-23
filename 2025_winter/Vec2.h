@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <cmath>
 
 class Vec2
@@ -21,19 +21,19 @@ public:
 	{
 	}
 
-	//’P€‰‰Zq+ Vec2 = + Vec2
+	//å˜é …æ¼”ç®—å­+ Vec2 = + Vec2
 	Vec2 operator+() const
 	{
-		return *this;//‚í‚©‚ç‚È‚¢????????
+		return *this;//ã‚ã‹ã‚‰ãªã„????????
 	}
 
-	//’P€‰‰Zq- Vec2 = - Vec2
+	//å˜é …æ¼”ç®—å­- Vec2 = - Vec2
 	Vec2 operator-() const
 	{
 		return Vec2(-x, -y);
 	}
 
-	//‘«‚µZ@c = a + b, c = (a + b)
+	//è¶³ã—ç®—ã€€c = a + b, c = (a + b)
 	Vec2 operator+(Vec2 vec) const
 	{
 		return Vec2(x + vec.x, y + vec.y);
@@ -46,7 +46,7 @@ public:
 		y += vec.y;
 		return *this;
 	}
-	//ˆø‚«Z c = a - b, c = (a - b)
+	//å¼•ãç®— c = a - b, c = (a - b)
 	Vec2 operator-(Vec2 vec) const
 	{
 		return Vec2(x - vec.x, y - vec.y);
@@ -61,7 +61,7 @@ public:
 
 	}
 
-	//Š|‚¯Z
+	//æ›ã‘ç®—
 	Vec2 operator*(float scale) const
 	{
 		return Vec2(x * scale, y * scale);
@@ -74,7 +74,7 @@ public:
 		return *this;
 	}
 
-	//Š„‚èZ
+	//å‰²ã‚Šç®—
 	Vec2 operator/(float scale) const
 	{
 		return Vec2{ x / scale,y / scale };
@@ -87,19 +87,19 @@ public:
 		return *this;
 	}
 
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚Ì“ñæ‚ğ‹‚ß‚é
+	//ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã®äºŒä¹—ã‚’æ±‚ã‚ã‚‹
 	float sqLength() const
 	{
 		return x * x + y * y;
 	}
 
-	//ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ‹‚ß‚é
+	//ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’æ±‚ã‚ã‚‹
 	float length() const
 	{
 		return sqrtf(sqLength());
 	}
 
-	//©g‚Ì³‹K‰»‚ğs‚¤
+	//è‡ªèº«ã®æ­£è¦åŒ–ã‚’è¡Œã†
 	void normalize()
 	{
 		float len = length();
@@ -108,10 +108,10 @@ public:
 			x /= len;
 			y /= len;
 		}
-		//’·‚³‚Ìê‡‚Í‰½‚à‚µ‚È‚¢
+		//é•·ã•ã®å ´åˆã¯ä½•ã‚‚ã—ãªã„
 	}
 
-	//©g‚ğ³‹K‰»‚µ‚½ƒxƒNƒgƒ‹‚ğæ“¾‚·‚é
+	//è‡ªèº«ã‚’æ­£è¦åŒ–ã—ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—ã™ã‚‹
 	Vec2 getNormalize() const
 	{
 		float len = length();
@@ -119,8 +119,13 @@ public:
 		{
 			return Vec2(x / len, y / len);
 		}
-		//’·‚³‚ª0‚Ìê‡‚Í‚»‚Ì‚Ü‚Ü•Ô‚·
+		//é•·ã•ãŒ0ã®å ´åˆã¯ãã®ã¾ã¾è¿”ã™
 		return Vec2(0.0f, 0.0f);
+	}
+
+	bool operator==( const Vec2& right)
+	{
+		return x == right.x && y == right.y;
 	}
 };
 

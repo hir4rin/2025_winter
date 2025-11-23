@@ -11,17 +11,19 @@ namespace
 }
 
 
-Character::Character():
+Character::Character() :
 	m_handle(-1),
 	m_isRight(true),
 	m_isGround(false),
+	m_wasGround(false),
 	m_isJumpPreparing(false),
 	m_jumpFrame(0),
 	m_x(0),
 	m_y(0),
-	m_pos(m_x,m_y),
-	m_vel(0,0),
-	zero(0,0)
+	m_pos(m_x, m_y),
+	m_vel(0, 0),
+	zero(0, 0)
+
 {
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 }
@@ -38,22 +40,22 @@ void Character::Update()
 {
 	//重力処理
 	Gravity();
-	
+
 
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
 
-	
+
 	if (m_isGround)
 	{
-		
+
 		m_isGround = true;
 
 		if (m_isJumpPreparing)return;
 		m_jumpFrame = 0;
 		m_vel.y = 0.0f;
-		
-		
+
+
 	}
 
 }
@@ -62,7 +64,7 @@ void Character::Draw()
 {
 #ifdef _DEBUG
 	//当たり判定の描画//スクロール対応をする
-	m_colRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(),GetColor(0, 255, 255), false);
+	m_colRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 255), false);
 
 #endif 
 }
@@ -79,11 +81,11 @@ void Character::SetRect()
 
 void Character::CheckHitMap(Rect& chipRect)
 {
-	
+
 	//assert(m_pBg && "入っていない");
 	// 横から当たったかチェックする
 	m_pos.x += m_vel.x;
-	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 
 	if (m_pBg->IsCollision(m_colRect, chipRect))
 	{
@@ -120,22 +122,24 @@ void Character::CheckHitMap(Rect& chipRect)
 
 void Character::CheckHitMapPlayer(Rect& chipRect)
 {
-
-
 	//m_isGroundをセットする
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 	//マップと当たっていなかったらm_isGroundをfalseにする
 	if (!(m_pBg->IsCollision(m_colRect, chipRect))) m_isGround = false;
+
 	
 
 	//assert(m_pBg && "入っていない");
 	// 横から当たったかチェックする
-	//m_pos.x += m_vel.x;これはなし
-	
+	m_pos.x += m_vel.x;
+
+
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
+	
 	if (m_pBg->IsCollision(m_colRect, chipRect))
 	{
+
 		if (m_vel.x > 0.0f)
 		{
 			m_pos.x = chipRect.Getleft() - kCharaSize * 0.5f;
@@ -144,16 +148,20 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 		{
 			m_pos.x = chipRect.GetRight() + kCharaSize * 0.5f;
 		}
+
+
 		m_vel.x = 0.0f;
+
 	}
 
-	// 縦から当たったかチェックする
-	//m_pos.y += m_vel.y;これはなし
 
+	// 縦から当たったかチェックする
+        m_pos.y += m_vel.y;
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
 	if (m_pBg->IsCollision(m_colRect, chipRect))
 	{
+
 		if (m_vel.y > 0.0f)
 		{
 			m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
@@ -165,11 +173,11 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 			m_pos.y = chipRect.GetBottom() + kCharaSize * 0.5f;
 			m_vel.y *= -1.0f;
 		}
-	}
-	
-	
 
-	
+
+	}
+
+
 
 }
 
@@ -179,10 +187,10 @@ bool Character::CheckHitMapPlayer_(Rect& chipRect)
 
 	if (m_pBg->IsCollision(m_colRect, chipRect))
 	{
-		
+
 
 		return true;
-		
+
 	}
 
 	return false;

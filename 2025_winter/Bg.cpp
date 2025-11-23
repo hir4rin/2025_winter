@@ -221,8 +221,8 @@ void Bg::DrawMapChip0(Camera& camera)
 			int posY = static_cast<int>(y * kChipSize * kChipScale + camera.drawOffset.y);
 
 			// 画面外は描画しない
-			if (posX < 0 - kChipSize) continue;
-			if (posX > kScreenSizeWidth) continue;
+			if (posX < 0 - kChipSize*4) continue;
+			if (posX > kScreenSizeWidth*4) continue;
 			if (posY < 0 - kChipSize) continue;
 			if (posY > kScreenSizeHeight) continue;
 

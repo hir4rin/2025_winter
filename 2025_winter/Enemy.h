@@ -25,6 +25,7 @@ struct EnemySpawn
 	EnemyType type;
 	Vec2 pos;
 	bool spawned = false;
+	bool wasKilled = false;
 };;
 
 
@@ -47,7 +48,7 @@ public :
 
 	void SetPlayer(std::shared_ptr<Player> player){m_pPlayer = player;}	
 
-	Vec2& SetInitialID() { return m_initialID; }
+	void  SetInitialID(Vec2 id) { m_initialID = id; }
 	Vec2 GetInitialID() { return m_initialID; }
 
 	std::shared_ptr<EnemyWizard> HitWizard = nullptr;//SceneMainに渡してアイテムを出させる

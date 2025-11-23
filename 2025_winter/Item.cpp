@@ -50,21 +50,17 @@ void Item::Init()
 void Item::Update()
 {
 	Character::Update();
+	Character::SetRect();
 }
 
 void Item::Draw()
 {
-	//当たり判定の描画
-	Character::Draw();
-	DrawRectRotaGraph(m_pos.x, m_pos.y,
-		player_cut_w * 0, player_cut_h * 0,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true);
+	
 }
 void Item::Draw(Camera& camera)
 {
 	//当たり判定の描画
-	Character::Draw();
+	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 	if (m_state == ItemState::Burning)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,

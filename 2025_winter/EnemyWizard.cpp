@@ -5,7 +5,7 @@
 
 namespace
 {
-	const Vec2 kInitPos = { 000.0f,100.0f };//初期位置
+	const Vec2 kInitPos = { 000.0f,000.0f };//初期位置
 	constexpr float kSpeed = 2.0f;//移動速度
 	constexpr int enemy_cut_w = 64;
 	constexpr int enemy_cut_h = 64;

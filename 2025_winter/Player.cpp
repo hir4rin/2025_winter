@@ -14,7 +14,7 @@
 namespace
 {
 	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
-	constexpr float kSpeed = 20.0f;//移動速度
+	constexpr float kSpeed = 10.0f;//移動速度
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
 	constexpr int player_cut_w = 100;
 	constexpr int player_cut_h = 100;
@@ -104,6 +104,11 @@ void Player::Update(Input& input)
 		break;
 	}
 	CheckHitMapPlayer(chipRect);
+
+	if(m_pos.x <0)//画面外に出ないようにする
+	{
+		m_pos.x = 0;
+	}
 
 }
 
@@ -307,7 +312,7 @@ void Player::NormalUpdate(Input& input)
 			AnimSelect(Anim::Idle);
 		}
 	}
-	m_pos += m_vel;
+	//m_pos += m_vel;
 }
 
 void Player::JumpUpdate(Input& input)
@@ -345,10 +350,22 @@ void Player::AttackUpdate()
 	}
 	else
 	{
-		if (_type == PlayerType::Burning)
+		if (_type == PlayerType::Burning)//減速時のbarningの攻撃処理
 		{
-			if (m_isRight)m_pos.x += kBurningSpeed / 3;
-			else m_pos.x -= kBurningSpeed / 3;
+			/*if (m_isRight)m_pos.x += kBurningSpeed / 3;
+			else m_pos.x -= kBurningSpeed / 3;*/
+			float dist = (m_isRight) ? kBurningSpeed/3 : -kBurningSpeed/3;
+			bool hit = MoveWithCollisionX(dist);//衝突判定付きで少しずつ移動(少しずつの間当たり判定)
+			if (hit)
+			{
+				//衝突したので追加の処理
+				//攻撃終了
+
+				burningTimer = 0;
+				isBurningAttack = false;
+				_state = PlayerState::Normal;
+				//isNomove = false;
+			}
 		}
 	}
 	//着地時にアニメーションを帰るところ
@@ -365,10 +382,13 @@ void Player::AttackUpdate()
 			AnimSelect(Anim::Idle);
 		}
 	}
-
-	
-	//Character::Gravity();
-	m_pos += m_vel;
+	//バーニングだけ攻撃中は重力を受けない
+	//微妙だったため一旦なし
+	/*if (!(_type == PlayerType::Burning))
+	{
+		Character::Gravity();
+	}*/
+	//m_pos += m_vel;
 
 	Attack();
 }
@@ -377,7 +397,7 @@ void Player::CopyUpdate()
 {
 	Character::Gravity();
 	Copy();
-	m_pos += m_vel;
+	//m_pos += m_vel;
 
 
 }

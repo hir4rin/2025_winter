@@ -159,7 +159,7 @@ private:
 
 	bool isBurningAttack = false;///今のところ用途不明
 
-	float burningTime = 18.0f;  //バーニングの移動時間
+	float burningTime = 12.0f;  //バーニングの移動時間
 	float burningTimer = 0.0f;
 
 	float coolTimer = 0.0f;

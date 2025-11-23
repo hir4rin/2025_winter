@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Enemy.h"
 #include <memory>
+#include <cassert>
 
 class Player;
 class EnemyWizard;
@@ -16,6 +17,10 @@ class Bg;
 class Character;
 class Frozen;
 class BurningObject;
+
+constexpr int cameraMargin = 100;
+constexpr int screenWidth = 1920;
+constexpr int screenHeight = 1080;
 
 
 class GameScene : public Scene
@@ -85,6 +90,26 @@ private:
 	std::vector<EnemySpawn> m_enemySpawns;
 	//敵を生成するunique_ptrのベクター
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
+	//カメラの内側にいるかどうか
+	bool IsInCamera(float x, float y)
+	{
+		float left = camera.pos.x - screenWidth/2 + 10;//???一度わからなくなった
+		float right = camera.pos.x + screenWidth/2 - 10;//???一度わからなくなった
+		float top = camera.pos.y - cameraMargin;
+		float bottom = camera.pos.y + screenHeight + cameraMargin;
+
+
+		return (x > left && x < right && y > top && y < bottom);
+	}
+
+	EnemySpawn& FindSpawnData(const Vec2& id)
+	{
+		for (auto& spawn : m_enemySpawns)
+		{
+			if (spawn.pos == id)return spawn;
+		}
+		assert(false && "posがちがうenemyが検出されました");
+	}
 
 private:
 	int frame_ = 0;	// フェードインアウト用

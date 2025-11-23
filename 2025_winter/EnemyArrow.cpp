@@ -61,6 +61,7 @@ void EnemyArrow::CheckPlayer(std::shared_ptr<Player> m_pPlayer)
 }
 void EnemyArrow::Draw(Camera& camera)
 {
+
 	// 弾を描画する
 	const float shotHalfW = kCharaSize * 0.5f;
 	const float shotHalfH = kCharaSize * 0.5f;

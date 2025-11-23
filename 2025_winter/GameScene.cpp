@@ -27,18 +27,18 @@ namespace
 }
 
 
-GameScene::GameScene(SceneController& controller):
+GameScene::GameScene(SceneController& controller) :
 	Scene(controller),
 	update_(&GameScene::FadeInUpdate),
 	draw_(&GameScene::FadeDraw)
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(1500.0f,300.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2100.0f,300.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2500.0f,300.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(3000.0f,300.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(4000.0f,300.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(1500.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2100.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer, Vec2(2500.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(3000.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider, Vec2(4000.0f,700.0f), false });
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
@@ -327,33 +327,40 @@ void GameScene::ReactionBurning()
 
 void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizards)//ペンギン
+	
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
+		if (!m_pEnemyWizards[i])continue;
+		auto& e = m_pEnemyWizards[i];
+		if (e == nullptr)continue;
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			if (num == nullptr)continue;
-			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(e->GetColRect());
 
 
 			//矢の処理は別の場所(CheckhitArrow)
 
 			if (isHitAttack)
 			{
-				//num->DropItem(num);
+				//e->DropItem(e);
 				//アイテムを落とす処理
-				m_pItems = std::make_shared<Item>(num);//新しくアイテムを生成
+				m_pItems = std::make_shared<Item>(e);//新しくアイテムを生成
 				m_pItems->SetBgPointer(m_pBg);
-				m_pItems->ChangePos() = num->GetPos();
+				m_pItems->ChangePos() = e->GetPos();
 				////敵のヒット情報をリセット
 				//wizard->HitWizard = nullptr;
-
-
-				num = nullptr;
 				//ここに敵が攻撃されたときの処理を書く
+				//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 
 			}
-
 		}
 	}
 	for (auto& num : m_pEnemyRiders)//オークライダー
@@ -547,7 +554,7 @@ void GameScene::FadeInUpdate(Input&)
 
 	if (frame_-- <= 0)
 	{
-		
+
 		update_ = &GameScene::NormalUpdate;
 		draw_ = &GameScene::NormalDraw;
 		return;
@@ -556,36 +563,69 @@ void GameScene::FadeInUpdate(Input&)
 
 void GameScene::NormalUpdate(Input& input)
 {
+	//----カメラの位置-----------------------------------
+	float left = camera.pos.x - screenWidth / 2 + 10;
+	float right = camera.pos.x + screenWidth / 2 - 10;
+	float top = camera.pos.y - cameraMargin;
+	float bottom = camera.pos.y + screenHeight + cameraMargin;
+	//----------------------------------------------------
+
+	//復活チェック
 	for (auto& spawn : m_enemySpawns)
 	{
-		if (!spawn.spawned)
+		if (spawn.wasKilled)
 		{
-			spawn.spawned = true;
-			if (spawn.type == EnemyType::Wizard)
+			bool leftout = spawn.pos.x < left;
+			bool rightout = spawn.pos.x > right;
+			if (leftout || rightout)
 			{
-				auto enemy = std::make_shared<EnemyWizard>();
-				enemy->SetBgPointer(m_pBg);
+				spawn.wasKilled = false;//復活可能
+			}
+		}
 
-				enemy->SetPlayer(m_pPlayer);
-				enemy->AddPos(spawn.pos);
-				m_pEnemyWizards.push_back(enemy);
-			}
-			else if (spawn.type == EnemyType::Rider)
+	}
+
+
+	//生成
+	for (auto& spawn : m_enemySpawns)//敵の生成する場所
+	{
+		if (!spawn.spawned && !spawn.wasKilled)//spawnされてなかったら//復活できる状態だったら
+		{
+
+			if (IsInCamera(spawn.pos.x, spawn.pos.y))//カメラの中にいたら
 			{
-				auto enemy = std::make_shared<EnemyRider>();
-				enemy->SetBgPointer(m_pBg);
-				enemy->SetPlayer(m_pPlayer);
-				enemy->AddPos(spawn.pos);
-				m_pEnemyRiders.push_back(enemy);
+				spawn.spawned = true;
+
+				if (spawn.type == EnemyType::Wizard)
+				{
+					auto enemy = std::make_shared<EnemyWizard>();
+					enemy->SetBgPointer(m_pBg);
+
+					enemy->SetPlayer(m_pPlayer);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyWizards.push_back(enemy);
+				}
+				else if (spawn.type == EnemyType::Rider)
+				{
+					auto enemy = std::make_shared<EnemyRider>();
+					enemy->SetBgPointer(m_pBg);
+					enemy->SetPlayer(m_pPlayer);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyRiders.push_back(enemy);
+				}
+				else if (spawn.type == EnemyType::Archer)
+				{
+					auto enemy = std::make_shared<EnemyArcher>();
+					enemy->SetBgPointer(m_pBg);
+					enemy->SetPlayer(m_pPlayer);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyArchers.push_back(enemy);
+				}
 			}
-			else if (spawn.type == EnemyType::Archer)
-			{
-				auto enemy = std::make_shared<EnemyArcher>();
-				enemy->SetBgPointer(m_pBg);
-				enemy->SetPlayer(m_pPlayer);
-				enemy->AddPos(spawn.pos);
-				m_pEnemyArchers.push_back(enemy);
-			}
+
 		}
 	}
 
@@ -611,7 +651,7 @@ void GameScene::NormalUpdate(Input& input)
 
 
 	m_pBg->Update();
-	
+
 	m_pPlayer->Update(input);
 	if (m_pPlayer->isArrowAttack)//矢の出現
 	{
@@ -698,13 +738,27 @@ void GameScene::NormalUpdate(Input& input)
 	//CheckItemOrcRider();
 	CheckFrozenHit();
 
-	
-	
+	//消える処理
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)
+	{
+		if (!m_pEnemyWizards[i])continue;
+		auto& e = m_pEnemyWizards[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
 
-	
-	
+			//インスタンスを消す
+			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+		}
+	}
 
-	
+
+
+
+
 }
 
 void GameScene::FadeOutUpdate(Input&)
@@ -765,6 +819,13 @@ void GameScene::NormalDraw()
 		if (m_pBurningObject) m_pBurningObject->Draw(camera);
 	}
 	ReactionBurning();
+
+	float left = camera.pos.x + 10 - screenWidth / 2;
+	float right = camera.pos.x + screenWidth / 2 - 10;
+	float top = camera.pos.y + 10;
+	float bottom = camera.pos.y + screenHeight - 10;
+	DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
+
 }
 
 void GameScene::Update(Input& input)
