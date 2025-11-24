@@ -40,7 +40,11 @@ void Character::Update()
 {
 	//重力処理
 	Gravity();
+	//敵の重力が弱いから3重にかける
+	Gravity();
+	Gravity();
 
+	Character::SetRect();
 
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
@@ -79,13 +83,13 @@ void Character::SetRect()
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 }
 
-void Character::CheckHitMap(Rect& chipRect)
+void Character::CheckHitMap(Rect& chipRect)//imanotokoro________Enemy___dake
 {
 
 	//assert(m_pBg && "入っていない");
 	// 横から当たったかチェックする
 	m_pos.x += m_vel.x;
-	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize-1, kCharaSize-1);
 
 	if (m_pBg->IsCollision(m_colRect, chipRect))
 	{
@@ -97,7 +101,8 @@ void Character::CheckHitMap(Rect& chipRect)
 		{
 			m_pos.x = chipRect.GetRight() + kCharaSize * 0.5f;
 		}
-		m_vel.x = 0.0f;
+		m_vel.x *= -1;
+		m_isRight = !m_isRight;
 	}
 
 	// 縦から当たったかチェックする

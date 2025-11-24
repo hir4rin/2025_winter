@@ -12,8 +12,11 @@ namespace
 	constexpr int player_cut_h = 100;
 	constexpr int burning_cut_w = 300;
 	constexpr int burning_cut_h = 388;
+	constexpr int arrow_cut_w = 268;
+	constexpr int arrow_cut_h = 268;
 	constexpr float  player_scale = 3.0f;
 	constexpr float  burning_scale = 0.2f;
+	constexpr float  arrow_scale = 0.2f;
 }
 
 
@@ -33,7 +36,7 @@ Item::Item(std::shared_ptr<EnemyRider> _enemyRiders)
 }
 Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers)
 {
-	m_handle = LoadGraph("data/BurningCard.png");
+	m_handle = LoadGraph("data/BowAndArrow.png");
 	m_pos = kInitPos;
 	m_state = ItemState::Archer;
 }
@@ -50,7 +53,7 @@ void Item::Init()
 void Item::Update()
 {
 	Character::Update();
-	Character::SetRect();
+	//Character::SetRect();
 }
 
 void Item::Draw()
@@ -78,9 +81,9 @@ void Item::Draw(Camera& camera)
 	else if (m_state == ItemState::Archer)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		burning_cut_w * 0, burning_cut_h * 0,//切り取り左上
-		burning_cut_w, burning_cut_h,//切り取りの幅
-		burning_scale, 0.0f, m_handle, true);
+		arrow_cut_w * 0, arrow_cut_h * 0,//切り取り左上
+		arrow_cut_w, arrow_cut_h,//切り取りの幅
+		arrow_scale, 0.0f, m_handle, true);
 	}
 
 	

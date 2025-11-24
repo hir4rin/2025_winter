@@ -24,6 +24,9 @@ namespace
 	constexpr int kScreenHeight = 1080;
 
 	constexpr int fade_interval = 60;
+
+
+	constexpr float FrozenSpeed = 13.0f;
 }
 
 
@@ -34,10 +37,10 @@ GameScene::GameScene(SceneController& controller) :
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(1500.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(1500.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2100.0f,700.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Archer, Vec2(2500.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(3000.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(3000.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Rider, Vec2(4000.0f,700.0f), false });
 
 	InitCamera(camera);//カメラの初期化
@@ -220,12 +223,12 @@ void GameScene::CheckFrozenHit()
 		if (!m_pFrozen)continue;
 		//プレイヤーと当たった時の反応
 		bool isHitFrozen = m_pPlayer->GetColRect().IsCollision(m_pFrozen->GetColRect());
-		if (isHitFrozen)
+		if (isHitFrozen && !(m_pFrozen->isMove))
 		{
 			//プレイヤーが攻撃モーションのときは氷は動かせない
 			if (m_pPlayer->GetState() == PlayerState::Attack)return;
 			bool dir = m_pPlayer->GetPos().x < m_pFrozen->GetPos().x;
-			Vec2 add = { dir ? 5.0f : -5.0f,   0 };
+			Vec2 add = { dir ? FrozenSpeed : -FrozenSpeed,   0 };
 			m_pFrozen->AddVel(add);
 
 			m_pFrozen->isMove = true;
@@ -233,16 +236,24 @@ void GameScene::CheckFrozenHit()
 		if (m_pFrozen->isMove)
 		{
 			//動いているときに敵と当たる//ペンギン
-			for (auto& enemyWizard : m_pEnemyWizards)
+			for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)
 			{
-				if (!enemyWizard) continue;
+				auto& e = m_pEnemyWizards[i];
+				if (!e)continue;
 				if (!m_pFrozen) break;
-				bool isHitEnemy = enemyWizard->GetColRect().IsCollision(m_pFrozen->GetColRect());
+				bool isHitEnemy = e->GetColRect().IsCollision(m_pFrozen->GetColRect());
 
 				if (isHitEnemy)
 				{
-					enemyWizard = nullptr;
 					m_pFrozen = nullptr;
+					//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+					spawn.spawned = false;
+					spawn.wasKilled = true;
+
+					//インスタンスを消す
+					m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 				}
 
 			}
@@ -330,7 +341,7 @@ void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 	
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
-		if (!m_pEnemyWizards[i])continue;
+		
 		auto& e = m_pEnemyWizards[i];
 		if (e == nullptr)continue;
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
@@ -427,20 +438,28 @@ void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 void GameScene::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizards)//ペンギン
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() >= 0)
 		{
-			if (num == nullptr)continue;
+			auto& e = m_pEnemyWizards[i];
+			if (!e)continue;
 
-			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(e->GetColRect());
 
 			if (isHitBurning)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				m_pBurningObjects.push_back(std::make_shared<BurningObject>(num));
-				num = nullptr;
+				m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+				//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 			}
 
 		}
@@ -485,22 +504,30 @@ void GameScene::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 
 void GameScene::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
 {
-	for (auto& num : m_pEnemyWizards)//ペンギン
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			if (num == nullptr)continue;
+			auto& e = m_pEnemyWizards[i];
+			if (!e)continue;
 
-			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
 			//矢の処理は別の場所(CheckhitArrow)
 
 
 			if (isHitFrozen)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				m_pFrozens.push_back(std::make_shared<Frozen>(num));
-				num = nullptr;
+				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 			}
 
 		}
@@ -749,6 +776,7 @@ void GameScene::NormalUpdate(Input& input)
 			//対応するspawnを復活可能にする
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
+			spawn.wasKilled = true;
 
 			//インスタンスを消す
 			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);

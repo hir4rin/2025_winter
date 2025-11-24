@@ -163,7 +163,7 @@ private:
 	float burningTimer = 0.0f;
 
 	float coolTimer = 0.0f;
-	float coolTime = 5.0f;
+	float coolTime = 15.0f;//今のところ効いてない
 	
 
 	//ノーマル

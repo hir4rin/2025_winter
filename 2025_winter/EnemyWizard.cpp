@@ -6,7 +6,7 @@
 namespace
 {
 	const Vec2 kInitPos = { 000.0f,000.0f };//初期位置
-	constexpr float kSpeed = 2.0f;//移動速度
+	constexpr float kSpeed = 3.0f;//移動速度
 	constexpr int enemy_cut_w = 64;
 	constexpr int enemy_cut_h = 64;
 	constexpr float  enemy_scale = 3.0f;
@@ -26,7 +26,7 @@ EnemyWizard::EnemyWizard():
 	m_handle = LoadGraph("data/Penguin.png");
 	m_pos = kInitPos;
 	m_isRight = false;
-	_state = EnemyState::Attack;
+	_state = EnemyState::Walk;
 }
 
 EnemyWizard::~EnemyWizard()
@@ -40,7 +40,7 @@ void EnemyWizard::Init()
 void EnemyWizard::Update()
 {
 	m_animframe++;
-	Character::Update();
+	
 	switch (_state)
 	{
 	case EnemyState::Normal:
@@ -61,7 +61,10 @@ void EnemyWizard::Update()
 	default:
 		break;
 	}
-
+	
+		
+	Character::Update();
+	
 }
 
 void EnemyWizard::Draw()
@@ -128,7 +131,7 @@ void EnemyWizard::Draw(Camera& camera)
 	}
 
 	//キャラとプレイヤーとの距離を表示
-	DrawBox(m_pos.x - catchDistance /2+ camera.drawOffset.x, 0, m_pos.x + catchDistance/2 + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
+	DrawBox(m_pos.x - catchDistance + camera.drawOffset.x, 0, m_pos.x + catchDistance + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 }
 
 void EnemyWizard::AnimChange(const EnemyState state)
@@ -153,7 +156,7 @@ void EnemyWizard::NormalUpdate()
 
 void EnemyWizard::WalkUpdate()
 {
-	m_vel.x = -kSpeed;
+	m_vel.x = m_isRight ? kSpeed : -kSpeed;
 	
 }
 void EnemyWizard::AttackUpdate()

@@ -131,7 +131,7 @@ void EnemyRider::Draw(Camera& camera)
 	}
 
 	//キャラとプレイヤーとの距離を表示
-	DrawBox(m_pos.x - catchDistance / 2 + camera.drawOffset.x, 0, m_pos.x + catchDistance / 2 + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
+	DrawBox(m_pos.x - catchDistance + camera.drawOffset.x, 0, m_pos.x + catchDistance+ camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 }
 
 void EnemyRider::AnimChange(const EnemyState state)
