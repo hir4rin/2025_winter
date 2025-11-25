@@ -369,10 +369,10 @@ void Player::AttackUpdate()
 		}
 	}
 	//着地時にアニメーションを帰るところ
-	if (m_pos.y > kGround)
+	/*if (m_isGround)
 	{
 		m_pos.y = kGround;
-		m_isGround = true;
+		
 
 		if (m_isJumpPreparing)return;
 		m_jumpFrame = 0;
@@ -381,7 +381,7 @@ void Player::AttackUpdate()
 		{
 			AnimSelect(Anim::Idle);
 		}
-	}
+	}*/
 	//バーニングだけ攻撃中は重力を受けない
 	//微妙だったため一旦なし
 	/*if (!(_type == PlayerType::Burning))

@@ -145,6 +145,7 @@
     <ClCompile Include="BurningObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="Door.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyArcher.cpp" />
     <ClCompile Include="EnemyArrow.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="BurningObject.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Door.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyArcher.h" />
     <ClInclude Include="EnemyArrow.h" />

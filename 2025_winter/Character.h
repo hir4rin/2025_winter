@@ -4,6 +4,16 @@
 #include <memory>
 
 class Bg;
+
+struct HitDir
+{
+	bool any = false;
+	bool left = false;
+	bool right = false;
+	bool top = false;
+	bool bottom = false;
+};
+
 class Character
 {
 public:
@@ -71,7 +81,9 @@ protected:
 	 /// プレイヤーでのマップチップとの当たり判定処理
 	 /// </summary>
 	 /// <param name="chipRect"></param>
-	  void CheckHitMapPlayer(Rect& chipRect);
+	  void  CheckHitMapPlayer(Rect& chipRect);
+
+	 
 
 	 /// <summary>
 	 /// プレイヤーと当たったかどうか

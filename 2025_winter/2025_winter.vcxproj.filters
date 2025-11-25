@@ -99,6 +99,9 @@
     <ClCompile Include="GameScene0.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Door.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vec2.h">
@@ -175,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="GameScene0.h">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Door.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

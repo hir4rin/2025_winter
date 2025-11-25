@@ -125,8 +125,11 @@ void Character::CheckHitMap(Rect& chipRect)//imanotokoro________Enemy___dake
 	}
 }
 
-void Character::CheckHitMapPlayer(Rect& chipRect)
+void  Character::CheckHitMapPlayer(Rect& chipRect)
 {
+	//当たったところを返す
+
+
 	//m_isGroundをセットする
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 	//マップと当たっていなかったらm_isGroundをfalseにする
@@ -185,6 +188,7 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 
 
 }
+
 
 bool Character::CheckHitMapPlayer_(Rect& chipRect)
 {
