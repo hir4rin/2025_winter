@@ -11,6 +11,7 @@
 #include "Item.h"
 #include "Frozen.h"
 #include "BurningObject.h"
+#include <../Door.h>
 #include "Bg.h"
 #include "../input.h"
 #include "GameoverScene.h"
@@ -51,6 +52,7 @@ GameScene::GameScene(SceneController& controller) :
 	frame_ = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
+	m_doors = std::make_shared< Door>();
 	//m_pEnemyWizards.resize(3);//ペンギンの数
 	//for (int i = 0; i < m_pEnemyWizards.size(); i++)
 	//{
@@ -656,6 +658,7 @@ void GameScene::NormalUpdate(Input& input)
 					enemy->AddPos(spawn.pos);
 					enemy->SetInitialID(spawn.pos);
 					m_pEnemyArchers.push_back(enemy);
+
 				}
 			}
 
@@ -673,6 +676,12 @@ void GameScene::NormalUpdate(Input& input)
 		update_ = &GameScene::FadeOutUpdate;
 		draw_ = &GameScene::FadeDraw;
 	}
+	//ドアに触れているかつ上入力をしていたらシーン遷移
+	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
+	{
+		update_ = &GameScene::FadeOutUpdate;
+		draw_ = &GameScene::FadeDraw;
+	}
 
 	//ポーズ画面
 	/*if (input.IsTriggered("pause"))
@@ -684,6 +693,7 @@ void GameScene::NormalUpdate(Input& input)
 
 
 	m_pBg->Update();
+	m_doors->Update();
 
 	m_pPlayer->Update(input);
 	if (m_pPlayer->isArrowAttack)//矢の出現
@@ -819,6 +829,7 @@ void GameScene::NormalDraw()
 {
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	m_pBg->Draw(camera);
+	m_doors->Draw(camera);
 
 	for (auto& m_pFrozen : m_pFrozens)
 	{

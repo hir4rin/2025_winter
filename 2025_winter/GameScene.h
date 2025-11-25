@@ -6,6 +6,7 @@
 #include <memory>
 #include <cassert>
 
+
 class Player;
 class EnemyWizard;
 class EnemyRider;
@@ -17,6 +18,7 @@ class Bg;
 class Character;
 class Frozen;
 class BurningObject;
+class Door;
 
 constexpr int cameraMargin = 100;
 constexpr int screenWidth = 1920;
@@ -132,6 +134,8 @@ private:
 
 	Bg* m_pBg;
 	Character* m_pCharacter;
+
+	std::shared_ptr<Door> m_doors;
 
 
 	
