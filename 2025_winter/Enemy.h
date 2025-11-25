@@ -23,6 +23,7 @@ enum class EnemyType
 struct EnemySpawn
 {
 	EnemyType type;
+	EnemyState state;
 	Vec2 pos;
 	bool spawned = false;
 	bool wasKilled = false;
@@ -47,7 +48,7 @@ public :
 	void DropItem(std::shared_ptr<EnemyRider> enemy);
 
 	void SetPlayer(std::shared_ptr<Player> player){m_pPlayer = player;}	
-
+	void SetState(EnemyState state) { _state = state; }
 	void  SetInitialID(Vec2 id) { m_initialID = id; }
 	Vec2 GetInitialID() { return m_initialID; }
 
@@ -57,6 +58,7 @@ public :
 
 protected:
 	Vec2 m_initialID;
+	EnemyState _state;
 
 };
 

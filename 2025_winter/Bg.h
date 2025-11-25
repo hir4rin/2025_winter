@@ -49,6 +49,14 @@ public:
 	/// <param name="chipRect">マップチップの矩形</param>
 	/// <returns>当たっているか</returns>
 	bool IsCollision(Rect rect, Rect& chipRect);
+	/// <summary>
+	/// 指定した矩形と当たっているか判定するプレイヤー専用
+	/// </summary>
+	/// <param name="rect">指定した矩形</param>
+	/// <param name="chipRect">マップチップの矩形</param>
+	/// <returns>当たっているか</returns>
+	bool IsCollisionPlayer(Rect rect, Rect& chipRect);
+	
 private:
 	int m_bgH;
 	int m_mapH;

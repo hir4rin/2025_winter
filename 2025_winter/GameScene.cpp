@@ -20,6 +20,7 @@
 
 namespace
 {
+
 	constexpr int kScreenWidth = 1920;
 	constexpr int kScreenHeight = 1080;
 
@@ -27,6 +28,7 @@ namespace
 
 
 	constexpr float FrozenSpeed = 13.0f;
+
 }
 
 
@@ -37,11 +39,12 @@ GameScene::GameScene(SceneController& controller) :
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(1500.0f,500.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(2100.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Archer, Vec2(2500.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard, Vec2(3000.0f,500.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Rider, Vec2(4000.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,700.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
@@ -441,7 +444,7 @@ void GameScene::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() >= 0)
+		if (m_pPlayer->GetState() == PlayerState::Attack)// && m_pPlayer->GetAnimIdx() >= 0
 		{
 			auto& e = m_pEnemyWizards[i];
 			if (!e)continue;
@@ -629,6 +632,7 @@ void GameScene::NormalUpdate(Input& input)
 					enemy->SetBgPointer(m_pBg);
 
 					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
 					enemy->AddPos(spawn.pos);
 					enemy->SetInitialID(spawn.pos);
 					m_pEnemyWizards.push_back(enemy);
@@ -638,6 +642,7 @@ void GameScene::NormalUpdate(Input& input)
 					auto enemy = std::make_shared<EnemyRider>();
 					enemy->SetBgPointer(m_pBg);
 					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
 					enemy->AddPos(spawn.pos);
 					enemy->SetInitialID(spawn.pos);
 					m_pEnemyRiders.push_back(enemy);
@@ -647,6 +652,7 @@ void GameScene::NormalUpdate(Input& input)
 					auto enemy = std::make_shared<EnemyArcher>();
 					enemy->SetBgPointer(m_pBg);
 					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
 					enemy->AddPos(spawn.pos);
 					enemy->SetInitialID(spawn.pos);
 					m_pEnemyArchers.push_back(enemy);

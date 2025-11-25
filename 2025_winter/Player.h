@@ -70,7 +70,7 @@ public:
 	Rect GetColArcherRect() { return m_archerRect; }
 
 	Rect GetColCopyRect() { return m_copyRect; }//攻撃判定を取得
-	PlayerState GetState() { return _state; }//Playerの状態を取得
+	 PlayerState GetState() { return _state; }//Playerの状態を取得
 	PlayerType GetType() { return _type; }//Playerの変身タイプを取得
 	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
 	void ChangeNormal();//外部から変身の変更

@@ -20,7 +20,7 @@ private:
 	int charaIdx;
 	int charaIdy;
 	int m_animframe;
-	EnemyState _state;
+	
 	void CheckHit();
 
 	void AnimChange(const EnemyState state);

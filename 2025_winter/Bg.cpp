@@ -232,7 +232,7 @@ void Bg::DrawMapChip0(Camera& camera)
 
 			// マップチップのグラフィック切り出し座標
 			int srcX = kChipSize * (chipNo % m_graphChipNumX);
-			int srcY = kChipSize * (chipNo / m_graphChipNumX);//???
+			int srcY = kChipSize * (chipNo / m_graphChipNumX);
 
 			DrawRectRotaGraph(
 				static_cast<int>(posX + kChipSize * kChipScale * 0.5f),
@@ -271,7 +271,7 @@ void Bg::DrawMapChip(Camera& camera)
 
 			// マップチップのグラフィック切り出し座標
 			int srcX = kChipSize * (chipNo % m_graphChipNumX);
-			int srcY = kChipSize * (chipNo / m_graphChipNumX);//???
+			int srcY = kChipSize * (chipNo / m_graphChipNumX);
 
 			DrawRectRotaGraph(
 				static_cast<int>(posX + kChipSize * kChipScale * 0.5f),
@@ -315,6 +315,68 @@ bool Bg::IsCollision(Rect rect, Rect& chipRect)
 			chipRect.m_right = static_cast<float>(chipRight);
 			chipRect.m_top = static_cast<float>(chipTop);
 			chipRect.m_bottom = static_cast<float>(chipBottom);
+
+			//マップチップが39,40,41のとき下からあたっていたら貫通したいから
+			//プレイヤーの速度が上向きだったらfalseになる
+			bool clearnness = (m_chipData0[x][y] == 38 ||
+				               m_chipData0[x][y] == 39 ||
+				               m_chipData0[x][y] == 40);
+			if (clearnness)
+			{
+				/*if (m_pPlayer->ChangeVel().y < 0.0f)
+				{
+					return false;
+				}
+				*/
+			}
+
+			// いずれかのチップに当たっていたら終了する
+			return true;
+		}
+	}
+	return false;
+
+}
+bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect)
+{
+	for (int y = 0; y < kChipNumY; y++)
+	{
+		for (int x = 0; x < kChipNumX; x++)
+		{
+			// マップチップ0番は当たり判定がないため飛ばす
+			if (m_chipData0[x][y] == 5) continue;
+			if (m_chipData0[x][y] == 0) continue;
+
+			int chipLeft = static_cast<int>(x * kChipSize * kChipScale);
+			int chipRight = static_cast<int>(chipLeft + kChipSize * kChipScale);
+			int chipTop = static_cast<int>(y * kChipSize * kChipScale);
+			int chipBottom = static_cast<int>(chipTop + kChipSize * kChipScale);
+
+			// 絶対に当たらない場合
+			if (chipLeft > rect.GetRight()) continue;
+			if (chipTop > rect.GetBottom()) continue;
+			if (chipRight < rect.Getleft()) continue;
+			if (chipBottom < rect.GetTop()) continue;
+
+			// ぶつかったマップチップの矩形を設定する
+			chipRect.m_left = static_cast<float>(chipLeft);
+			chipRect.m_right = static_cast<float>(chipRight);
+			chipRect.m_top = static_cast<float>(chipTop);
+			chipRect.m_bottom = static_cast<float>(chipBottom);
+
+			//マップチップが39,40,41のとき下からあたっていたら貫通したいから
+			//プレイヤーの速度が上向きだったらfalseになる
+			bool clearnness = (m_chipData0[x][y] == 39 ||
+				               m_chipData0[x][y] == 40 ||
+				               m_chipData0[x][y] == 41);
+			if (clearnness)
+			{
+				if (m_pPlayer->ChangeVel().y < 0.0f)
+				{
+					return false;
+				}
+				
+			}
 
 			// いずれかのチップに当たっていたら終了する
 			return true;

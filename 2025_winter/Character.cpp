@@ -130,7 +130,7 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 	//m_isGroundをセットする
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize, kCharaSize);
 	//マップと当たっていなかったらm_isGroundをfalseにする
-	if (!(m_pBg->IsCollision(m_colRect, chipRect))) m_isGround = false;
+	if (!(m_pBg->IsCollisionPlayer(m_colRect, chipRect))) m_isGround = false;
 
 	
 
@@ -142,7 +142,7 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
 	
-	if (m_pBg->IsCollision(m_colRect, chipRect))
+	if (m_pBg->IsCollisionPlayer(m_colRect, chipRect))
 	{
 
 		if (m_vel.x > 0.0f)
@@ -164,7 +164,7 @@ void Character::CheckHitMapPlayer(Rect& chipRect)
         m_pos.y += m_vel.y;
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
-	if (m_pBg->IsCollision(m_colRect, chipRect))
+	if (m_pBg->IsCollisionPlayer(m_colRect, chipRect))
 	{
 
 		if (m_vel.y > 0.0f)
@@ -190,7 +190,7 @@ bool Character::CheckHitMapPlayer_(Rect& chipRect)
 {
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
-	if (m_pBg->IsCollision(m_colRect, chipRect))
+	if (m_pBg->IsCollisionPlayer(m_colRect, chipRect))
 	{
 
 
