@@ -59,19 +59,25 @@ public:
 	/// アイテムもここで落ちる
 	/// </summary>
 	/// <param name="enemyWizards"></param>
-	void CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
+	void CheckHitNormal();
 	/// <summary>
-	/// バーニングでの当たり判定チェック
+	/// バーニングでの当たり判定チェック(遅いほうのバーニング)
 	/// </summary>
 	/// <param name="enemyWizards"></param>
-	void CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
+	void CheckHitBurning();
+	/// <summary>
+	///  バーニングでの当たり判定チェック(速いほうのバーニング)
+	/// </summary>
+	void CheckFastBurning();
 	/// <summary>
 	/// フローズンでの当たり判定チェック
 	/// </summary>
 	/// <param name="enemyWizards"></param>
-	void CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards);
+	void CheckHitFrozen();
 
+	
 
+	
 
 
 private:
@@ -112,6 +118,15 @@ private:
 		}
 		assert(false && "posがちがうenemyが検出されました");
 	}
+
+	/// <summary>
+	/// なんかよくわからんAIが考えた新しく矩形を作ってそれで判定
+	/// </summary>
+	/// <param name="p0"></param>
+	/// <param name="p1"></param>
+	/// <param name="rect"></param>
+	/// <returns></returns>
+	bool CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect);
 
 private:
 	int frame_ = 0;	// フェードインアウト用

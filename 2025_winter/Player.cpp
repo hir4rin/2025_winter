@@ -41,7 +41,10 @@ Player::Player() :
 	isNomove(false),
 	arrowFrame(-1),
 	isArrowAttack(false),
-	isJumping(false)
+	isJumping(false),
+	BurningPrevPos{0,0},
+	BurningAfterPos{0,0},
+	isBurningAttack(false)
 	//m_pBg(nullptr)
 {
 	m_pos = kInitPos;
@@ -229,7 +232,7 @@ void Player::InputUpdate(Input& input)
 			if (coolTimer <= 0)
 			{
 				burningTimer = burningTime;
-				isBurningAttack = true;
+			
 			}
 		}
 	}
@@ -275,6 +278,7 @@ void Player::AttackUpdate()
 	{
 		if (_type == PlayerType::Burning)//バーニングの攻撃処理
 		{
+			isBurningAttack = true;
 			float dist = (m_isRight) ? kBurningSpeed : -kBurningSpeed;
 			bool hit = MoveWithCollisionX(dist);//衝突判定付きで少しずつ移動(少しずつの間当たり判定)
 			if (hit)
@@ -283,7 +287,7 @@ void Player::AttackUpdate()
 				//攻撃終了
 
 				burningTimer = 0;
-				isBurningAttack = false;
+				 
 				_state = PlayerState::Normal;
 				//isNomove = false;
 			}
@@ -306,7 +310,7 @@ void Player::AttackUpdate()
 				//攻撃終了
 
 				burningTimer = 0;
-				isBurningAttack = false;
+				
 				_state = PlayerState::Normal;
 				//isNomove = false;
 			}
@@ -793,6 +797,7 @@ bool Player::MoveWithCollisionX(float distance)
 {
 	if (distance == 0.0f) return false;
 
+	
 	//1ステップ当たりの移動量
 	const float stepSize = 4.0f;
 	int steps = static_cast<int>(std::ceil(std::abs((distance)) / stepSize));
@@ -802,6 +807,8 @@ bool Player::MoveWithCollisionX(float distance)
 	float stepDelta = distance / static_cast<float>(steps);
 
 	Rect chipRect;
+	//バーニングの前座標
+	BurningPrevPos = m_pos;
 	for (int i = 0; i < steps; ++i)
 	{
 		m_pos.x += stepDelta;
@@ -820,8 +827,10 @@ bool Player::MoveWithCollisionX(float distance)
 			}
 			//衝突したのでこれ以上進まない
 			m_pos.x -= stepDelta;
+			BurningAfterPos = m_pos;
 			return true;
 		}
+		BurningAfterPos = m_pos;
 
 	}
 
@@ -829,6 +838,7 @@ bool Player::MoveWithCollisionX(float distance)
 	//衝突なし
 	return false;
 }
+
 
 void Player::ChangeNormal()
 {

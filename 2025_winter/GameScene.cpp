@@ -1,4 +1,5 @@
 ﻿#include "GameScene.h"
+#include <algorithm>
 #include "DxLib.h"
 #include "Camera.h"
 #include "Character.h"
@@ -18,6 +19,7 @@
 #include "SceneController.h"
 #include <cassert>
 #include "../Application.h"
+
 
 namespace
 {
@@ -53,39 +55,9 @@ GameScene::GameScene(SceneController& controller) :
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer);
 	m_doors = std::make_shared< Door>();
-	//m_pEnemyWizards.resize(3);//ペンギンの数
-	//for (int i = 0; i < m_pEnemyWizards.size(); i++)
-	//{
-	//	float  distance = i * 200;
-	//	m_pEnemyWizards[i] = std::make_shared<EnemyWizard>();
-	//	m_pEnemyWizards[i]->SetBgPointer(m_pBg);
-	//	m_pEnemyWizards[i]->SetPlayer(m_pPlayer);
-	//	m_pEnemyWizards[i]->AddPos(Vec2{ distance,0.0f });
 
-	//}
-	//m_pEnemyRiders.resize(2);//ライダーの数
-	//for (int i = 0; i < m_pEnemyRiders.size(); i++)
-	//{
-	//	float  distance = i * 200;
-	//	m_pEnemyRiders[i] = std::make_shared<EnemyRider>();
-	//	m_pEnemyRiders[i]->SetBgPointer(m_pBg);
-	//	m_pEnemyRiders[i]->SetPlayer(m_pPlayer);
-	//	m_pEnemyRiders[i]->AddPos(Vec2{ distance,0.0f });
 
-	//}
 
-	/*m_pEnemyArchers.resize(3);
-	for (int i = 0; i < m_pEnemyArchers.size(); i++)
-	{
-		float  distance = i * 200;
-		m_pEnemyArchers[i] = std::make_shared<EnemyArcher>();
-		m_pEnemyArchers[i]->SetBgPointer(m_pBg);
-		m_pEnemyArchers[i]->SetPlayer(m_pPlayer);
-		m_pEnemyArchers[i]->AddPos(Vec2{ distance,0.0f });
-		i * 200;
-	}*/
-
-	//m_pItems = std::make_shared<Item>();
 
 
 	//後で張り付ける
@@ -107,13 +79,13 @@ void GameScene::CheckHit()
 	switch (m_pPlayer->GetType())
 	{
 	case PlayerType::Normal:
-		CheckHitNormal(m_pEnemyWizards);
+		CheckHitNormal();
 		break;
 	case PlayerType::Burning:
-		CheckHitBurning(m_pEnemyWizards);
+		CheckHitBurning();
 		break;
 	case PlayerType::Frozen:
-		CheckHitFrozen(m_pEnemyWizards);
+		CheckHitFrozen();
 		break;
 	}
 	if (m_pItems)
@@ -169,12 +141,20 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<EnemyWizard> enemy = num->hitEnemyWizard;
 
 		//敵リストから一致するやつを探して削除
-		for (auto& e : m_pEnemyWizards)
+		for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)
 		{
+			auto& e = m_pEnemyWizards[i];
 			if (e == enemy)
 			{
 
-				e = nullptr;
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 				break;
 			}
 		}
@@ -188,12 +168,20 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<EnemyRider> enemy = num->hitEnemyRider;
 
 		//敵リストから一致するやつを探して削除
-		for (auto& e : m_pEnemyRiders)
+		for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)
 		{
+			auto& e = m_pEnemyRiders[i];
 			if (e == enemy)
 			{
 
-				e = nullptr;
+				//消えるとき絶対する処理
+		//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 				break;
 			}
 		}
@@ -207,12 +195,20 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<EnemyArcher> enemy = num->hitEnemyArcher;
 
 		//敵リストから一致するやつを探して削除
-		for (auto& e : m_pEnemyArchers)
+		for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)
 		{
+			auto& e = m_pEnemyArchers[i];
 			if (e == enemy)
 			{
 
-				e = nullptr;
+				//消えるとき絶対する処理
+		//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 				break;
 			}
 		}
@@ -287,16 +283,25 @@ void GameScene::CheckFrozenHit()
 
 			}
 			//動いているときに敵と当たる//どくろアーチャー
-			for (auto& enemyArcher : m_pEnemyArchers)
+			for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)
 			{
-				if (!enemyArcher) continue;
+				auto& e = m_pEnemyArchers[i];
+				if (e == nullptr)continue;
 				if (!m_pFrozen) break;
-				bool isHitEnemy = enemyArcher->GetColRect().IsCollision(m_pFrozen->GetColRect());
+				bool isHitEnemy = e->GetColRect().IsCollision(m_pFrozen->GetColRect());
 
 				if (isHitEnemy)
 				{
-					enemyArcher = nullptr;
 					m_pFrozen = nullptr;
+					//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+					spawn.spawned = false;
+					spawn.wasKilled = true;
+
+					//インスタンスを消す
+					m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+
 
 				}
 
@@ -350,12 +355,12 @@ void GameScene::ReactionBurning()
 
 }
 
-void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
+void GameScene::CheckHitNormal()
 {
-	
+
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
-		
+
 		auto& e = m_pEnemyWizards[i];
 		if (e == nullptr)continue;
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
@@ -429,13 +434,14 @@ void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 		}
 	}
-	for (auto& num : m_pEnemyArchers)//どくろアーチャー
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			if (num == nullptr)continue;
-			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
+			auto& e = m_pEnemyArchers[i];
+			if (e == nullptr)continue;
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(e->GetColRect());
 
 
 			//矢の処理は別の場所(CheckhitArrow)
@@ -447,13 +453,21 @@ void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 				//if (num == nullptr || !rider->HitRider)continue;
 
 				//アイテムを落とす処理
-				m_pItems = std::make_shared<Item>(num);//新しくアイテムを生成//別のアイテムを渡す
+				m_pItems = std::make_shared<Item>(e);//新しくアイテムを生成//別のアイテムを渡す
 				m_pItems->SetBgPointer(m_pBg);
-				m_pItems->ChangePos() = num->GetPos();
+				m_pItems->ChangePos() = e->GetPos();
 				//敵のヒット情報をリセット
 				//num->HitRider = nullptr;
 
-				num = nullptr;
+			//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+
 
 			}
 
@@ -461,7 +475,7 @@ void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 	}
 }
 
-void GameScene::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
+void GameScene::CheckHitBurning()
 {
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
@@ -515,27 +529,102 @@ void GameScene::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 
 		}
 	}
-	for (auto& num : m_pEnemyArchers)//どくろアーチャー
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
-			if (num == nullptr)continue;
+			auto& e = m_pEnemyArchers[i];
+			if (e == nullptr)continue;
 
-			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(e->GetColRect());
 
 			if (isHitBurning)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				m_pBurningObjects.push_back(std::make_shared<BurningObject>(num));
-				num = nullptr;
+				m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			}
 
 		}
 	}
 }
 
-void GameScene::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyWizards)
+void GameScene::CheckFastBurning()
+{
+	if (!m_pPlayer) return;
+	m_pPlayer->ChangeBurningAttack(false);
+	Vec2 p0 = m_pPlayer->GetPrevPos();
+	Vec2 p1 = m_pPlayer->GetAfterPos();
+	//敵のやられ判定の処理
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
+	{
+		auto& e = m_pEnemyWizards[i];
+		if (!e)continue;
+		//バーニングの攻撃の矩形との当たり判定チェック
+		if (CheckSweepHit(p0, p1, e->GetColRect()))
+		{
+			//ここに敵が攻撃されたときの処理を書く
+			m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+		}
+	}
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
+	{
+		auto& e = m_pEnemyRiders[i];
+		if (!e)continue;
+		//バーニングの攻撃の矩形との当たり判定チェック
+		if (CheckSweepHit(p0, p1, e->GetColRect()))
+		{
+			//ここに敵が攻撃されたときの処理を書く
+			m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+		}
+	}
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//オークライダー
+	{
+		auto& e = m_pEnemyArchers[i];
+		if (!e)continue;
+		//バーニングの攻撃の矩形との当たり判定チェック
+		if (CheckSweepHit(p0, p1, e->GetColRect()))
+		{
+			//ここに敵が攻撃されたときの処理を書く
+			m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+		}
+	}
+
+}
+
+void GameScene::CheckHitFrozen()
 {
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
@@ -593,27 +682,37 @@ void GameScene::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 		}
 	}
-	for (auto& num : m_pEnemyArchers)//どくろアーチャー
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			if (num == nullptr)continue;
+			auto& e = m_pEnemyArchers[i];
+			if (e == nullptr)continue;
 
-			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
 			//矢の処理は別の場所(CheckhitArrow)
 
 
 			if (isHitFrozen)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				m_pFrozens.push_back(std::make_shared<Frozen>(num));
-				num = nullptr;
+				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+				//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			}
 
 		}
 	}
 }
+
+
 
 void GameScene::FadeInUpdate(Input&)
 {
@@ -732,6 +831,11 @@ void GameScene::NormalUpdate(Input& input)
 	m_doors->Update();
 
 	m_pPlayer->Update(input);
+	if (m_pPlayer->isBurningAttack)//バーニングの攻撃の出始めのほうの判定
+	{
+		CheckFastBurning();
+	}
+
 	if (m_pPlayer->isArrowAttack)//矢の出現
 	{
 		//ポインタを作ってその座標を入れる
@@ -811,7 +915,7 @@ void GameScene::NormalUpdate(Input& input)
 	{
 		if (m_pBurningObject) m_pBurningObject->Update();
 	}
-	CheckHit();//当たり判定
+	CheckHit();//3種の攻撃の当たり判定
 	CheckArrowHit();
 	//CheckItemWizard();
 	//CheckItemOrcRider();
@@ -878,7 +982,7 @@ void GameScene::FadeOutUpdate(Input&)
 void GameScene::FadeDraw()
 {
 
-	
+
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(frame_) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
@@ -935,6 +1039,58 @@ void GameScene::NormalDraw()
 	float bottom = camera.pos.y + screenHeight - 10;
 	DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
 
+}
+
+bool GameScene::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)
+{
+	// --- ① まず AABB でざっくり判定 ---
+	float sweepLeft = (std::min)(p0.x, p1.x);
+	float sweepRight = (std::max)(p0.x, p1.x);
+	float sweepTop = (std::min)(p0.y, p1.y);
+	float sweepBottom = (std::max)(p0.y, p1.y);
+
+	// AABB が敵矩形とまったく重ならない → 交差してない
+	if (sweepRight < rect.Getleft() || sweepLeft > rect.GetRight() ||
+		sweepBottom < rect.GetTop() || sweepTop > rect.GetBottom())
+	{
+		return false;
+	}
+	// --- ② 線分と矩形の正確判定（Liang–Barsky）---
+
+	float dx = p1.x - p0.x;
+	float dy = p1.y - p0.y;
+
+	float t0 = 0.0f, t1 = 1.0f;
+
+	auto clip = [&](float p, float q) -> bool
+		{
+			if (p == 0.0f) {
+				// 線が矩形と平行
+				return (q >= 0.0f);
+			}
+			float t = q / p;
+			if (p < 0.0f) {
+				if (t > t1) return false;
+				if (t > t0) t0 = t;
+			}
+			else {
+				if (t < t0) return false;
+				if (t < t1) t1 = t;
+			}
+			return true;
+		};
+
+	// 左（x >= r.left）
+	if (!clip(-dx, p0.x - rect.Getleft()))   return false;
+	// 右（x <= r.right）
+	if (!clip(dx, rect.GetRight() - p0.x))  return false;
+	// 上（y >= r.top）
+	if (!clip(-dy, p0.y - rect.GetTop()))    return false;
+	// 下（y <= r.bottom）
+	if (!clip(dy, rect.GetBottom() - p0.y)) return false;
+
+	// t0～t1 の間で交差が確認されたらヒット
+	return true;
 }
 
 void GameScene::Update(Input& input)

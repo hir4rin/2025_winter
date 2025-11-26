@@ -84,7 +84,11 @@ public:
 	int arrowFrame;//矢が発射するまでの時間
 	bool isArrowAttack;//矢を撃ったかどうか
 
-
+	Vec2 GetPrevPos() { return BurningPrevPos; }
+	Vec2 GetAfterPos() { return BurningAfterPos; }
+	
+	bool isBurningAttack;///バーニング攻撃を下かどうか
+	void ChangeBurningAttack(bool ans) { isBurningAttack = ans; }
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -145,6 +149,8 @@ private:
 	bool MoveWithCollisionX(float distance);
 
 	
+
+	
 	
 private:
 	int m_frame;
@@ -158,13 +164,17 @@ private:
 	bool isJumping;
 	const int arrowtime = 30;//発射クールタイム
 
-	bool isBurningAttack = false;///今のところ用途不明
+	
 
-	float burningTime = 12.0f;  //バーニングの移動時間
+	float burningTime = 9.0f;  //バーニングの移動時間
 	float burningTimer = 0.0f;
 
 	float coolTimer = 0.0f;
 	float coolTime = 15.0f;//今のところ効いてない
+
+	//バーニングの移動の前後の座標
+	Vec2 BurningPrevPos;
+	Vec2 BurningAfterPos;
 	
 	HitDir m_hitDir;
 
