@@ -263,16 +263,25 @@ void GameScene::CheckFrozenHit()
 
 			}
 			//動いているときに敵と当たる//オークライダー
-			for (auto& enemyRider : m_pEnemyRiders)
+			for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)
 			{
-				if (!enemyRider) continue;
+				auto& e = m_pEnemyRiders[i];
+				if (!e)continue;
 				if (!m_pFrozen) break;
-				bool isHitEnemy = enemyRider->GetColRect().IsCollision(m_pFrozen->GetColRect());
+				bool isHitEnemy = e->GetColRect().IsCollision(m_pFrozen->GetColRect());
 
 				if (isHitEnemy)
 				{
-					enemyRider = nullptr;
 					m_pFrozen = nullptr;
+
+					//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+					spawn.spawned = false;
+					spawn.wasKilled = true;
+
+					//インスタンスを消す
+					m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 
 				}
 
@@ -379,31 +388,42 @@ void GameScene::CheckHitNormal(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 			}
 		}
 	}
-	for (auto& num : m_pEnemyRiders)//オークライダー
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			if (num == nullptr)continue;
-			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(num->GetColRect());
+			auto& e = m_pEnemyRiders[i];
+			if (e == nullptr)continue;
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(e->GetColRect());
 
 
 			//矢の処理は別の場所(CheckhitArrow)
 
 			if (isHitAttack)
 			{
-				//num->DropItem(num);
+				//e->DropItem(e);
 				//ここに敵が攻撃されたときの処理を書く
-				//if (num == nullptr || !rider->HitRider)continue;
+				//if (e == nullptr || !rider->HitRider)continue;
 
 				//アイテムを落とす処理
-				m_pItems = std::make_shared<Item>(num);//新しくアイテムを生成//別のアイテムを渡す
+				m_pItems = std::make_shared<Item>(e);//新しくアイテムを生成//別のアイテムを渡す
 				m_pItems->SetBgPointer(m_pBg);
-				m_pItems->ChangePos() = num->GetPos();
+				m_pItems->ChangePos() = e->GetPos();
 				//敵のヒット情報をリセット
 				//num->HitRider = nullptr;
 
-				num = nullptr;
+					////敵のヒット情報をリセット
+				//wizard->HitWizard = nullptr;
+				//ここに敵が攻撃されたときの処理を書く
+				//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 
 			}
 
@@ -469,20 +489,28 @@ void GameScene::CheckHitBurning(std::vector<std::shared_ptr<EnemyWizard>>& enemy
 
 		}
 	}
-	for (auto& num : m_pEnemyRiders)//オークライダー
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
-			if (num == nullptr)continue;
+			auto& e = m_pEnemyRiders[i];
+			if (!e)continue;
 
-			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(num->GetColRect());
+			bool isHitBurning = m_pPlayer->GetColBurningRect().IsCollision(e->GetColRect());
 
 			if (isHitBurning)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				m_pBurningObjects.push_back(std::make_shared<BurningObject>(num));
-				num = nullptr;
+				m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));
+				//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 			}
 
 		}
@@ -537,22 +565,30 @@ void GameScene::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 
 		}
 	}
-	for (auto& num : m_pEnemyRiders)//オークライダー
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
 		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			if (num == nullptr)continue;
+			auto& e = m_pEnemyRiders[i];
+			if (!e)continue;
 
-			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(num->GetColRect());
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
 			//矢の処理は別の場所(CheckhitArrow)
 
 
 			if (isHitFrozen)
 			{
 				//ここに敵が攻撃されたときの処理を書く
-				m_pFrozens.push_back(std::make_shared<Frozen>(num));
-				num = nullptr;
+				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 			}
 
 		}
@@ -782,7 +818,7 @@ void GameScene::NormalUpdate(Input& input)
 	CheckFrozenHit();
 
 	//消える処理
-	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
 		if (!m_pEnemyWizards[i])continue;
 		auto& e = m_pEnemyWizards[i];
@@ -798,6 +834,22 @@ void GameScene::NormalUpdate(Input& input)
 			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 		}
 	}
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//ライダー
+	{
+		if (!m_pEnemyRiders[i])continue;
+		auto& e = m_pEnemyRiders[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+		}
+	}
 
 
 
@@ -807,6 +859,13 @@ void GameScene::NormalUpdate(Input& input)
 
 void GameScene::FadeOutUpdate(Input&)
 {
+	//ドアの描画(FadeOutDrawがないため,
+	// いったんこっちにおく)
+	m_doors->OutUpdate();
+	m_pBg->Draw(camera);
+	m_doors->Draw(camera);
+	m_pPlayer->Draw(camera);
+
 	if (frame_++ >= fade_interval)
 	{
 		//delete m_pCharacter;
@@ -818,11 +877,16 @@ void GameScene::FadeOutUpdate(Input&)
 
 void GameScene::FadeDraw()
 {
+
+	
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(frame_) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
 	DrawBox(0, 0, 640, 480, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+
+
 }
 
 void GameScene::NormalDraw()

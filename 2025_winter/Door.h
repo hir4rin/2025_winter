@@ -15,6 +15,7 @@ public:
 
 	const Rect& GetColRect() { return m_colRect; }
 
+	void OutUpdate();
 
 private:
 	Vec2 m_pos;
@@ -25,6 +26,8 @@ private:
 
 	int charaIdx;
 	int charaIdy;
+
+	int m_frame;
 
 
 

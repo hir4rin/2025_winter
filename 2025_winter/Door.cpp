@@ -9,9 +9,10 @@ namespace
 	constexpr float kDoorScale = 5.0f;
 }
 
-Door::Door()
+Door::Door():
+	m_frame(0)
 {
-	m_pos = { 5200,625 };
+	m_pos = { 5200,660 };
 	m_handle = LoadGraph("data/doors.png");
 	charaIdx = 0;
 	charaIdy = 0;
@@ -32,7 +33,6 @@ void Door::Update()
 }
 void Door::Draw(Camera& camera)
 {
-	
 
 	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x,
 			m_pos.y + camera.drawOffset.y,
@@ -40,4 +40,14 @@ void Door::Draw(Camera& camera)
 		kCharaWidth, kCharaHeight,//切り取りの幅
 		kDoorScale, 0.0f, m_handle, true, false);
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
+}
+
+void Door::OutUpdate()
+{
+	//fade_interval = 60
+	m_frame++;
+
+	charaIdx = m_frame / 15 % 3;
+	if (m_frame >= 45) charaIdx = 2;
+
 }
