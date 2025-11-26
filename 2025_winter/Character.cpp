@@ -125,8 +125,9 @@ void Character::CheckHitMap(Rect& chipRect)//imanotokoro________Enemy___dake
 	}
 }
 
-void  Character::CheckHitMapPlayer(Rect& chipRect)
+HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
 {
+	HitDir ans;
 	//当たったところを返す
 
 
@@ -151,10 +152,13 @@ void  Character::CheckHitMapPlayer(Rect& chipRect)
 		if (m_vel.x > 0.0f)
 		{
 			m_pos.x = chipRect.Getleft() - kCharaSize * 0.5f;
+			ans.left = true;
+
 		}
 		else if (m_vel.x < 0.0f)
 		{
 			m_pos.x = chipRect.GetRight() + kCharaSize * 0.5f;
+			ans.right = true;
 		}
 
 
@@ -175,17 +179,19 @@ void  Character::CheckHitMapPlayer(Rect& chipRect)
 			m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
 			m_vel.y = 0.0f;
 			m_isGround = true;
+			ans.bottom = true;
 		}
 		else if (m_vel.y < 0.0f)
 		{
 			m_pos.y = chipRect.GetBottom() + kCharaSize * 0.5f;
 			m_vel.y *= -1.0f;
+			ans.top = true;
 		}
 
 
 	}
 
-
+	return ans;
 
 }
 

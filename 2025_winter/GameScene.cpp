@@ -281,7 +281,7 @@ void GameScene::CheckFrozenHit()
 					spawn.wasKilled = true;
 
 					//インスタンスを消す
-					m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+					m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 
 				}
 
@@ -588,7 +588,7 @@ void GameScene::CheckHitFrozen(std::vector<std::shared_ptr<EnemyWizard>>& enemyW
 				spawn.wasKilled = true;
 
 				//インスタンスを消す
-				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 			}
 
 		}

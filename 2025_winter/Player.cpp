@@ -20,20 +20,14 @@ namespace
 	constexpr int player_cut_h = 100;
 	constexpr float  player_scale = 3.0f;
 
-	constexpr float kJumpPower = 20.0f;//ジャンプ力
-
-	constexpr float kSmallJumpFrame = 5;//小ジャンプのフレーム
-
-
-	constexpr float kSmallJumpHeight = 1.0f;//小ジャンプの高さ
-
-	constexpr float kBigJumpHeight = 1.5f;//大ジャンプの高さ
+	constexpr float kJumpPower = -15.0f;	// ジャンプ力
+	constexpr int kMaxJumpFrame = 15;	// ジャンプを長押しできる最大時間
 
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
 
 	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
-	
+
 
 }
 
@@ -46,7 +40,8 @@ Player::Player() :
 	m_animframe(0),
 	isNomove(false),
 	arrowFrame(-1),
-	isArrowAttack(false)
+	isArrowAttack(false),
+	isJumping(false)
 	//m_pBg(nullptr)
 {
 	m_pos = kInitPos;
@@ -103,9 +98,21 @@ void Player::Update(Input& input)
 		CopyUpdate();
 		break;
 	}
-	CheckHitMapPlayer(chipRect);
+	m_hitDir = CheckHitMapPlayer(chipRect);
+	//着地時にアニメーションを帰るところ
+	if (m_isGround)
+	{
 
-	if(m_pos.x <0)//画面外に出ないようにする
+
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+		if (_anim == Anim::Jump)
+		{
+			AnimSelect(Anim::Idle);
+		}
+	}
+
+	if (m_pos.x < 0)//画面外に出ないようにする
 	{
 		m_pos.x = 0;
 	}
@@ -114,71 +121,19 @@ void Player::Update(Input& input)
 
 void Player::Draw()//使わない
 {
-//	float drawX = m_pos.x - m_pBg->GetScrollX();
-//	float drawY = m_pos.y - m_pBg->GetScrollY();
-//
-//
-//
-//
-//#ifdef _DEBUG
-//	//当たり判定の描画
-//	Character::Draw();
-//	m_attackRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-//	m_burningRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-//	m_frozenRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-//	m_archerRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-//	m_copyRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 0), false);
-//#endif
-//	switch (_type)
-//	{
-//	case PlayerType::Normal:;//アニメーションの遷移
-//		NormalAnim();
-//		break;
-//	case PlayerType::Burning:;//アニメーションの遷移
-//		BurningAnim();
-//		break;
-//	case PlayerType::Frozen:;//アニメーションの遷移
-//		FrozenAnim();
-//		break;
-//	case PlayerType::Archer:;//アニメーションの遷移
-//		ArcherAnim();
-//		break;
-//	}
-//
-//	if (m_isRight)
-//	{
-//		DrawRectRotaGraph(drawX, drawY,
-//		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-//		player_cut_w, player_cut_h,//切り取りの幅
-//		player_scale, 0.0f, m_handle, true);
-//	}
-//	else
-//	{
-//		DrawRectRotaGraph(drawX, drawY,
-//		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-//		player_cut_w, player_cut_h,//切り取りの幅
-//		player_scale, 0.0f, m_handle, true, true);
-//	}
-//
-//#ifdef _DEBUG
-//	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
-//	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", _state);
-//	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", _type);
-//	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
-//	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
-//#endif
+
 }
 
 void Player::Draw(Camera& camera)
 {
-	
+
 #ifdef _DEBUG
 	//当たり判定の描画
 	//当たり判定の描画(変身攻撃など)
 	switch (_state)
 	{
 	case PlayerState::Normal://アップデートの遷移
-	
+
 		break;
 	case PlayerState::Attack://アップデートの遷移
 		switch (_type)
@@ -197,18 +152,18 @@ void Player::Draw(Camera& camera)
 			break;
 
 		}
-		
+
 		break;
 	case PlayerState::Copy://アップデートの遷移
 		m_copyRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 		break;
 	}
-	m_colRect.DrawCamera(camera.drawOffset.x,camera.drawOffset.y,GetColor(0,0,255),false);
-	
-	
-	
-	
-	
+	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
+
+
+
+
+
 #endif
 	switch (_type)
 	{
@@ -268,13 +223,13 @@ void Player::InputUpdate(Input& input)
 			arrowFrame = arrowtime;
 
 		}
-		
+
 		if (_type == PlayerType::Burning)
 		{
 			if (coolTimer <= 0)
 			{
-			burningTimer = burningTime;
-			isBurningAttack = true;
+				burningTimer = burningTime;
+				isBurningAttack = true;
 			}
 		}
 	}
@@ -300,18 +255,7 @@ void Player::NormalUpdate(Input& input)
 	Jump(input);
 	Character::Gravity();
 
-	//着地時にアニメーションを帰るところ
-	if (m_isGround)
-	{
 
-		if (m_isJumpPreparing)return;
-		m_jumpFrame = 0;
-		m_vel.y = 0.0f;
-		if (_anim == Anim::Jump)
-		{
-			AnimSelect(Anim::Idle);
-		}
-	}
 	//m_pos += m_vel;
 }
 
@@ -345,7 +289,7 @@ void Player::AttackUpdate()
 			}
 			/*if (m_isRight)m_pos.x += kBurningSpeed;
 			else m_pos.x -= kBurningSpeed;*/
-			
+
 		}
 	}
 	else
@@ -354,7 +298,7 @@ void Player::AttackUpdate()
 		{
 			/*if (m_isRight)m_pos.x += kBurningSpeed / 3;
 			else m_pos.x -= kBurningSpeed / 3;*/
-			float dist = (m_isRight) ? kBurningSpeed/3 : -kBurningSpeed/3;
+			float dist = (m_isRight) ? kBurningSpeed / 3 : -kBurningSpeed / 3;
 			bool hit = MoveWithCollisionX(dist);//衝突判定付きで少しずつ移動(少しずつの間当たり判定)
 			if (hit)
 			{
@@ -372,7 +316,7 @@ void Player::AttackUpdate()
 	/*if (m_isGround)
 	{
 		m_pos.y = kGround;
-		
+
 
 		if (m_isJumpPreparing)return;
 		m_jumpFrame = 0;
@@ -439,36 +383,50 @@ void Player::Move(Input& input)
 }
 void Player::Jump(Input& input)
 {
-	//ジャンプ中はスキップ
-	if (!m_isGround) return;
 
-	if (Pad::IsTrigger(PAD_INPUT_1))
+	// ジャンプが入力され、かつ接地しているならジャンプ中
+	if (input.IsTriggered("Jump") && m_isGround)
 	{
-		m_isJumpPreparing = true;
-
+		isJumping = true;
+		m_isGround = false;
+		//AnimSelect(Anim::Jump);
 	}
 
-	if (!m_isJumpPreparing) return;
-	m_jumpFrame++;
-
-	float jumpHeight = kJumpPower;//ジャンプの高さを決める
-
-	//ボタンを離した瞬間にジャンプする
-	if (!Pad::IsRelease(PAD_INPUT_1)) return;
-
-	if (m_jumpFrame < kSmallJumpFrame)
+	if (input.IsPressed("Jump") && isJumping)
 	{
-		jumpHeight = kSmallJumpHeight;
+
+		//AnimSelect(Anim::Jump);
+
+		if (m_hitDir.top)
+		{
+			m_jumpFrame = kMaxJumpFrame;//天井に当たったらジャンプ力をもう加えない
+		}
+		//ジャンプが入力されており、かつジャンプ中ならジャンプ力を加える
+		m_jumpFrame++;
+		m_isGround = false;
+		if (m_jumpFrame < kMaxJumpFrame)
+		{
+			m_vel.y = kJumpPower;
+
+		}
+		else
+		{
+			// ジャンプが入力されていないならジャンプ中を解除
+			m_jumpFrame = 0;
+			isJumping = false;
+
+		}
 	}
 	else
 	{
-		jumpHeight = kBigJumpHeight;
+		isJumping = false;
+		m_jumpFrame = 0;
 	}
+	
 
-	m_vel.y = -kJumpPower * jumpHeight;
-	m_isGround = false;
-	m_isJumpPreparing = false;
-	AnimSelect(Anim::Jump);
+	if (isJumping)AnimSelect(Anim::Jump);
+
+
 
 }
 
@@ -549,7 +507,7 @@ void Player::AnimSelectNormal(const Anim& anim)
 		_anim = Anim::Idle;
 		isNomove = false;
 		_state = PlayerState::Normal;
-		
+
 
 	}
 	if (_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
@@ -854,7 +812,7 @@ bool Player::MoveWithCollisionX(float distance)
 			if (m_isRight)
 			{
 				//m_pos.x = m_colRect.Getleft() -  kCharaSize / 2;
-			
+
 			}
 			else
 			{
@@ -920,12 +878,12 @@ std::shared_ptr<Arrow> Player::ShotArrow()
 {
 	std::shared_ptr<Arrow> arrow;
 	arrow = std::make_shared<Arrow>();
-	
+
 	arrow->ChangePos() = m_pos;
 
 	arrow->m_playerdir = m_isRight;
-		
 
-		return arrow;
-	
+
+	return arrow;
+
 }

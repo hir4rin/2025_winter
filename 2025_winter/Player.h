@@ -155,6 +155,7 @@ private:
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;
+	bool isJumping;
 	const int arrowtime = 30;//発射クールタイム
 
 	bool isBurningAttack = false;///今のところ用途不明
@@ -165,6 +166,7 @@ private:
 	float coolTimer = 0.0f;
 	float coolTime = 15.0f;//今のところ効いてない
 	
+	HitDir m_hitDir;
 
 	//ノーマル
 	Rect m_attackRect;//攻撃判定

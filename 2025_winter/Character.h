@@ -81,7 +81,7 @@ protected:
 	 /// プレイヤーでのマップチップとの当たり判定処理
 	 /// </summary>
 	 /// <param name="chipRect"></param>
-	  void  CheckHitMapPlayer(Rect& chipRect);
+	  HitDir  CheckHitMapPlayer(Rect& chipRect);
 
 	 
 
@@ -90,6 +90,8 @@ protected:
 	 /// </summary>
 	 /// <param name="chipRect"></param>
 	 bool CheckHitMapPlayer_(Rect& chipRect);
+
+	 
 	
 };
 
