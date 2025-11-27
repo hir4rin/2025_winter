@@ -120,7 +120,7 @@ void Player::Update(Input& input)
 
 
 		m_jumpFrame = 0;
-		m_vel.y = 0.0f;
+		if(_anim != Anim::Damage)m_vel.y = 0.0f;
 		if (_anim == Anim::Jump)
 		{
 			AnimSelect(Anim::Idle);
@@ -227,6 +227,7 @@ void Player::DamageHit(bool ans)
 	//動けないようにする
 	isNomove = true;
 	m_vel.y = 0;
+	m_vel.y = -10.0f;
 	_state = PlayerState::Damage;
 	AnimSelect(Anim::Damage);
 	damageCount = damageFrame;
