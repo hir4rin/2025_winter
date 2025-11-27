@@ -20,7 +20,8 @@ enum class PlayerState
 {
 	Normal,
 	Attack,
-	Copy
+	Copy,
+	Damage
 
 };
 
