@@ -100,6 +100,9 @@ void Player::Update(Input& input)
 	case PlayerState::Copy://アップデートの遷移
 		CopyUpdate();
 		break;
+	case PlayerState::Damage:
+		//ダメージを食らったときの関数を作る
+		break;
 	}
 	m_hitDir = CheckHitMapPlayer(chipRect);
 	//着地時にアニメーションを帰るところ
@@ -521,10 +524,9 @@ void Player::AnimSelectNormal(const Anim& anim)
 		_state = PlayerState::Normal;
 
 	}
-
+	//damageアニメーションは最優先で変わるし、変わらないようにする
 	if (_anim == Anim::Attack)return;
 	if (_anim == Anim::Copy)return;
-
 
 	if (_anim != anim)
 	{
@@ -664,6 +666,9 @@ void Player::NormalAnim()
 		charaIdx = (m_animframe / 10) % 6;
 		charaIdy = 4;
 		break;
+	case Anim::Damage:
+		//ダメージを食らったときのアニメーション
+		break;
 	default:
 		// ここに来たら想定外！
 		//assert(false && "Unknown animation type in switch(_anim)");
@@ -702,6 +707,9 @@ void Player::BurningAnim()
 	case Anim::Copy:
 		charaIdx = (m_animframe / 10) % 8;//【注意】切り替わった直後のアニメーションはここが流れてる
 		charaIdy = 5;
+		break;
+	case Anim::Damage:
+		//ダメージを食らったときのアニメーション
 		break;
 	default:
 		// ここに来たら想定外！
@@ -744,6 +752,9 @@ void Player::FrozenAnim()
 		charaIdx = (m_animframe / 10) % 15 + 4;
 		charaIdy = 4;
 		break;
+	case Anim::Damage:
+		//ダメージを食らったときのアニメーション
+		break;
 	default:
 		// ここに来たら想定外！
 		//assert(false && "Unknown animation type in switch(_anim)");
@@ -784,6 +795,9 @@ void Player::ArcherAnim()
 	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
 		charaIdx = (m_animframe / 3) % 9;
 		charaIdy = 2;
+		break;
+	case Anim::Damage:
+		//ダメージを食らったときのアニメーション
 		break;
 	default:
 		// ここに来たら想定外！
