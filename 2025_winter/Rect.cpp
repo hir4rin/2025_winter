@@ -69,6 +69,17 @@ bool Rect::IsCollision(const Rect& rect)
 	return true;
 }
 
+bool Rect::CheckLeftHit(const Rect& rect)
+{
+	//ぶつかっている前提の時、
+	//左からぶつかっているか
+	if (m_left < rect.Getleft())
+	{
+		return true;
+	}
+	return false;
+}
+
 void Rect::DrawScroll(int scrollX, int scrollY, unsigned int color, bool isFill)
 {
 	int drawL = static_cast<int>(m_left) - scrollX;

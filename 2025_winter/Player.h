@@ -92,10 +92,7 @@ public:
 	bool isBurningAttack;///バーニング攻撃を下かどうか
 	void ChangeBurningAttack(bool ans) { isBurningAttack = ans; }
 
-	/// <summary>
-	/// プレイヤーがダメージを食らったときに呼ぶ関数
-	/// </summary>
-	void DamageHit();
+	
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -165,6 +162,7 @@ private:
 	PlayerState _state;
 	PlayerType _type;
 	int m_animframe;
+	float  damageCount;//ダメージを食らったときの秒数
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;
@@ -173,8 +171,8 @@ private:
 
 	
 
-	float burningTime = 9.0f;  //バーニングの移動時間
-	float burningTimer = 0.0f;
+	
+	float burningTimer = 0.0f;//バーニングの時間
 
 	float coolTimer = 0.0f;
 	float coolTime = 15.0f;//今のところ効いてない

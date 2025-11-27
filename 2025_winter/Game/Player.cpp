@@ -29,6 +29,9 @@ namespace
 
 	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
 
+	constexpr float damageFrame = 40.0f;
+	constexpr float burningTime = 9.0f;  //バーニングの移動時間
+
 
 }
 
@@ -45,7 +48,8 @@ Player::Player() :
 	isJumping(false),
 	BurningPrevPos{0,0},
 	BurningAfterPos{0,0},
-	isBurningAttack(false)
+	isBurningAttack(false),
+	damageCount(0)
 	//m_pBg(nullptr)
 {
 	m_pos = kInitPos;
@@ -79,7 +83,10 @@ void Player::Update(Input& input)
 	DrawFormatString(10, 40, GetColor(255, 0, 0), "arrowFrameは%dです", arrowFrame);
 
 	Rect chipRect;
-
+	if (input.IsPressed("ok"))
+	{
+		DamageHit(false);
+	}
 
 
 
@@ -103,6 +110,7 @@ void Player::Update(Input& input)
 		break;
 	case PlayerState::Damage:
 		//ダメージを食らったときの関数を作る
+		DamageUpdate();
 		break;
 	}
 	m_hitDir = CheckHitMapPlayer(chipRect);
@@ -213,11 +221,15 @@ void Player::Draw(Camera& camera)
 #endif
 }
 
-void Player::DamageHit()
+void Player::DamageHit(bool ans)
 {
+	m_isRight = ans;
 	//動けないようにする
 	isNomove = true;
+	m_vel.y = 0;
+	_state = PlayerState::Damage;
 	AnimSelect(Anim::Damage);
+	damageCount = damageFrame;
 }
 
 void Player::InputUpdate(Input& input)
@@ -359,6 +371,23 @@ void Player::CopyUpdate()
 	//m_pos += m_vel;
 
 
+}
+
+void Player::DamageUpdate()
+{
+	damageCount--;
+	m_vel.x = m_isRight ? -2 : 2;
+	
+	Character::Gravity();
+	//damageCountが0になったらstateをNormalに戻す、
+	//damageを食らっているときは無敵判定
+	if (damageCount <= 0)
+	{
+		isNomove = false;
+		_state = PlayerState::Normal;
+		AnimSelect(Anim::Idle);
+		
+	}
 }
 
 void Player::Move(Input& input)
@@ -513,29 +542,34 @@ void Player::AnimSelect(const Anim& anim)
 
 void Player::AnimSelectNormal(const Anim& anim)
 {
-	if (_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
+	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
+	if (anim != Anim::Damage)
 	{
-		if (_type == PlayerType::Burning)
+		if (_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
 		{
-			coolTimer = coolTime;
+			if (_type == PlayerType::Burning)
+			{
+				coolTimer = coolTime;
+			}
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
+
+
 		}
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
+		if (_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
 
+		}
+		
+		if (_anim == Anim::Attack)return;
+		if (_anim == Anim::Copy)return;
 
 	}
-	if (_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
-	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
-
-	}
-	//damageアニメーションは最優先で変わるし、変わらないようにする
-	if (_anim == Anim::Attack)return;
-	if (_anim == Anim::Copy)return;
-
+	
 	if (_anim != anim)
 	{
 		_anim = anim;
@@ -548,24 +582,29 @@ void Player::AnimSelectNormal(const Anim& anim)
 
 void Player::AnimSelectBurning(const Anim& anim)
 {
-	if (_anim == Anim::Attack && charaIdx == 7)//攻撃アニメーション終了
+	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
+	if (anim != Anim::Damage)
 	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
+		if (_anim == Anim::Attack && charaIdx == 7)//攻撃アニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
+
+		}
+		if (_anim == Anim::Copy && charaIdx == 7)//コピーアニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
+
+		}
+
+		if (_anim == Anim::Attack)return;
+		if (_anim == Anim::Copy)return;
 
 	}
-	if (_anim == Anim::Copy && charaIdx == 7)//コピーアニメーション終了
-	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
-
-	}
-
-	if (_anim == Anim::Attack)return;
-	if (_anim == Anim::Copy)return;
-
+	
 
 	if (_anim != anim)
 	{
@@ -579,23 +618,28 @@ void Player::AnimSelectBurning(const Anim& anim)
 
 void Player::AnimSelectFrozen(const Anim& anim)
 {
-	if (_anim == Anim::Attack && charaIdx == 14)//攻撃アニメーション終了
+	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
+	if (anim != Anim::Damage)
 	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
+		if (_anim == Anim::Attack && charaIdx == 14)//攻撃アニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
 
+		}
+		if (_anim == Anim::Copy && charaIdx == 14)//コピーアニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
+
+		}
+
+		if (_anim == Anim::Attack)return;
+		if (_anim == Anim::Copy)return;
 	}
-	if (_anim == Anim::Copy && charaIdx == 14)//コピーアニメーション終了
-	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
-
-	}
-
-	if (_anim == Anim::Attack)return;
-	if (_anim == Anim::Copy)return;
+	
 
 
 	if (_anim != anim)
@@ -610,24 +654,27 @@ void Player::AnimSelectFrozen(const Anim& anim)
 
 void Player::AnimSelectArcher(const Anim& anim)
 {
-	if (_anim == Anim::Attack && charaIdx == 11)//攻撃アニメーション終了
+	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
+	if (anim != Anim::Damage)
 	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
+		if (_anim == Anim::Attack && charaIdx == 11)//攻撃アニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
 
+		}
+		if (_anim == Anim::Copy && charaIdx == 8)//コピーアニメーション終了
+		{
+			_anim = Anim::Idle;
+			isNomove = false;
+			_state = PlayerState::Normal;
+
+		}
+
+		if (_anim == Anim::Attack)return;
+		if (_anim == Anim::Copy)return;
 	}
-	if (_anim == Anim::Copy && charaIdx == 8)//コピーアニメーション終了
-	{
-		_anim = Anim::Idle;
-		isNomove = false;
-		_state = PlayerState::Normal;
-
-	}
-
-	if (_anim == Anim::Attack)return;
-	if (_anim == Anim::Copy)return;
-
 
 	if (_anim != anim)
 	{
@@ -638,8 +685,6 @@ void Player::AnimSelectArcher(const Anim& anim)
 	}
 	return;
 }
-
-
 
 void Player::NormalAnim()
 {
@@ -676,6 +721,8 @@ void Player::NormalAnim()
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
+		charaIdx = (m_animframe / 5) % 4;
+		charaIdy = 6;
 		break;
 	default:
 		// ここに来たら想定外！
@@ -718,6 +765,8 @@ void Player::BurningAnim()
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
+		charaIdx = (m_animframe / 5) % 4;
+		charaIdy = 6;
 		break;
 	default:
 		// ここに来たら想定外！
@@ -762,6 +811,8 @@ void Player::FrozenAnim()
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
+		charaIdx = (m_animframe / 5) % 4;
+		charaIdy = 8;
 		break;
 	default:
 		// ここに来たら想定外！
@@ -806,6 +857,8 @@ void Player::ArcherAnim()
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
+		charaIdx = (m_animframe / 5) % 4;
+		charaIdy = 4;
 		break;
 	default:
 		// ここに来たら想定外！
@@ -860,7 +913,6 @@ bool Player::MoveWithCollisionX(float distance)
 	//衝突なし
 	return false;
 }
-
 
 void Player::ChangeNormal()
 {

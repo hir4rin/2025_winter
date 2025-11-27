@@ -85,6 +85,14 @@ public:
 	/// <returns>当たってるかどうか</returns>
 	bool IsCollision(const Rect& rect);
 
+	/// <summary>
+	/// 左から当たっているかどうか
+	/// </summary>
+	/// <param name="rect"></param>
+	/// <returns></returns>
+	bool CheckLeftHit(const Rect& rect);
+
+
 public:
 	float m_left; //左上のX座標
 	float m_top;//左上のY座標

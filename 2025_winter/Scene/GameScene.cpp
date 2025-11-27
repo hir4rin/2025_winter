@@ -712,6 +712,37 @@ void GameScene::CheckHitFrozen()
 	}
 }
 
+void GameScene::CheckPlayer()
+{
+	if (!m_pPlayer)return;
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
+	{
+		auto& e = m_pEnemyWizards[i];
+		if (!e)continue;
+		//プレイヤーの当たり判定が敵の当たり判定と当たった時
+		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
+		{
+			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+			//敵がどっちから当たったかどうかを入れる
+			//プレイヤーのダメージ処理
+			m_pPlayer->DamageHit(isLeft);
+
+			//敵が消える処理
+			//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+
+		}
+	}
+
+	
+}
+
 
 
 void GameScene::FadeInUpdate(Input&)
@@ -806,11 +837,11 @@ void GameScene::NormalUpdate(Input& input)
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 
-	if (input.IsTriggered("ok"))
+	/*if (input.IsTriggered("ok"))
 	{
 		update_ = &GameScene::FadeOutUpdate;
 		draw_ = &GameScene::FadeDraw;
-	}
+	}*/
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{
@@ -920,6 +951,7 @@ void GameScene::NormalUpdate(Input& input)
 	//CheckItemWizard();
 	//CheckItemOrcRider();
 	CheckFrozenHit();
+	CheckPlayer();
 
 	//消える処理
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン

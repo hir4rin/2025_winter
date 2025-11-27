@@ -95,7 +95,7 @@ public:
 	/// <summary>
 	/// プレイヤーがダメージを食らったときに呼ぶ関数
 	/// </summary>
-	void DamageHit();
+	void DamageHit(bool ans);
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -103,6 +103,7 @@ private:
 	void JumpUpdate(Input& input);//ジャンプ時の更新
 	void AttackUpdate();//攻撃時の更新
 	void CopyUpdate();//コピー時の更新
+	void DamageUpdate();//ダメージを食らったときの更新
 	 
 
 	void Move(Input& input);//動きの入力の処理内容
@@ -165,6 +166,7 @@ private:
 	PlayerState _state;
 	PlayerType _type;
 	int m_animframe;
+	float damageCount;//ダメージを食らったときの秒数
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;

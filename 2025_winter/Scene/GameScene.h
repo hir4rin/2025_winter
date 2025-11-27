@@ -75,7 +75,11 @@ public:
 	/// <param name="enemyWizards"></param>
 	void CheckHitFrozen();
 
-	
+	/// <summary>
+	/// プレイヤーが敵に当たっていないかどうか
+	/// 当たったら敵も一緒に消える
+	/// </summary>
+	void CheckPlayer();
 
 	
 
