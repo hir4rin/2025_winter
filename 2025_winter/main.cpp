@@ -1,6 +1,5 @@
 ﻿#include "DxLib.h"
 #include "Application.h"
-#include "SceneMain.h"
 #include "Input.h"
 #include "Pad.h"
 

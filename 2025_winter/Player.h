@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Character.h"
+#include "Game/Character.h"
 #include "vector"
 
 class Input;
@@ -92,7 +92,10 @@ public:
 	bool isBurningAttack;///バーニング攻撃を下かどうか
 	void ChangeBurningAttack(bool ans) { isBurningAttack = ans; }
 
-	DamageHit
+	/// <summary>
+	/// プレイヤーがダメージを食らったときに呼ぶ関数
+	/// </summary>
+	void DamageHit();
 
 private:
 	void InputUpdate(Input& input);//入力の更新

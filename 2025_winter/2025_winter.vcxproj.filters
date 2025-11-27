@@ -42,61 +42,61 @@
     <ClCompile Include="Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="SceneController.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Arrow.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="BurningObject.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyArcher.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyArrow.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyRider.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyWizard.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Frozen.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="GameOverScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameScene0.cpp">
+    <ClCompile Include="Door.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Arrow.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\BurningObject.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Enemy.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnemyArcher.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnemyArrow.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnemyRider.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnemyWizard.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Frozen.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Item.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GameOverScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Door.cpp">
+    <ClCompile Include="Scene\GameScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\GameScene0.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\SceneController.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Character.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,61 +119,64 @@
     <ClInclude Include="Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneController.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Arrow.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="BurningObject.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyArcher.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyArrow.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyRider.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyWizard.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Frozen.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="GameOverScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameScene0.h">
+    <ClInclude Include="Door.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Arrow.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\BurningObject.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Enemy.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnemyArcher.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnemyArrow.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnemyRider.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnemyWizard.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Frozen.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Item.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameOverScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Door.h">
+    <ClInclude Include="Scene\GameScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\GameScene0.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\SceneController.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Character.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

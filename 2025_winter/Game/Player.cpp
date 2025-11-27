@@ -10,6 +10,7 @@
 #include "Bg.h"
 #include <cmath>
 #include <memory>
+#include "Player.h"
 
 namespace
 {
@@ -210,6 +211,13 @@ void Player::Draw(Camera& camera)
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
 #endif
+}
+
+void Player::DamageHit()
+{
+	//動けないようにする
+	isNomove = true;
+	AnimSelect(Anim::Damage);
 }
 
 void Player::InputUpdate(Input& input)

@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>DxLib_h</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>DxLib_h;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>DxLib_h</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>DxLib_h;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -140,57 +140,58 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Arrow.cpp" />
     <ClCompile Include="Bg.cpp" />
-    <ClCompile Include="BurningObject.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Door.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyArcher.cpp" />
-    <ClCompile Include="EnemyArrow.cpp" />
-    <ClCompile Include="EnemyRider.cpp" />
-    <ClCompile Include="EnemyWizard.cpp" />
-    <ClCompile Include="Frozen.cpp" />
-    <ClCompile Include="GameOverScene.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="GameScene0.cpp" />
+    <ClCompile Include="Game\Arrow.cpp" />
+    <ClCompile Include="Game\BurningObject.cpp" />
+    <ClCompile Include="Game\Character.cpp" />
+    <ClCompile Include="Game\Enemy.cpp" />
+    <ClCompile Include="Game\EnemyArcher.cpp" />
+    <ClCompile Include="Game\EnemyArrow.cpp" />
+    <ClCompile Include="Game\EnemyRider.cpp" />
+    <ClCompile Include="Game\EnemyWizard.cpp" />
+    <ClCompile Include="Game\Frozen.cpp" />
+    <ClCompile Include="Game\Item.cpp" />
+    <ClCompile Include="Game\Player.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pad.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rect.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneController.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="Scene\GameOverScene.cpp" />
+    <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\GameScene0.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneController.cpp" />
+    <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Arrow.h" />
     <ClInclude Include="Bg.h" />
-    <ClInclude Include="BurningObject.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Character.h" />
     <ClInclude Include="Door.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyArcher.h" />
-    <ClInclude Include="EnemyArrow.h" />
-    <ClInclude Include="EnemyRider.h" />
-    <ClInclude Include="EnemyWizard.h" />
-    <ClInclude Include="Frozen.h" />
-    <ClInclude Include="GameOverScene.h" />
-    <ClInclude Include="GameScene.h" />
-    <ClInclude Include="GameScene0.h" />
+    <ClInclude Include="Game\Arrow.h" />
+    <ClInclude Include="Game\BurningObject.h" />
+    <ClInclude Include="Game\Character.h" />
+    <ClInclude Include="Game\Enemy.h" />
+    <ClInclude Include="Game\EnemyArcher.h" />
+    <ClInclude Include="Game\EnemyArrow.h" />
+    <ClInclude Include="Game\EnemyRider.h" />
+    <ClInclude Include="Game\EnemyWizard.h" />
+    <ClInclude Include="Game\Frozen.h" />
+    <ClInclude Include="Game\Item.h" />
+    <ClInclude Include="Game\Player.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rect.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneController.h" />
-    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="Scene\GameOverScene.h" />
+    <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\GameScene0.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneController.h" />
+    <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

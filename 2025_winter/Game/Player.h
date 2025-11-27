@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Character.h"
+#include "Game/Character.h"
 #include "vector"
 
 class Input;
@@ -14,6 +14,7 @@ enum class Anim
 	Jump,
 	Attack,
 	Copy,
+	Damage
 
 };
 enum class PlayerState
@@ -90,6 +91,11 @@ public:
 	
 	bool isBurningAttack;///バーニング攻撃を下かどうか
 	void ChangeBurningAttack(bool ans) { isBurningAttack = ans; }
+
+	/// <summary>
+	/// プレイヤーがダメージを食らったときに呼ぶ関数
+	/// </summary>
+	void DamageHit();
 
 private:
 	void InputUpdate(Input& input);//入力の更新
