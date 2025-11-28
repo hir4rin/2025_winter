@@ -54,9 +54,9 @@ Player::Player() :
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/player.png");
-	_anim = Anim::Idle;
-	_state = PlayerState::Normal;
-	_type = PlayerType::Normal;
+	m_anim = Anim::Idle;
+	m_state = PlayerState::Normal;
+	m_type = PlayerType::Normal;
 }
 Player::~Player()
 {
@@ -83,21 +83,21 @@ void Player::Update(Input& input)
 	DrawFormatString(10, 40, GetColor(255, 0, 0), "arrowFrameは%dです", arrowFrame);
 
 	Rect chipRect;
-	if (input.IsPressed("ok"))
+	/*if (input.IsPressed("ok"))
 	{
 		DamageHit(false);
-	}
+	}*/
 
 
 
 	//当たり判定更新
 	Character::SetRect();
 
-	AnimSelect(_anim);
+	AnimSelect(m_anim);
 
 	InputUpdate(input);//特殊行動の入力検知
 
-	switch (_state)
+	switch (m_state)
 	{
 	case PlayerState::Normal://アップデートの遷移
 		NormalUpdate(input);
@@ -120,8 +120,8 @@ void Player::Update(Input& input)
 
 
 		m_jumpFrame = 0;
-		if(_anim != Anim::Damage)m_vel.y = 0.0f;
-		if (_anim == Anim::Jump)
+		if(m_anim != Anim::Damage)m_vel.y = 0.0f;
+		if (m_anim == Anim::Jump)
 		{
 			AnimSelect(Anim::Idle);
 		}
@@ -145,13 +145,13 @@ void Player::Draw(Camera& camera)
 #ifdef _DEBUG
 	//当たり判定の描画
 	//当たり判定の描画(変身攻撃など)
-	switch (_state)
+	switch (m_state)
 	{
 	case PlayerState::Normal://アップデートの遷移
 
 		break;
 	case PlayerState::Attack://アップデートの遷移
-		switch (_type)
+		switch (m_type)
 		{
 		case PlayerType::Normal://Normalの攻撃判定
 			m_attackRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
@@ -180,7 +180,7 @@ void Player::Draw(Camera& camera)
 
 
 #endif
-	switch (_type)
+	switch (m_type)
 	{
 	case PlayerType::Normal://アニメーションの遷移
 		NormalAnim();
@@ -213,9 +213,9 @@ void Player::Draw(Camera& camera)
 	}
 
 #ifdef _DEBUG
-	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", _anim);
-	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", _state);
-	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", _type);
+	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", m_anim);
+	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", m_state);
+	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", m_type);
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
 #endif
@@ -228,7 +228,7 @@ void Player::DamageHit(bool ans)
 	isNomove = true;
 	m_vel.y = 0;
 	m_vel.y = -10.0f;
-	_state = PlayerState::Damage;
+	m_state = PlayerState::Damage;
 	AnimSelect(Anim::Damage);
 	damageCount = damageFrame;
 }
@@ -239,19 +239,19 @@ void Player::InputUpdate(Input& input)
 	//特殊行動の入力検知
 	if (input.IsTriggered("Attack"))
 	{
-		_state = PlayerState::Attack;
+		m_state = PlayerState::Attack;
 		m_vel.x = 0;//攻撃中は動けないようにするため
 		m_vel.y = 0;
 
-		if (_type == PlayerType::Archer)
+		if (m_type == PlayerType::Archer)
 		{
 			if (arrowFrame >= 0)return;
 			//矢を回す
-			arrowFrame = arrowtime;
+			arrowFrame = arrowTime;
 
 		}
 
-		if (_type == PlayerType::Burning)
+		if (m_type == PlayerType::Burning)
 		{
 			if (coolTimer <= 0)
 			{
@@ -262,12 +262,12 @@ void Player::InputUpdate(Input& input)
 	}
 	if (input.IsTriggered("Copy"))
 	{
-		_state = PlayerState::Copy;
+		m_state = PlayerState::Copy;
 	}
 
 	if (input.IsTriggered("CopyOut"))
 	{
-		if (!(_type == PlayerType::Normal))
+		if (!(m_type == PlayerType::Normal))
 		{
 			ChangeNormal();
 
@@ -300,7 +300,7 @@ void Player::AttackUpdate()
 	coolTimer--;
 	if (burningTimer >= 0.0f)
 	{
-		if (_type == PlayerType::Burning)//バーニングの攻撃処理
+		if (m_type == PlayerType::Burning)//バーニングの攻撃処理
 		{
 			isBurningAttack = true;
 			float dist = (m_isRight) ? kBurningSpeed : -kBurningSpeed;
@@ -312,7 +312,7 @@ void Player::AttackUpdate()
 
 				burningTimer = 0;
 				 
-				_state = PlayerState::Normal;
+				m_state = PlayerState::Normal;
 				//isNomove = false;
 			}
 			/*if (m_isRight)m_pos.x += kBurningSpeed;
@@ -322,7 +322,7 @@ void Player::AttackUpdate()
 	}
 	else
 	{
-		if (_type == PlayerType::Burning)//減速時のbarningの攻撃処理
+		if (m_type == PlayerType::Burning)//減速時のbarningの攻撃処理
 		{
 			/*if (m_isRight)m_pos.x += kBurningSpeed / 3;
 			else m_pos.x -= kBurningSpeed / 3;*/
@@ -335,7 +335,7 @@ void Player::AttackUpdate()
 
 				burningTimer = 0;
 				
-				_state = PlayerState::Normal;
+				m_state = PlayerState::Normal;
 				//isNomove = false;
 			}
 		}
@@ -385,7 +385,7 @@ void Player::DamageUpdate()
 	if (damageCount <= 0)
 	{
 		isNomove = false;
-		_state = PlayerState::Normal;
+		m_state = PlayerState::Normal;
 		AnimSelect(Anim::Idle);
 		
 	}
@@ -393,7 +393,7 @@ void Player::DamageUpdate()
 
 void Player::Move(Input& input)
 {
-	AnimSelect(_anim);
+	AnimSelect(m_anim);
 	if (isNomove)return;
 	//ここに処理を追加していく
 	if (Pad::IsPress(PAD_INPUT_LEFT))
@@ -414,7 +414,7 @@ void Player::Move(Input& input)
 		m_vel.x = 0.0f;
 
 	}
-	if (_anim != Anim::Jump)
+	if (m_anim != Anim::Jump)
 	{
 		if (m_vel.x > 0.1f || m_vel.x < -0.1f)
 		{
@@ -484,7 +484,7 @@ void Player::Attack()
 	AnimSelect(Anim::Attack);
 	//判定をつける
 
-	switch (_type)
+	switch (m_type)
 	{
 	case PlayerType::Normal:
 		//Normalの攻撃アニメーション
@@ -519,7 +519,7 @@ void Player::Copy()
 
 void Player::AnimSelect(const Anim& anim)
 {
-	switch (_type)
+	switch (m_type)
 	{
 	case PlayerType::Normal://アニメーションの切り替わりの遷移
 		AnimSelectNormal(anim);
@@ -546,34 +546,34 @@ void Player::AnimSelectNormal(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
 		{
-			if (_type == PlayerType::Burning)
+			if (m_type == PlayerType::Burning)
 			{
 				coolTimer = coolTime;
 			}
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 
 		}
-		if (_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
 		
-		if (_anim == Anim::Attack)return;
-		if (_anim == Anim::Copy)return;
+		if (m_anim == Anim::Attack)return;
+		if (m_anim == Anim::Copy)return;
 
 	}
 	
-	if (_anim != anim)
+	if (m_anim != anim)
 	{
-		_anim = anim;
+		m_anim = anim;
 		m_animframe = 0;
 		charaIdx = 0;
 		charaIdy = 0;
@@ -586,30 +586,30 @@ void Player::AnimSelectBurning(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (_anim == Anim::Attack && charaIdx == 7)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == 7)//攻撃アニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
-		if (_anim == Anim::Copy && charaIdx == 7)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == 7)//コピーアニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
 
-		if (_anim == Anim::Attack)return;
-		if (_anim == Anim::Copy)return;
+		if (m_anim == Anim::Attack)return;
+		if (m_anim == Anim::Copy)return;
 
 	}
 	
 
-	if (_anim != anim)
+	if (m_anim != anim)
 	{
-		_anim = anim;
+		m_anim = anim;
 		m_animframe = 0;
 		charaIdx = 0;
 		charaIdy = 0;
@@ -622,30 +622,30 @@ void Player::AnimSelectFrozen(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (_anim == Anim::Attack && charaIdx == 14)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == 14)//攻撃アニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
-		if (_anim == Anim::Copy && charaIdx == 14)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == 14)//コピーアニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
 
-		if (_anim == Anim::Attack)return;
-		if (_anim == Anim::Copy)return;
+		if (m_anim == Anim::Attack)return;
+		if (m_anim == Anim::Copy)return;
 	}
 	
 
 
-	if (_anim != anim)
+	if (m_anim != anim)
 	{
-		_anim = anim;
+		m_anim = anim;
 		m_animframe = 0;
 		charaIdx = 0;
 		charaIdy = 0;
@@ -658,28 +658,28 @@ void Player::AnimSelectArcher(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (_anim == Anim::Attack && charaIdx == 11)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == 11)//攻撃アニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
-		if (_anim == Anim::Copy && charaIdx == 8)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == 8)//コピーアニメーション終了
 		{
-			_anim = Anim::Idle;
+			m_anim = Anim::Idle;
 			isNomove = false;
-			_state = PlayerState::Normal;
+			m_state = PlayerState::Normal;
 
 		}
 
-		if (_anim == Anim::Attack)return;
-		if (_anim == Anim::Copy)return;
+		if (m_anim == Anim::Attack)return;
+		if (m_anim == Anim::Copy)return;
 	}
 
-	if (_anim != anim)
+	if (m_anim != anim)
 	{
-		_anim = anim;
+		m_anim = anim;
 		m_animframe = 0;
 		charaIdx = 0;
 		charaIdy = 0;
@@ -689,7 +689,7 @@ void Player::AnimSelectArcher(const Anim& anim)
 
 void Player::NormalAnim()
 {
-	switch (_anim)
+	switch (m_anim)
 	{
 	case  Anim::Idle:
 		charaIdx = (m_animframe / 6) % 6;
@@ -733,7 +733,7 @@ void Player::NormalAnim()
 }
 void Player::BurningAnim()
 {
-	switch (_anim)
+	switch (m_anim)
 	{
 	case  Anim::Idle:
 		charaIdx = (m_animframe / 4) % 6;
@@ -779,7 +779,7 @@ void Player::BurningAnim()
 
 void Player::FrozenAnim()
 {
-	switch (_anim)
+	switch (m_anim)
 	{
 	case  Anim::Idle:
 		charaIdx = (m_animframe / 6) % 6;
@@ -825,7 +825,7 @@ void Player::FrozenAnim()
 
 void Player::ArcherAnim()
 {
-	switch (_anim)
+	switch (m_anim)
 	{
 	case  Anim::Idle:
 		charaIdx = (m_animframe / 6) % 6;
@@ -922,8 +922,8 @@ void Player::ChangeNormal()
 
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/player.png");
-	_type = PlayerType::Normal;
-	_state = PlayerState::Normal;
+	m_type = PlayerType::Normal;
+	m_state = PlayerState::Normal;
 }
 
 void Player::ChangeBurning()
@@ -933,8 +933,8 @@ void Player::ChangeBurning()
 
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/Burning.png");
-	_type = PlayerType::Burning;
-	_state = PlayerState::Normal;
+	m_type = PlayerType::Burning;
+	m_state = PlayerState::Normal;
 }
 
 void Player::ChangeFrozen()
@@ -944,8 +944,8 @@ void Player::ChangeFrozen()
 
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/Frozen.png");
-	_type = PlayerType::Frozen;
-	_state = PlayerState::Normal;
+	m_type = PlayerType::Frozen;
+	m_state = PlayerState::Normal;
 }
 
 void Player::ChangeArcher()
@@ -955,8 +955,8 @@ void Player::ChangeArcher()
 
 	// 2. 新しい画像を読み込む
 	m_handle = LoadGraph("data/Archer.png");
-	_type = PlayerType::Archer;
-	_state = PlayerState::Normal;
+	m_type = PlayerType::Archer;
+	m_state = PlayerState::Normal;
 }
 
 std::shared_ptr<Arrow> Player::ShotArrow()

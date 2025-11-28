@@ -72,8 +72,8 @@ public:
 	Rect GetColArcherRect() { return m_archerRect; }
 
 	Rect GetColCopyRect() { return m_copyRect; }//攻撃判定を取得
-	 PlayerState GetState() { return _state; }//Playerの状態を取得
-	PlayerType GetType() { return _type; }//Playerの変身タイプを取得
+	 PlayerState GetState() { return m_state; }//Playerの状態を取得
+	PlayerType GetType() { return m_type; }//Playerの変身タイプを取得
 	int GetAnimIdx() { return charaIdx; }//アニメーションのcharaIdxを取得
 	void ChangeNormal();//外部から変身の変更
 	void ChangeBurning();//外部から変身の変更
@@ -162,16 +162,16 @@ private:
 	
 private:
 	int m_frame;
-	Anim _anim;
-	PlayerState _state;
-	PlayerType _type;
+	Anim m_anim;
+	PlayerState m_state;
+	PlayerType m_type;
 	int m_animframe;
 	float damageCount;//ダメージを食らったときの秒数
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;
 	bool isJumping;
-	const int arrowtime = 30;//発射クールタイム
+	const int arrowTime = 30;//発射クールタイム
 
 	
 

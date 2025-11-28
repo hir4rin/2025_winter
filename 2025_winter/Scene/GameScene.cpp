@@ -42,7 +42,7 @@ GameScene::GameScene(SceneController& controller) :
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
+	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,700.0f), false });
@@ -215,6 +215,15 @@ void GameScene::CheckArrowHit()
 		//矢のヒット情報をリセット
 		num->hitEnemyArcher = nullptr;
 	}
+
+	//敵の矢の情報を書く
+	//for (auto& e_arrow : m_pEnemyArrows)
+	//{
+	//	if (e_arrow == nullptr || !e_arrow->m_hitPlayer)continue;
+	//	//矢とどの方向で当たったかどうか
+	//	m_pPlayer->DamageHit();
+
+	//}
 }
 
 void GameScene::CheckFrozenHit()
@@ -719,6 +728,10 @@ void GameScene::CheckPlayer()
 	{
 		auto& e = m_pEnemyWizards[i];
 		if (!e)continue;
+		//バーニングの攻撃中は無敵
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetType() == PlayerType::Burning)
+			continue;
+
 		//プレイヤーの当たり判定が敵の当たり判定と当たった時
 		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
 		{
@@ -736,6 +749,63 @@ void GameScene::CheckPlayer()
 
 			//インスタンスを消す
 			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+
+		}
+	}
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
+	{
+		auto& e = m_pEnemyRiders[i];
+		if (!e)continue;
+
+		//バーニングの攻撃中は無敵
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetType() == PlayerType::Burning)
+			continue;
+		//プレイヤーの当たり判定が敵の当たり判定と当たった時
+		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
+		{
+			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+			//敵がどっちから当たったかどうかを入れる
+			//プレイヤーのダメージ処理
+			m_pPlayer->DamageHit(isLeft);
+
+			//敵が消える処理
+			//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+
+		}
+	}
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
+	{
+		auto& e = m_pEnemyArchers[i];
+		if (!e)continue;
+
+		//バーニングの攻撃中は無敵
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetType() == PlayerType::Burning)
+			continue;
+
+		//プレイヤーの当たり判定が敵の当たり判定と当たった時
+		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
+		{
+			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+			//敵がどっちから当たったかどうかを入れる
+			//プレイヤーのダメージ処理
+			m_pPlayer->DamageHit(isLeft);
+
+			//敵が消える処理
+			//消えるとき絶対する処理
+				//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 
 		}
 	}
@@ -837,11 +907,11 @@ void GameScene::NormalUpdate(Input& input)
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 
-	/*if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok"))
 	{
 		update_ = &GameScene::FadeOutUpdate;
 		draw_ = &GameScene::FadeDraw;
-	}*/
+	}
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{
