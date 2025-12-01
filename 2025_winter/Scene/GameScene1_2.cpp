@@ -45,16 +45,19 @@ GameScene1_2::GameScene1_2(SceneController& controller) :
 	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,200.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,75000.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,250.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2400.0f,800.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,200.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4400.0f,200.0f), false });
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer,2);
-	m_doors = std::make_shared< Door>(Vec2{ 6500,700 });
+	m_doors = std::make_shared< Door>(Vec2{ 6000,750 });
 
 
 

@@ -43,7 +43,7 @@ GameScene::GameScene(SceneController& controller) :
 
 {
 	//実質Initの使い方
-	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,700.0f), false });
@@ -55,7 +55,8 @@ GameScene::GameScene(SceneController& controller) :
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>();
 	m_pBg = new Bg(m_pPlayer,1);
-	m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+	//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+	m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 
 
 
