@@ -76,8 +76,6 @@ GameScene1_2::GameScene1_2(SceneController& controller) :
 }
 
 
-
-
 void GameScene1_2::CheckHit()
 {
 	switch (m_pPlayer->GetType())
@@ -821,7 +819,6 @@ void GameScene1_2::CheckPlayer()
 
 
 }
-
 
 
 void GameScene1_2::FadeInUpdate(Input&)
