@@ -219,6 +219,7 @@ void Player::Draw(Camera& camera)
 	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", m_type);
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
+	DrawFormatString(10, 60, GetColor(255, 0, 0), "m_pos.yは%fです", m_pos.y);
 #endif
 }
 
