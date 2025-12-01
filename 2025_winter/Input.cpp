@@ -5,15 +5,15 @@ Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
 {
     //イベント名を添え字にして、右辺値に実際の入力種別と入力コードの配列をおく
     inputTable_["ok"] = { { PeripheralType::keyboard,KEY_INPUT_RETURN },
-                          { PeripheralType::pad1,PAD_INPUT_L } };//SELECTキー
+                          { PeripheralType::pad1,PAD_INPUT_8 } };//SELECTキー
 
     inputTable_["Attack"] = { { PeripheralType::keyboard,KEY_INPUT_X },
-                          { PeripheralType::pad1,PAD_INPUT_A } };//PADのAボタン
+                          { PeripheralType::pad1,PAD_INPUT_3 } };//PADのAボタン
 
     inputTable_["Copy"] = { { PeripheralType::keyboard,KEY_INPUT_C },
-                          { PeripheralType::pad1,PAD_INPUT_X } };//PADのAボタン
+                          { PeripheralType::pad1,PAD_INPUT_4 } };//PADのAボタン
     inputTable_["CopyOut"] = { { PeripheralType::keyboard,KEY_INPUT_V },
-                          { PeripheralType::pad1,PAD_INPUT_6 } };//PADのSボタン
+                          { PeripheralType::pad1,PAD_INPUT_7 } };//PADのSボタン
     inputTable_["Jump"] = { { PeripheralType::keyboard,KEY_INPUT_Z },
                           { PeripheralType::pad1,PAD_INPUT_1 } };//PADの?ボタン
 

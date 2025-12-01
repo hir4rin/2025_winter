@@ -23,11 +23,11 @@ class Door;
 
 
 
-
-class GameScene : public Scene
+class GameScene1_2 :
+    public Scene
 {
 public:
-	GameScene(SceneController& controller);
+	GameScene1_2(SceneController& controller);
 	void Update(Input& input) override;
 	void Draw() override;
 	/// <summary>
@@ -77,12 +77,12 @@ private:
 	void NormalUpdate(Input& input);
 	void FadeOutUpdate(Input&);
 
-	using UpdateFunc_t = void(GameScene::*)(Input&);
+	using UpdateFunc_t = void(GameScene1_2::*)(Input&);
 	UpdateFunc_t update_;	// Update系を受け取るメンバ関数ポインタ
 
 	void FadeDraw();
 	void NormalDraw();
-	using DrawFunc_t = void(GameScene::*)();
+	using DrawFunc_t = void(GameScene1_2::*)();
 	DrawFunc_t draw_;	// Draw系を受け取るメンバ関数ポインタ
 
 
@@ -91,11 +91,13 @@ private:
 	//敵を生成するunique_ptrのベクター
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
 	//カメラの内側にいるかどうか
+	int m_cameraMargin = 50;
+
 	bool IsInCamera(float x, float y)
 	{
-		float left = camera.pos.x - screenWidth/2 + 10;//???一度わからなくなった
-		float right = camera.pos.x + screenWidth/2 - 10;//???一度わからなくなった
-		float top = camera.pos.y - cameraMargin;
+		float left = camera.pos.x - screenWidth / 2 + m_cameraMargin;//???一度わからなくなった
+		float right = camera.pos.x + screenWidth / 2 - m_cameraMargin;//???一度わからなくなった
+		float top = camera.pos.y + cameraMargin;
 		float bottom = camera.pos.y + screenHeight + cameraMargin;
 
 
@@ -145,7 +147,7 @@ private:
 	std::shared_ptr<Door> m_doors;
 
 
-	
+
 	Camera camera;//カメラのためのオブジェクト
 
 };

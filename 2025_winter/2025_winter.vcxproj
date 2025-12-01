@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>DxLib_h;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>DxLib_h;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir);$(ProjectDir);$(ProjectDir)data/Game</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir);$(ProjectDir);$(ProjectDir)data/Game</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>DxLib_h;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>DxLib_h;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir);$(ProjectDir);$(ProjectDir)data/Game</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\tsyts\Downloads\DxLib_VC3_24f\DxLib_VC\プロジェクトに追加すべきファイル_VC用;$(ProjectDir)Game;$(ProjectDir)Scene;$(ProjectDir);$(ProjectDir);$(ProjectDir)data/Game</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -142,7 +142,8 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Bg.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Door.cpp" />
+    <ClCompile Include="data\Game\Door.cpp" />
+    <ClCompile Include="Scene\GameScene1_2.cpp" />
     <ClCompile Include="Game\Arrow.cpp" />
     <ClCompile Include="Game\BurningObject.cpp" />
     <ClCompile Include="Game\Character.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Bg.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Door.h" />
+    <ClInclude Include="Scene\GameScene1_2.h" />
     <ClInclude Include="Game\Arrow.h" />
     <ClInclude Include="Game\BurningObject.h" />
     <ClInclude Include="Game\Character.h" />

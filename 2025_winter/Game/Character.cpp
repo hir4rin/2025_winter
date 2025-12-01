@@ -68,7 +68,7 @@ void Character::Draw()
 {
 #ifdef _DEBUG
 	//当たり判定の描画//スクロール対応をする
-	m_colRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 255), false);
+	//m_colRect.DrawScroll(m_pBg->GetScrollX(), m_pBg->GetScrollY(), GetColor(0, 255, 255), false);
 
 #endif 
 }

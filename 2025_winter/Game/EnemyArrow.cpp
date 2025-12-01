@@ -3,7 +3,7 @@
 #include "Rect.h"
 #include "Player.h"
 #include "Camera.h"
-
+#include <cassert>
 
 namespace
 {
@@ -17,7 +17,9 @@ EnemyArrow::EnemyArrow():
 	m_dir(1, 0),
 	m_enemydir(false)
 {
-	m_handle = LoadGraph("data/EnemyArrow.png");
+	m_handle = LoadGraph("data/Game/EnemyArrow.png");
+	assert(m_handle >= 0);
+
 }
 
 EnemyArrow::~EnemyArrow()
@@ -54,7 +56,13 @@ void EnemyArrow::Draw()
 void EnemyArrow::CheckPlayer(std::shared_ptr<Player> m_pPlayer)
 {
 	if (!m_pPlayer) return;
-	m_hitPlayer = m_pPlayer;
+	//ほかの矢に寄せるためこの使用
+	//矢が当たっているとき、
+	if (m_colRect.IsCollision(m_pPlayer->GetColRect()))
+	{
+		m_hitPlayer = m_pPlayer;
+		isAlive = false;
+	}
 	
 	//自分と当たった時の処理(未解決)
 

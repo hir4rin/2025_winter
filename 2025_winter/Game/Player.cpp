@@ -53,7 +53,8 @@ Player::Player() :
 	//m_pBg(nullptr)
 {
 	m_pos = kInitPos;
-	m_handle = LoadGraph("data/player.png");
+	m_handle = LoadGraph("data/Game/player.png");
+	assert(m_handle >= 0);
 	m_anim = Anim::Idle;
 	m_state = PlayerState::Normal;
 	m_type = PlayerType::Normal;
@@ -921,7 +922,9 @@ void Player::ChangeNormal()
 	DeleteGraph(m_handle);
 
 	// 2. 新しい画像を読み込む
-	m_handle = LoadGraph("data/player.png");
+	m_handle = LoadGraph("data/Game/player.png");
+	assert(m_handle >= 0);
+
 	m_type = PlayerType::Normal;
 	m_state = PlayerState::Normal;
 }
@@ -932,7 +935,9 @@ void Player::ChangeBurning()
 	DeleteGraph(m_handle);
 
 	// 2. 新しい画像を読み込む
-	m_handle = LoadGraph("data/Burning.png");
+	m_handle = LoadGraph("data/Game/Burning.png");
+	assert(m_handle >= 0);
+
 	m_type = PlayerType::Burning;
 	m_state = PlayerState::Normal;
 }
@@ -943,7 +948,9 @@ void Player::ChangeFrozen()
 	DeleteGraph(m_handle);
 
 	// 2. 新しい画像を読み込む
-	m_handle = LoadGraph("data/Frozen.png");
+	m_handle = LoadGraph("data/Game/Frozen.png");
+	assert(m_handle >= 0);
+
 	m_type = PlayerType::Frozen;
 	m_state = PlayerState::Normal;
 }
@@ -954,7 +961,9 @@ void Player::ChangeArcher()
 	DeleteGraph(m_handle);
 
 	// 2. 新しい画像を読み込む
-	m_handle = LoadGraph("data/Archer.png");
+	m_handle = LoadGraph("data/Game/Archer.png");
+	assert(m_handle >= 0);
+
 	m_type = PlayerType::Archer;
 	m_state = PlayerState::Normal;
 }

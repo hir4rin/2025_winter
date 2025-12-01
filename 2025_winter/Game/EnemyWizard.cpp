@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Player.h"
 #include "Camera.h"
+#include <cassert>
 
 namespace
 {
@@ -23,7 +24,9 @@ EnemyWizard::EnemyWizard():
 	m_animframe(0),
 	isAttack(false)
 {
-	m_handle = LoadGraph("data/Penguin.png");
+	m_handle = LoadGraph("data/Game/Penguin.png");
+	assert(m_handle >= 0);
+
 	m_pos = kInitPos;
 	m_isRight = false;
 	_state = EnemyState::Walk;

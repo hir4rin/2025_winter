@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Camera.h"
 #include "EnemyArrow.h"
-
+#include <cassert>
 
 namespace
 {
@@ -29,7 +29,9 @@ EnemyArcher::EnemyArcher():
 	isAttack(false),
 	isArrowAttack(false)
 {
-	m_handle = LoadGraph("data/EnemyArcher.png");
+	m_handle = LoadGraph("data/Game/EnemyArcher.png");
+	assert(m_handle >= 0);
+
 	m_pos = kInitPos;
 	m_isRight = false;
 	_state = EnemyState::Attack;

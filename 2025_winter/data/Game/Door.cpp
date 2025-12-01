@@ -1,6 +1,7 @@
 ﻿#include "Door.h"
 #include "DxLib.h"
 #include "Camera.h"
+#include <cassert>
 
 namespace
 {
@@ -9,11 +10,14 @@ namespace
 	constexpr float kDoorScale = 5.0f;
 }
 
-Door::Door():
-	m_frame(0)
+Door::Door(Vec2 pos):
+	m_frame(0),
+	m_pos(pos)
 {
-	m_pos = { 5200,660 };
+	
 	m_handle = LoadGraph("data/doors.png");
+	assert(m_handle >= 0);
+
 	charaIdx = 0;
 	charaIdy = 0;
 }

@@ -6,7 +6,7 @@
 #include "EnemyArcher.h"
 #include "Player.h"
 #include "Camera.h"
-
+#include <cassert>
 
 namespace
 {
@@ -20,7 +20,9 @@ Arrow::Arrow():
 	m_playerdir(false)
 	
 {
-	m_handle = LoadGraph("data/Arrow.png");
+	m_handle = LoadGraph("data/Game/Arrow.png");
+	assert(m_handle >= 0);
+
 
 }
 

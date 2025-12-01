@@ -4,7 +4,7 @@
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
-
+#include <cassert>
 
 namespace
 {
@@ -16,19 +16,25 @@ namespace
 
 Frozen::Frozen(std::shared_ptr<EnemyWizard> _enemyWiz)
 {
-	m_handle = LoadGraph("data/icebox.png");
+	m_handle = LoadGraph("data/Game/icebox.png");
+	assert(m_handle >= 0);
+
 	m_pos = _enemyWiz->GetPos();
 }
 Frozen::Frozen(std::shared_ptr<EnemyRider> _enemyRiders)
 {
-	m_handle = LoadGraph("data/icebox.png");
+	m_handle = LoadGraph("data/Game/icebox.png");
+	assert(m_handle >= 0);
+
 	m_pos = _enemyRiders->GetPos();
 
 
 }
 Frozen::Frozen(std::shared_ptr<EnemyArcher> _enemyArchers)
 {
-	m_handle = LoadGraph("data/icebox.png");
+	m_handle = LoadGraph("data/Game/icebox.png");
+	assert(m_handle >= 0);
+
 	m_pos = _enemyArchers->GetPos();
 }
 

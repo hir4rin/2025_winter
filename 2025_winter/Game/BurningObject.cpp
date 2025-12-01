@@ -4,7 +4,7 @@
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
-
+#include <cassert>
 
 namespace
 {
@@ -16,21 +16,27 @@ namespace
 BurningObject::BurningObject(std::shared_ptr<EnemyWizard> _enemyWiz):
 	m_burningObjectDir(false)
 {
-	m_handle = LoadGraph("data/BurningBox.png");
+	m_handle = LoadGraph("data/Game/BurningBox.png");
+	assert(m_handle >= 0);
+
 	m_pos = _enemyWiz->GetPos();
 	m_vel.y = -10.0f;
 }
 BurningObject::BurningObject(std::shared_ptr<EnemyRider> _enemyRiders):
 	m_burningObjectDir(false)
 {
-	m_handle = LoadGraph("data/BurningBox.png");
+	m_handle = LoadGraph("data/Game/BurningBox.png");
+	assert(m_handle >= 0);
+
 	m_pos = _enemyRiders->GetPos();
 	m_vel.y = -10.0f;
 }
 BurningObject::BurningObject(std::shared_ptr<EnemyArcher> _enemyArchers):
 	m_burningObjectDir(false)
 {
-	m_handle = LoadGraph("data/BurningBox.png");
+	m_handle = LoadGraph("data/Game/BurningBox.png");
+	assert(m_handle >= 0);
+
 	m_pos = _enemyArchers->GetPos();
 	m_vel.y = -10.0f;
 }

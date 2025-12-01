@@ -1,9 +1,16 @@
-#pragma once
-class SceneController; // ƒV[ƒ“ƒRƒ“ƒgƒ[ƒ‰[‚Ìƒvƒƒgƒ^ƒCƒvéŒ¾
-class Input; // “ü—Í‚Ìƒvƒƒgƒ^ƒCƒvéŒ¾
+ï»¿#pragma once
+class SceneController; // ã‚·ãƒ¼ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
+class Input; // å…¥åŠ›ã®ãƒ—ãƒ­ãƒˆã‚¿ã‚¤ãƒ—å®£è¨€
+
+
+constexpr int cameraMargin = 100;
+constexpr int screenWidth = 1920;
+constexpr int screenHeight = 1080;
+
+
 
 /// <summary>
-/// ƒV[ƒ“Šî’êƒNƒ‰ƒX
+/// ã‚·ãƒ¼ãƒ³åŸºåº•ã‚¯ãƒ©ã‚¹
 /// </summary>
 class Scene
 {
@@ -12,13 +19,13 @@ protected:
 public:
 	Scene(SceneController& controller);
 	/// <summary>
-	/// ƒV[ƒ“‚Ìî•ñ‚ÌXV
+	/// ã‚·ãƒ¼ãƒ³ã®æƒ…å ±ã®æ›´æ–°
 	/// </summary>
-	/// <param name="input">“ü—Íî•ñ</param>
+	/// <param name="input">å…¥åŠ›æƒ…å ±</param>
 	virtual void Update(Input& input) = 0;
 
 	/// <summary>
-	/// ƒV[ƒ“‚Ì•`‰æ(ƒV[ƒ“‚Ì‚¿•¨‚à•`‰æ‚·‚é)
+	/// ã‚·ãƒ¼ãƒ³ã®æç”»(ã‚·ãƒ¼ãƒ³ã®æŒã¡ç‰©ã‚‚æç”»ã™ã‚‹)
 	/// </summary>
 	virtual void Draw() = 0;
 };

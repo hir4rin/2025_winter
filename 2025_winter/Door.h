@@ -7,7 +7,7 @@ class Camera;
 class Door
 {
 public:
-	Door();
+	Door(Vec2 pos);
 	virtual ~Door();
 	void Init();
 	void Update();

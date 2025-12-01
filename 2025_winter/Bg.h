@@ -9,18 +9,13 @@ class Bg
 public:
 	Bg();
 	virtual ~Bg();
-	Bg(std::shared_ptr<Player> pPlayer);
 	/// <summary>
-	/// 横のスクロール量を決定する
+	/// 引き数2つ目はStageNumです
 	/// </summary>
-	/// <returns></returns>
-	int GetScrollX();
-	/// <summary>
-	/// 縦のスクロール量を決定する
-	/// </summary>
-	/// <returns></returns>
-	int GetScrollY();
-
+	/// <param name="pPlayer"></param>
+	/// <param name="stagenum">stage番号のint型を入れる</param>
+	Bg(std::shared_ptr<Player> pPlayer,int stagenum);
+	
 	void Init();
 	void Update();
 	void Draw(Camera& camera);
@@ -35,9 +30,17 @@ public:
 	/// </summary>
 	void LoadMapData0();
 	/// <summary>
+	/// マップの読み込み(stage1_2)
+	/// </summary>
+	void LoadMapData1_2();
+	/// <summary>
 	/// マップチップ表示
 	/// </summary>
 	void DrawMapChip0(Camera& camera);
+	/// <summary>
+	/// マップチップ表示(1_2)
+	/// </summary>
+	void DrawMapChip1_2(Camera& camera);
 	/// <summary>
 	/// マップチップ表示
 	/// </summary>
@@ -49,6 +52,8 @@ public:
 	/// <param name="chipRect">マップチップの矩形</param>
 	/// <returns>当たっているか</returns>
 	bool IsCollision(Rect rect, Rect& chipRect);
+	bool IsCollision1_1(Rect rect, Rect& chipRect);
+	bool IsCollision1_2(Rect rect, Rect& chipRect);
 	/// <summary>
 	/// 指定した矩形と当たっているか判定するプレイヤー専用
 	/// </summary>
@@ -56,6 +61,10 @@ public:
 	/// <param name="chipRect">マップチップの矩形</param>
 	/// <returns>当たっているか</returns>
 	bool IsCollisionPlayer(Rect rect, Rect& chipRect);
+	bool IsCollisionPlayer1_1(Rect rect, Rect& chipRect);
+	bool IsCollisionPlayer1_2(Rect rect, Rect& chipRect);
+
+	
 	
 private:
 	int m_bgH;
@@ -70,6 +79,8 @@ private:
 	// 画像に含まれるマップチップの数
 	int m_graphChipNumX;
 	int m_graphChipNumY;
+
+	 int StageNum = 1;//stage選択用---//0:stage0 1:最初のマップ
 
 	struct Size
 	{

@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Player.h"
 #include "Camera.h"
+#include <cassert>
 
 
 namespace
@@ -24,7 +25,9 @@ EnemyRider::EnemyRider():
 	m_animframe(0),
 	isAttack(false)
 {
-	m_handle = LoadGraph("data/OrcRider.png");
+	m_handle = LoadGraph("data/Game/OrcRider.png");
+	assert(m_handle >= 0);
+
 	m_pos = kInitPos;
 	m_isRight = false;
 	_state = EnemyState::Attack;

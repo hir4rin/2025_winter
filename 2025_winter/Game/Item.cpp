@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "EnemyWizard.h"
 #include "EnemyArcher.h"
+#include <cassert>
 
 namespace
 {
@@ -24,19 +25,25 @@ namespace
 
 Item::Item(std::shared_ptr<EnemyWizard> _enemywiz)
 {
-	m_handle = LoadGraph("data/ItemWizard.png");
+	m_handle = LoadGraph("data/Game/ItemWizard.png");
+	assert(m_handle >= 0);
+
 	m_pos = kInitPos;
 	m_state = ItemState::Frozen;
 }
 Item::Item(std::shared_ptr<EnemyRider> _enemyRiders)
 {
-	m_handle = LoadGraph("data/BurningCard.png");
+	m_handle = LoadGraph("data/Game/BurningCard.png");
+	assert(m_handle >= 0);
+
 	m_pos = kInitPos;
 	m_state = ItemState::Burning;
 }
 Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers)
 {
-	m_handle = LoadGraph("data/BowAndArrow.png");
+	m_handle = LoadGraph("data/Game/BowAndArrow.png");
+	assert(m_handle >= 0);
+
 	m_pos = kInitPos;
 	m_state = ItemState::Archer;
 }
