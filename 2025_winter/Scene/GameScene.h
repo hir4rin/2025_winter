@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Input.h"
 #include "Camera.h"
+#include "StageUI.h"
 #include "Enemy.h"
 #include <memory>
 #include <cassert>
@@ -19,6 +20,7 @@ class Character;
 class Frozen;
 class BurningObject;
 class Door;
+
 
 
 
@@ -156,6 +158,7 @@ private:
 
 	
 	Camera camera;//カメラのためのオブジェクト
+	StageUI stageUI;//UI
 
 };
 

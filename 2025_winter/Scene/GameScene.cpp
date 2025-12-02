@@ -1150,6 +1150,7 @@ void GameScene::NormalDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	m_pBg->Draw(camera);
 	m_doors->Draw(camera);
+	stageUI.Draw(camera);
 
 	for (auto& m_pFrozen : m_pFrozens)
 	{
