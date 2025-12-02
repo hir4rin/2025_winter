@@ -16,6 +16,7 @@
 #include "Bg.h"
 #include "../input.h"
 #include "GameoverScene.h"
+#include "GameClearScene.h"
 #include "SceneController.h"
 #include <cassert>
 #include "../Application.h"
@@ -1101,7 +1102,7 @@ void GameScene1_3::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameoverScene>(controller_));
+		controller_.ChangeScene(std::make_shared<GameClearScene>(controller_));
 		return;
 	}
 }
