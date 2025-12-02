@@ -55,8 +55,8 @@ GameScene::GameScene(SceneController& controller,PlayerType type) :
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>(PlayerType::Normal);
 	m_pBg = new Bg(m_pPlayer,1);
-	m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-	//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+	//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+	m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 
 
 
@@ -1138,7 +1138,7 @@ void GameScene::FadeDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
-	DrawBox(0, 0, screenWidth, screenHeight, 0x000000, true);
+	//DrawBox(0, 0, screenWidth, screenHeight, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 
