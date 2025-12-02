@@ -21,6 +21,13 @@ void InitCamera(Camera& camera)
 	camera.pos = { 0.0f, 0.0f };
 }
 
+void StartCameraShake(Camera& camera, float power, float time)
+{
+	camera.shakePower = power;
+	camera.shakeTimer = time;
+	camera.shakeTimerMax = time;
+}
+
 void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 {
 	//// プレイヤーの位置が、カメラの中央から一定以上離れたら
@@ -96,4 +103,18 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 	// (camera.posが画面の中央になるようにする)
 	camera.drawOffset.x = camera.drawOffset.x + (ScreenWidth * 0.5f);
 	camera.drawOffset.y = camera.drawOffset.y;//+(ScreenHeight * 0.5f) 
+	//カメラシェイク処理
+	if (camera.shakeTimer > 0.0f)
+	{
+		camera.shakeTimer -= 1.0f / 60.0f;//これは1フレームで1秒ずつずらしたいからこの計算
+
+		float progress = camera.shakeTimer / camera.shakeTimerMax;//1から0までの割合
+		float currentPower = camera.shakePower * progress;
+
+		float magX = (GetRand(200) / 100.0f - 1.0f) * currentPower;
+		float magY = (GetRand(200) / 100.0f - 1.0f) * currentPower;
+
+		camera.drawOffset.x += magX;
+		camera.drawOffset.y += magY;
+	}
 }

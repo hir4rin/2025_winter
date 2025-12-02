@@ -73,10 +73,19 @@ public:
 	/// 当たったら敵も一緒に消える
 	/// </summary>
 	void CheckPlayer();
+	/// <summary>
+	/// プレイヤーが落下した後の復帰処理
+	/// </summary>
+	bool CheckDropped();
+	/// <summary>
+	/// カメラが揺れる(敵と当たったとき用)
+	/// </summary>
+	void OnShake();
 private:
 	void FadeInUpdate(Input&);
 	void NormalUpdate(Input& input);
 	void FadeOutUpdate(Input&);
+	void DyingUpdate(Input&);
 
 	using UpdateFunc_t = void(GameScene1_3::*)(Input&);
 	UpdateFunc_t update_;	// Update系を受け取るメンバ関数ポインタ

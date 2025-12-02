@@ -41,7 +41,7 @@ public:
 	bool m_playerdir;
 private:
 	const float m_speed = 25;
-	float	AliveLimitX = 5000.0f;
+	float	AliveLimitX = 15000.0f;
 	const int kCharaSize = 100;
 	
 	const float kScale = 3;

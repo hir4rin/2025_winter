@@ -97,6 +97,10 @@ public:
 	/// </summary>
 	void DamageHit(bool ans);
 
+	void Death();
+	void DyingUpdate();
+	void DyingDraw(Camera& camera);
+
 private:
 	void InputUpdate(Input& input);//入力の更新
 	void NormalUpdate(Input& input);//通常時の更新
@@ -166,6 +170,7 @@ private:
 	PlayerState m_state;
 	PlayerType m_type;
 	int m_animframe;
+	int m_angle;//回転角度
 	float damageCount;//ダメージを食らったときの秒数
 	int charaIdx;
 	int charaIdy;

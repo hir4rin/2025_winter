@@ -49,7 +49,8 @@ Player::Player(PlayerType type) :
 	BurningPrevPos{0,0},
 	BurningAfterPos{0,0},
 	isBurningAttack(false),
-	damageCount(0)
+	damageCount(0),
+	m_angle(0.0f)
 	//m_pBg(nullptr)
 {
 	m_pos = kInitPos;
@@ -248,6 +249,45 @@ void Player::DamageHit(bool ans)
 	m_state = PlayerState::Damage;
 	AnimSelect(Anim::Damage);
 	damageCount = damageFrame;
+}
+
+void Player::Death()
+{
+	m_vel.y = -20;
+	//アニメーションを初期に戻す
+	{
+		m_anim = Anim::Idle;
+		m_animframe = 0;
+		charaIdx = 0;
+		charaIdy = 0;
+	}
+
+}
+
+void Player::DyingUpdate()
+{
+	m_angle -= 10.0f;//回転角度
+	m_vel.y += 0.8f;
+	m_pos.y += m_vel.y;
+}
+
+void Player::DyingDraw(Camera& camera)
+{
+	
+	if (m_isRight)
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
+		player_cut_w, player_cut_h,//切り取りの幅
+		player_scale, m_angle * DX_PI / 180.0f, m_handle, true);
+	}
+	else
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
+		player_cut_w, player_cut_h,//切り取りの幅
+		player_scale, m_angle * DX_PI / 180.0f, m_handle, true, true);
+	}
 }
 
 void Player::InputUpdate(Input& input)

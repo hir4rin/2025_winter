@@ -227,7 +227,7 @@ void GameScene1_3::CheckArrowHit()
 		//敵がどっちから当たったかどうかを入れる
 		//矢とどの方向で当たったかどうか
 		m_pPlayer->DamageHit(isLeft);
-
+		OnShake();
 		e_arrow->m_hitPlayer = nullptr;
 
 	}
@@ -746,7 +746,7 @@ void GameScene1_3::CheckPlayer()
 			//敵がどっちから当たったかどうかを入れる
 			//プレイヤーのダメージ処理
 			m_pPlayer->DamageHit(isLeft);
-
+			OnShake();
 			//敵が消える処理
 			//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
@@ -774,7 +774,7 @@ void GameScene1_3::CheckPlayer()
 			//敵がどっちから当たったかどうかを入れる
 			//プレイヤーのダメージ処理
 			m_pPlayer->DamageHit(isLeft);
-
+			OnShake();
 			//敵が消える処理
 			//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
@@ -803,7 +803,7 @@ void GameScene1_3::CheckPlayer()
 			//敵がどっちから当たったかどうかを入れる
 			//プレイヤーのダメージ処理
 			m_pPlayer->DamageHit(isLeft);
-
+			OnShake();
 			//敵が消える処理
 			//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
@@ -819,7 +819,24 @@ void GameScene1_3::CheckPlayer()
 
 
 }
+bool  GameScene1_3::CheckDropped()
+{
+	bool dropped = m_pPlayer->GetPos().y > screenHeight;
 
+	if (dropped)
+	{
+		m_pPlayer->Death();
+		StartCameraShake(camera, 20.0f, 0.2f);
+		update_ = &GameScene1_3::DyingUpdate;
+		draw_ = &GameScene1_3::FadeDraw;
+		return true;
+	}
+	return false;
+}
+void GameScene1_3::OnShake()
+{
+	StartCameraShake(camera, 15.0f, 0.1f);
+}
 
 void GameScene1_3::FadeInUpdate(Input&)
 {
@@ -912,12 +929,14 @@ void GameScene1_3::NormalUpdate(Input& input)
 
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
+	//プレイヤーが落ちたかどうか
+	if (CheckDropped())return;//落ちてたらそのあとの処理をしない
 
-	if (input.IsTriggered("ok"))
-	{
-		update_ = &GameScene1_3::FadeOutUpdate;
-		draw_ = &GameScene1_3::FadeDraw;
-	}
+	///*if (input.IsTriggered("ok"))
+	//{
+	//	update_ = &GameScene1_3::FadeOutUpdate;
+	//	draw_ = &GameScene1_3::FadeDraw;
+	//}*/
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{
@@ -1086,7 +1105,21 @@ void GameScene1_3::FadeOutUpdate(Input&)
 		return;
 	}
 }
+void GameScene1_3::DyingUpdate(Input& input)
+{
+	UpdateCamera(camera, m_pPlayer);
+	m_pBg->Draw(camera);
+	m_pPlayer->DyingUpdate();
+	m_pPlayer->DyingDraw(camera);
 
+	if (m_frame++ >= fade_interval * 1.5f)
+	{
+		//delete m_pCharacter;
+		delete m_pBg;
+		controller_.ChangeScene(std::make_shared<GameScene1_3>(controller_, PlayerType::Normal));
+		return;
+	}
+}
 void GameScene1_3::FadeDraw()
 {
 
