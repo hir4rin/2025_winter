@@ -143,6 +143,7 @@
     <ClCompile Include="Bg.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="data\Game\Door.cpp" />
+    <ClCompile Include="Scene\GameScene1_3.cpp" />
     <ClCompile Include="Scene\GameScene1_2.cpp" />
     <ClCompile Include="Game\Arrow.cpp" />
     <ClCompile Include="Game\BurningObject.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Bg.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Door.h" />
+    <ClInclude Include="Scene\GameScene1_3.h" />
     <ClInclude Include="Scene\GameScene1_2.h" />
     <ClInclude Include="Game\Arrow.h" />
     <ClInclude Include="Game\BurningObject.h" />

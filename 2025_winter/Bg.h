@@ -34,6 +34,10 @@ public:
 	/// </summary>
 	void LoadMapData1_2();
 	/// <summary>
+	/// マップの読み込み(stage1_3)
+	/// </summary>
+	void LoadMapData1_3();
+	/// <summary>
 	/// マップチップ表示
 	/// </summary>
 	void DrawMapChip0(Camera& camera);
@@ -41,6 +45,10 @@ public:
 	/// マップチップ表示(1_2)
 	/// </summary>
 	void DrawMapChip1_2(Camera& camera);
+	/// <summary>
+	/// マップチップ表示(1_3)
+	/// </summary>
+	void DrawMapChip1_3(Camera& camera);
 	/// <summary>
 	/// マップチップ表示
 	/// </summary>
@@ -54,6 +62,7 @@ public:
 	bool IsCollision(Rect rect, Rect& chipRect);
 	bool IsCollision1_1(Rect rect, Rect& chipRect);
 	bool IsCollision1_2(Rect rect, Rect& chipRect);
+	bool IsCollision1_3(Rect rect, Rect& chipRect);
 	/// <summary>
 	/// 指定した矩形と当たっているか判定するプレイヤー専用
 	/// </summary>
@@ -63,6 +72,7 @@ public:
 	bool IsCollisionPlayer(Rect rect, Rect& chipRect);
 	bool IsCollisionPlayer1_1(Rect rect, Rect& chipRect);
 	bool IsCollisionPlayer1_2(Rect rect, Rect& chipRect);
+	bool IsCollisionPlayer1_3(Rect rect, Rect& chipRect);
 
 	
 	

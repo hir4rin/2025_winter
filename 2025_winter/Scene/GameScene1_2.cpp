@@ -15,7 +15,8 @@
 #include <../Door.h>
 #include "Bg.h"
 #include "../input.h"
-#include "GameoverScene.h"
+#include "GameScene1_3.h"
+#include "GameOverScene.h"
 #include "SceneController.h"
 #include <cassert>
 #include "../Application.h"
@@ -35,7 +36,7 @@ namespace
 }
 
 
-GameScene1_2::GameScene1_2(SceneController& controller) :
+GameScene1_2::GameScene1_2(SceneController& controller,PlayerType type) :
 	Scene(controller),
 	update_(&GameScene1_2::FadeInUpdate),
 	draw_(&GameScene1_2::FadeDraw)
@@ -56,7 +57,7 @@ GameScene1_2::GameScene1_2(SceneController& controller) :
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
-	m_pPlayer = std::make_shared<Player>();
+	m_pPlayer = std::make_shared<Player>(type);
 	m_pBg = new Bg(m_pPlayer,2);
 	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 
@@ -1082,7 +1083,7 @@ void GameScene1_2::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameoverScene>(controller_));
+		controller_.ChangeScene(std::make_shared<GameScene1_3>(controller_, m_pPlayer->GetType()));
 		return;
 	}
 }

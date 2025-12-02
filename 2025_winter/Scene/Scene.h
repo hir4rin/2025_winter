@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Player.h"//playerの状態を継承先が渡す用
 class SceneController; // シーンコントローラーのプロトタイプ宣言
 class Input; // 入力のプロトタイプ宣言
 

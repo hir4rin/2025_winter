@@ -1,4 +1,4 @@
-﻿#include "GameScene.h"
+﻿#include "GameScene1_3.h"
 #include <algorithm>
 #include "DxLib.h"
 #include "Camera.h"
@@ -16,7 +16,6 @@
 #include "Bg.h"
 #include "../input.h"
 #include "GameoverScene.h"
-#include "GameScene1_2.h"
 #include "SceneController.h"
 #include <cassert>
 #include "../Application.h"
@@ -36,27 +35,30 @@ namespace
 }
 
 
-GameScene::GameScene(SceneController& controller,PlayerType type) :
+GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type) :
 	Scene(controller),
-	update_(&GameScene::FadeInUpdate),
-	draw_(&GameScene::FadeDraw)
+	update_(&GameScene1_3::FadeInUpdate),
+	draw_(&GameScene1_3::FadeDraw)
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1884.0f,880.0f), false });//tika
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2400.0f,880.0f), false });//tika
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,250.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,200.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4000.0f,1000.0f), false });//地下
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4400.0f,200.0f), false });
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal);
-	m_pBg = new Bg(m_pPlayer,1);
-	//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-	m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+	m_pPlayer = std::make_shared<Player>(type);
+	m_pBg = new Bg(m_pPlayer, 3);
+	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 
 
 
@@ -74,9 +76,7 @@ GameScene::GameScene(SceneController& controller,PlayerType type) :
 }
 
 
-
-
-void GameScene::CheckHit()
+void GameScene1_3::CheckHit()
 {
 	switch (m_pPlayer->GetType())
 	{
@@ -134,7 +134,7 @@ void GameScene::CheckHit()
 
 
 
-void GameScene::CheckArrowHit()
+void GameScene1_3::CheckArrowHit()
 {
 	for (auto& num : m_arrows)
 	{
@@ -233,7 +233,7 @@ void GameScene::CheckArrowHit()
 	}
 }
 
-void GameScene::CheckFrozenHit()
+void GameScene1_3::CheckFrozenHit()
 {
 	for (auto& m_pFrozen : m_pFrozens)
 	{
@@ -346,7 +346,7 @@ void GameScene::CheckFrozenHit()
 
 }
 
-void GameScene::ReactionBurning()
+void GameScene1_3::ReactionBurning()
 {
 	for (auto& m_pBurningObject : m_pBurningObjects)
 	{
@@ -371,7 +371,7 @@ void GameScene::ReactionBurning()
 
 }
 
-void GameScene::CheckHitNormal()
+void GameScene1_3::CheckHitNormal()
 {
 
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
@@ -491,7 +491,7 @@ void GameScene::CheckHitNormal()
 	}
 }
 
-void GameScene::CheckHitBurning()
+void GameScene1_3::CheckHitBurning()
 {
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
@@ -573,7 +573,7 @@ void GameScene::CheckHitBurning()
 	}
 }
 
-void GameScene::CheckFastBurning()
+void GameScene1_3::CheckFastBurning()
 {
 	if (!m_pPlayer) return;
 	m_pPlayer->ChangeBurningAttack(false);
@@ -640,7 +640,7 @@ void GameScene::CheckFastBurning()
 
 }
 
-void GameScene::CheckHitFrozen()
+void GameScene1_3::CheckHitFrozen()
 {
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
@@ -728,7 +728,7 @@ void GameScene::CheckHitFrozen()
 	}
 }
 
-void GameScene::CheckPlayer()
+void GameScene1_3::CheckPlayer()
 {
 	if (!m_pPlayer)return;
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
@@ -817,12 +817,11 @@ void GameScene::CheckPlayer()
 		}
 	}
 
-	
+
 }
 
 
-
-void GameScene::FadeInUpdate(Input&)
+void GameScene1_3::FadeInUpdate(Input&)
 {
 
 
@@ -830,13 +829,13 @@ void GameScene::FadeInUpdate(Input&)
 	if (m_frame-- <= 0)
 	{
 
-		update_ = &GameScene::NormalUpdate;
-		draw_ = &GameScene::NormalDraw;
+		update_ = &GameScene1_3::NormalUpdate;
+		draw_ = &GameScene1_3::NormalDraw;
 		return;
 	}
 }
 
-void GameScene::NormalUpdate(Input& input)
+void GameScene1_3::NormalUpdate(Input& input)
 {
 	//----カメラの位置-----------------------------------
 	float left = camera.pos.x - screenWidth / 2 + 10;
@@ -916,14 +915,14 @@ void GameScene::NormalUpdate(Input& input)
 
 	if (input.IsTriggered("ok"))
 	{
-		update_ = &GameScene::FadeOutUpdate;
-		draw_ = &GameScene::FadeDraw;
+		update_ = &GameScene1_3::FadeOutUpdate;
+		draw_ = &GameScene1_3::FadeDraw;
 	}
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{
-		update_ = &GameScene::FadeOutUpdate;
-		draw_ = &GameScene::FadeDraw;
+		update_ = &GameScene1_3::FadeOutUpdate;
+		draw_ = &GameScene1_3::FadeDraw;
 	}
 
 	//ポーズ画面
@@ -1070,7 +1069,7 @@ void GameScene::NormalUpdate(Input& input)
 
 }
 
-void GameScene::FadeOutUpdate(Input&)
+void GameScene1_3::FadeOutUpdate(Input&)
 {
 	//ドアの描画(FadeOutDrawがないため,
 	// いったんこっちにおく)
@@ -1083,12 +1082,12 @@ void GameScene::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_,m_pPlayer->GetType()));
+		controller_.ChangeScene(std::make_shared<GameoverScene>(controller_));
 		return;
 	}
 }
 
-void GameScene::FadeDraw()
+void GameScene1_3::FadeDraw()
 {
 
 
@@ -1102,7 +1101,7 @@ void GameScene::FadeDraw()
 
 }
 
-void GameScene::NormalDraw()
+void GameScene1_3::NormalDraw()
 {
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	m_pBg->Draw(camera);
@@ -1142,15 +1141,15 @@ void GameScene::NormalDraw()
 	}
 	ReactionBurning();
 
-	float left = camera.pos.x + 10 - screenWidth / 2;
-	float right = camera.pos.x + screenWidth / 2 - 10;
+	float left = camera.pos.x + m_cameraMargin - screenWidth / 2;
+	float right = camera.pos.x + screenWidth / 2 - m_cameraMargin;
 	float top = camera.pos.y + 10;
 	float bottom = camera.pos.y + screenHeight - 10;
 	DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
 
 }
 
-bool GameScene::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)
+bool GameScene1_3::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)
 {
 	// --- ① まず AABB でざっくり判定 ---
 	float sweepLeft = (std::min)(p0.x, p1.x);
@@ -1202,12 +1201,13 @@ bool GameScene::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)
 	return true;
 }
 
-void GameScene::Update(Input& input)
+void GameScene1_3::Update(Input& input)
 {
 	(this->*update_)(input);
 }
 
-void GameScene::Draw()
+void GameScene1_3::Draw()
 {
 	(this->*draw_)();
 }
+

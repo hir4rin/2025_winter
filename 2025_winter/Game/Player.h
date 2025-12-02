@@ -37,7 +37,7 @@ enum class PlayerType
 class Player : public Character
 {
 public:
-	Player();
+	Player(PlayerType type);
 	virtual ~Player();
 
 	virtual void Init() override;

@@ -37,7 +37,7 @@ namespace
 
 
 
-Player::Player() :
+Player::Player(PlayerType type) :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -56,8 +56,23 @@ Player::Player() :
 	m_handle = LoadGraph("data/Game/player.png");
 	assert(m_handle >= 0);
 	m_anim = Anim::Idle;
-	m_state = PlayerState::Normal;
-	m_type = PlayerType::Normal;
+	/*m_state = PlayerState::Normal;
+	m_type = type;*/
+	switch (type)
+	{
+	case PlayerType::Normal:
+		ChangeNormal();
+		break;
+	case PlayerType::Burning:
+		ChangeBurning();
+		break;
+	case PlayerType::Frozen:
+		ChangeFrozen();
+		break;
+	case PlayerType::Archer:
+		ChangeArcher();
+		break;
+	}
 }
 Player::~Player()
 {

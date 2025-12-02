@@ -1,5 +1,6 @@
 ﻿#include "TitleScene.h"
 #include "DxLib.h"
+#include "Player.h"
 #include "../input.h"
 #include "GameScene.h"
 #include "SceneController.h"
@@ -34,7 +35,7 @@ void TitleScene::FadeOutUpdate(Input&)
 {
 	if (frame_++ >= fade_interval)
 	{
-		controller_.ChangeScene(std::make_shared<GameScene>(controller_));
+		controller_.ChangeScene(std::make_shared<GameScene>(controller_,PlayerType::Normal));
 		return;
 	}
 }
