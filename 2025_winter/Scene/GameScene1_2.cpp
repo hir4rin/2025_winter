@@ -30,6 +30,7 @@ namespace
 
 	constexpr int fade_interval = 60;
 
+	constexpr int shake_interval = 30;
 
 	constexpr float FrozenSpeed = 13.0f;
 
@@ -822,17 +823,28 @@ void GameScene1_2::CheckPlayer()
 }
 bool  GameScene1_2::CheckDropped()
 {
-	bool dropped = m_pPlayer->GetPos().y > screenHeight;
+	bool dropped = m_pPlayer->GetPos().y > screenHeight + 50;//UIの分上に上がったのでその分
 
 	if (dropped)
 	{
-		m_pPlayer->Death();
-		StartCameraShake(camera, 20.0f, 0.2f);
-		update_ = &GameScene1_2::DyingUpdate;
-		draw_ = &GameScene1_2::FadeDraw;
+		//DyingActと同じ処理
+		{
+			m_pPlayer->Death();
+			StartCameraShake(camera, 20.0f, 0.2f);
+			update_ = &GameScene1_2::ShakingUpdate;
+
+		}
+
 		return true;
 	}
 	return false;
+}
+void GameScene1_2::DyingAct()
+{
+	m_pPlayer->Death();
+	StartCameraShake(camera, 20.0f, 0.2f);
+	update_ = &GameScene1_2::ShakingUpdate;
+
 }
 void GameScene1_2::OnShake()
 {
@@ -926,7 +938,17 @@ void GameScene1_2::NormalUpdate(Input& input)
 		}
 	}
 
-
+	//プレイヤーのHPを引き渡す
+	stageUI.SetHp(m_pPlayer->GetHp());
+	//プレイヤーのTypeを引き渡す
+	stageUI.SetType(m_pPlayer->GetType());
+	stageUI.Update();
+	//プレイヤーのHpが0以下だったら死ぬ
+	if (m_pPlayer->GetHp() <= 0)
+	{
+		DyingAct();
+		return;
+	}
 
 
 
@@ -1097,6 +1119,7 @@ void GameScene1_2::FadeOutUpdate(Input&)
 	m_doors->OutUpdate();
 	m_pBg->Draw(camera);
 	m_doors->Draw(camera);
+	stageUI.Draw(camera);
 	m_pPlayer->Draw(camera);
 
 	if (m_frame++ >= fade_interval)
@@ -1109,8 +1132,9 @@ void GameScene1_2::FadeOutUpdate(Input&)
 }
 void GameScene1_2::DyingUpdate(Input& input)
 {
-	UpdateCamera(camera, m_pPlayer);
+	
 	m_pBg->Draw(camera);
+	stageUI.Draw(camera);
 	m_pPlayer->DyingUpdate();
 	m_pPlayer->DyingDraw(camera);
 
@@ -1122,6 +1146,17 @@ void GameScene1_2::DyingUpdate(Input& input)
 		return;
 	}
 }
+
+void GameScene1_2::ShakingUpdate(Input&)
+{
+	UpdateCamera(camera, m_pPlayer);
+	if (m_shakeTime++ >= shake_interval)
+	{
+		m_shakeTime = 0;
+		update_ = &GameScene1_2::DyingUpdate;
+		draw_ = &GameScene1_2::FadeDraw;
+	}
+}
 void GameScene1_2::FadeDraw()
 {
 
@@ -1129,7 +1164,7 @@ void GameScene1_2::FadeDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
-	DrawBox(0, 0, 640, 480, 0x000000, true);
+	//DrawBox(0, 0, 640, 480, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 
@@ -1141,6 +1176,7 @@ void GameScene1_2::NormalDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	m_pBg->Draw(camera);
 	m_doors->Draw(camera);
+	stageUI.Draw(camera);
 
 	for (auto& m_pFrozen : m_pFrozens)
 	{

@@ -30,6 +30,8 @@ namespace
 
 	constexpr int fade_interval = 60;
 
+	constexpr int shake_interval = 30;
+
 
 	constexpr float FrozenSpeed = 13.0f;
 
@@ -351,7 +353,7 @@ void GameScene::ReactionBurning()
 	for (auto& m_pBurningObject : m_pBurningObjects)
 	{
 		if (!m_pBurningObject) continue;
-		//カメラの外だったらnullptrにする
+		//カメラの外だったらnullptrにする+UI
 		float posX = m_pBurningObject->GetPos().x + camera.drawOffset.x;
 		float posY = m_pBurningObject->GetPos().y + camera.drawOffset.y;
 
@@ -824,17 +826,30 @@ void GameScene::CheckPlayer()
 
 bool  GameScene::CheckDropped()
 {
-	bool dropped = m_pPlayer->GetPos().y > screenHeight;
+	bool dropped = m_pPlayer->GetPos().y > screenHeight + 50;//UIの分上に上がったのでその分
 
+	
 	if (dropped)
 	{
-		m_pPlayer->Death();
-		StartCameraShake(camera, 20.0f, 0.2f);
-		update_ = &GameScene::DyingUpdate;
-		draw_ = &GameScene::FadeDraw;
+		//DyingActと同じ処理
+		{
+			m_pPlayer->Death();
+			StartCameraShake(camera, 20.0f, 0.2f);
+			update_ = &GameScene::ShakingUpdate;
+			
+		}
+		
 		return true; 
 	}
 	return false;
+}
+
+void GameScene::DyingAct()
+{
+	m_pPlayer->Death();
+	StartCameraShake(camera, 20.0f, 0.2f);
+	update_ = &GameScene::ShakingUpdate;
+	
 }
 
 void GameScene::OnShake()
@@ -933,7 +948,17 @@ void GameScene::NormalUpdate(Input& input)
 	{
 		
 	}
-
+	//プレイヤーのHPを引き渡す
+	stageUI.SetHp(m_pPlayer->GetHp());
+	//プレイヤーのTypeを引き渡す
+	stageUI.SetType(m_pPlayer->GetType());
+	stageUI.Update();
+	//プレイヤーのHpが0以下だったら死ぬ
+	if (m_pPlayer->GetHp() <= 0)
+	{
+		DyingAct();
+		return;
+	}
 
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
@@ -1104,6 +1129,7 @@ void GameScene::FadeOutUpdate(Input&)
 	m_doors->OutUpdate();
 	m_pBg->Draw(camera);
 	m_doors->Draw(camera);
+	stageUI.Draw(camera);
 	m_pPlayer->Draw(camera);
 
 	if (m_frame++ >= fade_interval)
@@ -1117,8 +1143,8 @@ void GameScene::FadeOutUpdate(Input&)
 
 void GameScene::DyingUpdate(Input& input)
 {
-	UpdateCamera(camera,m_pPlayer);
 	m_pBg->Draw(camera);
+	stageUI.Draw(camera);
 	m_pPlayer->DyingUpdate();
 	m_pPlayer->DyingDraw(camera);
 	
@@ -1128,6 +1154,17 @@ void GameScene::DyingUpdate(Input& input)
 		delete m_pBg;
 		controller_.ChangeScene(std::make_shared<GameScene>(controller_, PlayerType::Normal));
 		return;
+	}
+}
+
+void GameScene::ShakingUpdate(Input&)
+{
+	UpdateCamera(camera, m_pPlayer);
+	if (m_shakeTime++ >= shake_interval)
+	{
+		m_shakeTime = 0;
+		update_ = &GameScene::DyingUpdate;
+		draw_ = &GameScene::FadeDraw;
 	}
 }
 
@@ -1150,7 +1187,7 @@ void GameScene::NormalDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	m_pBg->Draw(camera);
 	m_doors->Draw(camera);
-	stageUI.Draw(camera);
+	
 
 	for (auto& m_pFrozen : m_pFrozens)
 	{
@@ -1186,12 +1223,14 @@ void GameScene::NormalDraw()
 	}
 	ReactionBurning();
 
+	//ステージUI
+	stageUI.Draw(camera);
+
 	float left = camera.pos.x + 10 - screenWidth / 2;
 	float right = camera.pos.x + screenWidth / 2 - 10;
 	float top = camera.pos.y + 10;
 	float bottom = camera.pos.y + screenHeight - 10;
 	DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
-
 }
 
 bool GameScene::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)

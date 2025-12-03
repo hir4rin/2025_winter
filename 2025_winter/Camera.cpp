@@ -6,8 +6,10 @@
 
 namespace
 {
-	const int ScreenWidth = 1920;
-	const int ScreenHeight = 1080;
+	constexpr int ScreenWidth = 1920;
+	constexpr int ScreenHeight = 1080;
+	//カメラから持ってきた
+	const float topPos = ScreenHeight * 0.75;
 
 	constexpr float t = 0.1f;
 }
@@ -102,7 +104,7 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 	// その時、画面の中央にプレイヤーが来るようにする
 	// (camera.posが画面の中央になるようにする)
 	camera.drawOffset.x = camera.drawOffset.x + (ScreenWidth * 0.5f);
-	camera.drawOffset.y = camera.drawOffset.y - ScreenHeight * 0.125f;//+(ScreenHeight * 0.5f) 
+	camera.drawOffset.y = camera.drawOffset.y - (ScreenHeight - topPos);//+(ScreenHeight * 0.5f) //ScreenHeight * 0.125f
 	//カメラシェイク処理
 	if (camera.shakeTimer > 0.0f)
 	{

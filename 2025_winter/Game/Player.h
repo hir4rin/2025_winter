@@ -32,7 +32,7 @@ enum class PlayerType
 	Burning,
 	Frozen,
 	Archer
-};;
+};
 
 class Player : public Character
 {
@@ -97,9 +97,12 @@ public:
 	/// </summary>
 	void DamageHit(bool ans);
 
+	int  GetHp() { return m_hp; }
+
 	void Death();
 	void DyingUpdate();
 	void DyingDraw(Camera& camera);
+
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -169,6 +172,7 @@ private:
 	Anim m_anim;
 	PlayerState m_state;
 	PlayerType m_type;
+	int m_hp;//playerの体力
 	int m_animframe;
 	int m_angle;//回転角度
 	float damageCount;//ダメージを食らったときの秒数

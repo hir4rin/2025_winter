@@ -191,7 +191,6 @@
     <ClInclude Include="Game\Player.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Pad.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Scene\GameOverScene.h" />
     <ClInclude Include="Scene\GameScene.h" />

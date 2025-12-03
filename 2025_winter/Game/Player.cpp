@@ -50,8 +50,8 @@ Player::Player(PlayerType type) :
 	BurningAfterPos{0,0},
 	isBurningAttack(false),
 	damageCount(0),
-	m_angle(0.0f)
-	//m_pBg(nullptr)
+	m_angle(0.0f),
+	m_hp(100)//HPは後で引継ぎできるように変える
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/Game/player.png");
@@ -249,6 +249,8 @@ void Player::DamageHit(bool ans)
 	m_state = PlayerState::Damage;
 	AnimSelect(Anim::Damage);
 	damageCount = damageFrame;
+	//ダメージ分HPが減る
+	m_hp -= 20;
 }
 
 void Player::Death()

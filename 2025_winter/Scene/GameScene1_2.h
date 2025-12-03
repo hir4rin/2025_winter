@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Input.h"
 #include "Camera.h"
+#include "StageUI.h"
 #include "Enemy.h"
 #include <memory>
 #include <cassert>
@@ -77,17 +78,33 @@ public:
 	/// </summary>
 	bool CheckDropped();
 	/// <summary>
+	/// プレイヤーが死ぬ処理
+	/// </summary>
+	void DyingAct();
+	/// <summary>
 	/// カメラが揺れる(敵と当たったとき用)
 	/// </summary>
 	void OnShake();
 private:
+	//-----------Updateメンバ関数ポインタ---------
 	void FadeInUpdate(Input&);
 	void NormalUpdate(Input& input);
 	void FadeOutUpdate(Input&);
+	/// <summary>
+	/// 死ぬときの処理(アニメーション)
+	/// </summary>
+	/// <param name=""></param>
 	void DyingUpdate(Input&);
+	/// <summary>
+	/// カメラが揺れるときは時を止める
+	/// </summary>
+	/// <param name=""></param>
+	void ShakingUpdate(Input&);
 
 	using UpdateFunc_t = void(GameScene1_2::*)(Input&);
 	UpdateFunc_t update_;	// Update系を受け取るメンバ関数ポインタ
+	//-------------------------------------------------------------
+	//-----------------------Drawメンバ関数ポインタ------------------------
 
 	void FadeDraw();
 	void NormalDraw();
@@ -134,6 +151,7 @@ private:
 private:
 	int m_frame = 0;	// フェードインアウト用
 	int m_gameFrame = 0;	// ゲーム中のフレームをカウント
+	int m_shakeTime = 0;//カメラが揺れてる間ほかを止める
 private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
@@ -158,6 +176,6 @@ private:
 
 
 	Camera camera;//カメラのためのオブジェクト
-
+	StageUI stageUI;//UI
 };
 
