@@ -60,6 +60,7 @@ protected:
 	bool m_isGround;//キャラクターが地面を向いているかどうか
 	bool m_wasGround;//前のフレームで地面にいたかどうか
 	bool m_isJumpPreparing;//ジャンプ準備中か
+	bool hitClear;//下から貫通する床に当たっているか
 
 	Vec2 m_pos;
 	Vec2 m_vel;

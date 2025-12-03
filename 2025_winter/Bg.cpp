@@ -669,23 +669,23 @@ bool Bg::IsCollision1_3(Rect rect, Rect& chipRect)
 	}
 	return false;
 }
-bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect)
+bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect,bool& hitClearness)
 {
 	bool ans;
 	//マップごとに判定を変える
 	switch (StageNum)
 	{
 	case 0:
-		ans = IsCollisionPlayer1_1(rect, chipRect);
+		ans = IsCollisionPlayer1_1(rect, chipRect,hitClearness);
 		break;
 	case 1://1_1のマップ
-		ans = IsCollisionPlayer1_1(rect, chipRect);
+		ans = IsCollisionPlayer1_1(rect, chipRect,hitClearness);
 		break;
 	case 2://1_2のマップ
-		ans = IsCollisionPlayer1_2(rect, chipRect);
+		ans = IsCollisionPlayer1_2(rect, chipRect, hitClearness);
 		break;
 	case 3://1_3のマップ
-		ans = IsCollisionPlayer1_3(rect, chipRect);
+		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
 		break;
 	default:
 		assert(false && "ここはIsCollisionの判定を変えるところです");
@@ -695,8 +695,9 @@ bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect)
 	return ans;
 }
 
-bool Bg::IsCollisionPlayer1_1(Rect rect, Rect& chipRect)
+bool Bg::IsCollisionPlayer1_1(Rect rect, Rect& chipRect,bool& hitClearness)
 {
+	hitClearness = false;//最初に初期化
 	for (int y = 0; y < kChipNumY; y++)
 	{
 		for (int x = 0; x < kChipNumX; x++)
@@ -750,6 +751,7 @@ bool Bg::IsCollisionPlayer1_1(Rect rect, Rect& chipRect)
 				{
 					return false;
 				}
+				hitClearness = true;
 
 			}
 
@@ -761,8 +763,9 @@ bool Bg::IsCollisionPlayer1_1(Rect rect, Rect& chipRect)
 
 }
 
-bool Bg::IsCollisionPlayer1_2(Rect rect, Rect& chipRect)
+bool Bg::IsCollisionPlayer1_2(Rect rect, Rect& chipRect, bool& hitClearness)
 {
+	hitClearness = false;//最初に初期化
 	for (int y = 0; y < kChipNumY; y++)
 	{
 		for (int x = 0; x < kChipNumX; x++)
@@ -798,7 +801,7 @@ bool Bg::IsCollisionPlayer1_2(Rect rect, Rect& chipRect)
 			//	{
 			//		return false;
 			//	}
-
+			//hitClearness = true;
 			//}
 
 			// いずれかのチップに当たっていたら終了する
@@ -809,8 +812,9 @@ bool Bg::IsCollisionPlayer1_2(Rect rect, Rect& chipRect)
 
 }
 
-bool Bg::IsCollisionPlayer1_3(Rect rect, Rect& chipRect)
+bool Bg::IsCollisionPlayer1_3(Rect rect, Rect& chipRect, bool& hitClearness)
 {
+	hitClearness = false;//最初に初期化
 	for (int y = 0; y < kChipNumY; y++)
 	{
 		for (int x = 0; x < kChipNumX; x++)
@@ -864,7 +868,7 @@ bool Bg::IsCollisionPlayer1_3(Rect rect, Rect& chipRect)
 				{
 					return false;
 				}
-
+				hitClearness = true;
 			}
 
 			// いずれかのチップに当たっていたら終了する

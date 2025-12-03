@@ -37,7 +37,7 @@ namespace
 
 
 
-Player::Player(PlayerType type) :
+Player::Player(PlayerType type,int hp) :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -51,7 +51,7 @@ Player::Player(PlayerType type) :
 	isBurningAttack(false),
 	damageCount(0),
 	m_angle(0.0f),
-	m_hp(100)//HPは後で引継ぎできるように変える
+	m_hp(hp)//HPは後で引継ぎできるように変える
 {
 	m_pos = kInitPos;
 	m_handle = LoadGraph("data/Game/player.png");

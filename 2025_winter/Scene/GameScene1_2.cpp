@@ -37,7 +37,7 @@ namespace
 }
 
 
-GameScene1_2::GameScene1_2(SceneController& controller,PlayerType type) :
+GameScene1_2::GameScene1_2(SceneController& controller,PlayerType type,int hp) :
 	Scene(controller),
 	update_(&GameScene1_2::FadeInUpdate),
 	draw_(&GameScene1_2::FadeDraw)
@@ -58,11 +58,12 @@ GameScene1_2::GameScene1_2(SceneController& controller,PlayerType type) :
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
-	m_pPlayer = std::make_shared<Player>(type);
+	m_pPlayer = std::make_shared<Player>(type,hp);
 	m_pBg = new Bg(m_pPlayer,2);
 	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 
-
+	//シーン切り替え後のにゅいーんをなくす
+	stageUI.Init(hp);
 
 
 
@@ -1126,7 +1127,7 @@ void GameScene1_2::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene1_3>(controller_, m_pPlayer->GetType()));
+		controller_.ChangeScene(std::make_shared<GameScene1_3>(controller_, m_pPlayer->GetType(),m_pPlayer->GetHp()));
 		return;
 	}
 }
@@ -1142,7 +1143,7 @@ void GameScene1_2::DyingUpdate(Input& input)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_, PlayerType::Normal));
+		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_, PlayerType::Normal,100));
 		return;
 	}
 }
@@ -1176,7 +1177,7 @@ void GameScene1_2::NormalDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	m_pBg->Draw(camera);
 	m_doors->Draw(camera);
-	stageUI.Draw(camera);
+	
 
 	for (auto& m_pFrozen : m_pFrozens)
 	{
@@ -1211,6 +1212,9 @@ void GameScene1_2::NormalDraw()
 		if (m_pBurningObject) m_pBurningObject->Draw(camera);
 	}
 	ReactionBurning();
+
+	//ステージUI
+	stageUI.Draw(camera);
 
 	float left = camera.pos.x + m_cameraMargin - screenWidth / 2;
 	float right = camera.pos.x + screenWidth / 2 - m_cameraMargin;

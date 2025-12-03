@@ -42,11 +42,13 @@ StageUI::StageUI() :
 
 StageUI::~StageUI()
 {
+
 }
 
-void StageUI::Init()
+void StageUI::Init(int hp)
 {
-
+	m_playerHp = hp;
+	m_displayHp = hp;
 }
 void StageUI::Update()
 {

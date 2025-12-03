@@ -37,7 +37,12 @@ enum class PlayerType
 class Player : public Character
 {
 public:
-	Player(PlayerType type);
+	/// <summary>
+	/// 1:type,2:hp
+	/// </summary>
+	/// <param name="type"></param>
+	/// <param name="hp"></param>
+	Player(PlayerType type,int hp);
 	virtual ~Player();
 
 	virtual void Init() override;
@@ -180,6 +185,7 @@ private:
 	int charaIdy;
 	bool isNomove;
 	bool isJumping;
+	
 	const int arrowTime = 30;//発射クールタイム
 
 	

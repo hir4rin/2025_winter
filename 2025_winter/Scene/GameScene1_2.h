@@ -28,7 +28,7 @@ class GameScene1_2 :
     public Scene
 {
 public:
-	GameScene1_2(SceneController& controller,PlayerType type);
+	GameScene1_2(SceneController& controller,PlayerType type,int hp);
 	void Update(Input& input) override;
 	void Draw() override;
 	/// <summary>

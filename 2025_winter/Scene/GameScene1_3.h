@@ -29,7 +29,7 @@ class GameScene1_3 :
 {
 
 public:
-	GameScene1_3(SceneController& controller,PlayerType type);
+	GameScene1_3(SceneController& controller,PlayerType type,int hp);
 	void Update(Input& input) override;
 	void Draw() override;
 	/// <summary>

@@ -29,7 +29,7 @@ class Door;
 class GameScene : public Scene
 {
 public:
-	GameScene(SceneController& controller,PlayerType type);
+	GameScene(SceneController& controller,PlayerType type,int hp);
 	void Update(Input& input) override;
 	void Draw() override;
 	/// <summary>

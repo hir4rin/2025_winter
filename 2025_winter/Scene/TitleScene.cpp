@@ -35,7 +35,7 @@ void TitleScene::FadeOutUpdate(Input&)
 {
 	if (frame_++ >= fade_interval)
 	{
-		controller_.ChangeScene(std::make_shared<GameScene>(controller_,PlayerType::Normal));
+		controller_.ChangeScene(std::make_shared<GameScene>(controller_,PlayerType::Normal,100));
 		return;
 	}
 }

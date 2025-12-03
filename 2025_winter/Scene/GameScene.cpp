@@ -38,7 +38,7 @@ namespace
 }
 
 
-GameScene::GameScene(SceneController& controller,PlayerType type) :
+GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 	Scene(controller),
 	update_(&GameScene::FadeInUpdate),
 	draw_(&GameScene::FadeDraw)
@@ -55,12 +55,14 @@ GameScene::GameScene(SceneController& controller,PlayerType type) :
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal);
+	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,hp);
 	m_pBg = new Bg(m_pPlayer,1);
 	//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
 	m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 
 
+	//シーン切り替え後のにゅいーんをなくす
+	stageUI.Init(hp);
 
 
 
@@ -1136,7 +1138,7 @@ void GameScene::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_,m_pPlayer->GetType()));
+		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp()));
 		return;
 	}
 }
@@ -1152,7 +1154,7 @@ void GameScene::DyingUpdate(Input& input)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene>(controller_, PlayerType::Normal));
+		controller_.ChangeScene(std::make_shared<GameScene>(controller_, PlayerType::Normal,100));
 		return;
 	}
 }

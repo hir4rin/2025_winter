@@ -69,10 +69,10 @@ public:
 	/// <param name="rect">指定した矩形</param>
 	/// <param name="chipRect">マップチップの矩形</param>
 	/// <returns>当たっているか</returns>
-	bool IsCollisionPlayer(Rect rect, Rect& chipRect);
-	bool IsCollisionPlayer1_1(Rect rect, Rect& chipRect);
-	bool IsCollisionPlayer1_2(Rect rect, Rect& chipRect);
-	bool IsCollisionPlayer1_3(Rect rect, Rect& chipRect);
+	bool IsCollisionPlayer(Rect rect, Rect& chipRect, bool& hitClearness);
+	bool IsCollisionPlayer1_1(Rect rect, Rect& chipRect,bool& hitClearness);
+	bool IsCollisionPlayer1_2(Rect rect, Rect& chipRect,bool& hitClearness);
+	bool IsCollisionPlayer1_3(Rect rect, Rect& chipRect,bool& hitClearness);
 
 	
 	
