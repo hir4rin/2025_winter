@@ -178,6 +178,8 @@ void EnemyWizard::AttackUpdate()
 		
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
+
+		m_isRight = dir;
 		}
 	}
 	if (isAttack == true)

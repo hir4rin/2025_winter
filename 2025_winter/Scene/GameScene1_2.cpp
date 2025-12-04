@@ -44,22 +44,26 @@ GameScene1_2::GameScene1_2(SceneController& controller,PlayerType type,int hp) :
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,200.0f), false });
+	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });//移動用
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1000.0f,600.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(2000.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2600.0f,200.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1884.0f,880.0f), false });//tika
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2400.0f,880.0f), false });//tika
-	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,250.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(3000.0f,250.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(3700.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(4750.0f,800.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4000.0f,1000.0f), false });//地下
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4400.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(5100.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5600.0f,200.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5650.0f,200.0f), false });
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>(type,hp);
 	m_pBg = new Bg(m_pPlayer,2);
+	//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
 	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 
 	//シーン切り替え後のにゅいーんをなくす
@@ -1106,7 +1110,22 @@ void GameScene1_2::NormalUpdate(Input& input)
 			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 		}
 	}
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
+	{
+		if (!m_pEnemyArchers[i])continue;
+		auto& e = m_pEnemyArchers[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
 
+			//インスタンスを消す
+			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+		}
+	}
 
 
 

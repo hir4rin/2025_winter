@@ -41,9 +41,17 @@ void Character::Update()
 {
 	//重力処理
 	Gravity();
-	//敵の重力が弱いから3重にかける
-	Gravity();
-	Gravity();
+	//敵の重力が弱いから多重にかける
+	{
+		Gravity();
+		Gravity();
+		Gravity();
+		Gravity();
+		Gravity();
+		Gravity();
+		Gravity();
+	}
+	
 
 	Character::SetRect();
 

@@ -172,7 +172,7 @@ void EnemyArcher::NormalUpdate()
 
 void EnemyArcher::WalkUpdate()
 {
-	m_vel.x = -kSpeed;
+	m_vel.x = m_isRight ? kSpeed : -kSpeed;
 
 }
 void EnemyArcher::AttackUpdate()
@@ -193,8 +193,9 @@ void EnemyArcher::AttackUpdate()
 			
 			m_animframe = 0;//アニメーションを最初からにする
 			//弓矢が移動するかはまだ検討中
-			/*bool  dir = m_pPlayer->GetPos().x > m_pos.x;
-			dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;*/
+			bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+			/*dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;*/
+			m_isRight = dir;
 		}
 	}
 	if (isAttack == true)

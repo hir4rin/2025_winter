@@ -45,7 +45,7 @@ GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });
+	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });//移動用
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,700.0f), false });
@@ -57,8 +57,8 @@ GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,hp);
 	m_pBg = new Bg(m_pPlayer,1);
-	//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-	m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+	m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+	//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 
 
 	//シーン切り替え後のにゅいーんをなくす
@@ -140,6 +140,19 @@ void GameScene::CheckHit()
 
 void GameScene::CheckArrowHit()
 {
+	for (auto& num : m_arrows)//壁に当たったら消す
+		
+	{
+		if (num == nullptr )continue;
+		Rect m_arrowRect = num->GetColRect();
+		Rect chipRect;
+
+		if (m_pBg->IsCollision(m_arrowRect,chipRect))
+		{
+			num = nullptr;
+			continue;
+		}
+	}
 	for (auto& num : m_arrows)
 	{
 		if (num == nullptr || !num->hitEnemyWizard)continue;
@@ -1115,6 +1128,22 @@ void GameScene::NormalUpdate(Input& input)
 
 			//インスタンスを消す
 			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+		}
+	}
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
+	{
+		if (!m_pEnemyArchers[i])continue;
+		auto& e = m_pEnemyArchers[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 		}
 	}
 

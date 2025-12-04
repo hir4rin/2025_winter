@@ -44,16 +44,23 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 
 {
 	//実質Initの使い方
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1884.0f,880.0f), false });//tika
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2400.0f,880.0f), false });//tika
-	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,250.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4000.0f,1000.0f), false });//地下
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4400.0f,200.0f), false });
+	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(700.0f,600.0f), false });//移動用
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1100.0f,500.0f), false });//上
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,650.0f), false });//下
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1700.0f,400.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(1700.0f,390.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(2200.0f,600.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(2700.0f,600.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2550.0f,810.0f), false });//崖下
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2800.0f,800.0f), false });//崖下
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(3150.0f,630.0f), false });//崖の上
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(4350.0f,690.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4865.0f,590.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(5315.0f,860.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(5784.0f,520.0f), false });
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6500.0f,520.0f), false });//崖上三連単
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6586.0f,520.0f), false });//崖上三連単
+	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
 
 	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
@@ -1105,7 +1112,22 @@ void GameScene1_3::NormalUpdate(Input& input)
 			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 		}
 	}
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
+	{
+		if (!m_pEnemyArchers[i])continue;
+		auto& e = m_pEnemyArchers[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
 
+			//インスタンスを消す
+			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+		}
+	}
 
 
 

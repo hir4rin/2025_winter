@@ -38,6 +38,7 @@ void Arrow::Update()
 {
 	//当たり判定をセット
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kArrowWidth, kArrowHeight);
+	
 
 
 	
