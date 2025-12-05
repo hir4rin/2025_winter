@@ -743,7 +743,8 @@ bool Bg::IsCollisionPlayer1_1(Rect rect, Rect& chipRect,bool& hitClearness)
 			chipRect.m_bottom = static_cast<float>(chipBottom);
 
 			//マップチップが39,40,41のとき下からあたっていたら貫通したいから
-			//プレイヤーの速度が上向きだったらfalseになる
+			//プレイヤーの速度が上向きだったら
+			// falseになる
 			
 			if (clearnness)
 			{

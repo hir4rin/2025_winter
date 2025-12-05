@@ -189,18 +189,50 @@ HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
         m_pos.y += m_vel.y;
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
+
+	DrawFormatString(1000, 120, GetColor(255, 0, 0), "m_vel.xは%fです", m_vel.x);
+	DrawFormatString(1000, 140, GetColor(255, 0, 0), "m_vel.yは%fです", m_vel.y);
+
 	if (m_pBg->IsCollisionPlayer(m_colRect, chipRect,hitClear))
 	{
 
-		if (m_vel.y > 0.0f)
+		if (m_vel.y > 0.0f)//下降
 		{
-			m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
-			m_vel.y = 0.0f;
-			m_isGround = true;
-			ans.bottom = true;
+			bool OnlyGravity = (m_vel.y == kGravity);
+		
+			if (hitClear && !OnlyGravity)//透過の床で、かつ、キャラの矩形の下側が床の上側より下にあるときは貫通させる
+			{
+				//前の座標のm_colRectの下側
+				float prevBottom = m_prevColRect.GetBottom();
+				//今の座標のm_colRectの下側
+				float curBottom = m_colRect.GetBottom();
+				//床の上側
+				float top = chipRect.GetTop();
+
+				if (prevBottom <= top)
+				{
+					if (curBottom > top)//上から落ちてきて床の上に着地する瞬間(1Fだけ下側に行く瞬間)
+					{
+						m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
+						m_vel.y = 0.0f;
+						m_isGround = true;
+						ans.bottom = true;
+					}
+				}
+			}
+			else//else 透過床じゃないときは普通に当たる
+			{
+				//普通の床だったら
+				m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
+				m_vel.y = 0.0f;
+				m_isGround = true;
+				ans.bottom = true;
+			}
+			
 		}
-		else if (m_vel.y < 0.0f)
+		else if (m_vel.y < 0.0f)//上昇
 		{
+			
 			m_pos.y = chipRect.GetBottom() + kCharaSize * 0.5f;
 			m_vel.y *= -1.0f;
 			ans.top = true;

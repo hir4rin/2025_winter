@@ -70,7 +70,7 @@ namespace
 	constexpr int kFrozenWalkDuration = 8;
 	constexpr int kFrozenJumpDuration = 2;
 	constexpr int kFrozenAttackDuration = 2;
-	constexpr int kFrozenCopyDuration = 10;
+	constexpr int kFrozenCopyDuration = 12;
 	constexpr int kFrozenDamageDuration = 5;
 	
 	//そのアニメーションが何このコマ数なのか(X)
@@ -86,7 +86,7 @@ namespace
 	constexpr int kArcherWalkDuration = 8;
 	constexpr int kArcherJumpDuration = 10;
 	constexpr int kArcherAttackDuration = 1;
-	constexpr int kArcherCopyDuration = 3;
+	constexpr int kArcherCopyDuration = 6;
 	constexpr int kArcherDamageDuration = 5;
 	
 	//そのアニメーションが何このコマ数なのか(X)
@@ -161,12 +161,12 @@ void Player::Update(Input& input)
 {
 
 	m_frame++;
-	m_animframe++;
+	AnimFrameUpdate();
 	if (arrowFrame >= 0)
 	{
 		arrowFrame--;
 	}
-	DrawFormatString(10, 40, GetColor(255, 0, 0), "arrowFrameは%dです", arrowFrame);
+	
 
 	Rect chipRect;
 	/*if (input.IsPressed("ok"))
@@ -174,7 +174,8 @@ void Player::Update(Input& input)
 		DamageHit(false);
 	}*/
 
-
+	//前フレームの矩形を保存
+	m_prevColRect = m_colRect;
 
 	//当たり判定更新
 	Character::SetRect();
@@ -305,7 +306,9 @@ void Player::Draw(Camera& camera)
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
 	DrawFormatString(10, 80, GetColor(255, 0, 0), "m_pos.xは%fです", m_pos.x);
-	DrawFormatString(10, 60, GetColor(255, 0, 0), "m_pos.yは%fです", m_pos.y);
+	DrawFormatString(10, 100, GetColor(255, 0, 0), "m_pos.yは%fです", m_pos.y);
+	DrawFormatString(10, 120, GetColor(255, 0, 0), "m_vel.xは%fです", m_vel.x);
+	DrawFormatString(10, 140, GetColor(255, 0, 0), "m_vel.yは%fです", m_vel.y);
 #endif
 }
 
@@ -982,7 +985,7 @@ void Player::ArcherAnim()
 		charaIdy = 3;
 		break;
 	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
-		charaIdx = (m_animframe / kArcherAttackDuration) % kArcherCopyNum;
+		charaIdx = (m_animframe / kArcherCopyDuration) % kArcherCopyNum;
 		charaIdy = 2;
 		break;
 	case Anim::Damage:

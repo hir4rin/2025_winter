@@ -71,6 +71,7 @@ protected:
 	 Vec2 zero;
 
 	 Rect m_colRect;//当たり判定用の矩形
+	 Rect m_prevColRect;//前のフレームの当たり判定用の矩形
 
 	 //背景のポインタ(その分ずらすため)
 	 Bg* m_pBg;

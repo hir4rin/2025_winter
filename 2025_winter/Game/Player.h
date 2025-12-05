@@ -108,7 +108,8 @@ public:
 	void Death();
 	void DyingUpdate();
 	void DyingDraw(Camera& camera);
-
+	//m_animFrameを外部から更新するため
+	void AnimFrameUpdate() { m_animframe++; }
 
 private:
 	void InputUpdate(Input& input);//入力の更新
