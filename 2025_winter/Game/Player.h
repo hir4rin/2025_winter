@@ -101,6 +101,7 @@ public:
 	/// プレイヤーがダメージを食らったときに呼ぶ関数
 	/// </summary>
 	void DamageHit(bool ans);
+	void DroppedOutHp0() { m_hp = 0; }//落下で体力を0にする
 
 	int  GetHp() { return m_hp; }
 

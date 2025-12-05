@@ -47,6 +47,10 @@ public:
 	}
 
 	bool Getm_isRight() { return m_isRight; }
+	/// <summary>
+	/// m_isRightを反転させる
+	/// </summary>
+	void Changem_isRight() { m_isRight = !m_isRight; }
 
 protected:
 	int m_handle;

@@ -14,12 +14,12 @@
 
 namespace
 {
-	const Vec2 kInitPos = { 100.0f,100.0f };//初期位置
+	const Vec2 kInitPos = { 100.0f,700.0f };//初期位置
 	constexpr float kSpeed = 10.0f;//移動速度
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
-	constexpr int player_cut_w = 100;
-	constexpr int player_cut_h = 100;
-	constexpr float  player_scale = 3.0f;
+	constexpr int kPlayerCutW = 100;
+	constexpr int kPlayerCutH = 100;
+	constexpr float  kPlayerScale = 3.0f;
 
 	constexpr float kJumpPower = -15.0f;	// ジャンプ力
 	constexpr int kMaxJumpFrame = 15;	// ジャンプを長押しできる最大時間
@@ -29,8 +29,77 @@ namespace
 
 	constexpr float kBurningSpeed = 30.0f;//バーニングのスピード
 
-	constexpr float damageFrame = 40.0f;
-	constexpr float burningTime = 9.0f;  //バーニングの移動時間
+	constexpr float kDamageFrame = 40.0f;
+	constexpr float kBurningTime = 9.0f;  //バーニングの移動時間
+
+	//Normal用
+	//1frameあたりのアニメーションの時間
+	constexpr int kNormalIdleDuration = 6;
+	constexpr int kNormalWalkDuration = 8;
+	constexpr int kNormalJumpDuration = 10;
+	constexpr int kNormalAttackDuration = 4;
+	constexpr int kNormalCopyDuration = 10;
+	constexpr int kNormalDamageDuration = 10;
+	
+	//そのアニメーションが何このコマ数なのか(X)
+	constexpr int kNormalIdleNum = 6;
+	constexpr int kNormalWalkNum = 6;
+	constexpr int kNormalJumpNum = 2;
+	constexpr int kNormalAttackNum = 7;
+	constexpr int kNormalCopyNum = 6;
+	constexpr int kNormalDamageNum = 4;
+	//Burning用
+	//1frameあたりのアニメーションの時間
+	constexpr int kBurningIdleDuration = 4;
+	constexpr int kBurningWalkDuration = 4;
+	constexpr int kBurningJumpDuration = 10;
+	constexpr int kBurningAttackDuration = 5;
+	constexpr int kBurningCopyDuration = 10;
+	constexpr int kBurningDamageDuration = 5;
+	
+	//そのアニメーションが何このコマ数なのか(X)
+	constexpr int kBurningIdleNum = 6;
+	constexpr int kBurningWalkNum = 8;
+	constexpr int kBurningJumpNum = 3;
+	constexpr int kBurningAttackNum = 8;
+	constexpr int kBurningCopyNum = 8;
+	constexpr int kBurningDamageNum = 4;
+	//frozen用
+	//1frameあたりのアニメーションの時間
+	constexpr int kBrozenIdleDuration = 6;
+	constexpr int kFrozenWalkDuration = 8;
+	constexpr int kFrozenJumpDuration = 2;
+	constexpr int kFrozenAttackDuration = 2;
+	constexpr int kFrozenCopyDuration = 10;
+	constexpr int kFrozenDamageDuration = 5;
+	
+	//そのアニメーションが何このコマ数なのか(X)
+	constexpr int kFrozenIdleNum = 6;
+	constexpr int kFrozenWalkNum = 8;
+	constexpr int kFrozenJumpNum = 4;
+	constexpr int kFrozenAttackNum = 15;
+	constexpr int kFrozenCopyNum = 15;
+	constexpr int kFrozenDamageNum = 4;
+	//Archer用
+	//1frameあたりのアニメーションの時間
+	constexpr int kArcherIdleDuration = 6;
+	constexpr int kArcherWalkDuration = 8;
+	constexpr int kArcherJumpDuration = 10;
+	constexpr int kArcherAttackDuration = 1;
+	constexpr int kArcherCopyDuration = 3;
+	constexpr int kArcherDamageDuration = 5;
+	
+	//そのアニメーションが何このコマ数なのか(X)
+	constexpr int kArcherIdleNum = 6;
+	constexpr int kArcherWalkNum = 8;
+	constexpr int kArcherJumpNum = 3;
+	constexpr int kArcherAttackNum = 12;
+	constexpr int kArcherCopyNum = 9;
+	constexpr int kArcherDamageNum = 4;
+	//アーチャーの矢をいつ出すか
+	constexpr int kArrowAppearCharaIdx = 9;//矢を出すときのcharaIdx
+	const int arrowAppearFrame = kArcherAttackDuration * kArrowAppearCharaIdx;//charaIdxが9になる瞬間
+
 
 
 }
@@ -217,16 +286,16 @@ void Player::Draw(Camera& camera)
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true);
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, 0.0f, m_handle, true);
 	}
 	else
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, 0.0f, m_handle, true, true);
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, 0.0f, m_handle, true, true);
 	}
 
 #ifdef _DEBUG
@@ -249,7 +318,7 @@ void Player::DamageHit(bool ans)
 	m_vel.y = -10.0f;
 	m_state = PlayerState::Damage;
 	AnimSelect(Anim::Damage);
-	damageCount = damageFrame;
+	damageCount = kDamageFrame;
 	//ダメージ分HPが減る
 	m_hp -= 20;
 }
@@ -280,16 +349,16 @@ void Player::DyingDraw(Camera& camera)
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, m_angle * DX_PI / 180.0f, m_handle, true);
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true);
 	}
 	else
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		player_cut_w * charaIdx, player_cut_h * charaIdy,//切り取り左上
-		player_cut_w, player_cut_h,//切り取りの幅
-		player_scale, m_angle * DX_PI / 180.0f, m_handle, true, true);
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
 	}
 }
 
@@ -547,14 +616,14 @@ void Player::Attack()
 	switch (m_type)
 	{
 	case PlayerType::Normal:
-		//Normalの攻撃アニメーション
-		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -70.0f), m_pos.y - kCharaSize, 60.0f, 80.0f);//50
+		//Normalの攻撃アニメーション              //右の判定：左の判定
+		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -90.0f), m_pos.y - kCharaSize, 80.0f, 80.0f);//50
 		break;
-	case PlayerType::Burning:
+	case PlayerType::Burning:                     //右の判定：左の判定
 		m_burningRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);//80
 		break;
-	case PlayerType::Frozen:
-		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -120.0f), m_pos.y - kCharaSize, 110.0f, 80.0f);//100
+	case PlayerType::Frozen:                     //右の判定：左の判定
+		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -120.0f), m_pos.y - kCharaSize, 110.0f, 100.0f);//100
 		break;
 	case PlayerType::Archer:
 		m_archerRect.SetLT(0, 0, 0, 0);
@@ -752,11 +821,11 @@ void Player::NormalAnim()
 	switch (m_anim)
 	{
 	case  Anim::Idle:
-		charaIdx = (m_animframe / 6) % 6;
+		charaIdx = (m_animframe / kNormalIdleDuration) % kNormalIdleNum;
 		charaIdy = 0;
 		break;
 	case Anim::Walk:
-		charaIdx = (m_animframe / 8) % 8;
+		charaIdx = (m_animframe / kNormalWalkDuration) % kNormalWalkNum;
 		charaIdy = 1;
 		break;
 	case Anim::Jump:
@@ -767,22 +836,22 @@ void Player::NormalAnim()
 		}
 		else
 		{
-			charaIdx = (m_animframe / 10) % 2 + 4;
+			charaIdx = (m_animframe / kNormalJumpDuration) % kNormalJumpNum + 4;
 			charaIdy = 3;
 		}
 		break;
 	case Anim::Attack:
 
-		charaIdx = (m_animframe / 7) % 7;
+		charaIdx = (m_animframe / kNormalAttackDuration) % kNormalAttackNum;
 		charaIdy = 2;
 		break;
 	case Anim::Copy:
-		charaIdx = (m_animframe / 10) % 6;
+		charaIdx = (m_animframe / kNormalCopyDuration) % kNormalCopyNum;
 		charaIdy = 4;
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
-		charaIdx = (m_animframe / 5) % 4;
+		charaIdx = (m_animframe / kNormalDamageDuration) % kNormalDamageNum;
 		charaIdy = 6;
 		break;
 	default:
@@ -796,11 +865,11 @@ void Player::BurningAnim()
 	switch (m_anim)
 	{
 	case  Anim::Idle:
-		charaIdx = (m_animframe / 4) % 6;
+		charaIdx = (m_animframe / kBurningIdleDuration) % kBurningIdleNum;
 		charaIdy = 0;
 		break;
 	case Anim::Walk:
-		charaIdx = (m_animframe / 4) % 8;
+		charaIdx = (m_animframe / kBurningIdleDuration) % kBurningWalkNum;
 		charaIdy = 1;
 		break;
 	case Anim::Jump:
@@ -811,22 +880,22 @@ void Player::BurningAnim()
 		}
 		else
 		{
-			charaIdx = (m_animframe / 10) % 3 + 0;
+			charaIdx = (m_animframe / kBurningJumpDuration) % kBurningJumpNum + 0;
 			charaIdy = 1;
 		}
 		break;
 	case Anim::Attack:
 
-		charaIdx = (m_animframe / 5) % 8;
+		charaIdx = (m_animframe / kBurningAttackDuration) % kBurningAttackNum;
 		charaIdy = 5;
 		break;
 	case Anim::Copy:
-		charaIdx = (m_animframe / 10) % 8;//【注意】切り替わった直後のアニメーションはここが流れてる
+		charaIdx = (m_animframe / kBurningCopyDuration) % kBurningCopyNum;//【注意】切り替わった直後のアニメーションはここが流れてる
 		charaIdy = 5;
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
-		charaIdx = (m_animframe / 5) % 4;
+		charaIdx = (m_animframe / kBurningDamageDuration) % kBurningDamageNum;
 		charaIdy = 6;
 		break;
 	default:
@@ -842,11 +911,11 @@ void Player::FrozenAnim()
 	switch (m_anim)
 	{
 	case  Anim::Idle:
-		charaIdx = (m_animframe / 6) % 6;
+		charaIdx = (m_animframe / kBrozenIdleDuration) % kFrozenIdleNum;
 		charaIdy = 0;
 		break;
 	case Anim::Walk:
-		charaIdx = (m_animframe / 8) % 8;
+		charaIdx = (m_animframe / kFrozenWalkDuration) % kFrozenWalkNum;
 		charaIdy = 1;
 		break;
 	case Anim::Jump:
@@ -857,22 +926,22 @@ void Player::FrozenAnim()
 		}
 		else
 		{
-			charaIdx = (m_animframe / 2) % 4 + 0;
+			charaIdx = (m_animframe / kFrozenJumpDuration) % kFrozenJumpNum + 0;
 			charaIdy = 6;
 		}
 		break;
 	case Anim::Attack:
 
-		charaIdx = (m_animframe / 4) % 15;
+		charaIdx = (m_animframe / kFrozenAttackDuration) % kFrozenAttackNum;
 		charaIdy = 2;
 		break;
 	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
-		charaIdx = (m_animframe / 10) % 15 + 4;
+		charaIdx = (m_animframe / kFrozenCopyDuration) % kFrozenCopyNum + 4;
 		charaIdy = 4;
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
-		charaIdx = (m_animframe / 5) % 4;
+		charaIdx = (m_animframe / kFrozenDamageDuration) % kFrozenDamageNum;
 		charaIdy = 8;
 		break;
 	default:
@@ -888,37 +957,37 @@ void Player::ArcherAnim()
 	switch (m_anim)
 	{
 	case  Anim::Idle:
-		charaIdx = (m_animframe / 6) % 6;
+		charaIdx = (m_animframe / kArcherIdleDuration) % kArcherIdleNum;
 		charaIdy = 0;
 		break;
 	case Anim::Walk:
-		charaIdx = (m_animframe / 8) % 8;
+		charaIdx = (m_animframe / kArcherWalkDuration) % kArcherWalkNum;
 		charaIdy = 1;
 		break;
 	case Anim::Jump:
 		if (charaIdx == 2)
 		{
-			charaIdx = 2; [[]]
+			charaIdx = 2; 
 				charaIdy = 1;
 		}
 		else
 		{
-			charaIdx = (m_animframe / 10) % 3 + 0;
+			charaIdx = (m_animframe / kArcherJumpDuration) % kArcherJumpNum + 0;
 			charaIdy = 1;
 		}
 		break;
 	case Anim::Attack:
-		if (m_animframe == 27) isArrowAttack = true;//chraIdxが9になった瞬間に矢を発射する//9 * 3;
-		charaIdx = (m_animframe / 3) % 12;
+		if (m_animframe == arrowAppearFrame) isArrowAttack = true;//chraIdxが9になった瞬間に矢を発射する//9 * 3;
+		charaIdx = (m_animframe / kArcherAttackDuration) % kArcherAttackNum;
 		charaIdy = 3;
 		break;
 	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
-		charaIdx = (m_animframe / 3) % 9;
+		charaIdx = (m_animframe / kArcherAttackDuration) % kArcherCopyNum;
 		charaIdy = 2;
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
-		charaIdx = (m_animframe / 5) % 4;
+		charaIdx = (m_animframe / kArcherDamageDuration) % kArcherDamageNum;
 		charaIdy = 4;
 		break;
 	default:

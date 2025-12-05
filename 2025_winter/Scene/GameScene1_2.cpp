@@ -143,6 +143,19 @@ void GameScene1_2::CheckHit()
 
 void GameScene1_2::CheckArrowHit()
 {
+	for (auto& num : m_arrows)//壁に当たったら消す
+
+	{
+		if (num == nullptr)continue;
+		Rect m_arrowRect = num->GetColRect();
+		Rect chipRect;
+
+		if (m_pBg->IsCollision(m_arrowRect, chipRect))
+		{
+			num = nullptr;
+			continue;
+		}
+	}
 	for (auto& num : m_arrows)
 	{
 		if (num == nullptr || !num->hitEnemyWizard)continue;
@@ -328,6 +341,59 @@ void GameScene1_2::CheckFrozenHit()
 
 				}
 
+			}
+		}
+		else if (m_pFrozen->isMove == false)
+		{
+			//動いていないときに敵と当たる//ペンギン
+			for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)
+			{
+				auto& e = m_pEnemyWizards[i];
+				if (!e)continue;
+				if (!m_pFrozen) break;
+				bool isHitEnemy = e->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+				if (isHitEnemy)
+				{
+					//X軸の速度を反転する
+					//キャラの向きを変える
+					e->ChangeVel().x *= -1;
+					e->Changem_isRight();
+
+				}
+
+			}
+			//動いているときに敵と当たる//オークライダー
+			for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)
+			{
+				auto& e = m_pEnemyRiders[i];
+				if (!e)continue;
+				if (!m_pFrozen) break;
+				bool isHitEnemy = e->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+				if (isHitEnemy)
+				{
+					//X軸の速度を反転する
+					//キャラの向きを変える
+					e->ChangeVel().x *= -1;
+					e->Changem_isRight();
+				}
+			}
+			//動いているときに敵と当たる//どくろアーチャー
+			for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)
+			{
+				auto& e = m_pEnemyArchers[i];
+				if (e == nullptr)continue;
+				if (!m_pFrozen) break;
+				bool isHitEnemy = e->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+				if (isHitEnemy)
+				{
+					//X軸の速度を反転する
+					//キャラの向きを変える
+					e->ChangeVel().x *= -1;
+					e->Changem_isRight();
+				}
 			}
 		}
 
@@ -835,6 +901,7 @@ bool  GameScene1_2::CheckDropped()
 		//DyingActと同じ処理
 		{
 			m_pPlayer->Death();
+			stageUI.Init(0);//HPを0にする
 			StartCameraShake(camera, 20.0f, 0.2f);
 			update_ = &GameScene1_2::ShakingUpdate;
 
