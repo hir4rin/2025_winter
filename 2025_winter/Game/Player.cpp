@@ -17,9 +17,9 @@ namespace
 	const Vec2 kInitPos = { 100.0f,700.0f };//初期位置
 	constexpr float kSpeed = 10.0f;//移動速度
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
-	constexpr int kPlayerCutW = 100;
-	constexpr int kPlayerCutH = 100;
-	constexpr float  kPlayerScale = 3.0f;
+	constexpr int kCannonCutW = 100;
+	constexpr int kCannonCutH = 100;
+	constexpr float  kCannonScale = 3.0f;
 
 	constexpr float kJumpPower = -15.0f;	// ジャンプ力
 	constexpr int kMaxJumpFrame = 15;	// ジャンプを長押しできる最大時間
@@ -287,16 +287,16 @@ void Player::Draw(Camera& camera)
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
-		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, 0.0f, m_handle, true);
+		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
+		kCannonCutW, kCannonCutH,//切り取りの幅
+		kCannonScale, 0.0f, m_handle, true);
 	}
 	else
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
-		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, 0.0f, m_handle, true, true);
+		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
+		kCannonCutW, kCannonCutH,//切り取りの幅
+		kCannonScale, 0.0f, m_handle, true, true);
 	}
 
 #ifdef _DEBUG
@@ -352,16 +352,16 @@ void Player::DyingDraw(Camera& camera)
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
-		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true);
+		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
+		kCannonCutW, kCannonCutH,//切り取りの幅
+		kCannonScale, m_angle * DX_PI / 180.0f, m_handle, true);
 	}
 	else
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
-		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
+		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
+		kCannonCutW, kCannonCutH,//切り取りの幅
+		kCannonScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
 	}
 }
 

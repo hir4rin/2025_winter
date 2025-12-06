@@ -9,13 +9,13 @@ namespace
 {
 	const Vec2 kInitPos = { 600.0f,100.0f };//初期位置
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ
-	constexpr int kPlayerCutW = 100;
-	constexpr int kPlayerCutH = 100;
+	constexpr int kCannonCutW = 100;
+	constexpr int kCannonCutH = 100;
 	constexpr int burning_cut_w = 300;
 	constexpr int burning_cut_h = 388;
 	constexpr int arrow_cut_w = 268;
 	constexpr int arrow_cut_h = 268;
-	constexpr float  kPlayerScale = 3.0f;
+	constexpr float  kCannonScale = 3.0f;
 	constexpr float  burning_scale = 0.2f;
 	constexpr float  arrow_scale = 0.2f;
 }
@@ -81,9 +81,9 @@ void Item::Draw(Camera& camera)
 	else if (m_state == ItemState::Frozen)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kPlayerCutW * 0, kPlayerCutH * 0,//切り取り左上
-		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, 0.0f, m_handle, true);
+		kCannonCutW * 0, kCannonCutH * 0,//切り取り左上
+		kCannonCutW, kCannonCutH,//切り取りの幅
+		kCannonScale, 0.0f, m_handle, true);
 	}
 	else if (m_state == ItemState::Archer)
 	{

@@ -111,6 +111,9 @@ public:
 	//m_animFrameを外部から更新するため
 	void AnimFrameUpdate() { m_animframe++; }
 
+	//クリアシーンで動かすよう
+	void AutoMove() { m_pos += m_vel; }
+
 private:
 	void InputUpdate(Input& input);//入力の更新
 	void NormalUpdate(Input& input);//通常時の更新

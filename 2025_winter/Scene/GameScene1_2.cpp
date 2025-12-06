@@ -1027,12 +1027,14 @@ void GameScene1_2::NormalUpdate(Input& input)
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	//プレイヤーが落ちたかどうか
 	if (CheckDropped())return;//落ちてたらそのあとの処理をしない
+#ifdef _DEBUG
 
-	/*if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok"))
 	{
 		update_ = &GameScene1_2::FadeOutUpdate;
 		draw_ = &GameScene1_2::FadeDraw;
-	}*/
+	}
+#endif // _DEBUG
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{

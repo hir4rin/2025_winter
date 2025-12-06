@@ -1034,12 +1034,13 @@ void GameScene::NormalUpdate(Input& input)
 	//プレイヤーが落ちたかどうか
 	if (CheckDropped())return;//落ちてたらそのあとの処理をしない
 
-
-	/*if (input.IsTriggered("ok"))
+#ifdef _DEBUG
+	if (input.IsTriggered("ok"))
 	{
 		update_ = &GameScene::FadeOutUpdate;
 		draw_ = &GameScene::FadeDraw;
-	}*/
+	}
+#endif
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{

@@ -40,7 +40,10 @@ public:
 	/// 当たり判定をセットする
 	/// </summary>
 	void SetRect();
-
+	/// <summary>
+	/// プレイヤーとマップの当たり判定ようにセットする
+	/// </summary>
+	/// <param name="pBg"></param>
 	void SetBgPointer(Bg* pBg)
 	{
 		m_pBg = pBg;
