@@ -367,7 +367,10 @@ void Player::DyingDraw(Camera& camera)
 
 void Player::AutoMove()
 {
-	m_vel.y += kGravity;
+	//重力
+	//m_vel.y += kGravity;
+	//減衰(ほぼしない)
+	//m_vel.x *= 0.999f;
 	Rect chipRect;
 	Character::CheckHitMapPlayer(chipRect);
 	

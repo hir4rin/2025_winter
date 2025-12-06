@@ -1217,7 +1217,7 @@ void GameScene1_3::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameClearScene>(controller_));
+		controller_.ChangeScene(std::make_shared<GameClearScene>(controller_,m_pPlayer->GetType()));
 		return;
 	}
 }

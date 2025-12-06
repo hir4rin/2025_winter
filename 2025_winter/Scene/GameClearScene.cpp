@@ -5,14 +5,27 @@
 #include "TitleScene.h"
 #include "SceneController.h"
 #include "Bg.h"
+#include <cmath>
+#include <cassert>
+
+namespace
+{
+	constexpr float kPower = 1.0f;//大砲の威力
+	constexpr float kSpeed = 1.0f;//ゲージのスピード
+
+	constexpr int margin = 100;//一旦マージンを取る
+	constexpr int kRankWidth = 2000;//位差の幅
+
+	constexpr float kSlowDownDistance = 1500.0f; // 減速開始距離
+	constexpr float kGravity = 2.5f; // 重力
+
+}
 
 
-
-
-GameClearScene::GameClearScene(SceneController& controller) : Scene(controller)
+GameClearScene::GameClearScene(SceneController& controller,PlayerType type) : Scene(controller)
 {
 	m_pCannon = std::make_shared<Cannon>();
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal, 100);
+	m_pPlayer = std::make_shared<Player>(type, 100);
 	m_pBg = new Bg(m_pPlayer, 4);
 
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -21,15 +34,46 @@ GameClearScene::GameClearScene(SceneController& controller) : Scene(controller)
 
 void GameClearScene::Update(Input& input)
 {
-	UpdateCamera(camera, m_pPlayer);
+	//ゲージの更新
+	//60フレームに1秒
+	m_timer += 1.0f/ 60, .0f;
+	m_gaugeTimer = fmod(m_timer* kSpeed, 1.0f);//0~1秒の間ループ
+
+	float tri;//triangle waveの略(三角波)
+	if (m_gaugeTimer < 0.5f)
+	{
+		tri = m_gaugeTimer * 2.0f;//0~1
+	}
+	else
+	{
+		tri = (1.0f - m_gaugeTimer) * 2.0f;//1~0
+	}
+	
+
+	m_gaugeCursorX = std::lerp(m_gaugeleftX, m_gaugerightX, tri);
+	//目押し処理終了------------------------------
+	//1位から7位までを決める
+	if (m_finalTri < 1 / 7.0f)m_rank = 7;//7位
+	else if (m_finalTri < 2 / 7.0f)m_rank = 6;//6位
+	else if (m_finalTri < 3 / 7.0f)m_rank = 5;//5位
+	else if (m_finalTri < 4 / 7.0f)m_rank = 4;//4位
+	else if (m_finalTri < 5 / 7.0f)m_rank = 3;//3位
+	else if (m_finalTri < 6 / 7.0f)m_rank = 2;//2位
+	else   m_rank = 1;//6/7.0f~1.0f//1位
+
+
+	if (m_pPlayer != nullptr)UpdateCamera(camera, m_pPlayer);
 	
 
 	m_pCannon->Update();
 	//お試し--------------------------------------
-	if (!isCannon)m_pPlayer->Update(input);
+	if (!isCannon && m_pPlayer != nullptr)m_pPlayer->Update(input);
 
-	if (isCannon)m_pPlayer->AutoMove();
-	//---------------------------------------------L
+	if (m_pPlayer != nullptr)
+	{
+		if (isCannon)m_pPlayer->AutoMove();
+	}
+	//---------------------------------------------
 
 	if (input.IsTriggered("ok"))
 	{
@@ -43,14 +87,42 @@ void GameClearScene::Update(Input& input)
 		if (m_pPlayer->GetColRect().IsCollision(m_pCannon->GetColRect()))
 		{
 			//m_pPlayer = nullptr;
-			m_pPlayer->ChangeVel() += Vec2{ 60.0f,-20.0f};//右上に飛ばす
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };//速度を0にする
+			
 			isCannon = true;
 		}
 	}
+	//大砲から発射する処理
+	if (isCannon)
+	{
+		if(input.IsTriggered("up"))
+		{
+			isFlying = true;
+			//大砲からプレイヤーを発射
+		/*	m_pPlayer = std::make_shared<Player>(PlayerType::Normal, 100);
+			m_pPlayer->SetBgPointer(m_pBg);*/
+			m_pPlayer->ChangePos() = m_pCannon->GetPos() ;//大砲の先端に座標を合わせる//+ Vec2{ 50.0f,0.0f }
+			m_pPlayer->ChangeVel() = Vec2{ 30.0f * kPower,0.0f };//右上に飛ばす
+
+			//順位づけの処理
+			m_finalTri = tri;
+		}
+	}
+	if (isFlying)//順位によって止まる位置を変える
+	{
+		//減速処理
+		ToArrivedAtGoal();
+	
+		//大砲から飛び出した後の処理
+		//isFlying = false;
+	}
+
+
 	//デバッグ用
 	if (input.IsTriggered("Jump"))
 	{
 		isCannon = false;
+		isFlying = false;
 	}
 	
 
@@ -62,7 +134,203 @@ void GameClearScene::Draw()
 
 	DrawString(320, 240, "Game Clear Scene", 0xffffff);
 
+	DrawFormatString(500, 300, GetColor(255, 0, 0), "Your Rank is %d", m_rank);
 
-	m_pPlayer->Draw(camera);
+	for (int i = 1; i <= 7; i++)
+	{
+		DrawBox(kRankWidth * i + camera.drawOffset.x,//左
+			0 + camera.drawOffset.y,//下
+			kRankWidth * i + camera.drawOffset.x,//右
+			1080 + camera.drawOffset.y,//上
+			GetColor(255, 255, 255), false);
+	}
+
+
+	//大砲のゲージ表示
+	if(isCannon)
+		DrawBox(m_pCannon->GetPos().x + camera.drawOffset.x+ margin + m_gaugeleftX,//左
+		m_pCannon->GetPos().y + camera.drawOffset.y - margin,//下
+		m_pCannon->GetPos().x + camera.drawOffset.x + margin + m_gaugeCursorX,//右
+			m_pCannon->GetPos().y + camera.drawOffset.y - margin + 50,//上
+		GetColor(0,255,0), true);
+
+	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
 	m_pCannon->Draw(camera);
+}
+
+void GameClearScene::ToArrivedAtGoal()
+{
+	//到達目標地点
+	float targetX = kRankWidth * (8 - m_rank); // 1位=7, 2位=6
+
+	switch (m_rank)
+	{
+	case 0:
+		break;
+	case 1://1位
+		
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	case 2://2位
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	case 3://3位
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	case 4://4位
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	case 5://5位
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	case 6://6位
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	case 7://7位
+		//減速開始判定
+		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
+		{
+			//目標地点までの距離に応じて速度を減速
+			isSlowDown = true;
+			m_slowDownStartX = m_pPlayer->GetPos().x;
+			m_pPlayer->ChangeVel().y += kGravity;//下に落ちるように
+		}
+		//減速
+		if (isSlowDown)
+		{
+			//減速処理
+			float progress = (m_pPlayer->GetPos().x - m_slowDownStartX) / kSlowDownDistance;
+			float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに
+			m_pPlayer->ChangeVel().x = 30.0f * kPower * speedRate;
+		}
+		//停止判定
+		if (m_pPlayer->GetPos().x >= targetX)
+		{
+			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+		}
+		break;
+	default:
+		assert("Error:Rank out of range");
+		break;
+	}
 }

@@ -55,12 +55,12 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 	float camerafuture = 0;
 
 	// 画面の中央にプレイヤーが来るようにする(x座標編)
-	if (pPlayer->GetPos().x < ScreenWidth * 0.5f)
+	if (pPlayer->GetPos().x < ScreenWidth * 0.5f)//最小値のほう
 	{
 		camerafuture = ScreenWidth * 0.5f;
 		//camera.pos.x = ScreenWidth * 0.5f;
 	}
-	else if (pPlayer->GetPos().x > 15000.0f - ScreenWidth * 0.5f)
+	else if (pPlayer->GetPos().x > 20000.0f - ScreenWidth * 0.5f)//最大値のほう
 	{
 		camerafuture = ScreenWidth * 0.5f;
 		//camera.pos.x = 5000.0f - ScreenWidth * 0.5f;

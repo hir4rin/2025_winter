@@ -48,7 +48,6 @@ GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });//移動用
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(2500.0f,700.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
 

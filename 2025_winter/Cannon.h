@@ -15,6 +15,7 @@ public:
 	void Fire();
 
 	Rect& GetColRect() { return m_colRect; }
+	Vec2& GetPos() { return m_pos; }
 
 private:
 	Rect m_colRect;
