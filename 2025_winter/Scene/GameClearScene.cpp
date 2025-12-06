@@ -13,7 +13,7 @@ GameClearScene::GameClearScene(SceneController& controller) : Scene(controller)
 {
 	m_pCannon = std::make_shared<Cannon>();
 	m_pPlayer = std::make_shared<Player>(PlayerType::Normal, 100);
-	m_pBg = new Bg(m_pPlayer, 1);
+	m_pBg = new Bg(m_pPlayer, 4);
 
 	m_pPlayer->SetBgPointer(m_pBg);
 	InitCamera(camera);
@@ -28,7 +28,7 @@ void GameClearScene::Update(Input& input)
 	//お試し--------------------------------------
 	if (!isCannon)m_pPlayer->Update(input);
 
-	m_pPlayer->AutoMove();
+	if (isCannon)m_pPlayer->AutoMove();
 	//---------------------------------------------L
 
 	if (input.IsTriggered("ok"))

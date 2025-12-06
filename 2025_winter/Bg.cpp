@@ -72,6 +72,9 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 	case 3:
 		m_mapH = LoadGraph("data/map.png");
 		break;
+	case 4:
+		m_mapH = LoadGraph("data/map.png");
+		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
 		break;
@@ -105,6 +108,10 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_graphChipNumX = graphW / kChipSize;
 		m_graphChipNumY = graphH / kChipSize;
 		break;
+	case 4:
+		m_graphChipNumX = graphW / kChipSize;
+		m_graphChipNumY = graphH / kChipSize;
+		break;
 	default:
 		assert(false && "マップチップの画像読み込みに失敗");
 
@@ -128,6 +135,9 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 	case 3:
 		LoadMapData1_3();
+		break;
+	case 4:
+		LoadMapDataClear();
 		break;
 	default:
 		assert(false && "Bgのマップデータ読み込みに失敗");
@@ -164,6 +174,9 @@ void Bg::Draw(Camera& camera)
 		break;
 	case 3://1_3のマップ
 		DrawMapChip1_3(camera);
+		break;
+	case 4://stageClearのマップ
+		DrawMapChipClear(camera);
 		break;
 	default:
 		assert(false && "Bgのマップチップ描画に失敗");
@@ -263,6 +276,29 @@ void Bg::LoadMapData1_2()
 void Bg::LoadMapData1_3()
 {
 	std::ifstream file("data/stage1_3.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData0[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::LoadMapDataClear()
+{
+	std::ifstream file("data/stageClear.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -424,6 +460,57 @@ void Bg::DrawMapChip1_3(Camera& camera)
 		}
 	}
 }
+void Bg::DrawMapChipClear(Camera& camera)
+{
+	// マップチップの描画
+	for (int y = 0; y < kChipNumY; y++)
+	{
+		for (int x = 0; x < kChipNumX; x++)
+		{
+			int posX = static_cast<int>(x * kChipSize * kChipScale + camera.drawOffset.x);
+			int posY = static_cast<int>(y * kChipSize * kChipScale + camera.drawOffset.y);
+
+			// 画面外は描画しない
+			if (posX < 0 - kChipSize * kChipScale) continue;
+			if (posX > kScreenSizeWidth + kChipSize * kChipScale) continue;
+			if (posY < 0 - kChipSize) continue;
+			if (posY > kScreenSizeHeight) continue;
+
+			// 設置するチップ
+			int chipNo = m_chipData0[x][y];
+			if (chipNo == 0) continue; // チップ番号5は空白なので描画しない
+
+			// マップチップのグラフィック切り出し座標
+			int srcX = kChipSize * (chipNo % m_graphChipNumX);
+			int srcY = kChipSize * (chipNo / m_graphChipNumX);
+
+			DrawRectRotaGraph(
+				static_cast<int>(posX + kChipSize * kChipScale * 0.5f),
+				static_cast<int>(posY + kChipSize * kChipScale * 0.5f),
+				srcX, srcY,
+				kChipSize, kChipSize,
+				kChipScale, 0.0f,
+				m_mapH, true);
+
+#ifdef _DEBUG
+			bool clearnness = (m_chipData0[x][y] == 39 ||
+						   m_chipData0[x][y] == 40 ||
+						   m_chipData0[x][y] == 41);
+			if (clearnness)
+			{
+				// 当たり判定
+				DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale * kThrough, 0x00ff00, false);
+			}
+			else
+			{
+				// 当たり判定
+				DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale, 0x00ff00, false);
+			}
+
+#endif
+		}
+	}
+}
 void Bg::DrawMapChip(Camera& camera)
 {
 	// マップチップの描画
@@ -481,6 +568,9 @@ bool Bg::IsCollision(Rect rect, Rect& chipRect)
 		break;
 	case 3://1_3のマップ
 		ans = IsCollision1_3(rect, chipRect);
+		break;
+	case 4://1_4のマップ
+		ans = IsCollisionClear(rect, chipRect);
 		break;
 	default:
 		assert(false && "ここはIsCollisionの判定を変えるところです");
@@ -669,6 +759,70 @@ bool Bg::IsCollision1_3(Rect rect, Rect& chipRect)
 	}
 	return false;
 }
+bool Bg::IsCollisionClear(Rect rect, Rect& chipRect)
+{
+	for (int y = 0; y < kChipNumY; y++)
+	{
+		for (int x = 0; x < kChipNumX; x++)
+		{
+			// マップチップ0番は当たり判定がないため飛ばす
+			if (m_chipData0[x][y] == 5) continue;
+			if (m_chipData0[x][y] == 0) continue;
+
+
+			bool clearnness = (m_chipData0[x][y] == 39 ||
+							   m_chipData0[x][y] == 40 ||
+							   m_chipData0[x][y] == 41);
+			int chipLeft;
+			int chipRight;
+			int chipTop;
+			int chipBottom;
+
+			if (clearnness)
+			{
+				chipLeft = static_cast<int>(x * kChipSize * kChipScale);
+				chipTop = static_cast<int>(y * kChipSize * kChipScale);
+				chipBottom = static_cast<int>(chipTop + kChipSize * kChipScale * kThrough);
+				chipRight = static_cast<int>(chipLeft + kChipSize * kChipScale);
+			}
+			else
+			{
+
+				chipLeft = static_cast<int>(x * kChipSize * kChipScale);
+				chipRight = static_cast<int>(chipLeft + kChipSize * kChipScale);
+				chipTop = static_cast<int>(y * kChipSize * kChipScale);
+				chipBottom = static_cast<int>(chipTop + kChipSize * kChipScale);
+			}
+			// 絶対に当たらない場合
+			if (chipLeft > rect.GetRight()) continue;
+			if (chipTop > rect.GetBottom()) continue;
+			if (chipRight < rect.Getleft()) continue;
+			if (chipBottom < rect.GetTop()) continue;
+
+			// ぶつかったマップチップの矩形を設定する
+			chipRect.m_left = static_cast<float>(chipLeft);
+			chipRect.m_right = static_cast<float>(chipRight);
+			chipRect.m_top = static_cast<float>(chipTop);
+			chipRect.m_bottom = static_cast<float>(chipBottom);
+
+			//マップチップが39,40,41のとき下からあたっていたら貫通したいから
+			//プレイヤーの速度が上向きだったらfalseになる
+
+			if (clearnness)
+			{
+				/*if (m_pPlayer->ChangeVel().y < 0.0f)
+				{
+					return false;
+				}
+				*/
+			}
+
+			// いずれかのチップに当たっていたら終了する
+			return true;
+		}
+	}
+	return false;
+}
 bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect,bool& hitClearness)
 {
 	bool ans;
@@ -686,6 +840,9 @@ bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect,bool& hitClearness)
 		break;
 	case 3://1_3のマップ
 		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
+		break;
+	case 4://stageClearのマップ
+		ans = IsCollisionPlayer1_1(rect, chipRect, hitClearness);
 		break;
 	default:
 		assert(false && "ここはIsCollisionの判定を変えるところです");

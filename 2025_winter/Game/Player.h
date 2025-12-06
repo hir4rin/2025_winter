@@ -112,7 +112,8 @@ public:
 	void AnimFrameUpdate() { m_animframe++; }
 
 	//クリアシーンで動かすよう
-	void AutoMove() { m_pos += m_vel; }
+	void AutoMove();
+	
 
 private:
 	void InputUpdate(Input& input);//入力の更新

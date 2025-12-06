@@ -38,6 +38,11 @@ public:
 	/// </summary>
 	void LoadMapData1_3();
 	/// <summary>
+	/// マップの読み込み(stageClear)
+	/// </summary>
+	void LoadMapDataClear();
+
+	/// <summary>
 	/// マップチップ表示
 	/// </summary>
 	void DrawMapChip0(Camera& camera);
@@ -49,6 +54,10 @@ public:
 	/// マップチップ表示(1_3)
 	/// </summary>
 	void DrawMapChip1_3(Camera& camera);
+	/// <summary>
+	/// マップチップ表示(stageClear)
+	/// </summary>
+	void DrawMapChipClear(Camera& camera);
 	/// <summary>
 	/// マップチップ表示
 	/// </summary>
@@ -63,6 +72,7 @@ public:
 	bool IsCollision1_1(Rect rect, Rect& chipRect);
 	bool IsCollision1_2(Rect rect, Rect& chipRect);
 	bool IsCollision1_3(Rect rect, Rect& chipRect);
+	bool IsCollisionClear(Rect rect, Rect& chipRect);
 	/// <summary>
 	/// 指定した矩形と当たっているか判定するプレイヤー専用
 	/// </summary>
@@ -90,7 +100,7 @@ private:
 	int m_graphChipNumX;
 	int m_graphChipNumY;
 
-	 int StageNum = 1;//stage選択用---//0:stage0 1:最初のマップ
+	int StageNum = 1;//stage選択用---//0:stage0 1:最初のマップ2:1_2 3:1_3 4:クリアシーン
 
 	struct Size
 	{
