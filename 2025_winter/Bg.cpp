@@ -57,33 +57,37 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 
 {
 	//一旦試す
-
+	//背景も後々変える
 	switch (StageNum)
 	{
 	case 0:
 		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/background.png");
 		break;
 	case 1:
 		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/background.png");
 		break;
 	case 2:
 		m_mapH = LoadGraph("data/map1_2.png");
+		m_bgH = LoadGraph("data/background.png");
 		break;
 	case 3:
 		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/background.png");
 		break;
 	case 4:
 		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/1.png");
 		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
 		break;
 	}
 	assert(m_mapH >= 0);
-
-
-	m_bgH = LoadGraph("data/background.png");
 	assert(m_bgH >= 0);
+
+	
 
 
 	// 画像のマップチップ数を数える

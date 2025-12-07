@@ -6,13 +6,14 @@
 #include "TitleScene.h"
 #include "SceneController.h"
 #include "Bg.h"
+#include "Player.h"
 #include <cmath>
 #include <cassert>
 
 namespace
 {
 	constexpr float kPower = 1.0f;//大砲の威力
-	constexpr float kSpeed = 1.0f;//ゲージのスピード
+	constexpr float kSpeed = 1.7f;//ゲージのスピード
 
 	constexpr int margin = 100;//一旦マージンを取る
 	constexpr int kRankWidth = 2000;//位差の幅
@@ -64,8 +65,10 @@ void GameClearScene::NormalUpdate(Input& input)
 		tri = (1.0f - m_gaugeTimer) * 2.0f;//1~0
 	}
 
-
-	m_gaugeCursorX = std::lerp(m_gaugeleftX, m_gaugerightX, tri);
+	if (!isFlying)
+	{
+		m_gaugeCursorX = std::lerp(m_gaugeleftX, m_gaugerightX, tri);
+	}
 	//目押し処理終了------------------------------
 	//1位から7位までを決める
 	if (m_finalTri < 1 / 7.0f)m_rank = 7;//7位
@@ -82,11 +85,18 @@ void GameClearScene::NormalUpdate(Input& input)
 
 	m_pCannon->Update();
 	//お試し--------------------------------------
-	if (!isCannon && m_pPlayer != nullptr)m_pPlayer->Update(input);
+	//if (!isCannon && m_pPlayer != nullptr)m_pPlayer->Update(input);
+	if ((!isCannon && !isFlying) &&  m_pPlayer != nullptr)
+	{
+		m_pPlayer->AnimFrameUpdate();
+	
+		m_pPlayer->ChangeVel().x = 6.0f;//自動で右に進む//ジャンプするようにしたい
+		m_pPlayer->AutoMoveStart();
+	}
 
 	if (m_pPlayer != nullptr)
 	{
-		if (isCannon)m_pPlayer->AutoMove();
+		if (isFlying)m_pPlayer->AutoMove();
 	}
 	//---------------------------------------------
 
@@ -97,7 +107,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	}
 
 	//大砲に乗ったら。。の処理
-	if (!isCannon)
+	if (!isCannon && !isFlying)
 	{
 		if (m_pPlayer->GetColRect().IsCollision(m_pCannon->GetColRect()))
 		{
@@ -115,6 +125,7 @@ void GameClearScene::NormalUpdate(Input& input)
 		if (input.IsTriggered("up"))
 		{
 			isFlying = true;
+			isCannon = false;
 			//ここで大砲から発射するアニメーション
 			m_pCannon->CannonFire();
 			//大砲からプレイヤーを発射
@@ -122,6 +133,7 @@ void GameClearScene::NormalUpdate(Input& input)
 			m_pPlayer->SetBgPointer(m_pBg);*/
 			m_pPlayer->ChangePos() = m_pCannon->GetPos();//大砲の先端に座標を合わせる//+ Vec2{ 50.0f,0.0f }
 			m_pPlayer->ChangeVel() = Vec2{ 30.0f * kPower,0.0f };//右上に飛ばす
+			m_pPlayer->AnimSelect(Anim::Jump);
 
 			//順位づけの処理
 			m_finalTri = tri;
@@ -131,7 +143,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	{
 		//減速処理
 		ToArrivedAtGoal();
-
+		m_pPlayer->AnimFrameUpdate();
 		//大砲から飛び出した後の処理
 		//isFlying = false;
 	}
@@ -144,10 +156,34 @@ void GameClearScene::NormalUpdate(Input& input)
 		isFlying = false;
 	}
 
+	if (isArrived)
+			{
+		update_ = &GameClearScene::FadeOutUpdate;
+		draw_ = &GameClearScene::FadeDraw;
+		m_frame = 0;
+		return;
+	}
+
 
 }
 void GameClearScene::FadeOutUpdate(Input&)
 {
+	//一旦のエリア
+	{
+	//減速処理
+	ToArrivedAtGoal();
+	m_pPlayer->AnimFrameUpdate();
+	m_pPlayer->AutoMove();
+	}
+
+	NormalDraw();
+	if (m_frame++ >= fade_interval * 5)
+	{
+		//delete m_pCharacter;
+		delete m_pBg;
+		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
+		return;
+	}
 }
 void GameClearScene::FadeDraw()
 {
@@ -178,7 +214,7 @@ void GameClearScene::NormalDraw()
 
 
 	//大砲のゲージ表示
-	if (isCannon)
+	if (isCannon ||isFlying)
 	{
 		//ゲージの中
 		DrawBox(m_pCannon->GetPos().x + camera.drawOffset.x + margin + m_gaugeleftX,//左
@@ -241,6 +277,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	case 2://2位
@@ -264,6 +301,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	case 3://3位
@@ -287,6 +325,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	case 4://4位
@@ -310,6 +349,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	case 5://5位
@@ -333,6 +373,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	case 6://6位
@@ -356,6 +397,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	case 7://7位
@@ -379,6 +421,7 @@ void GameClearScene::ToArrivedAtGoal()
 		if (m_pPlayer->GetPos().x >= targetX)
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
+			isArrived = true;
 		}
 		break;
 	default:

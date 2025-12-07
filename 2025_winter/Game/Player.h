@@ -111,9 +111,17 @@ public:
 	//m_animFrameを外部から更新するため
 	void AnimFrameUpdate() { m_animframe++; }
 
+
 	//クリアシーンで動かすよう
+	void AutoMoveStart();
+	//大砲で自動移動中の処理
 	void AutoMove();
-	
+
+	/// <summary>
+	/// アニメーションが変わるところ
+	/// </summary>
+	/// <param name="anim"></param>
+	void AnimSelect(const Anim& anim);//アニメーション
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -129,11 +137,7 @@ private:
 	void Attack();//攻撃のとこの処理内容
 
 	void Copy();//剣を掲げるモーション
-	/// <summary>
-	/// アニメーションが変わるところ
-	/// </summary>
-	/// <param name="anim"></param>
-	void AnimSelect(const Anim& anim );//アニメーション
+	
 	/// <summary>
 	/// Normalのアニメーションが変わるところ
 	/// </summary>
@@ -180,7 +184,13 @@ private:
 	
 private:
 	int m_frame;
+	int m_junpTimer = 0;//クリアシーンで使う用のタイマー
+	int m_jumpTime = 20;
+
+
 	Anim m_anim;
+
+
 	PlayerState m_state;
 	PlayerType m_type;
 	int m_hp;//playerの体力

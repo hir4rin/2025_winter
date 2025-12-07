@@ -46,6 +46,7 @@ private:
 
 	bool isCannon = false;//大砲に乗っているかどうか
 	bool isFlying = false;//大砲から飛び出しているかどうか
+	bool isArrived = false;//ゴールに到着したかどうか
 
 	float m_finalTri = 0.0f;//最終的な三角波の値
 

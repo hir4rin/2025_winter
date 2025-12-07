@@ -365,6 +365,34 @@ void Player::DyingDraw(Camera& camera)
 	}
 }
 
+void Player::AutoMoveStart()
+{
+	Character::Gravity();
+
+	if (m_isGround)
+	{
+		if (m_anim != Anim::Jump)
+		{
+			AnimSelect(Anim::Walk);
+		}
+	}
+
+	if (m_junpTimer++ > m_jumpTime)
+	{
+		if (m_isGround)
+		{
+			m_vel.y = -25.0f;
+			m_isGround = false;
+			AnimSelect(Anim::Jump);
+		}
+	}
+	
+
+
+	Rect chipRect;
+	Character::CheckHitMapPlayer(chipRect);
+}
+
 void Player::AutoMove()
 {
 	//重力
@@ -373,6 +401,25 @@ void Player::AutoMove()
 	//m_vel.x *= 0.999f;
 	Rect chipRect;
 	Character::CheckHitMapPlayer(chipRect);
+
+	if (m_isGround)
+	{
+		if (m_anim == Anim::Jump)
+		{
+			AnimSelect(Anim::Walk);
+			
+		}
+		if (m_vel.x <= 0.1f)
+		{
+			AnimSelect(Anim::Idle);
+		}
+	}
+	if (m_anim == Anim::Walk)
+	{
+		//倍速
+		AnimFrameUpdate();
+	}
+
 	
 }
 
@@ -887,9 +934,9 @@ void Player::BurningAnim()
 		charaIdy = 1;
 		break;
 	case Anim::Jump:
-		if (charaIdx == 3)
+		if (charaIdx == 2)
 		{
-			charaIdx = 3;
+			charaIdx = 2;
 			charaIdy = 1;
 		}
 		else

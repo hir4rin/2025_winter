@@ -30,7 +30,7 @@ Cannon::Cannon():
 	charaIdx(0),
 	charaIdy(0),
 	m_animFrame(0),
-	m_pos(300.0f, 720.0f)
+	m_pos(400.0f, 720.0f)
 {
 	 m_handle = LoadGraph("data/cannonSub.png");
 	assert(m_handle != -1 && "Cannon画像の読み込みに失敗しました");
@@ -74,7 +74,7 @@ void Cannon::Update()
 				
 				break;
 	}
-	m_colRect.SetCenter(m_pos.x, m_pos.y, 64.0f, 64.0f);
+	m_colRect.SetCenter(m_pos.x, m_pos.y, 64.0f*2, 64.0f * 2);
 
 }
 void Cannon::Draw(Camera& camera)

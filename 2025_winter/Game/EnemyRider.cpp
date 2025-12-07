@@ -184,7 +184,6 @@ void EnemyRider::AttackUpdate()
 	if (isAttack == true)
 	{
 		//敵はプレイヤーの向きに攻撃する
-
 		Attack();
 
 	}
