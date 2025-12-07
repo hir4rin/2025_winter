@@ -4,6 +4,13 @@
 
 class Camera;
 
+enum class CannonState
+{
+	Idle,
+	Transform,
+	Fire
+};
+
 class Cannon
 {
 public:
@@ -16,6 +23,14 @@ public:
 
 	Rect& GetColRect() { return m_colRect; }
 	Vec2& GetPos() { return m_pos; }
+	/// <summary>
+	/// 大砲が変形するアニメーション
+	/// </summary>
+	void CannonTransForm() { m_state = CannonState::Transform; m_animFrame = 0; }
+	/// <summary>
+	/// 大砲が発射するアニメーション
+	/// </summary>
+	void CannonFire() { m_state = CannonState::Fire; m_animFrame = 0; }
 
 private:
 	Rect m_colRect;
@@ -25,6 +40,7 @@ private:
 	int charaIdy = 0;
 
 	Vec2 m_pos;
+	CannonState m_state = CannonState::Idle;
 
 
 };

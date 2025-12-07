@@ -18,6 +18,21 @@ public:
 
 
 private:
+	int m_frame = 0;	// フェードインアウト用
+	//-----------Updateメンバ関数ポインタ---------
+	void FadeInUpdate(Input&);
+	void NormalUpdate(Input& input);
+	void FadeOutUpdate(Input&);
+	using UpdateFunc_t = void(GameClearScene::*)(Input&);
+	UpdateFunc_t update_;	// Update系を受け取るメンバ関数ポインタ
+	//-------------------------------------------------------------
+	//-----------------------Drawメンバ関数ポインタ------------------------
+
+	void FadeDraw();
+	void NormalDraw();
+	using DrawFunc_t = void(GameClearScene::*)();
+	DrawFunc_t draw_;	// Draw系を受け取るメンバ関数ポインタ
+	//------------------------------------------------------------
 	/// <summary>
 	/// ゴールに到着するための処理(減速処理)
 	/// </summary>
