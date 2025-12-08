@@ -33,13 +33,15 @@ draw_(&GameClearScene::FadeDraw)
 	m_pCannon = std::make_shared<Cannon>();
 	m_pPlayer = std::make_shared<Player>(type, 100);
 	m_pBg = new Bg(m_pPlayer, 4);
-
+	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
 	InitCamera(camera);//カメラの初期化
 }
 
 void GameClearScene::FadeInUpdate(Input&)
 {
+	m_pPlayer->AnimFrameUpdate();
+	if (m_pPlayer != nullptr)UpdateCamera(camera, m_pPlayer);
 	if (m_frame-- <= 0)
 	{
 
@@ -187,6 +189,8 @@ void GameClearScene::FadeOutUpdate(Input&)
 }
 void GameClearScene::FadeDraw()
 {
+	//normal draw
+	NormalDraw();
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);

@@ -29,6 +29,7 @@ namespace
 	constexpr int kScreenHeight = 1080;
 
 	constexpr int fade_interval = 60;
+	constexpr int copy_interval = 45;
 
 	constexpr int shake_interval = 30;
 
@@ -115,6 +116,11 @@ void GameScene1_2::CheckHit()
 
 						m_pPlayer->ChangeBurning();
 						m_pItems = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene1_2::CopyingUpdate;
+						draw_ = &GameScene1_2::NormalDraw;
+						m_frame = 0;
+						return;
 
 					}
 					else if (m_pItems->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
@@ -122,6 +128,11 @@ void GameScene1_2::CheckHit()
 
 						m_pPlayer->ChangeFrozen();
 						m_pItems = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene1_2::CopyingUpdate;
+						draw_ = &GameScene1_2::NormalDraw;
+						m_frame = 0;
+						return;
 
 					}
 					else if (m_pItems->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
@@ -129,6 +140,11 @@ void GameScene1_2::CheckHit()
 
 						m_pPlayer->ChangeArcher();
 						m_pItems = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene1_2::CopyingUpdate;
+						draw_ = &GameScene1_2::NormalDraw;
+						m_frame = 0;
+						return;
 
 					}
 				}
@@ -927,7 +943,8 @@ void GameScene1_2::OnShake()
 
 void GameScene1_2::FadeInUpdate(Input&)
 {
-
+	m_pPlayer->AnimFrameUpdate();
+	if (m_pPlayer != nullptr)UpdateCamera(camera, m_pPlayer);
 
 
 	if (m_frame-- <= 0)
@@ -1041,6 +1058,8 @@ void GameScene1_2::NormalUpdate(Input& input)
 	{
 		update_ = &GameScene1_2::FadeOutUpdate;
 		draw_ = &GameScene1_2::FadeDraw;
+		m_frame = 0;
+	//	m_frame = 0;
 	}
 
 	//ポーズ画面
@@ -1220,6 +1239,20 @@ void GameScene1_2::FadeOutUpdate(Input&)
 		return;
 	}
 }
+
+void GameScene1_2::CopyingUpdate(Input&)
+{
+	//変身中の処理
+	m_pPlayer->AnimFrameUpdate();
+	m_pPlayer->AnimFrameUpdate();
+	if (m_frame++ >= copy_interval)
+	{
+		update_ = &GameScene1_2::NormalUpdate;
+		draw_ = &GameScene1_2::NormalDraw;
+		return;
+	}
+}
+
 void GameScene1_2::DyingUpdate(Input& input)
 {
 	
@@ -1250,7 +1283,7 @@ void GameScene1_2::ShakingUpdate(Input&)
 void GameScene1_2::FadeDraw()
 {
 
-
+	NormalDraw();
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
@@ -1264,53 +1297,111 @@ void GameScene1_2::FadeDraw()
 void GameScene1_2::NormalDraw()
 {
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	m_pBg->Draw(camera);
-	m_doors->Draw(camera);
-	
 
-	for (auto& m_pFrozen : m_pFrozens)
-	{
-		if (m_pFrozen) m_pFrozen->Draw(camera);
-	}
-	m_pPlayer->Draw(camera);
-	for (auto& enemy : m_pEnemyWizards)//ペンギン
-	{
-		if (enemy) enemy->Draw(camera);
-	}
-	for (auto& enemy : m_pEnemyRiders)//オークライダー
-	{
-		if (enemy) enemy->Draw(camera);
-	}
-	for (auto& enemy : m_pEnemyArchers)//狙撃手
-	{
-		if (enemy) enemy->Draw(camera);
-	}
-	if (m_pItems) m_pItems->Draw(camera);
-	for (auto& arrow : m_arrows)//弓矢
-	{
-		if (!arrow) continue;
-		arrow->Draw(camera);
-	}
-	for (auto& arrow : m_pEnemyArrows)//敵の矢
-	{
-		if (!arrow) continue;
-		arrow->Draw(camera);
-	}
-	for (auto& m_pBurningObject : m_pBurningObjects)
-	{
-		if (m_pBurningObject) m_pBurningObject->Draw(camera);
-	}
-	ReactionBurning();
 
-	//ステージUI
-	stageUI.Draw(camera);
+	if (update_ == &GameScene1_2::CopyingUpdate)//変身中の暗転
+	{
+		//灰色にしたいものをここに
+		m_pBg->Draw(camera);
+		m_doors->Draw(camera);
 
-	float left = camera.pos.x + m_cameraMargin - screenWidth / 2;
-	float right = camera.pos.x + screenWidth / 2 - m_cameraMargin;
-	float top = camera.pos.y + 10;
-	float bottom = camera.pos.y + screenHeight - 10;
-	DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
+		if (m_pItems) m_pItems->Draw(camera);
+		for (auto& arrow : m_arrows)//弓矢
+		{
+			if (!arrow) continue;
+			arrow->Draw(camera);
+		}
+		for (auto& arrow : m_pEnemyArrows)//敵の矢
+		{
+			if (!arrow) continue;
+			arrow->Draw(camera);
+		}
+		for (auto& m_pBurningObject : m_pBurningObjects)
+		{
+			if (m_pBurningObject) m_pBurningObject->Draw(camera);
+		}
+		ReactionBurning();
+		for (auto& m_pFrozen : m_pFrozens)
+		{
+			if (m_pFrozen) m_pFrozen->Draw(camera);
+		}
 
+		// 2. 灰色オーバーレイ
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 160); // 好きな濃さ
+		DrawBox(0, 0, screenWidth, screenHeight, 0x202020, true);//下より濃いめ
+		//DrawBox(0, 0, screenWidth, screenHeight, 0x303030, true);//
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		//灰色にしたくないものをこっちに
+		m_pPlayer->Draw(camera);
+		for (auto& enemy : m_pEnemyWizards)//ペンギン
+		{
+			if (enemy) enemy->Draw(camera);
+		}
+		for (auto& enemy : m_pEnemyRiders)//オークライダー
+		{
+			if (enemy) enemy->Draw(camera);
+		}
+		for (auto& enemy : m_pEnemyArchers)//狙撃手
+		{
+			if (enemy) enemy->Draw(camera);
+		}
+		//ステージUI
+		stageUI.Draw(camera);
+
+		float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
+		float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
+		float top = camera.pos.y - cameraframeMargin;
+		float bottom = camera.pos.y + screenHeight + cameraframeMargin;
+		DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
+	}
+	else
+	{
+		m_pBg->Draw(camera);
+		m_doors->Draw(camera);
+		for (auto& m_pFrozen : m_pFrozens)
+		{
+			if (m_pFrozen) m_pFrozen->Draw(camera);
+		}
+		m_pPlayer->Draw(camera);
+		for (auto& enemy : m_pEnemyWizards)//ペンギン
+		{
+			if (enemy) enemy->Draw(camera);
+		}
+		for (auto& enemy : m_pEnemyRiders)//オークライダー
+		{
+			if (enemy) enemy->Draw(camera);
+		}
+		for (auto& enemy : m_pEnemyArchers)//狙撃手
+		{
+			if (enemy) enemy->Draw(camera);
+		}
+		if (m_pItems) m_pItems->Draw(camera);
+		for (auto& arrow : m_arrows)//弓矢
+		{
+			if (!arrow) continue;
+			arrow->Draw(camera);
+		}
+		for (auto& arrow : m_pEnemyArrows)//敵の矢
+		{
+			if (!arrow) continue;
+			arrow->Draw(camera);
+		}
+		for (auto& m_pBurningObject : m_pBurningObjects)
+		{
+			if (m_pBurningObject) m_pBurningObject->Draw(camera);
+		}
+		ReactionBurning();
+
+		//ステージUI
+		stageUI.Draw(camera);
+
+		float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
+		float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
+		float top = camera.pos.y - cameraframeMargin;
+		float bottom = camera.pos.y + screenHeight + cameraframeMargin;
+		DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
+	}
 }
 
 bool GameScene1_2::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)

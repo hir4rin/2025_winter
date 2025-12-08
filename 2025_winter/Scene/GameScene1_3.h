@@ -92,6 +92,11 @@ private:
 	void NormalUpdate(Input& input);
 	void FadeOutUpdate(Input&);
 	/// <summary>
+	/// 変身中の演出
+	/// </summary>
+	/// <param name=""></param>
+	void CopyingUpdate(Input&);
+	/// <summary>
 	/// 死ぬときの処理(アニメーション)
 	/// </summary>
 	/// <param name=""></param>
@@ -118,14 +123,13 @@ private:
 	//敵を生成するunique_ptrのベクター
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
 	//カメラの内側にいるかどうか
-	int m_cameraMargin = 50;
-
+	int cameraframeMargin = 100;
 	bool IsInCamera(float x, float y)
 	{
-		float left = camera.pos.x - screenWidth / 2 + m_cameraMargin;//???一度わからなくなった
-		float right = camera.pos.x + screenWidth / 2 - m_cameraMargin;//???一度わからなくなった
-		float top = camera.pos.y + cameraMargin;
-		float bottom = camera.pos.y + screenHeight + cameraMargin;
+		float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;//???一度わからなくなった
+		float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;//???一度わからなくなった
+		float top = camera.pos.y - cameraframeMargin;
+		float bottom = camera.pos.y + screenHeight + cameraframeMargin;
 
 
 		return (x > left && x < right && y > top && y < bottom);

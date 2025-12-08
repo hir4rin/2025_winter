@@ -70,7 +70,7 @@ namespace
 	constexpr int kFrozenWalkDuration = 8;
 	constexpr int kFrozenJumpDuration = 2;
 	constexpr int kFrozenAttackDuration = 2;
-	constexpr int kFrozenCopyDuration = 12;
+	constexpr int kFrozenCopyDuration = 6;
 	constexpr int kFrozenDamageDuration = 5;
 	
 	//そのアニメーションが何このコマ数なのか(X)
@@ -78,7 +78,7 @@ namespace
 	constexpr int kFrozenWalkNum = 8;
 	constexpr int kFrozenJumpNum = 4;
 	constexpr int kFrozenAttackNum = 15;
-	constexpr int kFrozenCopyNum = 15;
+	constexpr int kFrozenCopyNum = 10;
 	constexpr int kFrozenDamageNum = 4;
 	//Archer用
 	//1frameあたりのアニメーションの時間
@@ -94,7 +94,7 @@ namespace
 	constexpr int kArcherWalkNum = 8;
 	constexpr int kArcherJumpNum = 3;
 	constexpr int kArcherAttackNum = 12;
-	constexpr int kArcherCopyNum = 9;
+	constexpr int kArcherCopyNum = 12;
 	constexpr int kArcherDamageNum = 4;
 	//アーチャーの矢をいつ出すか
 	constexpr int kArrowAppearCharaIdx = 9;//矢を出すときのcharaIdx
@@ -161,6 +161,7 @@ void Player::Update(Input& input)
 {
 
 	m_frame++;
+	coolTimer--;
 	AnimFrameUpdate();
 	if (arrowFrame >= 0)
 	{
@@ -298,11 +299,12 @@ void Player::Draw(Camera& camera)
 		kCannonCutW, kCannonCutH,//切り取りの幅
 		kCannonScale, 0.0f, m_handle, true, true);
 	}
-
+	
 #ifdef _DEBUG
 	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", m_anim);
 	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", m_state);
 	DrawFormatString(1000, 30, GetColor(255, 0, 0), "_typeは%dです", m_type);
+	DrawFormatString(1000, 50, GetColor(255, 0, 0), "coolTimerは%fです", coolTimer);
 	DrawFormatString(10, 20, GetColor(255, 0, 0), "charaIdxは%dです", charaIdx);
 	DrawFormatString(10, 30, GetColor(255, 0, 0), "charaIdyは%dです", charaIdy);
 	DrawFormatString(10, 80, GetColor(255, 0, 0), "m_pos.xは%fです", m_pos.x);
@@ -446,7 +448,7 @@ void Player::InputUpdate(Input& input)
 			if (coolTimer <= 0)
 			{
 				burningTimer = burningTime;
-			
+				coolTimer = 0;
 			}
 		}
 	}
@@ -487,7 +489,8 @@ void Player::JumpUpdate(Input& input)
 void Player::AttackUpdate()
 {
 	burningTimer--;
-	coolTimer--;
+	
+	
 	if (burningTimer >= 0.0f)
 	{
 		if (m_type == PlayerType::Burning)//バーニングの攻撃処理
@@ -736,19 +739,16 @@ void Player::AnimSelectNormal(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == 6)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kNormalAttackNum-1)//攻撃アニメーション終了
 		{
-			if (m_type == PlayerType::Burning)
-			{
-				coolTimer = coolTime;
-			}
+			
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 
 
 		}
-		if (m_anim == Anim::Copy && charaIdx == 5)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kNormalCopyNum-1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -776,14 +776,18 @@ void Player::AnimSelectBurning(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == 7)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kBurningAttackNum-1)//攻撃アニメーション終了
 		{
+			//if (m_type == PlayerType::Burning)//弱体化(いまはしていない)
+			//{
+			//	if (coolTimer < 0) coolTimer = coolTime;
+			//}
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 
 		}
-		if (m_anim == Anim::Copy && charaIdx == 7)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kBurningCopyNum-1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -812,14 +816,14 @@ void Player::AnimSelectFrozen(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == 14)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kFrozenAttackNum-1)//攻撃アニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 
 		}
-		if (m_anim == Anim::Copy && charaIdx == 14)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kFrozenCopyNum-1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -848,14 +852,14 @@ void Player::AnimSelectArcher(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == 11)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kArcherAttackNum-1)//攻撃アニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 
 		}
-		if (m_anim == Anim::Copy && charaIdx == 8)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kArcherCopyNum-1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -907,8 +911,16 @@ void Player::NormalAnim()
 		charaIdy = 2;
 		break;
 	case Anim::Copy:
-		charaIdx = (m_animframe / kNormalCopyDuration) % kNormalCopyNum;
-		charaIdy = 4;
+		if(charaIdx == kNormalCopyNum - 1)
+		{
+			charaIdx = kNormalCopyNum - 1;
+			charaIdy = 4;
+		}
+		else
+		{
+			charaIdx = (m_animframe / kNormalCopyDuration) % kNormalCopyNum;//【注意】
+			charaIdy = 4;
+		}
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
@@ -951,8 +963,16 @@ void Player::BurningAnim()
 		charaIdy = 5;
 		break;
 	case Anim::Copy:
-		charaIdx = (m_animframe / kBurningCopyDuration) % kBurningCopyNum;//【注意】切り替わった直後のアニメーションはここが流れてる
-		charaIdy = 5;
+		if (charaIdx == kBurningCopyNum - 1)
+		{
+			charaIdx = kBurningCopyNum - 1;
+			charaIdy = 5;
+		}
+		else
+		{
+			charaIdx = (m_animframe / kBurningCopyDuration) % kBurningCopyNum;//【注意】切り替わった直後のアニメーションはここが流れてる
+			charaIdy = 5;
+		}
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
@@ -997,8 +1017,17 @@ void Player::FrozenAnim()
 		charaIdy = 2;
 		break;
 	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
-		charaIdx = (m_animframe / kFrozenCopyDuration) % kFrozenCopyNum + 4;
-		charaIdy = 4;
+		if (charaIdx == kFrozenCopyNum - 1)
+		{
+			charaIdx = kFrozenCopyNum - 1;
+			charaIdy = 4;
+		}
+		else
+		{
+			charaIdx = (m_animframe / kFrozenCopyDuration) % kFrozenCopyNum;
+			charaIdy = 4;
+		}
+		
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
@@ -1043,8 +1072,16 @@ void Player::ArcherAnim()
 		charaIdy = 3;
 		break;
 	case Anim::Copy://【注意】切り替わった直後のアニメーションはここが流れてる
-		charaIdx = (m_animframe / kArcherCopyDuration) % kArcherCopyNum;
-		charaIdy = 2;
+		if (charaIdx == kArcherCopyNum - 1)
+		{
+			charaIdx = kArcherCopyNum - 1;
+			charaIdy = 3;
+		}
+		else
+		{
+			charaIdx = (m_animframe / kArcherCopyDuration) % kArcherCopyNum;
+			charaIdy = 3;
+		}
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
@@ -1116,6 +1153,7 @@ void Player::ChangeNormal()
 
 	m_type = PlayerType::Normal;
 	m_state = PlayerState::Normal;
+	m_animframe = 0;
 }
 
 void Player::ChangeBurning()
@@ -1129,6 +1167,7 @@ void Player::ChangeBurning()
 
 	m_type = PlayerType::Burning;
 	m_state = PlayerState::Normal;
+	m_animframe = 0;
 }
 
 void Player::ChangeFrozen()
@@ -1142,6 +1181,7 @@ void Player::ChangeFrozen()
 
 	m_type = PlayerType::Frozen;
 	m_state = PlayerState::Normal;
+	m_animframe = 0;
 }
 
 void Player::ChangeArcher()
@@ -1155,6 +1195,7 @@ void Player::ChangeArcher()
 
 	m_type = PlayerType::Archer;
 	m_state = PlayerState::Normal;
+	m_animframe = 0;
 }
 
 std::shared_ptr<Arrow> Player::ShotArrow()
