@@ -62,10 +62,11 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6586.0f,520.0f), false });//崖上三連単
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
 
-	InitCamera(camera);//カメラの初期化
+	
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>(type,hp);
+	InitCamera(camera);//カメラの初期化
 	m_pBg = new Bg(m_pPlayer, 3);
 	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 

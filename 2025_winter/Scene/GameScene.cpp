@@ -28,7 +28,8 @@ namespace
 	constexpr int kScreenWidth = 1920;
 	constexpr int kScreenHeight = 1080;
 
-	constexpr int fade_interval = 60;
+	constexpr int fade_interval = 60; 
+	constexpr int copy_interval = 60; 
 
 	constexpr int shake_interval = 30;
 
@@ -51,10 +52,10 @@ GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
 
-	InitCamera(camera);//カメラの初期化
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,hp);
+	InitCamera(camera);//カメラの初期化
 	m_pBg = new Bg(m_pPlayer,1);
 	m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
 	//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
@@ -110,6 +111,7 @@ void GameScene::CheckHit()
 
 						m_pPlayer->ChangeBurning();
 						m_pItems = nullptr;
+					 //ここでアップデートを変える
 
 					}
 					else if (m_pItems->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
@@ -117,14 +119,14 @@ void GameScene::CheckHit()
 
 						m_pPlayer->ChangeFrozen();
 						m_pItems = nullptr;
-
+						//ここでアップデートを変える
 					}
 					else if (m_pItems->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
 					{
 
 						m_pPlayer->ChangeArcher();
 						m_pItems = nullptr;
-
+						//ここでアップデートを変える
 					}
 				}
 			}
@@ -1222,6 +1224,18 @@ void GameScene::FadeOutUpdate(Input&)
 		//delete m_pCharacter;
 		delete m_pBg;
 		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp()));
+		return;
+	}
+}
+
+void GameScene::CopyingUpdate(Input&)
+{
+	//変身中の処理
+	m_pPlayer->AnimFrameUpdate();
+	if (m_frame++ >= copy_interval)
+	{
+				update_ = &GameScene::NormalUpdate;
+		draw_ = &GameScene::NormalDraw;
 		return;
 	}
 }

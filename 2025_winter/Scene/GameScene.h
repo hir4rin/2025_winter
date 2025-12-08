@@ -91,6 +91,13 @@ private:
 	void FadeInUpdate(Input&);
 	void NormalUpdate(Input& input);
 	void FadeOutUpdate(Input&);
+
+	/// <summary>
+	/// 変身中の演出
+	/// </summary>
+	/// <param name=""></param>
+	void CopyingUpdate(Input&);
+
 	/// <summary>
 	/// 死ぬときの処理(アニメーション)
 	/// </summary>

@@ -35,7 +35,7 @@ draw_(&GameClearScene::FadeDraw)
 	m_pBg = new Bg(m_pPlayer, 4);
 
 	m_pPlayer->SetBgPointer(m_pBg);
-	InitCamera(camera);
+	InitCamera(camera);//カメラの初期化
 }
 
 void GameClearScene::FadeInUpdate(Input&)
@@ -122,7 +122,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	//大砲から発射する処理
 	if (isCannon)
 	{
-		if (input.IsTriggered("up"))
+		if (input.IsTriggered("Jump"))
 		{
 			isFlying = true;
 			isCannon = false;
@@ -150,11 +150,11 @@ void GameClearScene::NormalUpdate(Input& input)
 
 
 	//デバッグ用
-	if (input.IsTriggered("Jump"))
+	/*if (input.IsTriggered("Jump"))
 	{
 		isCannon = false;
 		isFlying = false;
-	}
+	}*/
 
 	if (isArrived)
 			{

@@ -58,10 +58,11 @@ GameScene1_2::GameScene1_2(SceneController& controller,PlayerType type,int hp) :
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5600.0f,200.0f), false });
 	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5650.0f,200.0f), false });
 
-	InitCamera(camera);//カメラの初期化
+	
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer = std::make_shared<Player>(type,hp);
+	InitCamera(camera);//カメラの初期化
 	m_pBg = new Bg(m_pPlayer,2);
 	//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
 	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });

@@ -8,14 +8,14 @@ Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
                           { PeripheralType::pad1,PAD_INPUT_8 } };//SELECTキー
 
     inputTable_["Attack"] = { { PeripheralType::keyboard,KEY_INPUT_X },
-                          { PeripheralType::pad1,PAD_INPUT_3 } };//PADのAボタン
+                          { PeripheralType::pad1,PAD_INPUT_3 } };//PADのXボタン
 
     inputTable_["Copy"] = { { PeripheralType::keyboard,KEY_INPUT_C },
-                          { PeripheralType::pad1,PAD_INPUT_4 } };//PADのAボタン
+                          { PeripheralType::pad1,PAD_INPUT_4 } };//PADのYボタン
     inputTable_["CopyOut"] = { { PeripheralType::keyboard,KEY_INPUT_V },
                           { PeripheralType::pad1,PAD_INPUT_7 } };//PADのSボタン
     inputTable_["Jump"] = { { PeripheralType::keyboard,KEY_INPUT_Z },
-                          { PeripheralType::pad1,PAD_INPUT_1 } };//PADの?ボタン
+                          { PeripheralType::pad1,PAD_INPUT_1 } };//PADのAボタン
 
     
 

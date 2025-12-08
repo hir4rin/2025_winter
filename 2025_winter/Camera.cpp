@@ -20,7 +20,7 @@ const float CameraScopeRangeH = 300.0f;
 
 void InitCamera(Camera& camera)
 {
-	camera.pos = { 0.0f, 0.0f };
+	camera.pos = { ScreenWidth * 0.5f, 0.0f };
 }
 
 void StartCameraShake(Camera& camera, float power, float time)
