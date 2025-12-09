@@ -159,6 +159,7 @@ private:
 	int m_frame = 0;	// フェードインアウト用
 	int m_gameFrame = 0;	// ゲーム中のフレームをカウント
 	int m_shakeTime = 0;//カメラが揺れてる間ほかを止める
+	int m_hitCoolFrame = 0;//被弾後のクールタイム
 private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;

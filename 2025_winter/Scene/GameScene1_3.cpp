@@ -32,6 +32,7 @@ namespace
 	constexpr int copy_interval = 45;
 
 	constexpr int shake_interval = 30;
+	constexpr int hit_interval = 40;
 
 	constexpr float FrozenSpeed = 13.0f;
 
@@ -824,6 +825,7 @@ void GameScene1_3::CheckHitFrozen()
 void GameScene1_3::CheckPlayer()
 {
 	if (!m_pPlayer)return;
+	m_hitCoolFrame--;
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
 		auto& e = m_pEnemyWizards[i];
@@ -835,20 +837,39 @@ void GameScene1_3::CheckPlayer()
 		//プレイヤーの当たり判定が敵の当たり判定と当たった時
 		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
 		{
-			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
-			//敵がどっちから当たったかどうかを入れる
-			//プレイヤーのダメージ処理
-			m_pPlayer->DamageHit(isLeft);
-			OnShake();
-			//敵が消える処理
-			//消えるとき絶対する処理
-				//対応するspawnを復活可能にする
-			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
-			spawn.spawned = false;
-			spawn.wasKilled = true;
+			if (m_hitCoolFrame > 0)
+			{
+				//敵だけ消す
+				//敵が消える処理
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
 
-			//インスタンスを消す
-			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+			}
+			else
+			{
+				m_hitCoolFrame = hit_interval; //無敵時間を設定
+
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+				//敵が消える処理
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+			}
+
 
 		}
 	}
@@ -863,20 +884,36 @@ void GameScene1_3::CheckPlayer()
 		//プレイヤーの当たり判定が敵の当たり判定と当たった時
 		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
 		{
-			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
-			//敵がどっちから当たったかどうかを入れる
-			//プレイヤーのダメージ処理
-			m_pPlayer->DamageHit(isLeft);
-			OnShake();
-			//敵が消える処理
-			//消えるとき絶対する処理
-				//対応するspawnを復活可能にする
-			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
-			spawn.spawned = false;
-			spawn.wasKilled = true;
+			if (m_hitCoolFrame > 0)
+			{
+				//敵が消える処理
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
 
-			//インスタンスを消す
-			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+				//インスタンスを消す
+				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+			}
+			else
+			{
+				m_hitCoolFrame = hit_interval; //無敵時間を設定
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+				//敵が消える処理
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
+
+				//インスタンスを消す
+				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+			}
 
 		}
 	}
@@ -892,21 +929,36 @@ void GameScene1_3::CheckPlayer()
 		//プレイヤーの当たり判定が敵の当たり判定と当たった時
 		if (m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
 		{
-			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
-			//敵がどっちから当たったかどうかを入れる
-			//プレイヤーのダメージ処理
-			m_pPlayer->DamageHit(isLeft);
-			OnShake();
-			//敵が消える処理
-			//消えるとき絶対する処理
-				//対応するspawnを復活可能にする
-			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
-			spawn.spawned = false;
-			spawn.wasKilled = true;
+			if (m_hitCoolFrame > 0)
+			{
+				//敵が消える処理
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
 
-			//インスタンスを消す
-			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+				//インスタンスを消す
+				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+			}
+			else
+			{
+				m_hitCoolFrame = hit_interval; //無敵時間を設定
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+				//敵が消える処理
+				//消えるとき絶対する処理
+					//対応するspawnを復活可能にする
+				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+				spawn.spawned = false;
+				spawn.wasKilled = true;
 
+				//インスタンスを消す
+				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+			}
 		}
 	}
 
@@ -1255,10 +1307,9 @@ void GameScene1_3::CopyingUpdate(Input&)
 void GameScene1_3::DyingUpdate(Input& input)
 {
 	
-	m_pBg->Draw(camera);
-	stageUI.Draw(camera);
+	
 	m_pPlayer->DyingUpdate();
-	m_pPlayer->DyingDraw(camera);
+	
 
 	if (m_frame++ >= fade_interval * 1.5f)
 	{
@@ -1281,7 +1332,7 @@ void GameScene1_3::ShakingUpdate(Input&)
 void GameScene1_3::FadeDraw()
 {
 	NormalDraw();
-
+	if (update_ == &GameScene1_3::DyingUpdate)m_pPlayer->DyingDraw(camera);
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
@@ -1361,7 +1412,7 @@ void GameScene1_3::NormalDraw()
 		{
 			if (m_pFrozen) m_pFrozen->Draw(camera);
 		}
-		m_pPlayer->Draw(camera);
+		if (update_ != &GameScene1_3::DyingUpdate) m_pPlayer->Draw(camera);//死に際の描画は別
 		for (auto& enemy : m_pEnemyWizards)//ペンギン
 		{
 			if (enemy) enemy->Draw(camera);
