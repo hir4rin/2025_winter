@@ -55,7 +55,7 @@ void Application::Run()
 
 	SceneController controller;
 	controller.ChangeScene(std::make_shared<TitleScene>(controller));
-	while (ProcessMessage() == 0)
+	while (ProcessMessage() == 0 && !requestedExit_)
 	{
 		LONGLONG time = GetNowHiPerformanceCount();
 		//画面のクリア

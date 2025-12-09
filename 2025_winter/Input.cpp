@@ -16,6 +16,8 @@ Input::Input() :inputData_{}, lastInputData_{}, inputTable_{}
                           { PeripheralType::pad1,PAD_INPUT_7 } };//PADのSボタン
     inputTable_["Jump"] = { { PeripheralType::keyboard,KEY_INPUT_Z },
                           { PeripheralType::pad1,PAD_INPUT_1 } };//PADのAボタン
+    inputTable_["pause"] = { { PeripheralType::keyboard,KEY_INPUT_P },
+                          { PeripheralType::pad1,PAD_INPUT_2 } };//PADのBボタン//一旦
 
     
 

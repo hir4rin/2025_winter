@@ -17,6 +17,7 @@
 #include "../input.h"
 #include "GameoverScene.h"
 #include "GameScene1_2.h"
+#include "PauseScene.h"
 #include "SceneController.h"
 #include <cassert>
 #include "../Application.h"
@@ -1063,11 +1064,11 @@ void GameScene::NormalUpdate(Input& input)
 	}
 
 	//ポーズ画面
-	/*if (input.IsTriggered("pause"))
+	if (input.IsTriggered("pause"))
 	{
 		controller_.PushScene(std::make_shared<PauseScene>(controller_));
 		return;
-	}*/
+	}
 	UpdateCamera(camera, m_pPlayer);
 
 
