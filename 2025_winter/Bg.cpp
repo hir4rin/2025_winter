@@ -79,6 +79,9 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 	case 4:
 		m_mapH = LoadGraph("data/map.png");
 		m_bgH = LoadGraph("data/1.png");
+		m_bgH2 = LoadGraph("data/2.png");
+		m_bgH3= LoadGraph("data/3.png");
+		m_bgH4= LoadGraph("data/4.png");
 		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
@@ -188,24 +191,54 @@ void Bg::Draw(Camera& camera)
 	}
 }
 
-void Bg::DrawBg(Camera& camera)
+void Bg::BgHSetDraw(Camera& camera, int handle)
 {
-
 	//画像サイズを取得
 	//Bgのサイズ
 	Size bgSize = { 0,0 };
 
-	GetGraphSize(m_bgH, &bgSize.width, &bgSize.height);
+	GetGraphSize(handle, &bgSize.width, &bgSize.height);
 
+	//ループ処理
+	float drawWidth = bgSize.width * 10.0f;
 
+	//剰余でループ
+	int looped = static_cast<int>(camera.drawOffset.x) % static_cast<int>(drawWidth);
 
-	DrawRectRotaGraph(graphHalfW + camera.drawOffset.x, graphHalfH + camera.drawOffset.y,  // 描画位置（中心座標）
+	//float に戻す
+	float bgX = static_cast<float>(looped);
+	
+
+	DrawRectRotaGraph(graphHalfW + bgX, graphHalfH + camera.drawOffset.y,  // 描画位置（中心座標）
 		0, 0, // 元画像の切り取り開始位置（左上）
 		bgSize.width, bgSize.height,  // 切り取るサイズ（幅・高さ）
 		10.0, 0, // 拡大率（1.0で等倍）// 回転角度（ラジアン）
-		m_bgH, // 画像ハンドル
-		false,// 透過描画フラグ（TRUEで透明色有効）
+		handle, // 画像ハンドル
+		true,// 透過描画フラグ（TRUEで透明色有効）
 		false, false);      // 左右反転フラグ（TRUEで反転）
+
+
+	
+	// 2枚目（右側）
+	DrawRectRotaGraph(
+		graphHalfW + bgX + drawWidth, graphHalfH + camera.drawOffset.y,
+		0, 0,
+		bgSize.width, bgSize.height,
+		10.0, 0,
+		handle,
+		TRUE,
+		FALSE, FALSE
+	);
+
+}
+
+void Bg::DrawBg(Camera& camera)
+{
+
+	BgHSetDraw(camera, m_bgH);
+	if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2);
+	if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3);
+	if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4);
 }
 
 void Bg::LoadMapData()

@@ -20,6 +20,8 @@ public:
 	void Update();
 	void Draw(Camera& camera);
 
+	void BgHSetDraw(Camera& camera, int handle);
+
 	void DrawBg(Camera& camera);
 	/// <summary>
 	/// マップの読み込み
@@ -84,8 +86,10 @@ public:
 	bool IsCollisionPlayer1_2(Rect rect, Rect& chipRect,bool& hitClearness);
 	bool IsCollisionPlayer1_3(Rect rect, Rect& chipRect,bool& hitClearness);
 
-	
-	
+private:
+	int m_bgH2=-1;
+	int m_bgH3 = -1;
+	int m_bgH4 = -1;
 private:
 	int m_bgH;
 	int m_mapH;

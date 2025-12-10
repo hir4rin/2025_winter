@@ -150,6 +150,7 @@ HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
 
 	//assert(m_pBg && "入っていない");
 	// 横から当たったかチェックする
+	//ここをlerpにする(恋先輩)
 	m_pos.x += m_vel.x;
 
 
