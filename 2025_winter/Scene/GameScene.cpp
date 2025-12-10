@@ -110,19 +110,58 @@ void GameScene::CheckHit()
 
 void GameScene::CheckArrowHit()
 {
-	for (auto& num : m_arrows)//壁に当たったら消す
-		
-	{
-		if (num == nullptr )continue;
-		Rect m_arrowRect = num->GetColRect();
-		Rect chipRect;
+	//for (auto& num : m_arrows)//壁に当たったら消す
+	//	
+	//{
+	//	if (num == nullptr )continue;
+	//	Rect m_arrowRect = num->GetColRect();
+	//	Rect chipRect;
 
-		if (m_pBg->IsCollision(m_arrowRect,chipRect))
+	//	if (m_pBg->IsCollision(m_arrowRect,chipRect))
+	//	{
+	//		num = nullptr;
+	//		continue;
+	//	}
+	//}
+	for (auto it = m_arrows.begin(); it != m_arrows.end(); )//壁に当たったら消す
+	{
+		if (*it == nullptr)
 		{
-			num = nullptr;
+			it = m_arrows.erase(it);
 			continue;
 		}
+
+		Rect m_arrowRect = (*it)->GetColRect();
+		Rect chipRect;
+
+		if (m_pBg->IsCollision(m_arrowRect, chipRect))
+		{
+			it = m_arrows.erase(it);
+			continue;
+		}
+
+		++it;
 	}
+	for (auto it = m_pEnemyArrows.begin(); it != m_pEnemyArrows.end(); )//壁に当たったら消す(敵の矢も)
+	{
+		if (*it == nullptr)
+		{
+			it = m_pEnemyArrows.erase(it);
+			continue;
+		}
+
+		Rect m_arrowRect = (*it)->GetColRect();
+		Rect chipRect;
+
+		if (m_pBg->IsCollision(m_arrowRect, chipRect))
+		{
+			it = m_pEnemyArrows.erase(it);
+			continue;
+		}
+
+		++it;
+	}
+	
 	for (auto& num : m_arrows)
 	{
 		if (num == nullptr || !num->hitEnemyWizard)continue;
@@ -1285,7 +1324,14 @@ void GameScene::NormalUpdate(Input& input)
 			++effect;
 	}
 	if (m_pItems) m_pItems->Update();
-	if (m_pDroppedItem) m_pDroppedItem->DroppedUpdate();
+	if (m_pDroppedItem)//演出のアイテムのアップデート
+	{
+		m_pDroppedItem->DroppedUpdate();
+		if (m_pDroppedItem->IsDead())
+		{
+			m_pDroppedItem = nullptr;
+		}
+	}
 	CheckHit();//3種の攻撃の当たり判定
 	CopyAct(input);//アイテム取得の処理関連
 	CheckArrowHit();
@@ -1435,7 +1481,7 @@ void GameScene::NormalDraw()
 		m_doors->Draw(camera);
 		
 		if (m_pItems) m_pItems->Draw(camera);
-		if (m_pItems) m_pDroppedItem->Draw(camera);
+		if (m_pItems) m_pDroppedItem->DroppedDraw(camera);
 		for (auto& arrow : m_arrows)//弓矢
 		{
 			if (!arrow) continue;

@@ -24,6 +24,10 @@ namespace
 	constexpr float kJumpPower = -15.0f;	// ジャンプ力
 	constexpr int kMaxJumpFrame = 15;	// ジャンプを長押しできる最大時間
 
+	//あまり慣性が乗っている感じはないように見える(笑)
+	constexpr float accel = 2.0f;//加速度
+	constexpr float decel = 1.0f;//減速度
+
 	constexpr float kGravity = 1.5f;//重力
 	constexpr float kGround = 900.0f;//地面位置
 
@@ -598,22 +602,37 @@ void Player::Move(Input& input)
 	//ここに処理を追加していく
 	if (Pad::IsPress(PAD_INPUT_LEFT))
 	{
-		m_vel.x = -kSpeed;
+		m_vel.x += -accel;
 		m_isRight = false;
 
 
 	}
 	else if (Pad::IsPress(PAD_INPUT_RIGHT))
 	{
-		m_vel.x = kSpeed;
+		//m_vel.x = kSpeed;
+		m_vel.x += accel;
 		m_isRight = true;
 
 	}
 	else
 	{
-		m_vel.x = 0.0f;
+		//減速処理(慣性)
+		if (m_vel.x > 0)//右に移動しているとき
+		{
+			m_vel.x += -decel;
+			if (m_vel.x < 0)m_vel.x = 0;
+		}
+		else if (m_vel.x < 0)//左に移動しているとき
+		{
+			m_vel.x += decel;
+			if (m_vel.x > 0)m_vel.x = 0;
+		}
 
 	}
+	//速度制限
+	if (m_vel.x > kSpeed)m_vel.x = kSpeed;
+	if (m_vel.x < -kSpeed)m_vel.x = -kSpeed;
+	//---------------------------
 	if (m_anim != Anim::Jump)
 	{
 		if (m_vel.x > 0.1f || m_vel.x < -0.1f)

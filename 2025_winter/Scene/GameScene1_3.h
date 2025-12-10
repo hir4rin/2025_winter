@@ -128,7 +128,7 @@ private:
 	//敵を生成するunique_ptrのベクター
 	std::vector<std::unique_ptr<Enemy>> m_enemies;
 	//カメラの内側にいるかどうか
-	int cameraframeMargin = 100;
+	int cameraframeMargin = 300;
 	bool IsInCamera(float x, float y)
 	{
 		float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;//???一度わからなくなった
@@ -172,6 +172,8 @@ private:
 	//アイテムは今のところ一つだけ
 	std::shared_ptr<Item> m_pItems;
 	Item* m_pItem;
+	//演出用のアイテム
+	std::shared_ptr<Item> m_pDroppedItem;
 	std::vector<std::shared_ptr<Arrow>> m_arrows;
 	std::vector<std::shared_ptr<EnemyArrow>> m_pEnemyArrows;
 

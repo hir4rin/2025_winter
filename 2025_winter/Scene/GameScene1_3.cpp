@@ -117,18 +117,56 @@ void GameScene1_3::CheckHit()
 
 void GameScene1_3::CheckArrowHit()
 {
-	for (auto& num : m_arrows)//壁に当たったら消す
+	//for (auto& num : m_arrows)//壁に当たったら消す
+	//	
+	//{
+	//	if (num == nullptr )continue;
+	//	Rect m_arrowRect = num->GetColRect();
+	//	Rect chipRect;
 
+	//	if (m_pBg->IsCollision(m_arrowRect,chipRect))
+	//	{
+	//		num = nullptr;
+	//		continue;
+	//	}
+	//}
+	for (auto it = m_arrows.begin(); it != m_arrows.end(); )//壁に当たったら消す
 	{
-		if (num == nullptr)continue;
-		Rect m_arrowRect = num->GetColRect();
+		if (*it == nullptr)
+		{
+			it = m_arrows.erase(it);
+			continue;
+		}
+
+		Rect m_arrowRect = (*it)->GetColRect();
 		Rect chipRect;
 
 		if (m_pBg->IsCollision(m_arrowRect, chipRect))
 		{
-			num = nullptr;
+			it = m_arrows.erase(it);
 			continue;
 		}
+
+		++it;
+	}
+	for (auto it = m_pEnemyArrows.begin(); it != m_pEnemyArrows.end(); )//壁に当たったら消す(敵の矢も)
+	{
+		if (*it == nullptr)
+		{
+			it = m_pEnemyArrows.erase(it);
+			continue;
+		}
+
+		Rect m_arrowRect = (*it)->GetColRect();
+		Rect chipRect;
+
+		if (m_pBg->IsCollision(m_arrowRect, chipRect))
+		{
+			it = m_pEnemyArrows.erase(it);
+			continue;
+		}
+
+		++it;
 	}
 	for (auto& num : m_arrows)
 	{
@@ -1016,7 +1054,29 @@ void GameScene1_3::CopyAct(Input& input)
 	{
 		if (!(m_pPlayer->GetType() == PlayerType::Normal))
 		{
+
+			//プレイヤーのタイプに応じて落とすアイテムを変える
+			switch (m_pPlayer->GetType())
+			{
+			case PlayerType::Frozen:
+				m_pDroppedItem = std::make_shared<Item>(std::make_shared<EnemyWizard>());
+				m_pDroppedItem->ChangePos() = m_pPlayer->GetPos();
+				m_pDroppedItem->Setm_isRight(m_pPlayer->Getm_isRight());
+				break;
+			case PlayerType::Burning:
+				m_pDroppedItem = std::make_shared<Item>(std::make_shared<EnemyRider>());
+				m_pDroppedItem->ChangePos() = m_pPlayer->GetPos();
+				m_pDroppedItem->Setm_isRight(m_pPlayer->Getm_isRight());
+				break;
+			case PlayerType::Archer:
+				m_pDroppedItem = std::make_shared<Item>(std::make_shared<EnemyArcher>());
+				m_pDroppedItem->ChangePos() = m_pPlayer->GetPos();
+				m_pDroppedItem->Setm_isRight(m_pPlayer->Getm_isRight());
+				break;
+			}
+			//プレイヤーをノーマルに戻す
 			m_pPlayer->ChangeNormal();
+
 		}
 	}
 }
@@ -1247,6 +1307,14 @@ void GameScene1_3::NormalUpdate(Input& input)
 			++effect;
 	}
 	if (m_pItems) m_pItems->Update();
+	if (m_pDroppedItem)//演出のアイテムのアップデート
+	{
+		m_pDroppedItem->DroppedUpdate();
+		if (m_pDroppedItem->IsDead())
+		{
+			m_pDroppedItem = nullptr;
+		}
+	}
 	CheckHit();//3種の攻撃の当たり判定
 	CopyAct(input);//アイテム取得の処理関連
 	CheckArrowHit();
@@ -1391,6 +1459,7 @@ void GameScene1_3::NormalDraw()
 		m_doors->Draw(camera);
 
 		if (m_pItems) m_pItems->Draw(camera);
+		if (m_pItems) m_pDroppedItem->DroppedDraw(camera);
 		for (auto& arrow : m_arrows)//弓矢
 		{
 			if (!arrow) continue;
@@ -1466,6 +1535,7 @@ void GameScene1_3::NormalDraw()
 			if (enemy) enemy->Draw(camera);
 		}
 		if (m_pItems) m_pItems->Draw(camera);
+		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
 		for (auto& arrow : m_arrows)//弓矢
 		{
 			if (!arrow) continue;

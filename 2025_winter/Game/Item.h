@@ -32,7 +32,7 @@ public:
 	void DroppedUpdate();
 	void DroppedDraw(Camera& camera);
 
-
+	bool IsDead() { return m_aliveFrame <= 0; }
 	
 
 private:

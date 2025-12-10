@@ -16,6 +16,10 @@ namespace
 
 	constexpr float kAttackSpeed = 3.0f;//攻撃時の速度
 
+	//当たり判定
+	constexpr int kCharaSizeW = 64;//キャラクターサイズW
+	constexpr int kCharaSizeH = 96;//キャラクターサイズH
+
 }
 
 
@@ -49,7 +53,10 @@ void EnemyRider::Update()
 		//m_isRight
 	}
 	m_animframe++;
+	//マップチップとの当たり判定(当たり判定はkCharaSizeのまま)
 	Character::Update();
+	//当たり判定のセットしなおし
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSizeW, kCharaSizeH);
 	switch (_state)
 	{
 	case EnemyState::Normal:

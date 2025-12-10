@@ -17,7 +17,7 @@ namespace
 	constexpr float kAttackSpeed = 3.0f;//攻撃時の速度
 	
 
-	float catchDistance = 400.0f;//プレイヤーを見つける距離
+	float catchDistance = 1000.0f;//プレイヤーを見つける距離
 }
 
 
