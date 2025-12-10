@@ -20,6 +20,7 @@ class Character;
 class Frozen;
 class BurningObject;
 class Door;
+class Effect;
 
 
 
@@ -86,6 +87,10 @@ public:
 	/// カメラが揺れる(敵と当たったとき用)
 	/// </summary>
 	void OnShake();
+	/// <summary>
+	/// 変身関連
+	/// </summary>
+	void CopyAct(Input& input);
 private:
 	//-----------Updateメンバ関数ポインタ---------
 	void FadeInUpdate(Input&);
@@ -168,6 +173,8 @@ private:
 
 	//アイテムは今のところ一つだけ
 	std::shared_ptr<Item> m_pItems;
+	//演出用のアイテム
+	std::shared_ptr<Item> m_pDroppedItem;
 	Item* m_pItem;
 	std::vector<std::shared_ptr<Arrow>> m_arrows;
 	std::vector<std::shared_ptr<EnemyArrow>> m_pEnemyArrows;
@@ -180,6 +187,9 @@ private:
 	Character* m_pCharacter;
 
 	std::shared_ptr<Door> m_doors;
+
+	//エフェクト
+	std::vector<std::shared_ptr<Effect>> m_pEffects;
 
 
 	

@@ -17,9 +17,9 @@ namespace
 	const Vec2 kInitPos = { 100.0f,700.0f };//初期位置
 	constexpr float kSpeed = 10.0f;//移動速度
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
-	constexpr int kCannonCutW = 100;
-	constexpr int kCannonCutH = 100;
-	constexpr float  kCannonScale = 3.0f;
+	constexpr int kPlayerCutW = 100;
+	constexpr int kPlayerCutH = 100;
+	constexpr float  kPlayerScale = 3.0f;
 
 	constexpr float kJumpPower = -15.0f;	// ジャンプ力
 	constexpr int kMaxJumpFrame = 15;	// ジャンプを長押しできる最大時間
@@ -120,6 +120,7 @@ Player::Player(PlayerType type,int hp) :
 	isBurningAttack(false),
 	damageCount(0),
 	m_angle(0.0f),
+	m_wasGround(false),
 	m_hp(hp)//HPは後で引継ぎできるように変える
 {
 	m_pos = kInitPos;
@@ -201,7 +202,21 @@ void Player::Update(Input& input)
 		DamageUpdate();
 		break;
 	}
+	m_wasGround = m_isGround;
+
 	m_hitDir = CheckHitMapPlayer(chipRect);
+	//着地effectを出す
+	if (!m_wasGround && m_isGround)
+	{
+		//エフェクトを出す
+		for (auto& func : onLandEvents)
+		{
+			if (func)func();//呼び出し
+		}
+		
+	}
+
+
 	//着地時にアニメーションを帰るところ
 	if (m_isGround)
 	{
@@ -287,17 +302,17 @@ void Player::Draw(Camera& camera)
 
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
-		kCannonCutW, kCannonCutH,//切り取りの幅
-		kCannonScale, 0.0f, m_handle, true);
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y+ kCharaSize/4,
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, 0.0f, m_handle, true);
 	}
 	else
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
-		kCannonCutW, kCannonCutH,//切り取りの幅
-		kCannonScale, 0.0f, m_handle, true, true);
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + kCharaSize / 4,
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, 0.0f, m_handle, true, true);
 	}
 	
 #ifdef _DEBUG
@@ -353,17 +368,17 @@ void Player::DyingDraw(Camera& camera)
 	
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
-		kCannonCutW, kCannonCutH,//切り取りの幅
-		kCannonScale, m_angle * DX_PI / 180.0f, m_handle, true);
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + kCharaSize / 4,
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true);
 	}
 	else
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		kCannonCutW * charaIdx, kCannonCutH * charaIdy,//切り取り左上
-		kCannonCutW, kCannonCutH,//切り取りの幅
-		kCannonScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + kCharaSize / 4,
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
 	}
 }
 
@@ -457,15 +472,7 @@ void Player::InputUpdate(Input& input)
 		m_state = PlayerState::Copy;
 	}
 
-	if (input.IsTriggered("CopyOut"))
-	{
-		if (!(m_type == PlayerType::Normal))
-		{
-			ChangeNormal();
-
-
-		}
-	}
+	
 }
 
 void Player::NormalUpdate(Input& input)

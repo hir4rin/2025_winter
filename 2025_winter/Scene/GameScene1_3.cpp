@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "DxLib.h"
 #include "Camera.h"
+#include "Effect.h"
 #include "Character.h"
 #include "Player.h"
 #include "EnemyWizard.h"
@@ -86,6 +87,11 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 
 	m_pPlayer->SetBgPointer(m_pBg);
 	//m_pItems->SetBgPointer(m_pBg);
+
+	//playerの状態によってエフェクトを出す
+	m_pPlayer->AddOnLandEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "star"));
+		});
 }
 
 
@@ -103,60 +109,7 @@ void GameScene1_3::CheckHit()
 		CheckHitFrozen();
 		break;
 	}
-	if (m_pItems)
-	{
-		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Copy)
-		{
-			if (m_pPlayer->GetAnimIdx() > 3)
-			{
-				//プレイヤーの当たり判定とアイテムの当たり判定をチェック
-				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(m_pItems->GetColRect());
-				if (isHitItem)
-				{
-					//ここにアイテムを取得したときの処理を書く
-					if (m_pItems->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
-					{
-
-						m_pPlayer->ChangeBurning();
-						m_pItems = nullptr;
-						//ここでアップデートを変える
-						update_ = &GameScene1_3::CopyingUpdate;
-						draw_ = &GameScene1_3::NormalDraw;
-						m_frame = 0;
-						return;
-
-					}
-					else if (m_pItems->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
-					{
-
-						m_pPlayer->ChangeFrozen();
-						m_pItems = nullptr;
-						//ここでアップデートを変える
-						update_ = &GameScene1_3::CopyingUpdate;
-						draw_ = &GameScene1_3::NormalDraw;
-						m_frame = 0;
-						return;
-
-					}
-					else if (m_pItems->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
-					{
-
-						m_pPlayer->ChangeArcher();
-						m_pItems = nullptr;
-						//ここでアップデートを変える
-						update_ = &GameScene1_3::CopyingUpdate;
-						draw_ = &GameScene1_3::NormalDraw;
-						m_frame = 0;
-						return;
-
-					}
-				}
-			}
-
-		}
-
-	}
+	
 
 }
 
@@ -442,26 +395,36 @@ void GameScene1_3::CheckFrozenHit()
 
 void GameScene1_3::ReactionBurning()
 {
-	for (auto& m_pBurningObject : m_pBurningObjects)
+	for (auto m_pBurningObject = m_pBurningObjects.begin(); m_pBurningObject != m_pBurningObjects.end();)
 	{
-		if (!m_pBurningObject) continue;
-		//カメラの外だったらnullptrにする
-		float posX = m_pBurningObject->GetPos().x + camera.drawOffset.x;
-		float posY = m_pBurningObject->GetPos().y + camera.drawOffset.y;
-
-		if (posX < 0 || posX > kScreenWidth)
+		auto& obj = *m_pBurningObject;
+		if (!obj)
 		{
-			m_pBurningObject = nullptr;
+			m_pBurningObject = m_pBurningObjects.erase(m_pBurningObject);
+			continue;
+		}
+		/*if (!m_pBurningObject) continue;*/
+		//カメラの外だったらけす+UI
+		float posX = obj->GetPos().x + camera.drawOffset.x;
+		float posY = obj->GetPos().y + camera.drawOffset.y;
+		//画面外なら削除
+		if (posX < 0 || posX > kScreenWidth || posY < 0 || posY > kScreenHeight)
+		{
+			m_pBurningObject = m_pBurningObjects.erase(m_pBurningObject);
+			//m_pBurningObject = nullptr;
+		}
+		else
+		{
+			++m_pBurningObject;//残す//次の要素へ進む
 		}
 
-		if (m_pBurningObject == nullptr) continue;
-		if (posY < 0 || posY > kScreenHeight)
-		{
-			m_pBurningObject = nullptr;
-		}
+		//if (posY < 0 || posY > kScreenHeight)
+		//{
+		//	//m_pBurningObjects.erase(m_pBurningObject);
+		//	m_pBurningObject = nullptr;
+		//}
 
 	}
-
 
 }
 
@@ -994,6 +957,69 @@ void GameScene1_3::OnShake()
 {
 	StartCameraShake(camera, 15.0f, 0.1f);
 }
+void GameScene1_3::CopyAct(Input& input)
+{
+	if (m_pItems)
+	{
+		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Copy)
+		{
+			if (m_pPlayer->GetAnimIdx() > 3)
+			{
+				//プレイヤーの当たり判定とアイテムの当たり判定をチェック
+				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(m_pItems->GetColRect());
+				if (isHitItem)
+				{
+					//ここにアイテムを取得したときの処理を書く
+					if (m_pItems->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
+					{
+
+						m_pPlayer->ChangeBurning();
+						m_pItems = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene1_3::CopyingUpdate;
+						draw_ = &GameScene1_3::NormalDraw;
+						m_frame = 0;
+						return;
+
+					}
+					else if (m_pItems->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
+					{
+
+						m_pPlayer->ChangeFrozen();
+						m_pItems = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene1_3::CopyingUpdate;
+						draw_ = &GameScene1_3::NormalDraw;
+						m_frame = 0;
+						return;
+					}
+					else if (m_pItems->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
+					{
+
+						m_pPlayer->ChangeArcher();
+						m_pItems = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene1_3::CopyingUpdate;
+						draw_ = &GameScene1_3::NormalDraw;
+						m_frame = 0;
+						return;
+					}
+				}
+			}
+
+		}
+
+	}
+
+	if (input.IsTriggered("CopyOut"))
+	{
+		if (!(m_pPlayer->GetType() == PlayerType::Normal))
+		{
+			m_pPlayer->ChangeNormal();
+		}
+	}
+}
 
 void GameScene1_3::FadeInUpdate(Input&)
 {
@@ -1143,18 +1169,18 @@ void GameScene1_3::NormalUpdate(Input& input)
 
 		m_pPlayer->isArrowAttack = false;
 	}
-	for (auto& m_pEnemyArcher : m_pEnemyArchers)//敵の矢の出現
+	for (auto& pEnemyArcher : m_pEnemyArchers)//敵の矢の出現
 	{
-		if (!m_pEnemyArcher)continue;
-		if (m_pEnemyArcher->isArrowAttack)
+		if (!pEnemyArcher)continue;
+		if (pEnemyArcher->isArrowAttack)
 		{
 			//ポインタを作ってその座標を入れる
-			std::shared_ptr<EnemyArrow> arrow = m_pEnemyArcher->ShotArrow();
+			std::shared_ptr<EnemyArrow> arrow = pEnemyArcher->ShotArrow();
 
 			//それをpush_backする
 			m_pEnemyArrows.push_back(arrow);
 
-			m_pEnemyArcher->isArrowAttack = false;
+			pEnemyArcher->isArrowAttack = false;
 		}
 
 	}
@@ -1173,8 +1199,7 @@ void GameScene1_3::NormalUpdate(Input& input)
 	{
 		if (enemy) enemy->Update();
 	}
-
-	if (m_pItems) m_pItems->Update();
+	
 	for (auto& arrow : m_arrows)//矢のアップデート
 	{
 
@@ -1204,15 +1229,26 @@ void GameScene1_3::NormalUpdate(Input& input)
 		arrow->CheckPlayer(m_pPlayer);
 
 	}
-	for (auto& m_pFrozen : m_pFrozens)
+	for (auto& pFrozen : m_pFrozens)
 	{
-		if (m_pFrozen) m_pFrozen->Update();
+		if (pFrozen) pFrozen->Update();
 	}
-	for (auto& m_pBurningObject : m_pBurningObjects)
+	for (auto& pBurningObject : m_pBurningObjects)
 	{
-		if (m_pBurningObject) m_pBurningObject->Update();
+		if (pBurningObject) pBurningObject->Update();
 	}
+	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
+	{
+		(*effect)->Update();
+
+		if ((*effect)->IsDead())
+			effect = m_pEffects.erase(effect);  // ← 安全に削除
+		else
+			++effect;
+	}
+	if (m_pItems) m_pItems->Update();
 	CheckHit();//3種の攻撃の当たり判定
+	CopyAct(input);//アイテム取得の処理関連
 	CheckArrowHit();
 	//CheckItemWizard();
 	//CheckItemOrcRider();
@@ -1370,6 +1406,10 @@ void GameScene1_3::NormalDraw()
 			if (m_pBurningObject) m_pBurningObject->Draw(camera);
 		}
 		ReactionBurning();
+		for (auto& effect : m_pEffects)
+		{
+			if (effect) effect->Draw(camera);
+		}
 		for (auto& m_pFrozen : m_pFrozens)
 		{
 			if (m_pFrozen) m_pFrozen->Draw(camera);
@@ -1441,6 +1481,10 @@ void GameScene1_3::NormalDraw()
 			if (m_pBurningObject) m_pBurningObject->Draw(camera);
 		}
 		ReactionBurning();
+		for (auto& effect : m_pEffects)
+		{
+			if (effect) effect->Draw(camera);
+		}
 
 		//ステージUI
 		stageUI.Draw(camera);

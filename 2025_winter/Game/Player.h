@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Game/Character.h"
-#include "vector"
+#include <vector>
+#include <functional>
 
 class Input;
 class Arrow;
@@ -122,6 +123,13 @@ public:
 	/// </summary>
 	/// <param name="anim"></param>
 	void AnimSelect(const Anim& anim);//アニメーション
+public:
+	//着地イベント
+	std::vector<std::function<void()>> onLandEvents;
+	//リスナー追加用(使いやすくするため)
+	void AddOnLandEvent(const std::function<void()>& eventFunc) {
+		onLandEvents.push_back(eventFunc);
+	}
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -186,6 +194,8 @@ private:
 	int m_frame;
 	int m_junpTimer = 0;//クリアシーンで使う用のタイマー
 	int m_jumpTime = 20;
+
+	int m_wasGround;//前のフレームで地面にいたかどうか
 
 
 	Anim m_anim;

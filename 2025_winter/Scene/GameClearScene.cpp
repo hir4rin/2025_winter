@@ -102,7 +102,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	}
 	//---------------------------------------------
 
-	if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok") )
 	{
 		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
 		return;
@@ -124,7 +124,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	//大砲から発射する処理
 	if (isCannon)
 	{
-		if (input.IsTriggered("Jump"))
+		if (input.IsTriggered("Jump") ||input.IsTriggered("Attack"))
 		{
 			isFlying = true;
 			isCannon = false;

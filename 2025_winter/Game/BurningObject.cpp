@@ -43,6 +43,7 @@ BurningObject::BurningObject(std::shared_ptr<EnemyArcher> _enemyArchers):
 
 BurningObject::~BurningObject()
 {
+	DeleteGraph(m_handle);	
 }
 
 void BurningObject::Init()

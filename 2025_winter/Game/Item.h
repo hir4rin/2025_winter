@@ -28,7 +28,17 @@ public:
 
 	ItemState GetItemState() const { return m_state; }
 
+	//アイテムが落ちたときの演出
+	void DroppedUpdate();
+	void DroppedDraw(Camera& camera);
+
+
+	
+
 private:
 	ItemState m_state;
+	//演出が生きてる時間
+	int m_aliveFrame = 0;
+	int m_angle = 0;
 };
 

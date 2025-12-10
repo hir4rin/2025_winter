@@ -30,6 +30,7 @@ Item::Item(std::shared_ptr<EnemyWizard> _enemywiz)
 
 	m_pos = kInitPos;
 	m_state = ItemState::Frozen;
+	m_vel.y = -5.0f;
 }
 Item::Item(std::shared_ptr<EnemyRider> _enemyRiders)
 {
@@ -38,6 +39,7 @@ Item::Item(std::shared_ptr<EnemyRider> _enemyRiders)
 
 	m_pos = kInitPos;
 	m_state = ItemState::Burning;
+	m_vel.y = -5.0f;
 }
 Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers)
 {
@@ -46,6 +48,7 @@ Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers)
 
 	m_pos = kInitPos;
 	m_state = ItemState::Archer;
+	m_vel.y = -5.0f;
 }
 
 Item::~Item()
@@ -94,4 +97,51 @@ void Item::Draw(Camera& camera)
 	}
 
 	
+}
+
+void Item::DroppedUpdate()
+{
+	m_aliveFrame--;
+	//effectの動き
+	// 重力を受ける
+	m_vel.y += 0.25f;
+	
+	if (m_isRight)
+	{
+		m_vel.x = -4.0f;
+		
+		//m_angleをずらす斜めぐらいまで
+	}
+	else
+	{
+		m_vel.x = 4.0f;
+	}
+
+
+	m_pos += m_vel;
+}
+
+void Item::DroppedDraw(Camera& camera)
+{
+	if (m_state == ItemState::Burning)
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		burning_cut_w * 0, burning_cut_h * 0,//切り取り左上
+		burning_cut_w, burning_cut_h,//切り取りの幅
+		burning_scale, m_angle, m_handle, true);
+	}
+	else if (m_state == ItemState::Frozen)
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		kCannonCutW * 0, kCannonCutH * 0,//切り取り左上
+		kCannonCutW, kCannonCutH,//切り取りの幅
+		kCannonScale, m_angle, m_handle, true);
+	}
+	else if (m_state == ItemState::Archer)
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		arrow_cut_w * 0, arrow_cut_h * 0,//切り取り左上
+		arrow_cut_w, arrow_cut_h,//切り取りの幅
+		arrow_scale, m_angle, m_handle, true);
+	}
 }

@@ -28,10 +28,10 @@ public:
 	/// 当たり判定を取得
 	/// </summary>
 	/// <returns>当たり判定情報</returns>
-	Rect GetColRect() const { return m_colRect; }
+	Rect GetColRect() const { return m_colRect;}
 	Vec2 GetPos()const { return m_pos; }
 	void  AddPos(Vec2 add) { m_pos += add;}
-	Vec2& ChangePos() { return m_pos; }
+	Vec2& ChangePos() { return m_pos;}
 	void AddVel(Vec2 add) { m_vel += add; }
 	Vec2& ChangeVel() { return m_vel; }
 
@@ -54,6 +54,10 @@ public:
 	/// m_isRightを反転させる
 	/// </summary>
 	void Changem_isRight() { m_isRight = !m_isRight; }
+	/// <summary>
+	/// m_isRightをセットする
+	/// </summary>
+	void Setm_isRight(bool ans) { m_isRight = ans; }
 
 protected:
 	int m_handle;
