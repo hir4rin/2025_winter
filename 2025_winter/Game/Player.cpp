@@ -429,6 +429,8 @@ void Player::AutoMove()
 		{
 			AnimSelect(Anim::Walk);
 			
+			
+			
 		}
 		if (m_vel.x <= 0.1f)
 		{
@@ -439,6 +441,14 @@ void Player::AutoMove()
 	{
 		//倍速
 		AnimFrameUpdate();
+		//エフェクトを出す
+		if (m_animframe % 3 == 0)
+		for (auto& func : onWalkEvents)
+		{
+			if (func)func();//呼び出し
+		}
+		
+		
 	}
 
 	
@@ -602,6 +612,15 @@ void Player::Move(Input& input)
 	//ここに処理を追加していく
 	if (Pad::IsPress(PAD_INPUT_LEFT))
 	{
+		//そくどの方向が変わるのなら
+		if (m_vel.x > 0 && m_isGround)
+		{
+			//エフェクトを出す
+			for (auto& func : onWalkEvents)
+			{
+				if (func)func();//呼び出し
+			}
+		}
 		m_vel.x += -accel;
 		m_isRight = false;
 
@@ -610,6 +629,15 @@ void Player::Move(Input& input)
 	else if (Pad::IsPress(PAD_INPUT_RIGHT))
 	{
 		//m_vel.x = kSpeed;
+		//そくどの方向が変わるのなら
+		if (m_vel.x < 0 && m_isGround)
+		{
+			//エフェクトを出す
+			for (auto& func : onWalkEvents)
+			{
+				if (func)func();//呼び出し
+			}
+		}
 		m_vel.x += accel;
 		m_isRight = true;
 

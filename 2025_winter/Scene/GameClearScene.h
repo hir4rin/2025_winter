@@ -6,6 +6,7 @@
 class Cannon;
 class Player;
 class Bg;
+class Effect;
 
 class GameClearScene :public Scene
 {
@@ -16,6 +17,9 @@ public:
 
 	
 
+private:
+	//エフェクト
+	std::vector<std::shared_ptr<Effect>> m_pEffects;
 
 private:
 	int m_frame = 0;	// フェードインアウト用

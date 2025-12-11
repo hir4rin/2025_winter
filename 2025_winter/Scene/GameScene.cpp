@@ -83,6 +83,9 @@ GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 	m_pPlayer->AddOnLandEvent([this]() {
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer,"star"));
 		});
+	m_pPlayer->AddOnWalkEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+		});
 }
 
 
@@ -1099,6 +1102,9 @@ void GameScene::FadeInUpdate(Input&)
 	m_pPlayer->AnimFrameUpdate();
 	if (m_pPlayer != nullptr)UpdateCamera(camera, m_pPlayer);
 
+
+	
+
 	if (m_frame-- <= 0)
 	{
 
@@ -1398,6 +1404,9 @@ void GameScene::NormalUpdate(Input& input)
 
 void GameScene::FadeOutUpdate(Input&)
 {
+
+
+
 	//ドアの描画(FadeOutDrawがないため,
 	// いったんこっちにおく)
 	m_doors->OutUpdate();
@@ -1405,6 +1414,9 @@ void GameScene::FadeOutUpdate(Input&)
 	m_doors->Draw(camera);
 	stageUI.Draw(camera);
 	m_pPlayer->Draw(camera);
+	//フェード
+	m_pBg->FadeBg(camera);
+
 
 	if (m_frame++ >= fade_interval)
 	{
@@ -1457,8 +1469,15 @@ void GameScene::ShakingUpdate(Input&)
 
 void GameScene::FadeDraw()
 {
+	
+
+
 	NormalDraw();
 	if(update_ == &GameScene::DyingUpdate)m_pPlayer->DyingDraw(camera);
+
+	//フェード
+	m_pBg->FadeBg(camera);
+
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);

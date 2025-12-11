@@ -7,6 +7,7 @@
 #include "SceneController.h"
 #include "Bg.h"
 #include "Player.h"
+#include "Effect.h"
 #include <cmath>
 #include <cassert>
 
@@ -36,6 +37,10 @@ draw_(&GameClearScene::FadeDraw)
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
 	InitCamera(camera);//カメラの初期化
+
+	m_pPlayer->AddOnWalkEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dustForClear"));
+			});
 }
 
 void GameClearScene::FadeInUpdate(Input&)
@@ -149,15 +154,16 @@ void GameClearScene::NormalUpdate(Input& input)
 		//大砲から飛び出した後の処理
 		//isFlying = false;
 	}
-
-
-	//デバッグ用
-	/*if (input.IsTriggered("Jump"))
+	//エフェクトのUpdate
+	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
 	{
-		isCannon = false;
-		isFlying = false;
-	}*/
+		(*effect)->Update();
 
+		if ((*effect)->IsDead())
+			effect = m_pEffects.erase(effect);  // ← 安全に削除
+		else
+			++effect;
+	}
 	if (isArrived)
 			{
 		update_ = &GameClearScene::FadeOutUpdate;
@@ -165,6 +171,8 @@ void GameClearScene::NormalUpdate(Input& input)
 		m_frame = 0;
 		return;
 	}
+
+	
 
 
 }
@@ -176,9 +184,21 @@ void GameClearScene::FadeOutUpdate(Input&)
 	ToArrivedAtGoal();
 	m_pPlayer->AnimFrameUpdate();
 	m_pPlayer->AutoMove();
+
+	//エフェクトのUpdate
+	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
+	{
+		(*effect)->Update();
+
+		if ((*effect)->IsDead())
+			effect = m_pEffects.erase(effect);  // ← 安全に削除
+		else
+			++effect;
 	}
 
-	NormalDraw();
+	}
+
+	//NormalDraw();
 	if (m_frame++ >= fade_interval * 5)
 	{
 		//delete m_pCharacter;
@@ -246,6 +266,13 @@ void GameClearScene::NormalDraw()
 
 	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
 	m_pCannon->Draw(camera);
+
+
+	for (auto& effect : m_pEffects)
+	{
+		if (effect) effect->Draw(camera);
+	}
+
 }
 
 void GameClearScene::ToArrivedAtGoal()

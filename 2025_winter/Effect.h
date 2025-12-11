@@ -6,6 +6,13 @@
 class Camera;
 class Player;
 
+enum class EffectType
+{
+	Star,
+	Dust,
+	DustForClear
+};
+
 class Effect : public Character
 {
 public:
@@ -20,8 +27,13 @@ public:
 
 	bool IsDead() { return m_aliveFrame <= 0; }
 private:
+	int m_animFrame;
+	int charaIdx;
+	int charaIdy;
 	int m_aliveFrame;
 	bool m_starDir;
+
+	EffectType m_type;
 
 };
 

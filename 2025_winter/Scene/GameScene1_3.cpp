@@ -92,6 +92,9 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 	m_pPlayer->AddOnLandEvent([this]() {
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "star"));
 		});
+	m_pPlayer->AddOnWalkEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+		});
 }
 
 

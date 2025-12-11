@@ -130,6 +130,10 @@ public:
 	void AddOnLandEvent(const std::function<void()>& eventFunc) {
 		onLandEvents.push_back(eventFunc);
 	}
+	std::vector<std::function<void()>> onWalkEvents;
+	void AddOnWalkEvent(const std::function<void()>& eventFunc) {
+		onWalkEvents.push_back(eventFunc);
+	}
 
 private:
 	void InputUpdate(Input& input);//入力の更新

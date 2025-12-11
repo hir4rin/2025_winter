@@ -16,6 +16,9 @@ public:
 	/// <param name="stagenum">stage番号のint型を入れる</param>
 	Bg(std::shared_ptr<Player> pPlayer,int stagenum);
 	
+	void FadeBg(Camera& camera);
+
+
 	void Init();
 	void Update();
 	void Draw(Camera& camera);
@@ -91,8 +94,10 @@ private:
 	int m_bgH3 = -1;
 	int m_bgH4 = -1;
 private:
-	int m_bgH;
-	int m_mapH;
+	int m_bgH=-1;
+	int m_mapH = -1;
+	int m_fadeH = -1;
+	float m_extRate;
 	Vec2 m_pos;
 	std::shared_ptr<Player>  m_pPlayer;
 	int m_mapData;//マップデータ
