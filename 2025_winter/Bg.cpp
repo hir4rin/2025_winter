@@ -160,7 +160,7 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 
 }
 
-void Bg::FadeBg(Camera& camera)
+void Bg::FadeInBg(Camera& camera)
 {
 	m_extRate += 0.2;
 
@@ -198,6 +198,45 @@ void Bg::FadeBg(Camera& camera)
 		m_extRate, 0,//拡大率、回転
 		m_fadeH, true);
 
+}
+
+void Bg::FadeOutBg(Camera& camera)
+{
+	m_extRate -= 0.2;
+
+	//画像サイズを取得
+	//Bgのサイズ
+	Size bgSize = { 0,0 };
+
+	GetGraphSize(m_fadeH, &bgSize.width, &bgSize.height);
+
+	//画像の4てんの座標を求める用
+
+	float cx = m_pPlayer->GetPos().x + camera.drawOffset.x;
+	float cy = m_pPlayer->GetPos().y + camera.drawOffset.y;
+
+	float halfW = bgSize.width * m_extRate / 2.0f;
+	float halfH = bgSize.height * m_extRate / 2.0f;
+
+	float leftX = cx - halfW;
+	float rightX = cx + halfW;
+	float topY = cy - halfH;
+	float bottomY = cy + halfH;
+
+	//左上
+	DrawBox(0, 0, rightX, topY, GetColor(0, 0, 0), true);
+	//左下
+	DrawBox(0, kScreenSizeHeight, leftX, topY, GetColor(0, 0, 0), true);
+	//右上
+	DrawBox(rightX, 0, kScreenSizeWidth, bottomY, GetColor(0, 0, 0), true);
+	//右下
+	DrawBox(leftX, bottomY, kScreenSizeWidth, kScreenSizeHeight, GetColor(0, 0, 0), true);
+
+	DrawRectRotaGraph(m_pPlayer->GetPos().x + camera.drawOffset.x, m_pPlayer->GetPos().y + camera.drawOffset.y,
+		0, 0,
+		bgSize.width, bgSize.height,
+		m_extRate, 0,//拡大率、回転
+		m_fadeH, true);
 }
 
 

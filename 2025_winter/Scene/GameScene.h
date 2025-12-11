@@ -119,6 +119,8 @@ private:
 	//-----------------------Drawメンバ関数ポインタ------------------------
 
 	void FadeDraw();
+	void FadeInDraw();
+	void FadeOutDraw();
 	void NormalDraw();
 	using DrawFunc_t = void(GameScene::*)();
 	DrawFunc_t draw_;	// Draw系を受け取るメンバ関数ポインタ

@@ -79,8 +79,7 @@ void EnemyArcher::Draw()
 }
 void EnemyArcher::Draw(Camera& camera)
 {
-	//当たり判定の描画
-	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
+	
 	float drawX = 0;
 	float drawY = 0;
 
@@ -138,8 +137,12 @@ void EnemyArcher::Draw(Camera& camera)
 			m_handle, true, true);
 	}
 
+#ifdef _DEBUG
+	//当たり判定の描画
+	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
 	//キャラとプレイヤーとの距離を表示
 	DrawBox(m_pos.x - catchDistance  + camera.drawOffset.x, 0, m_pos.x + catchDistance + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
+#endif
 }
 
 void EnemyArcher::AnimChange(const EnemyState state)

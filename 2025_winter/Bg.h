@@ -16,7 +16,9 @@ public:
 	/// <param name="stagenum">stage番号のint型を入れる</param>
 	Bg(std::shared_ptr<Player> pPlayer,int stagenum);
 	
-	void FadeBg(Camera& camera);
+	void FadeInBg(Camera& camera);
+
+	void FadeOutBg(Camera& camera);
 
 
 	void Init();

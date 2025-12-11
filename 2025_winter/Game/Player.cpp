@@ -106,6 +106,12 @@ namespace
 
 
 
+
+	//カメラ
+	constexpr int ScreenHeight = 1080;
+	//カメラから持ってきた
+	const float topPos = ScreenHeight * 0.75;
+
 }
 
 
@@ -237,6 +243,10 @@ void Player::Update(Input& input)
 	if (m_pos.x < 0)//画面外に出ないようにする
 	{
 		m_pos.x = 0;
+	}
+	if (m_pos.y < 0 + (ScreenHeight - topPos))//画面外に出ないようにする(本当は+drawOffsetCamera)
+	{
+		m_pos.y = 0 + (ScreenHeight -topPos);
 	}
 
 }
@@ -735,13 +745,13 @@ void Player::Attack()
 	{
 	case PlayerType::Normal:
 		//Normalの攻撃アニメーション              //右の判定：左の判定
-		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -90.0f), m_pos.y - kCharaSize, 80.0f, 80.0f);//50
+		m_attackRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -120.0f), m_pos.y - kCharaSize, 110.0f, 80.0f);//100
 		break;
 	case PlayerType::Burning:                     //右の判定：左の判定
 		m_burningRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -100.0f), m_pos.y - kCharaSize, 90.0f, 80.0f);//80
 		break;
 	case PlayerType::Frozen:                     //右の判定：左の判定
-		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -120.0f), m_pos.y - kCharaSize, 110.0f, 100.0f);//100
+		m_frozenRect.SetLT(m_pos.x + (m_isRight ? 10.0f : -140.0f), m_pos.y - kCharaSize, 130.0f, 110.0f);//120
 		break;
 	case PlayerType::Archer:
 		m_archerRect.SetLT(0, 0, 0, 0);

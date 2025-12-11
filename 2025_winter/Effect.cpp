@@ -143,7 +143,7 @@ void Effect::Draw(Camera& camera)
 		 kDustForClearScale, 0.0f,//左が拡大率、右が回転率
 		 m_handle,
 		 true,
-		 m_starDir ? false : true,//反転するかどうか
+		 true,//反転するかどうか
 		  false);
 		
 		

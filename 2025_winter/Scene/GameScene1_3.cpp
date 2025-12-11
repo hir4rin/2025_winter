@@ -29,7 +29,7 @@ namespace
 	constexpr int kScreenWidth = 1920;
 	constexpr int kScreenHeight = 1080;
 
-	constexpr int fade_interval = 60;
+	constexpr int fade_interval = 75;
 	constexpr int copy_interval = 45;
 
 	constexpr int shake_interval = 30;
@@ -43,7 +43,7 @@ namespace
 GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 	Scene(controller),
 	update_(&GameScene1_3::FadeInUpdate),
-	draw_(&GameScene1_3::FadeDraw)
+	draw_(&GameScene1_3::FadeInDraw)
 
 {
 	//実質Initの使い方
@@ -1193,14 +1193,14 @@ void GameScene1_3::NormalUpdate(Input& input)
 	if (input.IsTriggered("ok"))
 	{
 		update_ = &GameScene1_3::FadeOutUpdate;
-		draw_ = &GameScene1_3::FadeDraw;
+		draw_ = &GameScene1_3::FadeOutDraw;
 	}
 #endif // _DEBUG
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{
 		update_ = &GameScene1_3::FadeOutUpdate;
-		draw_ = &GameScene1_3::FadeDraw;
+		draw_ = &GameScene1_3::FadeOutDraw;
 		m_frame = 0;
 	}
 
@@ -1383,13 +1383,9 @@ void GameScene1_3::NormalUpdate(Input& input)
 
 void GameScene1_3::FadeOutUpdate(Input&)
 {
-	//ドアの描画(FadeOutDrawがないため,
-	// いったんこっちにおく)
+	
 	m_doors->OutUpdate();
-	m_pBg->Draw(camera);
-	m_doors->Draw(camera);
-	stageUI.Draw(camera);
-	m_pPlayer->Draw(camera);
+	
 
 	if (m_frame++ >= fade_interval)
 	{
@@ -1447,6 +1443,38 @@ void GameScene1_3::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 
+
+}
+void GameScene1_3::FadeInDraw()
+{
+
+	NormalDraw();
+	
+	//フェード
+	m_pBg->FadeInBg(camera);
+
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
+	//DrawBox(0, 0, 640, 480, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+
+
+}
+void GameScene1_3::FadeOutDraw()
+{
+	//フェードアウト用の処理
+	NormalDraw();
+
+	//フェード
+	m_pBg->FadeOutBg(camera);
+
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
+	//DrawBox(0, 0, screenWidth, screenHeight, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 }
 
