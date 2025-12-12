@@ -116,7 +116,7 @@ namespace
 
 
 
-Player::Player(PlayerType type,int hp) :
+Player::Player(PlayerType type,int hp,Vec2 pos) :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -131,9 +131,15 @@ Player::Player(PlayerType type,int hp) :
 	damageCount(0),
 	m_angle(0.0f),
 	m_wasGround(false),
-	m_hp(hp)//HPは後で引継ぎできるように変える
+	m_hp(hp),//HPは後で引継ぎできるように変える,
+	m_lastTapTime(0),
+	m_lastTapDir(-1),
+	m_isDash(false),
+	isRotateOne(false),
+	m_rotateFrame(0)
+
 {
-	m_pos = kInitPos;
+	m_pos = pos;
 	m_handle = LoadGraph("data/Game/player.png");
 	assert(m_handle >= 0);
 	m_anim = Anim::Idle;
@@ -196,6 +202,42 @@ void Player::Update(Input& input)
 
 	InputUpdate(input);//特殊行動の入力検知
 
+	//ダッシュ状態検知
+	//入力した方向
+	int dir = 0;
+	if (input.IsTriggered("right"))dir = 1;
+	if (input.IsTriggered("left"))dir = -1;
+
+	int nowFrame = m_frame;// 毎フレーム +1 してるカウンタ
+
+	if (dir != 0)
+	{
+		//前回と同じ方向を、一定時間内に2回押したらダッシュ
+		if (m_lastTapDir == dir && (nowFrame - m_lastTapTime) < doubleTapThreshold)
+		{
+			m_isDash = true;
+			//エフェクトを出す
+			for (auto& func : onDashEvents)
+			{
+				if (func)func();//呼び出し
+			}
+		}
+
+
+		//押した情報を記録
+		//(もっといい保存がありそう)
+		m_lastTapDir = dir;
+		m_lastTapTime = nowFrame;
+
+	}
+	//ダッシュ状態の解除
+	if (!input.IsPressed("right") && !input.IsPressed("left"))
+	{
+		m_isDash = false;
+	}
+
+
+
 	switch (m_state)
 	{
 	case PlayerState::Normal://アップデートの遷移
@@ -239,6 +281,8 @@ void Player::Update(Input& input)
 			AnimSelect(Anim::Idle);
 		}
 	}
+
+	
 
 	if (m_pos.x < 0)//画面外に出ないようにする
 	{
@@ -319,14 +363,14 @@ void Player::Draw(Camera& camera)
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y+ kCharaSize/4,
 		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, 0.0f, m_handle, true);
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true);
 	}
 	else
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + kCharaSize / 4,
 		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
-		kPlayerScale, 0.0f, m_handle, true, true);
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
 	}
 	
 #ifdef _DEBUG
@@ -394,6 +438,41 @@ void Player::DyingDraw(Camera& camera)
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
 	}
+}
+
+void Player::RotateUpdate()
+{
+	m_rotateFrame++;
+	if (m_rotateFrame >= 60)
+	{
+		if (!isRotateOne)isRotateOne = true;
+	}
+
+	if (isRotateOne)
+	{
+		m_angle += 15.0f;//回転角度
+		if (m_angle >= 360)
+		{
+			m_angle = 0;//きれいに戻す
+			isRotateOne = false;
+			
+			if (m_rotateNum < 1)//すぐ回転させるため
+			{
+				m_rotateNum++;
+				m_rotateFrame = 45;
+			}
+			else if (m_rotateNum == 1)//最大回転数分したら0に戻す
+			{
+				m_rotateNum = 0;
+				m_rotateFrame = 0;
+			}
+		}
+	}
+}
+
+void Player::RotateFinishUpdate()
+{
+	m_angle = std::lerp(m_angle, 360.0f, 0.5);
 }
 
 void Player::AutoMoveStart()
@@ -620,8 +699,12 @@ void Player::Move(Input& input)
 	AnimSelect(m_anim);
 	if (isNomove)return;
 	//ここに処理を追加していく
+	
+	
+
 	if (Pad::IsPress(PAD_INPUT_LEFT))
 	{
+		
 		//そくどの方向が変わるのなら
 		if (m_vel.x > 0 && m_isGround)
 		{
@@ -638,6 +721,7 @@ void Player::Move(Input& input)
 	}
 	else if (Pad::IsPress(PAD_INPUT_RIGHT))
 	{
+		
 		//m_vel.x = kSpeed;
 		//そくどの方向が変わるのなら
 		if (m_vel.x < 0 && m_isGround)
@@ -667,10 +751,26 @@ void Player::Move(Input& input)
 		}
 
 	}
+
+	
+
+	
+
+
 	//速度制限
 	if (m_vel.x > kSpeed)m_vel.x = kSpeed;
 	if (m_vel.x < -kSpeed)m_vel.x = -kSpeed;
 	//---------------------------
+
+	if (m_isDash)
+	{
+		//ダッシュのスピードに設定
+		m_vel.x = m_isRight ? kSpeed*1.5f : -kSpeed*1.5f;
+	}
+
+	
+
+
 	if (m_anim != Anim::Jump)
 	{
 		if (m_vel.x > 0.1f || m_vel.x < -0.1f)
@@ -682,6 +782,9 @@ void Player::Move(Input& input)
 			AnimSelect(Anim::Idle);
 		}
 	}
+
+
+
 }
 void Player::Jump(Input& input)
 {

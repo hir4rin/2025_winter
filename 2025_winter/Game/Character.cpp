@@ -235,7 +235,7 @@ HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
 		{
 			
 			m_pos.y = chipRect.GetBottom() + kCharaSize * 0.5f;
-			m_vel.y *= -1.0f;
+			m_vel.y = 0.0f;
 			ans.top = true;
 		}
 

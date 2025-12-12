@@ -43,7 +43,7 @@ public:
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="hp"></param>
-	Player(PlayerType type,int hp);
+	Player(PlayerType type,int hp,Vec2 pos);
 	virtual ~Player();
 
 	virtual void Init() override;
@@ -109,6 +109,10 @@ public:
 	void Death();
 	void DyingUpdate();
 	void DyingDraw(Camera& camera);
+
+	void RotateUpdate();
+	void RotateFinishUpdate();
+
 	//m_animFrameを外部から更新するため
 	void AnimFrameUpdate() { m_animframe++; }
 
@@ -134,6 +138,11 @@ public:
 	void AddOnWalkEvent(const std::function<void()>& eventFunc) {
 		onWalkEvents.push_back(eventFunc);
 	}
+	std::vector<std::function<void()>> onDashEvents;
+	void AddOnDashEvent(const std::function<void()>& eventFunc) {
+		onDashEvents.push_back(eventFunc);
+	}
+	
 
 private:
 	void InputUpdate(Input& input);//入力の更新
@@ -196,11 +205,13 @@ private:
 	
 private:
 	int m_frame;
+	int m_rotateFrame;//回転させるときのフレーム
 	int m_junpTimer = 0;//クリアシーンで使う用のタイマー
 	int m_jumpTime = 20;
 
 	int m_wasGround;//前のフレームで地面にいたかどうか
 
+	int m_rotateNum = 0;//回転した回数
 
 	Anim m_anim;
 
@@ -215,6 +226,7 @@ private:
 	int charaIdy;
 	bool isNomove;
 	bool isJumping;
+	bool isRotateOne;
 	
 	const int arrowTime = 30;//発射クールタイム
 
@@ -241,5 +253,16 @@ private:
 	Rect m_frozenRect;//攻撃判定
 	//アーチャー
 	Rect m_archerRect;//攻撃判定
+
+private:
+	//前回方向キーが押された時刻
+     float m_lastTapTime;
+	//前押した方向
+	int m_lastTapDir;
+	//ダッシュ中かどうか
+	bool m_isDash;
+		//2回押しの猶予時間
+		const float doubleTapThreshold = 30.0f;
+
 };
 

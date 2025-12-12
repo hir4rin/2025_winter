@@ -22,7 +22,7 @@ void TitleScene::FadeInUpdate(Input&)
 
 void TitleScene::NormalUpdate(Input& input)
 {
-	if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok") || input.IsTriggered("Attack")|| input.IsTriggered("Jump")|| input.IsTriggered("Copy")|| input.IsTriggered("CopyOut")|| input.IsTriggered("pause"))
 	{
 		update_ = &TitleScene::FadeOutUpdate;
 		draw_ = &TitleScene::FadeDraw;
@@ -43,9 +43,9 @@ void TitleScene::FadeOutUpdate(Input&)
 void TitleScene::NormalDraw()
 {
 
-	DrawFormatString(1920/2, 1080/2, 0xffffff, "Title Scene: Press 'OK' to Start");
-	//const auto& wsize = Application::GetInstance().GetWindowSize();
-	//DrawRotaGraph(wsize.w / 2, wsize.h / 2, 1.0f, 0.0f, titleH_, true);
+	DrawFormatString(1920*4/10, 1080 *3/4, 0xffffff, "Title Scene: Press 'ANY BUTTON' to Start");
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	DrawRotaGraph(wsize.w / 2, wsize.h* 1/ 3, 0.8f, 0.0f, m_titleH, true);
 	//DrawRotaGraph(wsize.w / 2, wsize.h / 2, 0.75f, 0.0f, titleLogoH_, true);
 }
 
@@ -68,6 +68,10 @@ TitleScene::TitleScene(SceneController& controller) : Scene(controller)
 	update_ = &TitleScene::FadeInUpdate;
 	draw_ = &TitleScene::FadeDraw;
 	frame_ = fade_interval;
+
+	m_titleH = LoadGraph("data/TitleLogo.png");
+	
+
 }
 
 void TitleScene::Update(Input& input)

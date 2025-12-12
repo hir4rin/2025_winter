@@ -25,5 +25,7 @@ public:
 	TitleScene(SceneController& controller);
 	void Update(Input& input) override;
 	void Draw()override;
+private:
+	int m_titleH = -1;
 };
 

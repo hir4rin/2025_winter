@@ -68,7 +68,7 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 	
 	//-----------------------------------------------------------------
 	m_frame = fade_interval;// フェードインの最初
-	m_pPlayer = std::make_shared<Player>(type,hp);
+	m_pPlayer = std::make_shared<Player>(type,hp, Vec2{ 100,800 });
 	InitCamera(camera);//カメラの初期化
 	m_pBg = new Bg(m_pPlayer, 3);
 	m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
@@ -95,6 +95,9 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 	m_pPlayer->AddOnWalkEvent([this]() {
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
 		});
+	m_pPlayer->AddOnDashEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+	});
 }
 
 
@@ -1102,10 +1105,10 @@ void GameScene1_3::FadeInUpdate(Input&)
 void GameScene1_3::NormalUpdate(Input& input)
 {
 	//----カメラの位置-----------------------------------
-	float left = camera.pos.x - screenWidth / 2 + 10;
-	float right = camera.pos.x + screenWidth / 2 - 10;
-	float top = camera.pos.y - cameraMargin;
-	float bottom = camera.pos.y + screenHeight + cameraMargin;
+	float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
+	float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
+	float top = camera.pos.y - cameraframeMargin;
+	float bottom = camera.pos.y + screenHeight + cameraframeMargin;
 	//----------------------------------------------------
 
 	//復活チェック

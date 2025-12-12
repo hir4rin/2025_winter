@@ -32,7 +32,7 @@ update_(&GameClearScene::FadeInUpdate),
 draw_(&GameClearScene::FadeDraw)
 {
 	m_pCannon = std::make_shared<Cannon>();
-	m_pPlayer = std::make_shared<Player>(type, 100);
+	m_pPlayer = std::make_shared<Player>(type, 100, Vec2{ 100,800 });
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -458,6 +458,16 @@ void GameClearScene::ToArrivedAtGoal()
 	default:
 		assert("Error:Rank out of range");
 		break;
+	}
+
+	if (!isSlowDown && isFlying)
+	{
+		//いったん回転させる
+		m_pPlayer->RotateUpdate();
+	}
+	if (isSlowDown)
+	{
+		m_pPlayer->RotateFinishUpdate();
 	}
 }
 
