@@ -57,16 +57,18 @@ void EnemyWizard::Update()
 		WalkUpdate();
 		break;
 	case EnemyState::Attack:
-		
 		//Attackのアップデート
 		AttackUpdate();
 		break;
+	case EnemyState::Damage:
+		//DamageのUpdate
+		DamageUpdate();
 	default:
 		break;
 	}
 	
 		
-	Character::Update();
+	Enemy::Update();
 	
 }
 
@@ -109,7 +111,10 @@ void EnemyWizard::Draw(Camera& camera)
 			}
 			
 			break;
-	case EnemyState::Damage://Damage
+	case EnemyState::Damage://Damage(一旦ノーマルのやつ)
+		charaIdx = (m_animframe / 8) % 2;
+		charaIdy = 0;
+		drawY -= enemy_cut_h / 2;
 			break;
 		default:
 			break;
@@ -196,6 +201,13 @@ void EnemyWizard::AttackUpdate()
 	}
 
 }
+
+void EnemyWizard::DamageUpdate()
+{
+	Enemy::DamageUpdate();
+
+}
+
 void EnemyWizard::Attack()
 {
 	//実際に攻撃をする処理

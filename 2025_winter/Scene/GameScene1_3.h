@@ -195,6 +195,8 @@ private:
 
 	Camera camera;//カメラのためのオブジェクト
 	StageUI stageUI;//UI
-
+	private:
+		//Update省略の関数たち
+		void CheckSpawns();
 };
 

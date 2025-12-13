@@ -90,13 +90,13 @@ GameScene1_3::GameScene1_3(SceneController& controller,PlayerType type,int hp) :
 
 	//playerの状態によってエフェクトを出す
 	m_pPlayer->AddOnLandEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "star"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star"));
 		});
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
 		});
 	m_pPlayer->AddOnDashEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
 	});
 }
 
@@ -503,6 +503,9 @@ void GameScene1_3::CheckHitNormal()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
@@ -1104,75 +1107,8 @@ void GameScene1_3::FadeInUpdate(Input&)
 
 void GameScene1_3::NormalUpdate(Input& input)
 {
-	//----カメラの位置-----------------------------------
-	float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
-	float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
-	float top = camera.pos.y - cameraframeMargin;
-	float bottom = camera.pos.y + screenHeight + cameraframeMargin;
-	//----------------------------------------------------
-
-	//復活チェック
-	for (auto& spawn : m_enemySpawns)
-	{
-		if (spawn.wasKilled)
-		{
-			bool leftout = spawn.pos.x < left;
-			bool rightout = spawn.pos.x > right;
-			if (leftout || rightout)
-			{
-				spawn.wasKilled = false;//復活可能
-			}
-		}
-
-	}
-
-
-	//生成
-	for (auto& spawn : m_enemySpawns)//敵の生成する場所
-	{
-		if (!spawn.spawned && !spawn.wasKilled)//spawnされてなかったら//復活できる状態だったら
-		{
-
-			if (IsInCamera(spawn.pos.x, spawn.pos.y))//カメラの中にいたら
-			{
-				spawn.spawned = true;
-
-				if (spawn.type == EnemyType::Wizard)
-				{
-					auto enemy = std::make_shared<EnemyWizard>();
-					enemy->SetBgPointer(m_pBg);
-
-					enemy->SetPlayer(m_pPlayer);
-					enemy->SetState(spawn.state);
-					enemy->AddPos(spawn.pos);
-					enemy->SetInitialID(spawn.pos);
-					m_pEnemyWizards.push_back(enemy);
-				}
-				else if (spawn.type == EnemyType::Rider)
-				{
-					auto enemy = std::make_shared<EnemyRider>();
-					enemy->SetBgPointer(m_pBg);
-					enemy->SetPlayer(m_pPlayer);
-					enemy->SetState(spawn.state);
-					enemy->AddPos(spawn.pos);
-					enemy->SetInitialID(spawn.pos);
-					m_pEnemyRiders.push_back(enemy);
-				}
-				else if (spawn.type == EnemyType::Archer)
-				{
-					auto enemy = std::make_shared<EnemyArcher>();
-					enemy->SetBgPointer(m_pBg);
-					enemy->SetPlayer(m_pPlayer);
-					enemy->SetState(spawn.state);
-					enemy->AddPos(spawn.pos);
-					enemy->SetInitialID(spawn.pos);
-					m_pEnemyArchers.push_back(enemy);
-
-				}
-			}
-
-		}
-	}
+	//復活、生成チェック
+	CheckSpawns();
 
 	//プレイヤーのHPを引き渡す
 	stageUI.SetHp(m_pPlayer->GetHp());
@@ -1654,6 +1590,81 @@ bool GameScene1_3::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rec
 	// t0～t1 の間で交差が確認されたらヒット
 	return true;
 }
+
+void GameScene1_3::CheckSpawns()
+{
+	//----カメラの位置-----------------------------------
+	float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
+	float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
+	float top = camera.pos.y - cameraframeMargin;
+	float bottom = camera.pos.y + screenHeight + cameraframeMargin;
+	//----------------------------------------------------
+
+	//復活チェック
+	for (auto& spawn : m_enemySpawns)
+	{
+		if (spawn.wasKilled)
+		{
+			bool leftout = spawn.pos.x < left;
+			bool rightout = spawn.pos.x > right;
+			if (leftout || rightout)
+			{
+				spawn.wasKilled = false;//復活可能
+			}
+		}
+
+	}
+
+
+	//生成
+	for (auto& spawn : m_enemySpawns)//敵の生成する場所
+	{
+		if (!spawn.spawned && !spawn.wasKilled)//spawnされてなかったら//復活できる状態だったら
+		{
+
+			if (IsInCamera(spawn.pos.x, spawn.pos.y))//カメラの中にいたら
+			{
+				spawn.spawned = true;
+
+				if (spawn.type == EnemyType::Wizard)
+				{
+					auto enemy = std::make_shared<EnemyWizard>();
+					enemy->SetBgPointer(m_pBg);
+
+					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyWizards.push_back(enemy);
+				}
+				else if (spawn.type == EnemyType::Rider)
+				{
+					auto enemy = std::make_shared<EnemyRider>();
+					enemy->SetBgPointer(m_pBg);
+					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyRiders.push_back(enemy);
+				}
+				else if (spawn.type == EnemyType::Archer)
+				{
+					auto enemy = std::make_shared<EnemyArcher>();
+					enemy->SetBgPointer(m_pBg);
+					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyArchers.push_back(enemy);
+
+				}
+			}
+
+		}
+	}
+
+}
+
 
 void GameScene1_3::Update(Input& input)
 {

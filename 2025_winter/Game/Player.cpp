@@ -210,7 +210,7 @@ void Player::Update(Input& input)
 
 	int nowFrame = m_frame;// 毎フレーム +1 してるカウンタ
 
-	if (dir != 0)
+	if (dir != 0 && m_isGround)
 	{
 		//前回と同じ方向を、一定時間内に2回押したらダッシュ
 		if (m_lastTapDir == dir && (nowFrame - m_lastTapTime) < doubleTapThreshold)

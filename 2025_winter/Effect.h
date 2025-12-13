@@ -10,13 +10,14 @@ enum class EffectType
 {
 	Star,
 	Dust,
-	DustForClear
+	DustForClear,
+	BlueStarLight
 };
 
 class Effect : public Character
 {
 public:
-	Effect(std::shared_ptr <Player> _player,std::string name);
+	Effect(Vec2 pos,std::string name);
 	virtual ~Effect();
 
 	void Init()override;

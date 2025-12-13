@@ -32,6 +32,7 @@ private:
 	void NormalUpdate();
 	void WalkUpdate();
 	void AttackUpdate();
+	void DamageUpdate();
 
 	void Attack();//実際に攻撃をする処理
 	

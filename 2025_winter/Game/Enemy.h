@@ -39,6 +39,14 @@ public :
 	void Init() override;
 	void Update()override;
 	void Draw()override;
+
+
+	//stateをDamageに変える
+	void HitDamaged() { _state = EnemyState::Damage; }
+	void DamageUpdate();
+	bool GetisDead() { return m_isDead; }
+
+
 	//ここは引き数を変えるだけにして、簡単にする
 	/// <summary>
 	/// ドロップアイテムを渡すよう
@@ -59,6 +67,9 @@ public :
 protected:
 	Vec2 m_initialID;
 	EnemyState _state;
+	bool m_isDead;
+protected:
+	int m_damageFrame;
 
 };
 

@@ -25,17 +25,25 @@ namespace
 	constexpr float kDustForClearScale = 4.0f;
 	constexpr int kDustForClearAnimDuration = 10;
 	constexpr int kDustForClearAnimNum = 9;
+	//blueStarLight
+	constexpr int kBlueStarLightCutW = 16;
+	constexpr int kBlueStarLightCutH = 16;
+	constexpr int kBlueStarLightSorW = 14*16;
+	constexpr int kBlueStarLightSorH = 12*16;
+	constexpr float kBlueStarLightScale = 4.0f;
+	constexpr int kBlueStarLightAnimDuration = 10;
+	constexpr int kBlueStarLightAnimNum = 4;
 
 }
 
-Effect::Effect(std::shared_ptr<Player> _player,std::string name):
+Effect::Effect(Vec2 pos,std::string name):
 	m_aliveFrame(20),
 	m_starDir(true),
 	charaIdx(0),
 	charaIdy(0),
 	m_animFrame(0)
 {
-	m_pos = _player->GetPos();
+	m_pos = pos;
 	if (name == "star")
 	{
 		m_type = EffectType::Star;
@@ -61,6 +69,11 @@ Effect::Effect(std::shared_ptr<Player> _player,std::string name):
 		m_type = EffectType::DustForClear;
 		m_handle = LoadGraph("data/Game/dustForClear.png");
 		assert(m_handle != -1 && "Failed to load  image");
+	}
+	if (name == "blueStarLight")
+	{
+		m_type = EffectType::BlueStarLight;
+		m_handle = LoadGraph("data/Game/WaterEffect.png");
 	}
 	
 }
@@ -90,6 +103,9 @@ void Effect::Update()
 			
 			break;
 		case EffectType::DustForClear:
+			
+			break;
+		case EffectType::BlueStarLight:
 			
 			break;
 
@@ -141,6 +157,21 @@ void Effect::Draw(Camera& camera)
 		 kDustForClearCutW * charaIdx, 0,//切り取り座標
 		 kDustForClearCutW, kDustForClearCutH,//切り取りの幅
 		 kDustForClearScale, 0.0f,//左が拡大率、右が回転率
+		 m_handle,
+		 true,
+		 true,//反転するかどうか
+		  false);
+		
+		
+		break;
+	case EffectType::BlueStarLight://BlueStarLightの描画処理
+		charaIdx = (m_animFrame / kBlueStarLightAnimDuration) % kBlueStarLightAnimNum;
+		
+		
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		 kBlueStarLightSorW+ kBlueStarLightCutW * charaIdx, kBlueStarLightSorH,//切り取り座標
+		 kBlueStarLightCutW, kBlueStarLightCutH,//切り取りの幅
+		 kBlueStarLightScale, 0.0f,//左が拡大率、右が回転率
 		 m_handle,
 		 true,
 		 true,//反転するかどうか

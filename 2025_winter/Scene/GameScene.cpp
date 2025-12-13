@@ -81,13 +81,13 @@ GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
 
 	//playerの状態によってエフェクトを出す
 	m_pPlayer->AddOnLandEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer,"star"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star"));
 		});
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
 		});
 	m_pPlayer->AddOnDashEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
 		});
 
 }
@@ -499,6 +499,9 @@ void GameScene::CheckHitNormal()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
@@ -1120,75 +1123,10 @@ void GameScene::FadeInUpdate(Input&)
 
 void GameScene::NormalUpdate(Input& input)
 {
-	//----カメラの位置-----------------------------------
-	float left = camera.pos.x - screenWidth / 2- cameraframeMargin;
-	float right = camera.pos.x + screenWidth / 2+ cameraframeMargin;
-	float top = camera.pos.y - cameraframeMargin;
-	float bottom = camera.pos.y + screenHeight + cameraframeMargin;
-	//----------------------------------------------------
-
-	//復活チェック
-	for (auto& spawn : m_enemySpawns)
-	{
-		if (spawn.wasKilled)
-		{
-			bool leftout = spawn.pos.x < left;
-			bool rightout = spawn.pos.x > right;
-			if (leftout || rightout)
-			{
-				spawn.wasKilled = false;//復活可能
-			}
-		}
-
-	}
+	//復活、生成チェック
+	CheckSpawns();
 
 
-	//生成
-	for (auto& spawn : m_enemySpawns)//敵の生成する場所
-	{
-		if (!spawn.spawned && !spawn.wasKilled)//spawnされてなかったら//復活できる状態だったら
-		{
-
-			if (IsInCamera(spawn.pos.x, spawn.pos.y))//カメラの中にいたら
-			{
-				spawn.spawned = true;
-
-				if (spawn.type == EnemyType::Wizard)
-				{
-					auto enemy = std::make_shared<EnemyWizard>();
-					enemy->SetBgPointer(m_pBg);
-
-					enemy->SetPlayer(m_pPlayer);
-					enemy->SetState(spawn.state);
-					enemy->AddPos(spawn.pos);
-					enemy->SetInitialID(spawn.pos);
-					m_pEnemyWizards.push_back(enemy);
-				}
-				else if (spawn.type == EnemyType::Rider)
-				{
-					auto enemy = std::make_shared<EnemyRider>();
-					enemy->SetBgPointer(m_pBg);
-					enemy->SetPlayer(m_pPlayer);
-					enemy->SetState(spawn.state);
-					enemy->AddPos(spawn.pos);
-					enemy->SetInitialID(spawn.pos);
-					m_pEnemyRiders.push_back(enemy);
-				}
-				else if (spawn.type == EnemyType::Archer)
-				{
-					auto enemy = std::make_shared<EnemyArcher>();
-					enemy->SetBgPointer(m_pBg);
-					enemy->SetPlayer(m_pPlayer);
-					enemy->SetState(spawn.state);
-					enemy->AddPos(spawn.pos);
-					enemy->SetInitialID(spawn.pos);
-					m_pEnemyArchers.push_back(enemy);
-
-				}
-			}
-
-		}
-	}
 
 	//お試しテスト用
 	if (input.IsTriggered("ok"))
@@ -1255,75 +1193,86 @@ void GameScene::NormalUpdate(Input& input)
 
 		m_pPlayer->isArrowAttack = false;
 	}
-	for (auto& pEnemyArcher : m_pEnemyArchers)//敵の矢の出現
+	//敵関連
 	{
-		if (!pEnemyArcher)continue;
-		if (pEnemyArcher->isArrowAttack)
-		{
-			//ポインタを作ってその座標を入れる
-			std::shared_ptr<EnemyArrow> arrow = pEnemyArcher->ShotArrow();
-
-			//それをpush_backする
-			m_pEnemyArrows.push_back(arrow);
-
-			pEnemyArcher->isArrowAttack = false;
-		}
-
-	}
-
-
-	for (auto& enemy : m_pEnemyWizards)//ペンギン
-	{
-		if (enemy) enemy->Update();
-	}
-
-	for (auto& enemy : m_pEnemyRiders)//オークライダー
-	{
-		if (enemy) enemy->Update();
-	}
-	for (auto& enemy : m_pEnemyArchers)//狙撃手
-	{
-		if (enemy) enemy->Update();
-	}
-
 	
-	for (auto& arrow : m_arrows)//矢のアップデート
-	{
 
-		if (!arrow) continue;
-		if (arrow->isAlive == false)//矢が消えてるサインが出たらけす
+
+		for (auto& enemy : m_pEnemyWizards)//ペンギン
 		{
-			arrow = nullptr;
-			continue;
+			if (enemy) enemy->Update();
 		}
-		//敵を渡すようにする
-		arrow->Update();
-		arrow->CheckEnemys(m_pEnemyWizards);
-		arrow->CheckEnemys(m_pEnemyRiders);
-		arrow->CheckEnemys(m_pEnemyArchers);
-	}
-	for (auto& arrow : m_pEnemyArrows)//敵の矢のアップデート
-	{
 
-		if (!arrow) continue;
-		if (arrow->isAlive == false)//矢が消えてるサインが出たらけす
+		for (auto& enemy : m_pEnemyRiders)//オークライダー
 		{
-			arrow = nullptr;
-			continue;
+			if (enemy) enemy->Update();
 		}
-		//敵を渡すようにする
-		arrow->Update();
-		arrow->CheckPlayer(m_pPlayer);
+		for (auto& enemy : m_pEnemyArchers)//狙撃手
+		{
+			if (enemy) enemy->Update();
+		}
+		for (auto& pEnemyArcher : m_pEnemyArchers)//敵の矢の出現
+		{
+			if (!pEnemyArcher)continue;
+			if (pEnemyArcher->isArrowAttack)
+			{
+				//ポインタを作ってその座標を入れる
+				std::shared_ptr<EnemyArrow> arrow = pEnemyArcher->ShotArrow();
 
+				//それをpush_backする
+				m_pEnemyArrows.push_back(arrow);
+
+				pEnemyArcher->isArrowAttack = false;
+			}
+
+		}
 	}
-	for (auto& pFrozen : m_pFrozens)
+	//矢関連
 	{
-		if (pFrozen) pFrozen->Update();
+		for (auto& arrow : m_arrows)//矢のアップデート
+		{
+
+			if (!arrow) continue;
+			if (arrow->isAlive == false)//矢が消えてるサインが出たらけす
+			{
+				arrow = nullptr;
+				continue;
+			}
+			//敵を渡すようにする
+			arrow->Update();
+			arrow->CheckEnemys(m_pEnemyWizards);
+			arrow->CheckEnemys(m_pEnemyRiders);
+			arrow->CheckEnemys(m_pEnemyArchers);
+		}
+		for (auto& arrow : m_pEnemyArrows)//敵の矢のアップデート
+		{
+
+			if (!arrow) continue;
+			if (arrow->isAlive == false)//矢が消えてるサインが出たらけす
+			{
+				arrow = nullptr;
+				continue;
+			}
+			//敵を渡すようにする
+			arrow->Update();
+			arrow->CheckPlayer(m_pPlayer);
+
+		}
 	}
-	for (auto& pBurningObject : m_pBurningObjects)
+
+	//氷、炎オブジェクト
 	{
-		if (pBurningObject) pBurningObject->Update();
+		for (auto& pFrozen : m_pFrozens)
+		{
+			if (pFrozen) pFrozen->Update();
+		}
+		for (auto& pBurningObject : m_pBurningObjects)
+		{
+			if (pBurningObject) pBurningObject->Update();
+		}
 	}
+	
+	
 	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
 	{
 		(*effect)->Update();
@@ -1345,62 +1294,10 @@ void GameScene::NormalUpdate(Input& input)
 	CheckHit();//3種の攻撃の当たり判定
 	CopyAct(input);//アイテム取得の処理関連
 	CheckArrowHit();
-	//CheckItemWizard();
-	//CheckItemOrcRider();
 	CheckFrozenHit();
 	CheckPlayer();
 
-	//消える処理
-	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
-	{
-		if (!m_pEnemyWizards[i])continue;
-		auto& e = m_pEnemyWizards[i];
-		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
-		{
-			//消えるとき絶対する処理
-			//対応するspawnを復活可能にする
-			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
-			spawn.spawned = false;
-			spawn.wasKilled = true;
-
-			//インスタンスを消す
-			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
-		}
-	}
-	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//ライダー
-	{
-		if (!m_pEnemyRiders[i])continue;
-		auto& e = m_pEnemyRiders[i];
-		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
-		{
-			//消えるとき絶対する処理
-			//対応するspawnを復活可能にする
-			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
-			spawn.spawned = false;
-			spawn.wasKilled = true;
-
-			//インスタンスを消す
-			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
-		}
-	}
-	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
-	{
-		if (!m_pEnemyArchers[i])continue;
-		auto& e = m_pEnemyArchers[i];
-		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
-		{
-			//消えるとき絶対する処理
-			//対応するspawnを復活可能にする
-			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
-			spawn.spawned = false;
-			spawn.wasKilled = true;
-
-			//インスタンスを消す
-			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
-		}
-	}
-
-
+	CheckOutCamera();
 
 
 
@@ -1690,6 +1587,133 @@ bool GameScene::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)
 
 	// t0～t1 の間で交差が確認されたらヒット
 	return true;
+}
+
+void GameScene::CheckSpawns()
+{
+	//----カメラの位置-----------------------------------
+	float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
+	float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
+	float top = camera.pos.y - cameraframeMargin;
+	float bottom = camera.pos.y + screenHeight + cameraframeMargin;
+	//----------------------------------------------------
+
+	//復活チェック
+	for (auto& spawn : m_enemySpawns)
+	{
+		if (spawn.wasKilled)
+		{
+			bool leftout = spawn.pos.x < left;
+			bool rightout = spawn.pos.x > right;
+			if (leftout || rightout)
+			{
+				spawn.wasKilled = false;//復活可能
+			}
+		}
+
+	}
+
+
+	//生成
+	for (auto& spawn : m_enemySpawns)//敵の生成する場所
+	{
+		if (!spawn.spawned && !spawn.wasKilled)//spawnされてなかったら//復活できる状態だったら
+		{
+
+			if (IsInCamera(spawn.pos.x, spawn.pos.y))//カメラの中にいたら
+			{
+				spawn.spawned = true;
+
+				if (spawn.type == EnemyType::Wizard)
+				{
+					auto enemy = std::make_shared<EnemyWizard>();
+					enemy->SetBgPointer(m_pBg);
+
+					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyWizards.push_back(enemy);
+				}
+				else if (spawn.type == EnemyType::Rider)
+				{
+					auto enemy = std::make_shared<EnemyRider>();
+					enemy->SetBgPointer(m_pBg);
+					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyRiders.push_back(enemy);
+				}
+				else if (spawn.type == EnemyType::Archer)
+				{
+					auto enemy = std::make_shared<EnemyArcher>();
+					enemy->SetBgPointer(m_pBg);
+					enemy->SetPlayer(m_pPlayer);
+					enemy->SetState(spawn.state);
+					enemy->AddPos(spawn.pos);
+					enemy->SetInitialID(spawn.pos);
+					m_pEnemyArchers.push_back(enemy);
+
+				}
+			}
+
+		}
+	}
+
+}
+
+void GameScene::CheckOutCamera()
+{
+	//消える処理
+	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
+	{
+		if (!m_pEnemyWizards[i])continue;
+		auto& e = m_pEnemyWizards[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+		}
+	}
+	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//ライダー
+	{
+		if (!m_pEnemyRiders[i])continue;
+		auto& e = m_pEnemyRiders[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+		}
+	}
+	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
+	{
+		if (!m_pEnemyArchers[i])continue;
+		auto& e = m_pEnemyArchers[i];
+		if (!IsInCamera(e->GetPos().x, e->GetPos().y))
+		{
+			//消えるとき絶対する処理
+			//対応するspawnを復活可能にする
+			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
+			spawn.spawned = false;
+			spawn.wasKilled = true;
+
+			//インスタンスを消す
+			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+		}
+	}
 }
 
 void GameScene::Update(Input& input)

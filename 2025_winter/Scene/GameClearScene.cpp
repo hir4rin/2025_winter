@@ -39,7 +39,7 @@ draw_(&GameClearScene::FadeDraw)
 	InitCamera(camera);//カメラの初期化
 
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer, "dustForClear"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dustForClear"));
 			});
 }
 
