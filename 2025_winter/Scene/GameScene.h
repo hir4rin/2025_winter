@@ -30,7 +30,7 @@ class Effect;
 class GameScene : public Scene
 {
 public:
-	GameScene(SceneController& controller,PlayerType type,int hp);
+	GameScene(SceneController& controller,int stageNum,PlayerType type,int hp);
 	void Update(Input& input) override;
 	void Draw() override;
 	/// <summary>
@@ -163,6 +163,9 @@ private:
 	bool CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect);
 
 private:
+	int m_stageNum;
+
+
 	int m_frame = 0;	// フェードインアウト用
 	int m_gameFrame = 0;	// ゲーム中のフレームをカウント
 	int m_shakeTime = 0;//カメラが揺れてる間ほかを止める

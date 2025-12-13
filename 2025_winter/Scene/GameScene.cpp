@@ -17,7 +17,7 @@
 #include "Bg.h"
 #include "../input.h"
 #include "GameoverScene.h"
-#include "GameScene1_2.h"
+#include "GameScene1_3.h"
 #include "PauseScene.h"
 #include "SceneController.h"
 #include <cassert>
@@ -42,38 +42,67 @@ namespace
 }
 
 
-GameScene::GameScene(SceneController& controller,PlayerType type,int hp) :
+GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,int hp) :
 	Scene(controller),
+	m_stageNum(stageNum),
 	update_(&GameScene::FadeInUpdate),
 	draw_(&GameScene::FadeInDraw)
 
 {
-	//実質Initの使い方
+	switch (m_stageNum)
+	{
+	case 1:
+		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });//移動用
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
-	m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2100.0f,700.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
+		//-----------------------------------------------------------------
 
-	//-----------------------------------------------------------------
+
+		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+
+		m_pBg = new Bg(m_pPlayer, 1);
+		m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+
+
+		break;
+	case 2:
+		//実質Initの使い方
+	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });//移動用
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1000.0f,600.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(2000.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2600.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1884.0f,880.0f), false });//tika
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2400.0f,880.0f), false });//tika
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(3000.0f,250.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(3700.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(4750.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4000.0f,1000.0f), false });//地下
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(5100.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5600.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5650.0f,200.0f), false });
+		//-----------------------------------------------------------------
+
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+
+		m_pBg = new Bg(m_pPlayer, 2);
+		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
+		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
+		break;
+	case 3:
+
+		break;
+	}
+	
 	m_frame = fade_interval;// フェードインの最初
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,hp,Vec2{100,736});
+	
 	InitCamera(camera);//カメラの初期化
-	m_pBg = new Bg(m_pPlayer,1);
-	m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-	//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
-
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp);
-
-
-
-	//後で張り付ける
-		////敵の情報を送る
-		//arrow->SetEnemyWizard(m_pEnemyWizards);
-		//arrow->SetPlayer(m_pPlayer);
-
 
 
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -1318,8 +1347,20 @@ void GameScene::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene1_2>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp()));
-		return;
+		switch (m_stageNum)
+		{
+		case 1:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum+1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			return;
+			break;
+		case 2:
+			controller_.ChangeScene(std::make_shared<GameScene1_3>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			return;
+			break;
+		}
+
+
+		
 	}
 }
 
@@ -1346,8 +1387,22 @@ void GameScene::DyingUpdate(Input& input)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<GameScene>(controller_, PlayerType::Normal,100));
-		return;
+		switch (m_stageNum)
+		{
+		case 1:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			return;
+			break;
+		case 2:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			return;
+			break;
+		}
+
+
+
+
+	
 	}
 }
 
