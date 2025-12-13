@@ -17,7 +17,7 @@
 #include "Bg.h"
 #include "../input.h"
 #include "GameoverScene.h"
-#include "GameScene1_3.h"
+#include "GameClearScene.h"
 #include "PauseScene.h"
 #include "SceneController.h"
 #include <cassert>
@@ -93,7 +93,31 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 		break;
 	case 3:
+		//実質Initの使い方
+	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(700.0f,600.0f), false });//移動用
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1100.0f,500.0f), false });//上
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,650.0f), false });//下
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1700.0f,400.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(1700.0f,390.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(2200.0f,600.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(2700.0f,600.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2550.0f,810.0f), false });//崖下
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2800.0f,800.0f), false });//崖下
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(3150.0f,630.0f), false });//崖の上
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(4350.0f,690.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4865.0f,590.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(5315.0f,860.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(5784.0f,520.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6500.0f,520.0f), false });//崖上三連単
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6586.0f,520.0f), false });//崖上三連単
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
 
+
+		//-----------------------------------------------------------------
+
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+		m_pBg = new Bg(m_pPlayer, 3);
+		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 		break;
 	}
 	
@@ -1354,7 +1378,11 @@ void GameScene::FadeOutUpdate(Input&)
 			return;
 			break;
 		case 2:
-			controller_.ChangeScene(std::make_shared<GameScene1_3>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			return;
+			break;
+		case 3:
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType()));
 			return;
 			break;
 		}
@@ -1394,6 +1422,10 @@ void GameScene::DyingUpdate(Input& input)
 			return;
 			break;
 		case 2:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			return;
+			break;
+		case 3:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
 			return;
 			break;
