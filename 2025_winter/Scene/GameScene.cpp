@@ -119,6 +119,37 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pBg = new Bg(m_pPlayer, 3);
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 		break;
+	case 6://ステージ2_1
+
+		//敵スポーン
+		
+		//------------------------------------------------------------------
+		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+
+		m_pBg = new Bg(m_pPlayer, 6);
+		//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+		m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+		break;
+	case 7://ステージ2_2
+		//敵スポーン
+
+		//------------------------------------------------------------------
+		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+
+		m_pBg = new Bg(m_pPlayer, 7);
+		//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+		m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+		break;
+	case 8://ステージ2_3
+		//敵スポーン
+
+		//------------------------------------------------------------------
+		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+
+		m_pBg = new Bg(m_pPlayer, 8);
+		//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
+		m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+		break;
 	}
 	
 	m_frame = fade_interval;// フェードインの最初
@@ -1402,6 +1433,21 @@ void GameScene::FadeOutUpdate(Input&)
 			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType()));
 			return;
 			break;
+		case 6:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			return;
+			break;
+		case 7:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			return;
+			break;
+		case 8:
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType()));
+			return;
+			break;
+		default:
+			assert(false && "ステージ移行に失敗");
+			break;
 		}
 
 
@@ -1444,6 +1490,18 @@ void GameScene::DyingUpdate(Input& input)
 			break;
 		case 3:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			return;
+			break;
+		case 6://ステージ2_1
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100));
+			return;
+			break;
+		case 7:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100));
+			return;
+			break;
+		case 8:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100));
 			return;
 			break;
 		}

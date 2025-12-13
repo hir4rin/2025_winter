@@ -71,24 +71,37 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_mapH = LoadGraph("data/map.png");
 		m_bgH = LoadGraph("data/background.png");
 		break;
-	case 1:
+	case 1://1_1
 		m_mapH = LoadGraph("data/map.png");
 		m_bgH = LoadGraph("data/background.png");
 		break;
-	case 2:
+	case 2://1_2
 		m_mapH = LoadGraph("data/map1_2.png");
 		m_bgH = LoadGraph("data/background.png");
 		break;
-	case 3:
+	case 3://1_3
 		m_mapH = LoadGraph("data/map.png");
 		m_bgH = LoadGraph("data/background.png");
 		break;
-	case 4:
+	case 4://クリアシーン
 		m_mapH = LoadGraph("data/map.png");
 		m_bgH = LoadGraph("data/1.png");
 		m_bgH2 = LoadGraph("data/2.png");
 		m_bgH3= LoadGraph("data/3.png");
 		m_bgH4= LoadGraph("data/4.png");
+		break;
+
+	case 6://2_1
+		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/background.png");
+		break;
+	case 7://2_2
+		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/background.png");
+		break;
+	case 8://2_3
+		m_mapH = LoadGraph("data/map.png");
+		m_bgH = LoadGraph("data/background.png");
 		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
@@ -126,6 +139,18 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_graphChipNumX = graphW / kChipSize;
 		m_graphChipNumY = graphH / kChipSize;
 		break;
+	case 6://2_1
+		m_graphChipNumX = graphW / kChipSize;
+		m_graphChipNumY = graphH / kChipSize;
+		break;
+	case 7:
+		m_graphChipNumX = graphW / kChipSize;
+		m_graphChipNumY = graphH / kChipSize;
+		break;
+	case 8:
+		m_graphChipNumX = graphW / kChipSize;
+		m_graphChipNumY = graphH / kChipSize;
+		break;
 	default:
 		assert(false && "マップチップの画像読み込みに失敗");
 
@@ -152,6 +177,15 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 	case 4:
 		LoadMapDataClear();
+		break;
+	case 6:    //2_1
+		LoadMapData2_1();
+		break;
+	case 7:
+		LoadMapData2_2();
+		break;
+	case 8:
+		LoadMapData2_3();
 		break;
 	default:
 		assert(false && "Bgのマップデータ読み込みに失敗");
@@ -270,6 +304,15 @@ void Bg::Draw(Camera& camera)
 		break;
 	case 4://stageClearのマップ
 		DrawMapChipClear(camera);
+		break;
+	case 6://2_1のマップ
+		DrawMapChip1_3(camera);
+		break;
+	case 7://2_2のマップ
+		DrawMapChip1_3(camera);
+		break;
+	case 8://2_3のマップ
+		DrawMapChip1_3(camera);
 		break;
 	default:
 		assert(false && "Bgのマップチップ描画に失敗");
@@ -422,6 +465,75 @@ void Bg::LoadMapData1_3()
 void Bg::LoadMapDataClear()
 {
 	std::ifstream file("data/stageClear.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData0[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::LoadMapData2_1()
+{
+	std::ifstream file("data/stage2_1.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData0[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::LoadMapData2_2()
+{
+	std::ifstream file("data/stage2_2.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData0[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::LoadMapData2_3()
+{
+	std::ifstream file("data/stage2_3.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -966,6 +1078,15 @@ bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect,bool& hitClearness)
 		break;
 	case 4://stageClearのマップ
 		ans = IsCollisionPlayer1_1(rect, chipRect, hitClearness);
+		break;
+	case 6://2_1のマップ
+		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
+		break;
+	case 7://2_2のマップ
+		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
+		break;
+	case 8://2_3のマップ
+		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
 		break;
 	default:
 		assert(false && "ここはIsCollisionの判定を変えるところです");

@@ -48,6 +48,19 @@ public:
 	/// マップの読み込み(stageClear)
 	/// </summary>
 	void LoadMapDataClear();
+	/// <summary>
+	/// マップの読み込み(stage2_1)
+	/// </summary>
+	void LoadMapData2_1();
+	/// <summary>
+	/// マップの読み込み(stage2_2)
+	/// </summary>
+	void LoadMapData2_2();
+	/// <summary>
+	/// マップの読み込み(stage2_3)
+	/// </summary>
+	void LoadMapData2_3();
+
 
 	/// <summary>
 	/// マップチップ表示
@@ -111,7 +124,8 @@ private:
 	int m_graphChipNumX;
 	int m_graphChipNumY;
 
-	int StageNum = 1;//stage選択用---//0:stage0 1:最初のマップ2:1_2 3:1_3 4:クリアシーン
+	int StageNum = 1;//stage選択用---//0:stage0 1:最初のマップ 2:1_2  3:1_3      4:クリアシーン
+	                                          //6:2_1         7:2_2   8:2_3   
 
 	struct Size
 	{
