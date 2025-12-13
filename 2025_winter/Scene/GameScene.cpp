@@ -1186,22 +1186,11 @@ void GameScene::NormalUpdate(Input& input)
 	{
 		
 	}
-	//プレイヤーのHPを引き渡す
-	stageUI.SetHp(m_pPlayer->GetHp());
-	//プレイヤーのTypeを引き渡す
-	stageUI.SetType(m_pPlayer->GetType());
-	stageUI.Update();
-	//プレイヤーのHpが0以下だったら死ぬ
-	if (m_pPlayer->GetHp() <= 0)
-	{
-		DyingAct();
-		return;
-	}
+
 
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	//プレイヤーが落ちたかどうか
-	if (CheckDropped())return;//落ちてたらそのあとの処理をしない
+	
 
 #ifdef _DEBUG
 	if (input.IsTriggered("ok"))
@@ -1224,28 +1213,52 @@ void GameScene::NormalUpdate(Input& input)
 		controller_.PushScene(std::make_shared<PauseScene>(controller_));
 		return;
 	}
+	//カメラ
 	UpdateCamera(camera, m_pPlayer);
 
-
+	//背景
 	m_pBg->Update();
+	//ドア
 	m_doors->Update();
-
-	m_pPlayer->Update(input);
-	if (m_pPlayer->isBurningAttack)//バーニングの攻撃の出始めのほうの判定
+	//ステージUI
 	{
-		CheckFastBurning();
+		//プレイヤーのHPを引き渡す
+		stageUI.SetHp(m_pPlayer->GetHp());
+		//プレイヤーのTypeを引き渡す
+		stageUI.SetType(m_pPlayer->GetType());
+		//UIのアップデート
+		stageUI.Update();
 	}
 
-	if (m_pPlayer->isArrowAttack)//矢の出現
+	//プレイヤー関連
 	{
-		//ポインタを作ってその座標を入れる
-		std::shared_ptr<Arrow> arrow = m_pPlayer->ShotArrow();
+	
+		//プレイヤーのHpが0以下だったら死ぬ
+		if (m_pPlayer->GetHp() <= 0)
+		{
+			DyingAct();
+			return;
+		}
+		//プレイヤーが落ちたかどうか
+		if (CheckDropped())return;//落ちてたらそのあとの処理をしない
+		m_pPlayer->Update(input);
+		if (m_pPlayer->isBurningAttack)//バーニングの攻撃の出始めのほうの判定
+		{
+			CheckFastBurning();
+		}
 
-		//それをpush_backする
-		m_arrows.push_back(arrow);
+		if (m_pPlayer->isArrowAttack)//矢の出現
+		{
+			//ポインタを作ってその座標を入れる
+			std::shared_ptr<Arrow> arrow = m_pPlayer->ShotArrow();
 
-		m_pPlayer->isArrowAttack = false;
+			//それをpush_backする
+			m_arrows.push_back(arrow);
+
+			m_pPlayer->isArrowAttack = false;
+		}
 	}
+	
 	//敵関連
 	{
 	
@@ -1325,7 +1338,7 @@ void GameScene::NormalUpdate(Input& input)
 		}
 	}
 	
-	
+	//エフェクト
 	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
 	{
 		(*effect)->Update();
@@ -1335,15 +1348,19 @@ void GameScene::NormalUpdate(Input& input)
 		else
 			++effect;
 	}
-	if (m_pItems) m_pItems->Update();
-	if (m_pDroppedItem)//演出のアイテムのアップデート
+	//アイテム関連
 	{
-		m_pDroppedItem->DroppedUpdate();
-		if (m_pDroppedItem->IsDead())
+		if (m_pItems) m_pItems->Update();
+		if (m_pDroppedItem)//演出のアイテムのアップデート
 		{
-			m_pDroppedItem = nullptr;
+			m_pDroppedItem->DroppedUpdate();
+			if (m_pDroppedItem->IsDead())
+			{
+				m_pDroppedItem = nullptr;
+			}
 		}
 	}
+	
 	CheckHit();//3種の攻撃の当たり判定
 	CopyAct(input);//アイテム取得の処理関連
 	CheckArrowHit();
