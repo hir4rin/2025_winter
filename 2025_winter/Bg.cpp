@@ -807,6 +807,15 @@ bool Bg::IsCollision(Rect rect, Rect& chipRect)
 	case 4://1_4のマップ
 		ans = IsCollisionClear(rect, chipRect);
 		break;
+	case 6:
+		ans = IsCollision1_3(rect, chipRect);
+		break;
+	case 7:
+		ans = IsCollision1_3(rect, chipRect);
+		break;
+	case 8:
+		ans = IsCollision1_3(rect, chipRect);
+		break;
 	default:
 		assert(false && "ここはIsCollisionの判定を変えるところです");
 

@@ -111,8 +111,6 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6500.0f,520.0f), false });//崖上三連単
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6586.0f,520.0f), false });//崖上三連単
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
-
-
 		//-----------------------------------------------------------------
 
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
@@ -120,15 +118,22 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 		break;
 	case 6://ステージ2_1
-
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(1225.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(1850.0f,850.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(1850.0f,700.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2800.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(3280.0f,730.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(3700.0f,890.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(4420.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4800.0f,800.0f), false });
 		//敵スポーン
 		
 		//------------------------------------------------------------------
 		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
 
 		m_pBg = new Bg(m_pPlayer, 6);
-		//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-		m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+		m_doors = std::make_shared< Door>(Vec2{ 6050,760 });
+		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 		break;
 	case 7://ステージ2_2
 		//敵スポーン
