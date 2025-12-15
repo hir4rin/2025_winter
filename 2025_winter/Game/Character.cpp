@@ -201,25 +201,37 @@ HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
 		{
 			bool OnlyGravity = (m_vel.y == kGravity);
 		
-			if (hitClear && !OnlyGravity)//透過の床で、かつ、キャラの矩形の下側が床の上側より下にあるときは貫通させる
+			if (hitClear)//透過の床で、
 			{
-				//前の座標のm_colRectの下側
-				float prevBottom = m_prevColRect.GetBottom();
-				//今の座標のm_colRectの下側
-				float curBottom = m_colRect.GetBottom();
-				//床の上側
-				float top = chipRect.GetTop();
-
-				if (prevBottom <= top)
+				if (!OnlyGravity)//かつ、キャラの矩形の下側が床の上側より下にあるときは貫通させる
 				{
-					if (curBottom > top)//上から落ちてきて床の上に着地する瞬間(1Fだけ下側に行く瞬間)
+					//前の座標のm_colRectの下側
+					float prevBottom = m_prevColRect.GetBottom();
+					//今の座標のm_colRectの下側
+					float curBottom = m_colRect.GetBottom();
+					//床の上側
+					float top = chipRect.GetTop();
+
+					if (prevBottom <= top)
 					{
-						m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
-						m_vel.y = 0.0f;
-						m_isGround = true;
-						ans.bottom = true;
+						if (curBottom > top)//上から落ちてきて床の上に着地する瞬間(1Fだけ下側に行く瞬間)
+						{
+							m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
+							m_vel.y = 0.0f;
+							m_isGround = true;
+							ans.bottom = true;
+						}
 					}
 				}
+				else//重力だけの時(多分今、こっちでしか通ってない)
+				{
+					//普通の床だったら
+					m_pos.y = chipRect.GetTop() - kCharaSize * 0.5f;
+					m_vel.y = 0.0f;
+					m_isGround = true;
+					ans.bottom = true;
+				}
+				
 			}
 			else//else 透過床じゃないときは普通に当たる
 			{

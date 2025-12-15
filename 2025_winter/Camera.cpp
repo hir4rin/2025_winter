@@ -30,66 +30,49 @@ void StartCameraShake(Camera& camera, float power, float time)
 	camera.shakeTimerMax = time;
 }
 
+void SetBossCamera(Camera& camera)
+{
+	//ボスシーンのカメラの中心座標
+	camera.m_cameraRect.SetLT(2000,0,ScreenWidth, ScreenHeight);
+	DrawBox(2000, 0, 2000 + ScreenWidth, ScreenHeight, GetColor(0, 0, 0), false);
+	
+}
+
 void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 {
-	//// プレイヤーの位置が、カメラの中央から一定以上離れたら
-	//// カメラのポジションをその範囲内に留める
-	/*if (pPlayer->GetPos().x > camera.pos.x + (CameraScopeRangeW * 0.5f))
-	{
-		camera.pos.x = pPlayer->GetPos().x - (CameraScopeRangeW * 0.5f);
-	}
-	else if (pPlayer->GetPos().x < camera.pos.x - (CameraScopeRangeW * 0.5f))
-	{
-		camera.pos.x = pPlayer->GetPos().x + (CameraScopeRangeW * 0.5f);
-	}
-	if (pPlayer->GetPos().y > camera.pos.y + (CameraScopeRangeH * 0.5f))
-	{
-		camera.pos.y = pPlayer->GetPos().y - (CameraScopeRangeH * 0.5f);
-	}
-	else if (pPlayer->GetPos().y < camera.pos.y - (CameraScopeRangeH * 0.5f))
-	{
-		camera.pos.y = pPlayer->GetPos().y + (CameraScopeRangeH * 0.5f);
-	}
-	*/
+	
 
 	float camerafuture = 0;
+	if (!camera.isBoss)//通常時
+	{
+		// 画面の中央にプレイヤーが来るようにする(x座標編)
+		if (pPlayer->GetPos().x < ScreenWidth * 0.5f)//最小値のほう
+		{
+			camerafuture = ScreenWidth * 0.5f;
+			//camera.pos.x = ScreenWidth * 0.5f;
+		}
+		else if (pPlayer->GetPos().x > 20000.0f - ScreenWidth * 0.5f)//最大値のほう
+		{
+			camerafuture = ScreenWidth * 0.5f;
+			//camera.pos.x = 5000.0f - ScreenWidth * 0.5f;
+		}
+		else
+		{
+			//camera.pos.x = pPlayer->GetPos().x;
+			camerafuture = pPlayer->GetPos().x;
+		}
+	}
+	else//ボス戦
+	{
+		camerafuture = 2811.0f;//ボス戦の中央座標
+	}
 
-	// 画面の中央にプレイヤーが来るようにする(x座標編)
-	if (pPlayer->GetPos().x < ScreenWidth * 0.5f)//最小値のほう
-	{
-		camerafuture = ScreenWidth * 0.5f;
-		//camera.pos.x = ScreenWidth * 0.5f;
-	}
-	else if (pPlayer->GetPos().x > 20000.0f - ScreenWidth * 0.5f)//最大値のほう
-	{
-		camerafuture = ScreenWidth * 0.5f;
-		//camera.pos.x = 5000.0f - ScreenWidth * 0.5f;
-	}
-	else
-	{
-		//camera.pos.x = pPlayer->GetPos().x;
-		camerafuture = pPlayer->GetPos().x;
-	}
-	//camera.pos.x = std::lerp(camera.pos.x, pPlayer->GetPos().x, t);
+	
 	camera.pos.x = std::lerp(camera.pos.x, camerafuture, t);
 
-	/*if (camera.pos.x < ScreenWidth * 0.5f)
-	{
-		camera.pos.x = ScreenWidth * 0.5f;
-	}
-	else if (camera.pos.x > 5000.0f - ScreenWidth * 0.5f)
-	{
-		camera.pos.x = 5000.0f - ScreenWidth * 0.5f;
-	}*/
+	
 	DrawFormatString(camera.pos.x, camera.pos.y, GetColor(255, 0, 0), "camera.pos.x:%f", camera.pos.x);
 
-	//camera.pos.y = pPlayer->GetPos().y;
-
-	/*printfDx("camera.pos:(%d,%d) pPlayer.pos:(%d,%d)\n",
-		(int)camera.pos.x,
-		(int)camera.pos.y,
-		(int)pPlayer->GetPos().x,
-		(int)pPlayer->GetPos().y);*/
 
 		/////////////////////////////////////////////////////////////////////////////
 		// ↓drawOffset補正

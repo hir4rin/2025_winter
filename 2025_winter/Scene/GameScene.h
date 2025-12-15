@@ -12,6 +12,7 @@ class Player;
 class EnemyWizard;
 class EnemyRider;
 class EnemyArcher;
+class EnemyEliteOrc;
 class Item;
 class Arrow;
 class EnemyArrow;
@@ -175,6 +176,9 @@ private:
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
 	std::vector<std::shared_ptr<EnemyRider>>  m_pEnemyRiders;
 	std::vector < std::shared_ptr<EnemyArcher>> m_pEnemyArchers;
+	//ボス
+	std::shared_ptr<EnemyEliteOrc> m_pElite;
+
 
 	//アイテムは今のところ一つだけ
 	std::shared_ptr<Item> m_pItems;
@@ -206,6 +210,8 @@ private:
 		void CheckSpawns();
 		//カメラ外に行ったかどうか
 		void CheckOutCamera();
+		//ボス戦のカメラ用
+		void CheckBossCamera();
 
 };
 

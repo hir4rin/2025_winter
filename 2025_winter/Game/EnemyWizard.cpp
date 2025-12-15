@@ -63,6 +63,7 @@ void EnemyWizard::Update()
 	case EnemyState::Damage:
 		//DamageのUpdate
 		DamageUpdate();
+		break;
 	default:
 		break;
 	}

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include "Vec2.h"
+#include "Rect.h"
 
 class  Player;
 struct Camera
@@ -11,10 +12,18 @@ struct Camera
 	float shakePower = 0.0f;
 	float shakeTimer = 0.0f;
 	float shakeTimerMax = 0.0f;//減衰用のコピー
+
+	//ボスカメラ用
+	Rect m_cameraRect;
+	bool isBoss = false;
+	void ChangeIsBossTrue() { isBoss = true; }
+	void ChangeIsBossFalse() { isBoss = false; }
+
 };
 
 void InitCamera(Camera& camera);
 void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer);
+
 /// <summary>
 /// カメラを揺らす
 /// </summary>
@@ -22,3 +31,16 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer);
 /// <param name="power">揺れの強さ</param>
 /// <param name="time">揺らす時間</param>
 void StartCameraShake(Camera& camera, float power, float time);
+
+
+void SetBossCamera(Camera& camera);
+
+
+
+
+
+
+
+
+
+

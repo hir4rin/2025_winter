@@ -8,6 +8,7 @@
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
+#include "EnemyEliteOrc.h"
 #include "EnemyArrow.h"
 #include "Arrow.h"
 #include "Item.h"
@@ -122,14 +123,19 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(1850.0f,850.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(1850.0f,700.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(2800.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,800.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(3280.0f,730.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(3700.0f,890.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4164.0f,730.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(4420.0f,800.0f), false });
-		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4800.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4800.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5400.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5700.0f,900.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(6000.0f,800.0f), false });
 		//敵スポーン
 		
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 });
 
 		m_pBg = new Bg(m_pPlayer, 6);
 		m_doors = std::make_shared< Door>(Vec2{ 6050,760 });
@@ -137,23 +143,47 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		break;
 	case 7://ステージ2_2
 		//敵スポーン
-
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(776.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1100.0f,600.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1550.0f,800.0f), false });//下の段
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(1560.0f,600.0f), false });//真ん中の段
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1550.0f,350.0f), false });//上の段
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(2704.0f,730.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(3187.0f,600.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(4197.0f,800.0f), false });//下の段
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4097.0f,600.0f), false });//中の段
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4697.0f,400.0f), false });//上の段
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5291.0f,800.0f), false });//下の段
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 });
 
 		m_pBg = new Bg(m_pPlayer, 7);
-		//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-		m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+		m_doors = std::make_shared< Door>(Vec2{ 6130,600 });
+		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 		break;
 	case 8://ステージ2_3
 		//敵スポーン
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(1300.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1422.0f,670.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(1544.0f,544.0f), false });
+		m_pElite = std::make_shared<EnemyEliteOrc>();
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(3959.0f,600.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4241.0f,670.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4834.0f,670.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4952.0f,200.0f), false });
 
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 });
 
+		
 		m_pBg = new Bg(m_pPlayer, 8);
-		//m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
-		m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+
+		m_pElite->SetPlayer(m_pPlayer);
+		m_pElite->SetBgPointer(m_pBg);
+
+
+		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
+		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 		break;
 	}
 	
@@ -676,6 +706,16 @@ void GameScene::CheckHitNormal()
 
 			}
 
+		}
+	}
+
+	if (m_pElite != nullptr)
+	{
+		bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
+		if (isHitAttack)
+		{
+			m_pElite = nullptr;
+			camera.ChangeIsBossFalse();
 		}
 	}
 }
@@ -1251,7 +1291,7 @@ void GameScene::NormalUpdate(Input& input)
 	}
 	//カメラ
 	UpdateCamera(camera, m_pPlayer);
-
+	CheckBossCamera();
 	//背景
 	m_pBg->Update();
 	//ドア
@@ -1327,6 +1367,10 @@ void GameScene::NormalUpdate(Input& input)
 				pEnemyArcher->isArrowAttack = false;
 			}
 
+		}
+		if (m_pElite != nullptr)//ボス
+		{
+			m_pElite->Update();
 		}
 	}
 	//矢関連
@@ -1639,6 +1683,10 @@ void GameScene::NormalDraw()
 		{
 			if (enemy) enemy->Draw(camera);
 		}
+		if (m_pElite != nullptr)//ボス
+		{
+			m_pElite->Draw(camera);
+		}
 		//ステージUI
 		stageUI.Draw(camera);
 
@@ -1668,6 +1716,10 @@ void GameScene::NormalDraw()
 		for (auto& enemy : m_pEnemyArchers)//狙撃手
 		{
 			if (enemy) enemy->Draw(camera);
+		}
+		if (m_pElite != nullptr)//ボス
+		{
+			m_pElite->Draw(camera);
 		}
 		if (m_pItems) m_pItems->Draw(camera);
 		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
@@ -1881,6 +1933,24 @@ void GameScene::CheckOutCamera()
 			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 		}
 	}
+}
+
+void GameScene::CheckBossCamera()
+{
+	//ステージ8専用処理
+	if (m_stageNum != 8)return;
+	//ボスがまだ生きていたらの話
+	if (m_pElite == nullptr)return;
+
+	SetBossCamera(camera);
+	if (m_pPlayer->GetColRect().IsCollision(camera.m_cameraRect))
+	{
+		
+		//カメラを固定する
+		camera.ChangeIsBossTrue();
+
+	}
+
 }
 
 void GameScene::Update(Input& input)
