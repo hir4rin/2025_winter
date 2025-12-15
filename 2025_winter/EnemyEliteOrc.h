@@ -24,6 +24,7 @@ public:
 	void Draw(Camera& camera);
 
 	void HitBossDamage(int damage);
+	bool GetIsDead() { return isDead; }
 
 private:
 	int charaIdx;
@@ -52,6 +53,8 @@ private:
 
 
 	float attackTime = 180.0f;  //攻撃の時間
+
+
 	float attackTimer = 0.0f;//攻撃を計るタイマー
 
 	float coolTimer = 0.0f;//クールダウンを図るタイマー
