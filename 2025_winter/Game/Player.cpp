@@ -236,7 +236,8 @@ void Player::Update(Input& input)
 		m_isDash = false;
 	}
 
-
+	//前フレームの攻撃の当たり判定を消す
+	ClearAttackRect();
 
 	switch (m_state)
 	{
@@ -446,6 +447,7 @@ void Player::RotateUpdate()
 	if (m_rotateFrame >= 60)
 	{
 		if (!isRotateOne)isRotateOne = true;
+
 	}
 
 	if (isRotateOne)
@@ -692,6 +694,16 @@ void Player::DamageUpdate()
 		AnimSelect(Anim::Idle);
 		
 	}
+}
+
+void Player::ClearAttackRect()
+{
+	// 判定を消す
+	m_attackRect.SetLT(0, 0, 0, 0);
+	m_copyRect.SetLT(0, 0, 0, 0);
+	m_burningRect.SetLT(0, 0, 0, 0);
+	m_frozenRect.SetLT(0, 0, 0, 0);
+	m_archerRect.SetLT(0, 0, 0, 0);
 }
 
 void Player::Move(Input& input)

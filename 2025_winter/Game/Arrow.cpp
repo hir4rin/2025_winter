@@ -4,6 +4,7 @@
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
+#include "EnemyEliteOrc.h"
 #include "Player.h"
 #include "Camera.h"
 #include <cassert>
@@ -104,6 +105,23 @@ void Arrow::CheckEnemys(std::vector<std::shared_ptr<EnemyArcher>> _enemyArchers)
 				break;
 			}
 		}
+}
+void Arrow::CheckEnemys(std::shared_ptr<EnemyEliteOrc> _enemyOrc)
+{
+	//敵と当たったら消す処理
+	
+	if (!_enemyOrc) return;
+		bool isHit = m_colRect.IsCollision(_enemyOrc->GetColRect());
+		if (isHit)
+		{
+			//当たった敵を消す
+			hitEnemyEliteOrc = _enemyOrc;
+			//矢を消す
+			isAlive = false;
+			//このとき、矢をけす方法を考える
+			
+		}
+	
 }
 void Arrow::Draw()
 {

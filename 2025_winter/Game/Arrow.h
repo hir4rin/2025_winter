@@ -7,6 +7,7 @@
 class EnemyWizard;
 class EnemyRider;
 class EnemyArcher;
+class EnemyEliteOrc;
 class Player;
 class Camera;
 class Arrow :public Character
@@ -24,6 +25,7 @@ public:
 	void CheckEnemys(std::vector<std::shared_ptr<EnemyWizard>> _enemyWiz);
 	void CheckEnemys(std::vector<std::shared_ptr<EnemyRider>> _enemyRiders);
 	void CheckEnemys(std::vector<std::shared_ptr<EnemyArcher>> _enemyArchers);
+	void CheckEnemys(std::shared_ptr<EnemyEliteOrc> _enemyOrc);
 
 	constexpr static int Num = 10;
 	Vec2& GetPosition() { return m_pos; }
@@ -35,6 +37,7 @@ public:
 	std::shared_ptr<EnemyWizard>  hitEnemyWizard = nullptr;//矢に当たった敵を一時保存
 	std::shared_ptr<EnemyRider>  hitEnemyRider = nullptr;//矢に当たった敵を一時保存
 	std::shared_ptr<EnemyArcher>  hitEnemyArcher = nullptr;//矢に当たった敵を一時保存
+	std::shared_ptr<EnemyEliteOrc>  hitEnemyEliteOrc = nullptr;//矢に当たった敵を一時保存
 public:
 	bool isAlive;
 	Vec2 m_dir;

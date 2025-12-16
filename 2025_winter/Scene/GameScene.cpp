@@ -370,6 +370,29 @@ void GameScene::CheckArrowHit()
 		num->hitEnemyArcher = nullptr;
 	}
 
+	//矢とボスが当たった時の処理
+	for (auto& num : m_arrows)
+	{
+		if (num == nullptr || !num->hitEnemyEliteOrc)continue;
+
+		std::shared_ptr<EnemyEliteOrc> enemy = num->hitEnemyEliteOrc;
+
+		//敵リストから一致するやつを探して削除
+		
+		auto& e = m_pElite;
+			if (e == enemy)
+			{
+
+				
+				//bossにダメージを与える
+				e->HitBossDamage(10);
+				break;
+			}
+		
+		//矢のヒット情報をリセット
+		num->hitEnemyArcher = nullptr;
+	}
+
 	//敵の矢の情報を書く(プレイヤーと当たった時)
 	for (auto& e_arrow : m_pEnemyArrows)
 	{
@@ -714,8 +737,8 @@ void GameScene::CheckHitNormal()
 		bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
 		if (isHitAttack)
 		{
-			m_pElite = nullptr;
-			camera.ChangeIsBossFalse();
+			m_pElite->HitBossDamage(10);
+			
 		}
 	}
 }
@@ -800,6 +823,17 @@ void GameScene::CheckHitBurning()
 
 		}
 	}
+
+	if (m_pElite != nullptr)
+	{
+		bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(m_pElite->GetColRect());
+		if (isHitAttack)
+		{
+			m_pElite->HitBossDamage(20);
+
+		}
+	}
+
 }
 
 void GameScene::CheckFastBurning()
@@ -952,6 +986,16 @@ void GameScene::CheckHitFrozen()
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			}
+
+		}
+	}
+
+	if (m_pElite != nullptr)
+	{
+		bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(m_pElite->GetColRect());
+		if (isHitAttack)
+		{
+			m_pElite->HitBossDamage(20);
 
 		}
 	}
@@ -1371,6 +1415,11 @@ void GameScene::NormalUpdate(Input& input)
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Update();
+			if (m_pElite->GetIsDead())
+			{
+				m_pElite = nullptr;
+				camera.ChangeIsBossFalse();
+			}
 		}
 	}
 	//矢関連
@@ -1389,7 +1438,9 @@ void GameScene::NormalUpdate(Input& input)
 			arrow->CheckEnemys(m_pEnemyWizards);
 			arrow->CheckEnemys(m_pEnemyRiders);
 			arrow->CheckEnemys(m_pEnemyArchers);
+			arrow->CheckEnemys(m_pElite);
 		}
+
 		for (auto& arrow : m_pEnemyArrows)//敵の矢のアップデート
 		{
 
@@ -1938,14 +1989,34 @@ void GameScene::CheckOutCamera()
 void GameScene::CheckBossCamera()
 {
 	//ステージ8専用処理
+
+	
+
+
+
 	if (m_stageNum != 8)return;
+
+
+
+
+
 	//ボスがまだ生きていたらの話
 	if (m_pElite == nullptr)return;
+
+	//プレイヤーはカメラの外にいけない
+	if (m_pPlayer->GetPos().x < 0 + -camera.drawOffset.x)
+	{
+		m_pPlayer->ChangePos().x = -camera.drawOffset.x;
+	}
+	if (m_pPlayer->GetPos().x > kScreenWidth + -camera.drawOffset.x)
+	{
+		m_pPlayer->ChangePos().x = kScreenWidth + -camera.drawOffset.x;
+	}
+
 
 	SetBossCamera(camera);
 	if (m_pPlayer->GetColRect().IsCollision(camera.m_cameraRect))
 	{
-		
 		//カメラを固定する
 		camera.ChangeIsBossTrue();
 

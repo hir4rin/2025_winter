@@ -152,6 +152,7 @@ private:
 	void CopyUpdate();//コピー時の更新
 	void DamageUpdate();//ダメージを食らったときの更新
 	 
+	void ClearAttackRect();
 
 	void Move(Input& input);//動きの入力の処理内容
 	void Jump(Input& input);//ジャンプの処理内容

@@ -145,7 +145,7 @@
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="data\Game\Door.cpp" />
     <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="EnemyEliteOrc.cpp" />
+    <ClCompile Include="Game\EnemyEliteOrc.cpp" />
     <ClCompile Include="Scene\PauseScene.cpp" />
     <ClCompile Include="Scene\GameClearScene.cpp" />
     <ClCompile Include="Game\Arrow.cpp" />
@@ -179,7 +179,7 @@
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="Effect.h" />
-    <ClInclude Include="EnemyEliteOrc.h" />
+    <ClInclude Include="Game\EnemyEliteOrc.h" />
     <ClInclude Include="Scene\PauseScene.h" />
     <ClInclude Include="Scene\GameClearScene.h" />
     <ClInclude Include="Game\Arrow.h" />

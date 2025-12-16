@@ -14,10 +14,14 @@ namespace
 	constexpr float  enemy_scale = 5.0f;
 
 
-	constexpr float kAttackSpeed = 6.0f;//攻撃時の速度
+	constexpr float kAttack1Speed = 6.0f;//攻撃時の速度
+	constexpr float kAttack2Speed = 8.0f;//攻撃時の速度
+	constexpr float kJumpSpeed = 75.0f;
 
+	//被ダメージクールタイム
+	constexpr int cool_interval = 60;
 
-	//Normal用
+	
 //1frameあたりのアニメーションの時間
 	constexpr int kIdleDuration = 6;
 	constexpr int kWalkDuration = 8;
@@ -42,7 +46,9 @@ EnemyEliteOrc::EnemyEliteOrc() :
 	charaIdy(0),
 	m_animframe(0),
 	isAttack(false),
-	m_attackP(AttackPattern::Attack3)
+	m_coolDamageTimer(0),
+	m_hp(100),
+	m_attackP(AttackPattern::Attack2)
 {
 	m_handle = LoadGraph("data/Game/Elite Orc.png");
 	assert(m_handle >= 0);
@@ -63,6 +69,10 @@ void EnemyEliteOrc::Init()
 void EnemyEliteOrc::Update()
 {
 	m_animframe++;
+	if (m_coolDamageTimer > 0)
+	{
+		m_coolDamageTimer--;
+	}
 
 	switch (_state)
 	{
@@ -130,6 +140,13 @@ void EnemyEliteOrc::Draw(Camera& camera)
 	default:
 		break;
 	}
+
+	if (m_coolDamageTimer > 0)
+	{
+		if ((m_coolDamageTimer /10) % 2 == 0)SetDrawBright(255, 100, 100);//赤っぽく
+	}
+
+
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX,
@@ -147,6 +164,9 @@ void EnemyEliteOrc::Draw(Camera& camera)
 		enemy_scale, 0.0f,
 			m_handle, true, true);
 	}
+	//元に戻す
+	SetDrawBright(255, 255, 255);
+
 
 #ifdef _DEBUG
 	//当たり判定の描画
@@ -160,7 +180,10 @@ void EnemyEliteOrc::Draw(Camera& camera)
 
 void EnemyEliteOrc::HitBossDamage(int damage)
 {
+	if (m_coolDamageTimer > 0)return;
+
 	m_hp -= damage;
+	m_coolDamageTimer = cool_interval;
 	if (m_hp <= 0)
 	{
 		m_hp = 0;
@@ -212,7 +235,7 @@ void EnemyEliteOrc::AttackUpdate()
 				attackTimer = attackTime;
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
-				dir ? m_vel.x = kAttackSpeed : m_vel.x = -kAttackSpeed;
+				dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
 
 				m_isRight = dir;
 			}
@@ -241,7 +264,9 @@ void EnemyEliteOrc::AttackUpdate()
 				attackTimer = attackTime;
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+				dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
 				m_isRight = dir;
+				m_vel.y = -kJumpSpeed;
 			}
 		}
 		if (isAttack == true)
@@ -363,6 +388,10 @@ void EnemyEliteOrc::Attack1()
 		isAttack = false;
 		m_vel = zero;
 		coolTimer = coolTime;
+
+		//プレイヤーのほうをむく
+		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+		m_isRight = dir;
 	}
 }
 
@@ -374,6 +403,9 @@ void EnemyEliteOrc::Attack2()
 		isAttack = false;
 		m_vel = zero;
 		coolTimer = coolTime;
+		//プレイヤーのほうをむく
+		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+		m_isRight = dir;
 	}
 }
 
@@ -385,6 +417,9 @@ void EnemyEliteOrc::Attack3()
 		isAttack = false;
 		m_vel = zero;
 		coolTimer = coolTime;
+		//プレイヤーのほうをむく
+		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+		m_isRight = dir;
 	}
 }
 

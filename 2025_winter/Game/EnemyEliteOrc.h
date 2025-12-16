@@ -7,9 +7,9 @@ class Camera;
 enum class AttackPattern
 {
 	
-	Attack1,
-	Attack2,
-	Attack3
+	Attack1,//ぐるぐる攻撃
+	Attack2,//ジャンプ攻撃
+	Attack3//もの投げ攻撃
 };
 
 class EnemyEliteOrc : public Enemy
@@ -60,12 +60,14 @@ private:
 	float coolTimer = 0.0f;//クールダウンを図るタイマー
 	float coolTime = 180.0f;//クールタイム
 
-	float catchDistance = 250.0f;//プレイヤーを見つける距離
+	float catchDistance = 1250.0f;//プレイヤーを見つける距離
 
 
 private:
+	int m_coolDamageTimer;
 	AttackPattern m_attackP;
 	int m_hp;
+
 	bool isDead = false;
 };
 
