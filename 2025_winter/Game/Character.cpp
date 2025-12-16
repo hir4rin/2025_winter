@@ -82,6 +82,30 @@ void Character::Draw()
 #endif 
 }
 
+void Character::BossUpdate()
+{
+	//重力処理
+	Gravity();
+
+	Character::SetRect();
+
+	Rect chipRect;//当たったマップチップの矩形
+	CheckHitMap(chipRect);
+
+
+	if (m_isGround)
+	{
+
+		m_isGround = true;
+
+		if (m_isJumpPreparing)return;
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+
+
+	}
+}
+
 void Character::Gravity()
 {
 	m_vel.y += 1.5f;

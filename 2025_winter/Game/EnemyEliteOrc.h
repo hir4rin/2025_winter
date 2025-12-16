@@ -26,6 +26,8 @@ public:
 	void HitBossDamage(int damage);
 	bool GetIsDead() { return isDead; }
 
+	int GetHp() { return m_hp; }
+
 private:
 	int charaIdx;
 	int charaIdy;
@@ -42,17 +44,22 @@ private:
 	void DamageUpdate();
 
 	void AttackAnimIdxy();
-
+	/// <summary>
+	/// ぐるぐる攻撃
+	/// </summary>
 	void Attack1();//実際に攻撃をする処理
-
+	/// <summary>
+	/// ジャンプ攻撃
+	/// </summary>
 	void Attack2();//実際に攻撃をする処理
-
+	/// <summary>
+	/// もの投げ攻撃
+	/// </summary>
 	void Attack3();//実際に攻撃をする処理
 
 	bool isAttack;//攻撃しているかどうか
 
 
-	float attackTime = 180.0f;  //攻撃の時間
 
 
 	float attackTimer = 0.0f;//攻撃を計るタイマー
@@ -69,5 +76,13 @@ private:
 	int m_hp;
 
 	bool isDead = false;
+
+	//アニメーション用
+	int baseFrame = 0;
+	int phaseProgress = 0;
+	//攻撃２用
+	float targetX = 0.0f;//目標までの距離
+	float m_startX = 0.0f;//攻撃するときの最初のX座標
+	float offset = 50.0f;//プレイヤーの後ろ50ピクセル//ゆとり
 };
 

@@ -1346,6 +1346,10 @@ void GameScene::NormalUpdate(Input& input)
 		stageUI.SetHp(m_pPlayer->GetHp());
 		//プレイヤーのTypeを引き渡す
 		stageUI.SetType(m_pPlayer->GetType());
+
+		//ボスのHPを引き渡す
+		if (camera.isBoss)stageUI.SetBossHp(m_pElite->GetHp());
+
 		//UIのアップデート
 		stageUI.Update();
 	}

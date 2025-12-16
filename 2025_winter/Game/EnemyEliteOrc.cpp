@@ -16,7 +16,8 @@ namespace
 
 	constexpr float kAttack1Speed = 6.0f;//攻撃時の速度
 	constexpr float kAttack2Speed = 8.0f;//攻撃時の速度
-	constexpr float kJumpSpeed = 75.0f;
+	constexpr float kJumpSpeed = 20.0f;
+	constexpr float kJumpDownSpeed = 15.0f;
 
 	//被ダメージクールタイム
 	constexpr int cool_interval = 60;
@@ -37,6 +38,17 @@ namespace
 	constexpr int kAttack2Num = 9;
 	constexpr int kAttack3Num = 7;
 	constexpr int kDamageNum = 4;
+
+
+
+	constexpr float kAttackTime = 100.0f;  //攻撃の時間
+
+
+	//攻撃2
+	constexpr float kJumpAttackUpTime = kAttackTime * 2/10;
+	constexpr float kJumpAttackStayTime = kAttackTime  * 4/10;
+	constexpr float kJumpAttackDownTime = kAttackTime * 3/10;
+	constexpr float kJumpAttackFreeTime = kAttackTime * 1/10;
 
 }
 
@@ -99,7 +111,7 @@ void EnemyEliteOrc::Update()
 	}
 
 
-	Enemy::Update();
+	Character::BossUpdate();
 
 }
 
@@ -174,6 +186,9 @@ void EnemyEliteOrc::Draw(Camera& camera)
 	//キャラとプレイヤーとの距離を表示
 	DrawBox(m_pos.x - catchDistance + camera.drawOffset.x, 0, m_pos.x + catchDistance + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 
+	/*printf("Frame: attackTimer = %f, m_pos.x = %f, m_vel.x = %f\n",
+		   attackTimer, m_pos.x, m_vel.x);*/
+
 #endif // DEBUG
 
 }
@@ -232,7 +247,7 @@ void EnemyEliteOrc::AttackUpdate()
 			{
 				AnimChange(EnemyState::Attack);
 				isAttack = true;
-				attackTimer = attackTime;
+				attackTimer = kAttackTime;
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 				dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
@@ -261,11 +276,24 @@ void EnemyEliteOrc::AttackUpdate()
 			{
 				AnimChange(EnemyState::Attack);
 				isAttack = true;
-				attackTimer = attackTime;
+				attackTimer = kAttackTime;
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
-				dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
 				m_isRight = dir;
+
+				m_startX = m_pos.x;//減速処理用
+
+				if (m_isRight)
+				{
+					targetX = m_pPlayer->GetPos().x + offset;
+				}
+				else
+				{
+					targetX = m_pPlayer->GetPos().x - offset;
+				}
+				float distance = targetX - m_pos.x;
+				m_vel.x = distance / kJumpAttackUpTime;
+
 				m_vel.y = -kJumpSpeed;
 			}
 		}
@@ -290,7 +318,7 @@ void EnemyEliteOrc::AttackUpdate()
 			{
 				AnimChange(EnemyState::Attack);
 				isAttack = true;
-				attackTimer = attackTime;
+				attackTimer = kAttackTime;
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 				m_isRight = dir;
@@ -347,6 +375,29 @@ void EnemyEliteOrc::AttackAnimIdxy()
 			charaIdx = (m_animframe / kAttack2Duration) % kAttack2Num;
 			charaIdy = 4;
 			drawY += enemy_cut_h / 4;
+
+			if (attackTimer > kAttackTime - kJumpAttackUpTime)//最初の上昇
+			{
+				if (charaIdx >= 2)charaIdx = 2;
+
+			}
+			else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime)//真ん中のstayTime
+			{
+				charaIdx = 3;
+			}
+			else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime)
+			{
+				baseFrame = 4; // フレーム4から開始
+				//このフレームから(0)の進み具合
+				phaseProgress = ((kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime) - attackTimer);
+				charaIdx = baseFrame + (phaseProgress / kAttack2Duration);
+				if (charaIdx > 6) charaIdx = 6;
+			}
+			else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime - kJumpAttackFreeTime)
+			{
+				charaIdx = 6;
+			}
+
 		}
 		else//Idle状態にする
 		{
@@ -384,7 +435,7 @@ void EnemyEliteOrc::Attack1()
 	if (attackTimer <= 0)
 	{
 		//_state = EnemyState::Normal;
-		//attackTimer = attackTime;
+		//attackTimer = kAttackTime;
 		isAttack = false;
 		m_vel = zero;
 		coolTimer = coolTime;
@@ -398,6 +449,54 @@ void EnemyEliteOrc::Attack1()
 void EnemyEliteOrc::Attack2()
 {
 	attackTimer--;
+	
+	
+
+	if (attackTimer > kAttackTime-kJumpAttackUpTime)//最初の上昇
+	{
+		m_vel.y += -kJumpSpeed;//途中のジャンプ力
+
+		//手前で止まる処理
+		{
+			//float distance = targetX - m_pos.x;
+		//float moveSpeed = distance / kJumpAttackUpTime;//上昇時間内に到達
+		//m_vel.x = moveSpeed;
+		}
+		
+		//減速処理(ClearSceneのと一緒)
+		{
+			////全体の進捗度合い
+			//float progress = (m_pos.x - m_startX) / (targetX - m_startX);
+			////速度の割合(2乗を使って滑らか) y=1-x*x
+			//float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに(イージング関数というやつらしい)(ググればわかる
+			//if (m_isRight)
+			//{
+			//	m_vel.x = kAttack2Speed * 3 * speedRate;
+
+			//}
+			//else
+			//{
+			//	m_vel.x = -kAttack2Speed * 3 * speedRate;
+			//}
+		}
+		
+	}
+	else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime)//真ん中のstayTime
+	{
+		m_vel.y = 0;//速度滞空
+		m_vel.x = 0;
+	}
+	else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime)//0以上
+	{
+		m_vel.y += kJumpDownSpeed;//落下(重力+α)
+	}
+	else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime - kJumpAttackFreeTime)//後隙
+	{
+		m_vel.y += kJumpDownSpeed;
+	}
+
+
+
 	if (attackTimer <= 0)
 	{
 		isAttack = false;

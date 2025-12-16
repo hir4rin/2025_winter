@@ -28,6 +28,9 @@ namespace
 	//残機数
 	const float thirdRihtX = ScreenWidth - 50;
 	
+	//BossUI
+	constexpr float ktopOffset = 100.0f;
+
 
 
 }
@@ -35,7 +38,9 @@ namespace
 
 StageUI::StageUI() :
 	m_playerHp(100),
-	m_displayHp(100)
+	m_displayHp(100),
+	m_bossHp(100),
+	m_displayBossHp(100)
 {
 	m_hpHandle;
 }
@@ -61,6 +66,8 @@ void StageUI::Update()
 	{
 		m_displayHp = std::lerp(m_displayHp, static_cast<float>(m_playerHp), t);
 	}
+
+	m_displayBossHp = std::lerp(m_displayBossHp, static_cast<float>(m_bossHp), t);
 
 }
 
@@ -90,6 +97,17 @@ void StageUI::Draw(Camera& camera)
 	DrawBox(secondRightX + 50, topPos + 80, thirdRihtX, bottomUI, col, true);//幅120
 
 
+
+
+	if (camera.isBoss)
+	{
+		//敵のHPバーを表示
+		DrawBox(leftHpX, topPos + 50+ ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(0, 0, 0), true);
+		DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + m_displayBossHp * hpScale, topPos + 100 + ktopOffset, GetColor(255, 170, 80), true);
+		DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(255, 0, 0), false);//外枠
+		DrawFormatString(300, topPos + 60 + ktopOffset, GetColor(0, 0, 0), "Boss : ");
+	}
+
 	//フォントサイズを元に戻す(元は16)
 	SetFontSize(oldSize);
 	SetFontThickness(1);//フォントの太さ
@@ -108,6 +126,11 @@ void StageUI::SetHp(int  m_pPlayerHP)
 void StageUI::SetType(PlayerType m_type)
 {
 	m_displayType = m_type;
+}
+
+void StageUI::SetBossHp(int m_pBossHp)
+{
+	m_bossHp = m_pBossHp;
 }
 
 float StageUI::GetTopX()

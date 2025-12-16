@@ -24,6 +24,9 @@ public:
 	virtual void Update();
 	virtual void Draw();
 
+	//ジャンプするように重力を下げたver.
+	void BossUpdate();
+
 	/// <summary>
 	/// 当たり判定を取得
 	/// </summary>
