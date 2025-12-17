@@ -10,6 +10,7 @@
 #include "EnemyArcher.h"
 #include "EnemyEliteOrc.h"
 #include "EnemyArrow.h"
+#include "BossShot.h"
 #include "Arrow.h"
 #include "Item.h"
 #include "Frozen.h"
@@ -287,6 +288,25 @@ void GameScene::CheckArrowHit()
 
 		++it;
 	}
+	for (auto it = m_pBossShots.begin(); it != m_pBossShots.end(); )//壁に当たったら消す(ボスの弾も)
+	{
+		if (*it == nullptr)
+		{
+			it = m_pBossShots.erase(it);
+			continue;
+		}
+
+		Rect m_arrowRect = (*it)->GetColRect();
+		Rect chipRect;
+
+		if (m_pBg->IsCollision(m_arrowRect, chipRect))
+		{
+			it = m_pBossShots.erase(it);
+			continue;
+		}
+
+		++it;
+	}
 	
 	for (auto& num : m_arrows)
 	{
@@ -404,6 +424,19 @@ void GameScene::CheckArrowHit()
 		m_pPlayer->DamageHit(isLeft);
 		OnShake();
 		e_arrow->m_hitPlayer = nullptr;
+
+	}
+	//ボスの弾の情報を書く(プレイヤーと当たった時)
+	for (auto& e_shot : m_pBossShots)
+	{
+		if (e_shot == nullptr || !e_shot->m_hitPlayer)continue;
+
+		bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e_shot->GetColRect());
+		//敵がどっちから当たったかどうかを入れる
+		//矢とどの方向で当たったかどうか
+		m_pPlayer->DamageHit(isLeft);
+		OnShake();
+		e_shot->m_hitPlayer = nullptr;
 
 	}
 }
@@ -1419,6 +1452,13 @@ void GameScene::NormalUpdate(Input& input)
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Update();
+
+			if (m_pElite->GetIsThrow())
+			{
+				//投げるものを生成
+				m_pBossShots.push_back(std::make_shared<BossShot>(m_pElite->Getm_isRight(),m_pElite->GetPos()));
+			}
+
 			if (m_pElite->GetIsDead())
 			{
 				m_pElite = nullptr;
@@ -1457,6 +1497,20 @@ void GameScene::NormalUpdate(Input& input)
 			//敵を渡すようにする
 			arrow->Update();
 			arrow->CheckPlayer(m_pPlayer);
+
+		}
+		for (auto& shot : m_pBossShots)//ボスの弾のアップデート
+		{
+
+			if (!shot) continue;
+			if (shot->isAlive == false)//矢が消えてるサインが出たらけす
+			{
+				shot = nullptr;
+				continue;
+			}
+			//敵を渡すようにする
+			shot->Update();
+			shot->CheckPlayer(m_pPlayer);
 
 		}
 	}
@@ -1704,6 +1758,11 @@ void GameScene::NormalDraw()
 			if (!arrow) continue;
 			arrow->Draw(camera);
 		}
+		for (auto& shot : m_pBossShots)//ボスの弾
+		{
+			if (!shot) continue;
+			shot->Draw(camera);
+		}
 		for (auto& m_pBurningObject : m_pBurningObjects)
 		{
 			if (m_pBurningObject) m_pBurningObject->Draw(camera);
@@ -1776,6 +1835,7 @@ void GameScene::NormalDraw()
 		{
 			m_pElite->Draw(camera);
 		}
+
 		if (m_pItems) m_pItems->Draw(camera);
 		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
 		for (auto& arrow : m_arrows)//弓矢
@@ -1787,6 +1847,11 @@ void GameScene::NormalDraw()
 		{
 			if (!arrow) continue;
 			arrow->Draw(camera);
+		}
+		for (auto& shot : m_pBossShots)//ボスの弾
+		{
+			if (!shot) continue;
+			shot->Draw(camera);
 		}
 		for (auto& m_pBurningObject : m_pBurningObjects)
 		{

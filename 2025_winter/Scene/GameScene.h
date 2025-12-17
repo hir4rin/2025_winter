@@ -16,6 +16,7 @@ class EnemyEliteOrc;
 class Item;
 class Arrow;
 class EnemyArrow;
+class BossShot;
 class Bg;
 class Character;
 class Frozen;
@@ -187,6 +188,7 @@ private:
 	Item* m_pItem;
 	std::vector<std::shared_ptr<Arrow>> m_arrows;
 	std::vector<std::shared_ptr<EnemyArrow>> m_pEnemyArrows;
+	std::vector<std::shared_ptr<BossShot>> m_pBossShots;
 
 	std::vector<std::shared_ptr<Frozen>> m_pFrozens;
 	std::vector<std::shared_ptr<BurningObject>> m_pBurningObjects;

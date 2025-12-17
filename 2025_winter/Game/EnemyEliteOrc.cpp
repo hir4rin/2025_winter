@@ -58,9 +58,10 @@ EnemyEliteOrc::EnemyEliteOrc() :
 	charaIdy(0),
 	m_animframe(0),
 	isAttack(false),
+	isThrow(false),
 	m_coolDamageTimer(0),
 	m_hp(100),
-	m_attackP(AttackPattern::Attack2)
+	m_attackP(AttackPattern::Attack3)
 {
 	m_handle = LoadGraph("data/Game/Elite Orc.png");
 	assert(m_handle >= 0);
@@ -511,6 +512,17 @@ void EnemyEliteOrc::Attack2()
 void EnemyEliteOrc::Attack3()
 {
 	attackTimer--;
+	
+
+	if (charaIdx == 3 && m_animframe % kAttack3Duration == 0)//3コマ目の最初に玉を投げる
+	{
+		isThrow = true;
+	}
+	else
+	{
+		isThrow = false;
+	}
+
 	if (attackTimer <= 0)
 	{
 		isAttack = false;
@@ -519,6 +531,7 @@ void EnemyEliteOrc::Attack3()
 		//プレイヤーのほうをむく
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
+
 	}
 }
 

@@ -25,6 +25,8 @@ public:
 
 	void HitBossDamage(int damage);
 	bool GetIsDead() { return isDead; }
+	bool GetIsThrow() { return isThrow; }
+	
 
 	int GetHp() { return m_hp; }
 
@@ -58,7 +60,7 @@ private:
 	void Attack3();//実際に攻撃をする処理
 
 	bool isAttack;//攻撃しているかどうか
-
+	bool isThrow;//投げるかどうか
 
 
 
