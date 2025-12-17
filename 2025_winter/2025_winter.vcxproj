@@ -141,7 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Bg.cpp" />
-    <ClCompile Include="BossShot.cpp" />
+    <ClCompile Include="Game\BossShot.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="data\Game\Door.cpp" />
@@ -172,11 +172,13 @@
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="StageUI.cpp" />
     <ClCompile Include="Vec2.cpp" />
+    <ClCompile Include="Game\Wave.cpp" />
+    <ClCompile Include="Game\WaveManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Bg.h" />
-    <ClInclude Include="BossShot.h" />
+    <ClInclude Include="Game\BossShot.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Door.h" />
@@ -206,6 +208,8 @@
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="StageUI.h" />
     <ClInclude Include="Vec2.h" />
+    <ClInclude Include="Game\Wave.h" />
+    <ClInclude Include="Game\WaveManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

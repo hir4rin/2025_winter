@@ -80,7 +80,7 @@ void EnemyArrow::Draw(Camera& camera)
 		0.0f, m_handle,
 		true, m_enemydir ? false : true);//もともとm_playerdirだった
 
-
+#ifdef _DEBUG
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-
+#endif
 }

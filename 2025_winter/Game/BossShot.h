@@ -35,9 +35,6 @@ public:
 private:
 	const float m_speed = 10;
 	float	AliveLimitX = 5000.0f;
-	const int kCharaSize = 32;
 
-
-	const float kScale = 3;
 };
 

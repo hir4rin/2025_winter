@@ -50,6 +50,8 @@ StageUI::~StageUI()
 
 }
 
+
+
 void StageUI::Init(int hp)
 {
 	m_playerHp = hp;

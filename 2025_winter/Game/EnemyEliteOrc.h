@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Enemy.h"
+#include <functional>
 
 class Camera;
 
@@ -9,7 +10,8 @@ enum class AttackPattern
 	
 	Attack1,//ぐるぐる攻撃
 	Attack2,//ジャンプ攻撃
-	Attack3//もの投げ攻撃
+	Attack3,//もの投げ攻撃
+	Down//弱い攻撃後、ダウンする
 };
 
 class EnemyEliteOrc : public Enemy
@@ -58,6 +60,10 @@ private:
 	/// もの投げ攻撃
 	/// </summary>
 	void Attack3();//実際に攻撃をする処理
+	/// <summary>
+	/// 弱い攻撃後、ダウン状態になる
+	/// </summary>
+	void AttackDown();
 
 	bool isAttack;//攻撃しているかどうか
 	bool isThrow;//投げるかどうか
@@ -71,7 +77,11 @@ private:
 
 	float catchDistance = 1250.0f;//プレイヤーを見つける距離
 
-
+public:
+	std::vector<std::function<void()>> onAttackEndEvents;
+	void AddOnAttackEndEvent(const std::function<void()>& eventFunc) {
+		onAttackEndEvents.push_back(eventFunc);
+	}
 private:
 	int m_coolDamageTimer;
 	AttackPattern m_attackP;
@@ -86,5 +96,9 @@ private:
 	float targetX = 0.0f;//目標までの距離
 	float m_startX = 0.0f;//攻撃するときの最初のX座標
 	float offset = 50.0f;//プレイヤーの後ろ50ピクセル//ゆとり
+
+	//ダウン時の揺れ用
+	Vec2 m_drawoffset = {0,0};
+
 };
 

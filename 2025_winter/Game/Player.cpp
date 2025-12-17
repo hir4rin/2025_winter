@@ -19,6 +19,9 @@ namespace
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
 	constexpr int kPlayerCutW = 100;
 	constexpr int kPlayerCutH = 100;
+
+	constexpr float kDamageInterval = 60;
+
 	constexpr float  kPlayerScale = 3.0f;
 
 	constexpr float kJumpPower = -15.0f;	// ジャンプ力
@@ -136,7 +139,8 @@ Player::Player(PlayerType type,int hp,Vec2 pos) :
 	m_lastTapDir(-1),
 	m_isDash(false),
 	isRotateOne(false),
-	m_rotateFrame(0)
+	m_rotateFrame(0),
+	damageTimer(0)
 
 {
 	m_pos = pos;
@@ -179,6 +183,7 @@ void Player::Update(Input& input)
 
 	m_frame++;
 	coolTimer--;
+	damageTimer--;
 	AnimFrameUpdate();
 	if (arrowFrame >= 0)
 	{
@@ -390,6 +395,13 @@ void Player::Draw(Camera& camera)
 
 void Player::DamageHit(bool ans)
 {
+	if (damageTimer > 0)return;
+
+
+
+	//被弾後
+	damageTimer = kDamageInterval;
+
 	m_isRight = ans;
 	//動けないようにする
 	isNomove = true;
@@ -682,8 +694,13 @@ void Player::CopyUpdate()
 void Player::DamageUpdate()
 {
 	damageCount--;
-	m_vel.x = m_isRight ? -2 : 2;
+	m_vel.x = m_isRight ? -1 : 1;
 	
+	if (m_isGround)
+	{
+		m_vel.x = 0;
+	}
+
 	Character::Gravity();
 	//damageCountが0になったらstateをNormalに戻す、
 	//damageを食らっているときは無敵判定

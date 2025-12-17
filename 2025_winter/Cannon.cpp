@@ -82,9 +82,9 @@ void Cannon::Draw(Camera& camera)
 	
 	
 
-
+#ifdef _DEBUG
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(255, 255, 255), false);
-
+#endif
 	switch (m_state)
 	{
 		case CannonState::Idle:

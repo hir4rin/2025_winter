@@ -50,6 +50,9 @@ namespace
 	constexpr float kJumpAttackDownTime = kAttackTime * 3/10;
 	constexpr float kJumpAttackFreeTime = kAttackTime * 1/10;
 
+	//ダウンタイム
+	constexpr float kDownTime = 60.0f;
+
 }
 
 
@@ -87,6 +90,9 @@ void EnemyEliteOrc::Update()
 		m_coolDamageTimer--;
 	}
 
+
+
+
 	switch (_state)
 	{
 	case EnemyState::Normal:
@@ -113,6 +119,39 @@ void EnemyEliteOrc::Update()
 
 
 	Character::BossUpdate();
+
+
+#ifdef _DEBUG
+
+	if (CheckHitKey(KEY_INPUT_Y))
+	{
+		m_attackP = AttackPattern::Down;
+	}
+	if (CheckHitKey(KEY_INPUT_T))
+	{
+		m_attackP = AttackPattern::Attack3;
+	}
+
+	if (CheckHitKey(KEY_INPUT_R))
+	{
+		m_attackP = AttackPattern::Attack2;
+	}
+
+	if (CheckHitKey(KEY_INPUT_E))
+	{
+		m_attackP = AttackPattern::Attack1;
+	}
+	
+	if (CheckHitKey(KEY_INPUT_W))
+	{
+		_state = EnemyState::Walk;
+	}
+	if (CheckHitKey(KEY_INPUT_Q))
+	{
+		_state = EnemyState::Attack;
+	}
+
+#endif
 
 }
 
@@ -154,24 +193,51 @@ void EnemyEliteOrc::Draw(Camera& camera)
 		break;
 	}
 
+
+
+
 	if (m_coolDamageTimer > 0)
 	{
 		if ((m_coolDamageTimer /10) % 2 == 0)SetDrawBright(255, 100, 100);//赤っぽく
 	}
 
+	
+	if (m_attackP == AttackPattern::Down)
+	{
+		if (charaIdx == 6)SetDrawBright(100, 100, 255);//青っぽく
+
+
+		//stan用の動き
+		if (attackTimer < kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime &&( m_isGround && charaIdx == 6))//stay条件よりも低いとき、
+		{
+			//xとyで揺らし方を変える
+			m_drawoffset.x = std::sin(m_animframe * 0.2f) * 3;
+			m_drawoffset.y = std::cos(m_animframe * 0.15f) * 3 * 0.5f;//Yのほうを小さめにずらす
+		}
+		else
+		{
+			m_drawoffset = { 0,0 };
+		}
+	}
+	else
+	{
+		m_drawoffset = { 0,0 };
+	}
+	
+
 
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX,
-			m_pos.y + camera.drawOffset.y + drawY,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x,
+			m_pos.y + camera.drawOffset.y + drawY + m_drawoffset.y,
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f, m_handle, true, false);
 	}
 	else
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX,
-			m_pos.y + camera.drawOffset.y + drawY,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x,
+			m_pos.y + camera.drawOffset.y + drawY + m_drawoffset.y,
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f,
@@ -334,6 +400,46 @@ void EnemyEliteOrc::AttackUpdate()
 		}
 	}
 		break;
+	case AttackPattern::Down://波動
+		coolTimer--;
+		//ぷれいやーのとの距離が近くなったら攻撃を出す
+		float distance = m_pPlayer->GetPos().x - m_pos.x;
+		if (distance < 0)distance = -distance;//絶対値にする
+		if (distance < catchDistance && !isAttack)
+		{
+			if (coolTimer <= 0)//クールタイムが0になったら
+			{
+				AnimChange(EnemyState::Attack);
+				isAttack = true;
+				attackTimer = kAttackTime;
+
+				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+				m_isRight = dir;
+
+				m_startX = m_pos.x;//減速処理用
+
+				if (m_isRight)
+				{
+					targetX = m_pPlayer->GetPos().x + offset;
+				}
+				else
+				{
+					targetX = m_pPlayer->GetPos().x - offset;
+				}
+				float distance = targetX - m_pos.x;
+				m_vel.x = distance / kJumpAttackUpTime;
+
+				m_vel.y = -kJumpSpeed;
+			}
+		}
+		if (isAttack == true)
+		{
+			//敵はプレイヤーの向きに攻撃する
+			//攻撃終わり処理も入っている
+			AttackDown();
+
+		}
+		break;
 
 	}
 	
@@ -424,6 +530,46 @@ void EnemyEliteOrc::AttackAnimIdxy()
 		}
 	}
 		break;
+	case AttackPattern::Down:
+		if (isAttack == true)
+		{
+			charaIdx = (m_animframe / kAttack2Duration) % kAttack2Num;
+			charaIdy = 4;
+			drawY += enemy_cut_h / 4;
+
+			if (attackTimer > kAttackTime - kJumpAttackUpTime)//最初の上昇
+			{
+				if (charaIdx >= 2)charaIdx = 2;
+
+			}
+			else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime)//真ん中のstayTime
+			{
+				charaIdx = 3;
+			}
+			else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime)
+			{
+				baseFrame = 4; // フレーム4から開始
+				//このフレームから(0)の進み具合
+				phaseProgress = ((kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime) - attackTimer);
+				charaIdx = baseFrame + (phaseProgress / kAttack2Duration/2);//kAttack2Durationの2倍の速さで進む
+				if (charaIdx > 6) charaIdx = 6;
+			}
+			else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime - kJumpAttackFreeTime)
+			{
+				charaIdx = 6;
+			}
+			else
+			{
+				charaIdx = 6;
+			}
+
+		}
+		else//Idle状態にする
+		{
+			charaIdx = (m_animframe / kIdleDuration) % kIdleNum;
+			charaIdy = 0;
+			drawY -= enemy_cut_h / 2;
+		}
 	}
 
 	
@@ -496,6 +642,14 @@ void EnemyEliteOrc::Attack2()
 		m_vel.y += kJumpDownSpeed;
 	}
 
+	if (attackTimer == 10)//着地の瞬間
+	{
+		//エフェクトを出す
+		for (auto& func : onAttackEndEvents)
+		{
+			if (func)func();//呼び出し
+		}
+	}
 
 
 	if (attackTimer <= 0)
@@ -503,9 +657,14 @@ void EnemyEliteOrc::Attack2()
 		isAttack = false;
 		m_vel = zero;
 		coolTimer = coolTime;
+
+	
+
 		//プレイヤーのほうをむく
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
+
+
 	}
 }
 
@@ -531,6 +690,76 @@ void EnemyEliteOrc::Attack3()
 		//プレイヤーのほうをむく
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
+
+	}
+}
+
+void EnemyEliteOrc::AttackDown()
+{
+	attackTimer--;
+
+
+
+	if (attackTimer > kAttackTime - kJumpAttackUpTime)//最初の上昇
+	{
+		m_vel.y += -kJumpSpeed;//途中のジャンプ力
+
+		//手前で止まる処理
+		{
+			//float distance = targetX - m_pos.x;
+		//float moveSpeed = distance / kJumpAttackUpTime;//上昇時間内に到達
+		//m_vel.x = moveSpeed;
+		}
+
+		//減速処理(ClearSceneのと一緒)
+		{
+			////全体の進捗度合い
+			//float progress = (m_pos.x - m_startX) / (targetX - m_startX);
+			////速度の割合(2乗を使って滑らか) y=1-x*x
+			//float speedRate = 1.0f - progress * progress;//二乗で減速を滑らかに(イージング関数というやつらしい)(ググればわかる
+			//if (m_isRight)
+			//{
+			//	m_vel.x = kAttack2Speed * 3 * speedRate;
+
+			//}
+			//else
+			//{
+			//	m_vel.x = -kAttack2Speed * 3 * speedRate;
+			//}
+		}
+
+	}
+	else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime)//真ん中のstayTime
+	{
+		m_vel.y = 0;//速度滞空
+		m_vel.x = 0;
+	}
+	else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime)//0以上
+	{
+		m_vel.y += kJumpDownSpeed*1.5f;
+	}
+	else if (attackTimer > kAttackTime - kJumpAttackUpTime - kJumpAttackStayTime - kJumpAttackDownTime - kJumpAttackFreeTime)//後隙
+	{
+		m_vel.y += kJumpDownSpeed * 1.5f;
+	}
+
+	//着地の瞬間にカメラを揺らす処理
+	
+	
+
+
+	if (attackTimer <= 0- kDownTime)
+	{
+		isAttack = false;
+		m_vel = zero;
+		coolTimer = coolTime;
+
+
+
+		//プレイヤーのほうをむく
+		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+		m_isRight = dir;
+
 
 	}
 }

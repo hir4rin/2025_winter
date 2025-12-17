@@ -223,6 +223,7 @@ private:
 	int m_animframe;
 	int m_angle;//回転角度
 	float damageCount;//ダメージを食らったときの秒数
+	float damageTimer;//被ダメ秒数
 	int charaIdx;
 	int charaIdy;
 	bool isNomove;

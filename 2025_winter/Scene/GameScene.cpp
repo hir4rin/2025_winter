@@ -1,5 +1,7 @@
 ﻿#include "GameScene.h"
 #include <algorithm>
+#include "WaveManager.h"
+#include "Wave.h"
 #include "DxLib.h"
 #include "Camera.h"
 #include "Effect.h"
@@ -185,6 +187,25 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+
+		//波動
+		m_pElite->AddOnAttackEndEvent([this]() {
+			Vec2 startPos = m_pElite->GetPos();
+			startPos.y += 16;//足元に合わせる
+
+			//左方向
+			m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, -1)
+			);
+
+			//右方向
+			m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, 1)
+			);
+
+			//カメラを揺らす
+			StartCameraShake(camera, 10.0f, 0.2f);
+		});
+
+
 		break;
 	}
 	
@@ -211,6 +232,12 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		});
 
 }
+
+GameScene::~GameScene()
+{
+
+}
+
 
 
 
@@ -1183,7 +1210,25 @@ void GameScene::CheckPlayer()
 
 		}
 	}
+	//波動
+	for (auto& wm : m_waveManagers)//波動マネ
+	{
+		for (auto& wave : wm->GetWaves())//波動
+		{
+			if (wave->IsDead())continue;
 
+			if (m_pPlayer->GetColRect().IsCollision(wave->GetColRect()))
+			{
+
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(wave->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
+		}
+	}
+	
 	
 }
 
@@ -1465,6 +1510,24 @@ void GameScene::NormalUpdate(Input& input)
 				camera.ChangeIsBossFalse();
 			}
 		}
+
+		for (auto& wm : m_waveManagers)
+		{
+			wm->Update(m_pBg);
+		}
+		//m_waveManagerの消す処理
+		{
+			m_waveManagers.erase(
+				std::remove_if(
+					m_waveManagers.begin(), m_waveManagers.end(),
+					[](const std::unique_ptr<WaveManager>& wm)
+					{
+						return wm->IsFinished();
+					}
+				), m_waveManagers.end()
+			);
+		}
+		
 	}
 	//矢関連
 	{
@@ -1763,6 +1826,10 @@ void GameScene::NormalDraw()
 			if (!shot) continue;
 			shot->Draw(camera);
 		}
+		for (auto& wm : m_waveManagers)//波動攻撃
+		{
+			wm->Draw(camera);
+		}
 		for (auto& m_pBurningObject : m_pBurningObjects)
 		{
 			if (m_pBurningObject) m_pBurningObject->Draw(camera);
@@ -1858,6 +1925,10 @@ void GameScene::NormalDraw()
 			if (m_pBurningObject) m_pBurningObject->Draw(camera);
 		}
 		ReactionBurning();
+		for (auto& wm : m_waveManagers)//波動攻撃
+		{
+			wm->Draw(camera);
+		}
 		for (auto& effect : m_pEffects)
 		{
 			if (effect) effect->Draw(camera);

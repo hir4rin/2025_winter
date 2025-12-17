@@ -7,8 +7,16 @@
 
 namespace
 {
-	const float kcharaWidth = 32.0f;//charaの幅
-	const float kcharaHeight = 32.0f;//charaの高さ
+	constexpr float kcharaWidth = 50.0f;//charaの幅
+	constexpr float kcharaHeight = 50.0f;//charaの高さ
+
+	constexpr float kGraphWidth = 1024.0f;
+	constexpr float kGraphHeight = 1024.0f;
+
+	constexpr int kCharaSize = 32;
+
+
+	constexpr float kScale = 0.125f;
 }
 
 BossShot::BossShot(bool isRight,Vec2 pos) :
@@ -17,7 +25,7 @@ BossShot::BossShot(bool isRight,Vec2 pos) :
 	m_dir(1, 0),
 	m_enemydir(isRight)
 {
-	m_handle = LoadGraph("data/Game/DEAD.png");
+	m_handle = LoadGraph("data/Game/bomb.png");
 	assert(m_handle >= 0);
 	Vec2 offset = { 100,0 };
 	if (m_enemydir)
@@ -80,17 +88,25 @@ void BossShot::CheckPlayer(std::shared_ptr<Player> m_pPlayer)
 void BossShot::Draw(Camera& camera)
 {
 
+
+	//画像サイズを取得
+//画像のサイズ
+	int graphW = 0;
+	int graphH = 0;
+
+	GetGraphSize(m_handle, &graphW, &graphH);
+
 	// 弾を描画する
-	const float shotHalfW = kCharaSize * 0.5f;
-	const float shotHalfH = kCharaSize * 0.5f;
-	DrawRotaGraph3(static_cast<int>(m_pos.x) + camera.drawOffset.x,
-		static_cast<int>(m_pos.y) + camera.drawOffset.y,
-		static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
-		kScale, 1.0f,
-		0.0f, m_handle,
-		true, m_enemydir ? false : true);//もともとm_playerdirだった
+	
+	DrawRectRotaGraph(static_cast<int>(m_pos.x) + camera.drawOffset.x,//座標
+		static_cast<int>(m_pos.y) + camera.drawOffset.y,//座標
+		0,0,//切り取り座標
+		graphW, graphH,//幅
+		kScale,0.0f,
+		m_handle,
+		true, m_enemydir ? true : false);//もともとm_playerdirだった
 
-
+#ifdef _DEBUG
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-
+#endif
 }

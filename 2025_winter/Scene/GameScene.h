@@ -23,6 +23,7 @@ class Frozen;
 class BurningObject;
 class Door;
 class Effect;
+class WaveManager;
 
 
 
@@ -33,6 +34,7 @@ class GameScene : public Scene
 {
 public:
 	GameScene(SceneController& controller,int stageNum,PlayerType type,int hp);
+	~GameScene();//宣言だけ
 	void Update(Input& input) override;
 	void Draw() override;
 	/// <summary>
@@ -192,6 +194,8 @@ private:
 
 	std::vector<std::shared_ptr<Frozen>> m_pFrozens;
 	std::vector<std::shared_ptr<BurningObject>> m_pBurningObjects;
+	//敵の波動
+	std::vector<std::unique_ptr<WaveManager>> m_waveManagers;
 
 
 	Bg* m_pBg;
@@ -201,6 +205,7 @@ private:
 
 	//エフェクト
 	std::vector<std::shared_ptr<Effect>> m_pEffects;
+	
 
 
 	
