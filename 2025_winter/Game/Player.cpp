@@ -27,6 +27,9 @@ namespace
 	constexpr float kJumpPower = -15.0f;	// ジャンプ力
 	constexpr int kMaxJumpFrame = 15;	// ジャンプを長押しできる最大時間
 
+	//攻撃のクールタイム
+	constexpr int kAttackCool = 8;
+
 	//あまり慣性が乗っている感じはないように見える(笑)
 	constexpr float accel = 2.0f;//加速度
 	constexpr float decel = 1.0f;//減速度
@@ -140,7 +143,8 @@ Player::Player(PlayerType type,int hp,Vec2 pos) :
 	m_isDash(false),
 	isRotateOne(false),
 	m_rotateFrame(0),
-	damageTimer(0)
+	damageTimer(0),
+	attackCoolTimer(0)
 
 {
 	m_pos = pos;
@@ -182,6 +186,7 @@ void Player::Update(Input& input)
 {
 
 	m_frame++;
+	attackCoolTimer--;
 	coolTimer--;
 	damageTimer--;
 	AnimFrameUpdate();
@@ -572,9 +577,13 @@ void Player::AutoMove()
 void Player::InputUpdate(Input& input)
 {
 	if (isNomove)return;
+
+
+
 	//特殊行動の入力検知
 	if (input.IsTriggered("Attack"))
 	{
+		if (attackCoolTimer > 0)return;
 		m_state = PlayerState::Attack;
 		m_vel.x = 0;//攻撃中は動けないようにするため
 		m_vel.y = 0;
@@ -642,6 +651,7 @@ void Player::AttackUpdate()
 				burningTimer = 0;
 				 
 				m_state = PlayerState::Normal;
+				attackCoolTimer = kAttackCool;
 				//isNomove = false;
 			}
 			/*if (m_isRight)m_pos.x += kBurningSpeed;
@@ -665,6 +675,7 @@ void Player::AttackUpdate()
 				burningTimer = 0;
 				
 				m_state = PlayerState::Normal;
+				attackCoolTimer = kAttackCool;
 				//isNomove = false;
 				//ここの処理を変えたら
 				//バーニングの終わり際が変わる
@@ -942,7 +953,7 @@ void Player::AnimSelectNormal(const Anim& anim)
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
-
+			attackCoolTimer = kAttackCool;
 
 		}
 		if (m_anim == Anim::Copy && charaIdx == kNormalCopyNum-1)//コピーアニメーション終了
@@ -982,7 +993,7 @@ void Player::AnimSelectBurning(const Anim& anim)
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
-
+			attackCoolTimer = kAttackCool;
 		}
 		if (m_anim == Anim::Copy && charaIdx == kBurningCopyNum-1)//コピーアニメーション終了
 		{
@@ -1018,7 +1029,7 @@ void Player::AnimSelectFrozen(const Anim& anim)
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
-
+			attackCoolTimer = kAttackCool;
 		}
 		if (m_anim == Anim::Copy && charaIdx == kFrozenCopyNum-1)//コピーアニメーション終了
 		{
@@ -1054,7 +1065,7 @@ void Player::AnimSelectArcher(const Anim& anim)
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
-
+			attackCoolTimer = kAttackCool;
 		}
 		if (m_anim == Anim::Copy && charaIdx == kArcherCopyNum-1)//コピーアニメーション終了
 		{

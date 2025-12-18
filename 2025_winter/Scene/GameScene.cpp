@@ -138,7 +138,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//敵スポーン
 		
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
 
 		m_pBg = new Bg(m_pPlayer, 6);
 		m_doors = std::make_shared< Door>(Vec2{ 6050,760 });
@@ -158,7 +158,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4697.0f,400.0f), false });//上の段
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5291.0f,800.0f), false });//下の段
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
 
 		m_pBg = new Bg(m_pPlayer, 7);
 		m_doors = std::make_shared< Door>(Vec2{ 6130,600 });
@@ -176,7 +176,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4952.0f,200.0f), false });
 
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
 
 		
 		m_pBg = new Bg(m_pPlayer, 8);

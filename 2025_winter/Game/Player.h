@@ -206,6 +206,7 @@ private:
 	
 private:
 	int m_frame;
+	int attackCoolTimer;
 	int m_rotateFrame;//回転させるときのフレーム
 	int m_junpTimer = 0;//クリアシーンで使う用のタイマー
 	int m_jumpTime = 20;
