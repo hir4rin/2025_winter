@@ -4,6 +4,7 @@
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
+#include "BossShot.h"
 #include <cassert>
 
 namespace
@@ -11,12 +12,11 @@ namespace
 
 	constexpr int enemy_cut_w = 50;
 	constexpr int enemy_cut_h = 50;
-	constexpr float kScale = 2.0f;
+
 
 	//表示させる画像
 	constexpr int kCharaIdx = 15;
-	//Y座標を少し上げる
-	constexpr float drawY = 1.5f/3.0f;
+	
 }
 
 Frozen::Frozen(std::shared_ptr<EnemyWizard> _enemyWiz)
@@ -41,6 +41,16 @@ Frozen::Frozen(std::shared_ptr<EnemyArcher> _enemyArchers)
 	assert(m_handle >= 0);
 
 	m_pos = _enemyArchers->GetPos();
+}
+
+Frozen::Frozen(std::shared_ptr<BossShot> _bossShot)
+{
+	m_handle = LoadGraph("data/Game/exp ice.png");
+	assert(m_handle >= 0);
+
+	m_pos = _bossShot->GetPos();
+	kScale = 4.0f;
+	drawY = 1.5f;
 }
 
 Frozen::~Frozen()

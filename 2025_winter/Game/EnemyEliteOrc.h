@@ -32,6 +32,9 @@ public:
 
 	int GetHp() { return m_hp; }
 
+
+	Rect& GetColAttack1Rect() { return m_attack1Rect; }
+
 private:
 	int charaIdx;
 	int charaIdy;
@@ -65,6 +68,8 @@ private:
 	/// </summary>
 	void AttackDown();
 
+	AttackPattern SelectAttack();
+
 	bool isAttack;//攻撃しているかどうか
 	bool isThrow;//投げるかどうか
 
@@ -79,9 +84,23 @@ private:
 
 public:
 	std::vector<std::function<void()>> onAttackEndEvents;
+	/// <summary>
+	/// 攻撃2終わりのエフェクトなどを追加
+	/// </summary>
+	/// <param name="eventFunc"></param>
 	void AddOnAttackEndEvent(const std::function<void()>& eventFunc) {
 		onAttackEndEvents.push_back(eventFunc);
 	}
+
+	std::vector<std::function<void()>> onDeathEvents;
+	/// <summary>
+	/// 死んだときのエフェクトなどを追加
+	/// </summary>
+	/// <param name="eventFunc"></param>
+	void AddOnDeathEvent(const std::function<void()>& eventFunc) {
+		onDeathEvents.push_back(eventFunc);
+	}
+
 private:
 	int m_coolDamageTimer;
 	AttackPattern m_attackP;
@@ -92,6 +111,13 @@ private:
 	//アニメーション用
 	int baseFrame = 0;
 	int phaseProgress = 0;
+
+	//攻撃判定初期化用
+	void ClearAttackRect();
+
+	//攻撃1用
+	Rect m_attack1Rect;
+
 	//攻撃２用
 	float targetX = 0.0f;//目標までの距離
 	float m_startX = 0.0f;//攻撃するときの最初のX座標

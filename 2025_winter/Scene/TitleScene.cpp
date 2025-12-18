@@ -2,7 +2,7 @@
 #include "DxLib.h"
 #include "Player.h"
 #include "../input.h"
-#include "GameScene.h"
+#include "StageSelectScene.h"
 #include "SceneController.h"
 #include "../Application.h"
 
@@ -35,7 +35,7 @@ void TitleScene::FadeOutUpdate(Input&)
 {
 	if (frame_++ >= fade_interval)
 	{
-		controller_.ChangeScene(std::make_shared<GameScene>(controller_,6,PlayerType::Normal,100));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_));
 		return;
 	}
 }

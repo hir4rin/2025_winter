@@ -204,6 +204,10 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 			//カメラを揺らす
 			StartCameraShake(camera, 10.0f, 0.2f);
 		});
+		m_pElite->AddOnDeathEvent([this]() {
+			//カメラを揺らす
+			StartCameraShake(camera, 10.0f, 0.4f);
+});
 
 
 		break;
@@ -466,6 +470,11 @@ void GameScene::CheckArrowHit()
 		e_shot->m_hitPlayer = nullptr;
 
 	}
+
+	
+	//氷と当たったときの処理は氷の場所でやってる
+
+	
 }
 
 void GameScene::CheckFrozenHit()
@@ -557,6 +566,32 @@ void GameScene::CheckFrozenHit()
 				}
 
 			}
+			//動いているときに敵と当たる//ボス
+			{
+				if (m_pElite != nullptr)
+				{
+					if (m_pFrozen)
+					{
+						bool isHitEnemy = m_pElite->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+						if (isHitEnemy)
+						{
+							m_pFrozen = nullptr;
+						
+
+							//インスタンスを消す
+							//ボスにダメージを与える
+							m_pElite->HitBossDamage(20);
+
+
+						}
+					}
+				
+			    }
+				
+				
+
+			}
 		}
 		else if (m_pFrozen->isMove == false)
 		{
@@ -630,6 +665,36 @@ void GameScene::CheckFrozenHit()
 		}
 
 	}
+
+	for (auto& frozen : m_pFrozens)
+	{
+		if (!frozen)continue;
+
+		//ボスの弾と当たったとき
+		for (auto& e_shot : m_pBossShots)
+		{
+			if (!frozen)continue;
+			if (!e_shot)continue;
+			if (e_shot->GetColRect().IsCollision(frozen->GetColRect()))
+			{
+				e_shot = nullptr;
+				
+			}
+		}
+		//敵の矢と当たったとき
+		for (auto& e_arrow : m_pEnemyArrows)
+		{
+			if (!frozen)continue;
+			if (!e_arrow)continue;
+			if (e_arrow->GetColRect().IsCollision(frozen->GetColRect()))
+			{
+				e_arrow = nullptr;
+
+			}
+		}
+
+	}
+
 
 
 }
@@ -1049,6 +1114,30 @@ void GameScene::CheckHitFrozen()
 
 		}
 	}
+	for (int i = (int)m_pBossShots.size() - 1; i >= 0; i--)//ボスの弾
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		{
+			auto& e = m_pBossShots[i];
+			if (e == nullptr)continue;
+
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
+			//矢の処理は別の場所(CheckhitArrow)
+
+
+			if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+			
+
+				//インスタンスを消す
+				m_pBossShots.erase(m_pBossShots.begin() + i);
+			}
+
+		}
+	}
 
 	if (m_pElite != nullptr)
 	{
@@ -1226,6 +1315,19 @@ void GameScene::CheckPlayer()
 				m_pPlayer->DamageHit(isLeft);
 				OnShake();
 			}
+		}
+	}
+
+	//ボスの攻撃
+	if (m_pElite != nullptr)
+	{
+		if (m_pElite->GetColAttack1Rect().IsCollision(m_pPlayer->GetColRect()))
+		{
+			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
+			//敵がどっちから当たったかどうかを入れる
+			//プレイヤーのダメージ処理
+			m_pPlayer->DamageHit(isLeft);
+			OnShake();
 		}
 	}
 	

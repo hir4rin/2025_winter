@@ -396,7 +396,19 @@ void Player::Draw(Camera& camera)
 void Player::DamageHit(bool ans)
 {
 	if (damageTimer > 0)return;
+	//バーニングの攻撃の初速の時は無敵(案1)
+	{
+		//if (m_state == PlayerState::Attack && burningTimer > 0)
+	//{
+	//	return;
+	//}
+	}
 
+	//バーニングの攻撃しているときは無敵(案2)
+	if (m_state == PlayerState::Attack && m_type == PlayerType::Burning)
+	{
+		return;
+	}
 
 
 	//被弾後
@@ -654,23 +666,12 @@ void Player::AttackUpdate()
 				
 				m_state = PlayerState::Normal;
 				//isNomove = false;
+				//ここの処理を変えたら
+				//バーニングの終わり際が変わる
 			}
 		}
 	}
-	//着地時にアニメーションを帰るところ
-	/*if (m_isGround)
-	{
-		m_pos.y = kGround;
-
-
-		if (m_isJumpPreparing)return;
-		m_jumpFrame = 0;
-		m_vel.y = 0.0f;
-		if (_anim == Anim::Jump)
-		{
-			AnimSelect(Anim::Idle);
-		}
-	}*/
+	
 	//バーニングだけ攻撃中は重力を受けない
 	//微妙だったため一旦なし
 	/*if (!(_type == PlayerType::Burning))

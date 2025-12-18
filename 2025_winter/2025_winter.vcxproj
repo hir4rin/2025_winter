@@ -170,6 +170,7 @@
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneController.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
+    <ClCompile Include="Scene\StageSelectScene.cpp" />
     <ClCompile Include="StageUI.cpp" />
     <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="Game\Wave.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Scene\TitleScene.h" />
+    <ClInclude Include="Scene\StageSelectScene.h" />
     <ClInclude Include="StageUI.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Game\Wave.h" />

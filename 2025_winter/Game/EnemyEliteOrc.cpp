@@ -29,7 +29,7 @@ namespace
 	constexpr int kAttackDuration = 2;
 	constexpr int kAttack2Duration = 4;
 	constexpr int kAttack3Duration = 12;
-	constexpr int kDamageDuration = 10;
+	constexpr int kDamageDuration = 20;
 
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kIdleNum = 6;
@@ -51,7 +51,10 @@ namespace
 	constexpr float kJumpAttackFreeTime = kAttackTime * 1/10;
 
 	//ダウンタイム
-	constexpr float kDownTime = 60.0f;
+	constexpr float kDownTime = 100.0f;
+
+	//左上限
+	constexpr float kLeftMax = 2000.0f;
 
 }
 
@@ -89,8 +92,8 @@ void EnemyEliteOrc::Update()
 	{
 		m_coolDamageTimer--;
 	}
-
-
+	
+	ClearAttackRect();
 
 
 	switch (_state)
@@ -112,6 +115,7 @@ void EnemyEliteOrc::Update()
 	case EnemyState::Damage:
 		//DamageのUpdate
 		DamageUpdate();
+		return;
 		break;
 	default:
 		break;
@@ -184,10 +188,10 @@ void EnemyEliteOrc::Draw(Camera& camera)
 		AttackAnimIdxy();
 
 		break;
-	case EnemyState::Damage://Damage(一旦ノーマルのやつ)
+	case EnemyState::Damage://死亡演出
 		charaIdx = (m_animframe / kDamageDuration) % kDamageNum;
-		charaIdy = 5;
-		drawY -= enemy_cut_h / 2;
+		charaIdy = 6;
+		drawY = 0;
 		break;
 	default:
 		break;
@@ -250,6 +254,9 @@ void EnemyEliteOrc::Draw(Camera& camera)
 #ifdef _DEBUG
 	//当たり判定の描画
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
+
+	m_attack1Rect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+
 	//キャラとプレイヤーとの距離を表示
 	DrawBox(m_pos.x - catchDistance + camera.drawOffset.x, 0, m_pos.x + catchDistance + camera.drawOffset.x, 1080, GetColor(0, 0, 255), false);
 
@@ -264,12 +271,20 @@ void EnemyEliteOrc::HitBossDamage(int damage)
 {
 	if (m_coolDamageTimer > 0)return;
 
+	//死んでるアニメーションの時は、被ダメしない
+	if (_state == EnemyState::Damage)return;
+
 	m_hp -= damage;
 	m_coolDamageTimer = cool_interval;
 	if (m_hp <= 0)
 	{
 		m_hp = 0;
-		isDead = true;
+	
+		_state = EnemyState::Damage;
+		m_vel = Vec2{ 0,0 };
+		m_animframe = 0;
+		charaIdx = 0;
+		charaIdy = 0;
 	}
 }
 
@@ -334,6 +349,14 @@ void EnemyEliteOrc::AttackUpdate()
 	case AttackPattern::Attack2:
 	{
 		coolTimer--;
+
+		//左上限をきめる
+		if (m_pos.x <= kLeftMax)
+		{
+			m_pos.x = kLeftMax;
+		}
+
+
 		//ぷれいやーのとの距離が近くなったら攻撃を出す
 		float distance = m_pPlayer->GetPos().x - m_pos.x;
 		if (distance < 0)distance = -distance;//絶対値にする
@@ -402,6 +425,13 @@ void EnemyEliteOrc::AttackUpdate()
 		break;
 	case AttackPattern::Down://波動
 		coolTimer--;
+
+		//左上限をきめる
+		if (m_pos.x <= kLeftMax)
+		{
+			m_pos.x = kLeftMax;
+		}
+
 		//ぷれいやーのとの距離が近くなったら攻撃を出す
 		float distance = m_pPlayer->GetPos().x - m_pos.x;
 		if (distance < 0)distance = -distance;//絶対値にする
@@ -448,7 +478,41 @@ void EnemyEliteOrc::AttackUpdate()
 
 void EnemyEliteOrc::DamageUpdate()
 {
-	Enemy::DamageUpdate();
+	//死亡アニメーションをする
+
+	if (m_animframe == kDamageDuration * kDamageNum)
+	{
+		isDead = true;
+		
+		//エフェクトを出す
+		for (auto& func : onDeathEvents)
+		{
+			if (func)func();//呼び出し
+		}
+	}
+	 
+	//重力処理
+	Gravity();
+
+
+
+
+
+	Rect chipRect;//当たったマップチップの矩形
+	CheckHitMap(chipRect);
+
+
+	if (m_isGround)
+	{
+
+		m_isGround = true;
+
+		if (m_isJumpPreparing)return;
+		m_jumpFrame = 0;
+		m_vel.y = 0.0f;
+
+
+	}
 
 }
 
@@ -579,6 +643,13 @@ void EnemyEliteOrc::Attack1()
 {
 	//実際に攻撃をする処理
 	attackTimer--;
+
+	//攻撃判定をセット
+	float attackWidth = 200.0f;
+	float attackHeight = 200.0f;
+	float offsetY = 100.0f;
+	m_attack1Rect.SetLT(m_pos.x - attackWidth / 2, m_pos.y - offsetY, attackWidth, attackHeight);
+
 	if (attackTimer <= 0)
 	{
 		//_state = EnemyState::Normal;
@@ -590,6 +661,17 @@ void EnemyEliteOrc::Attack1()
 		//プレイヤーのほうをむく
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
+
+		//次の攻撃パターンを選択
+		{
+			AttackPattern prev = m_attackP;
+			do
+			{
+				m_attackP = SelectAttack();
+			} while (m_attackP == prev);
+		}
+		
+
 	}
 }
 
@@ -664,7 +746,14 @@ void EnemyEliteOrc::Attack2()
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
 
-
+		//次の攻撃パターンを選択
+		{
+			AttackPattern prev = m_attackP;
+			do
+			{
+				m_attackP = SelectAttack();
+			} while (m_attackP == prev);
+		}
 	}
 }
 
@@ -690,6 +779,15 @@ void EnemyEliteOrc::Attack3()
 		//プレイヤーのほうをむく
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
+
+		//次の攻撃パターンを選択
+		{
+			AttackPattern prev = m_attackP;
+			do
+			{
+				m_attackP = SelectAttack();
+			} while (m_attackP == prev);
+		}
 
 	}
 }
@@ -760,8 +858,52 @@ void EnemyEliteOrc::AttackDown()
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
 
+		//次の攻撃パターンを選択
+		{
+			AttackPattern prev = m_attackP;
+			do
+			{
+				m_attackP = SelectAttack();
+			} while (m_attackP == prev);
+		}
 
 	}
+}
+
+AttackPattern EnemyEliteOrc::SelectAttack()
+{
+	int flow = 0;
+	//--------------
+	int fmax = 30;
+	int smax = 60;
+	int thmax = 95;
+	//---------------
+	int fomax = 100;
+
+
+	int ans = GetRand(99);//0から99の100通り
+	if (0 <= ans && ans < fmax)
+	{
+		return AttackPattern::Attack1;
+	}
+	if (fmax <= ans && ans < smax)
+	{
+		return AttackPattern::Attack2;
+	}
+	if (smax <= ans && ans < thmax)
+	{
+		return AttackPattern::Attack3;
+	}
+	if (thmax <= ans && ans < 100)
+	{
+		return AttackPattern::Down;
+	}
+	
+}
+
+void EnemyEliteOrc::ClearAttackRect()
+{
+	m_attack1Rect.SetLT(0, 0, 0, 0);
 }
 
 

@@ -7,12 +7,14 @@ class Camera;
 class EnemyWizard;
 class EnemyRider;
 class EnemyArcher;
+class BossShot;
 class Frozen :public Character
 {
 public:
 	Frozen(std::shared_ptr<EnemyWizard> _enemyWiz);
 	Frozen(std::shared_ptr<EnemyRider> _enemyRiders);
 	Frozen(std::shared_ptr<EnemyArcher> _enemyArchers);
+	Frozen(std::shared_ptr<BossShot> _bossShot);
 	virtual ~Frozen();
 	void Init()override;
 	void Update()override;
@@ -25,6 +27,8 @@ public:
 private:
 	std::vector<std::shared_ptr<EnemyWizard>> _enemyWizard;
 
-
+	 float kScale = 2.0f;
+	 //Y座標を少し上げる
+	  float drawY = 1.5f / 3.0f;
 };
 
