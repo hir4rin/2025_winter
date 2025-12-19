@@ -183,8 +183,8 @@ private:
 	std::shared_ptr<EnemyEliteOrc> m_pElite;
 
 
-	//アイテムは今のところ一つだけ
-	std::shared_ptr<Item> m_pItems;
+	//アイテムは今のところ一つだけ→複数に変更
+	std::vector<std::shared_ptr<Item>> m_pItems;
 	//演出用のアイテム
 	std::shared_ptr<Item> m_pDroppedItem;
 	Item* m_pItem;

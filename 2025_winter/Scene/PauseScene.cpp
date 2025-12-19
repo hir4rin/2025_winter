@@ -45,7 +45,7 @@ void PauseScene::NormalUpdate(Input& input)
 	{
 		selectIndex_ = (selectIndex_ + 1) % menuList_.size();
 	}
-	if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
 	{
 		// 現在選択中のメニューアイテム名を取得する
 		auto& menuName = menuList_[selectIndex_];

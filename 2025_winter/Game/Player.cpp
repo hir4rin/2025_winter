@@ -50,7 +50,7 @@ namespace
 	constexpr int kNormalAttackDuration = 4;
 	constexpr int kNormalCopyDuration = 10;
 	constexpr int kNormalDamageDuration = 10;
-	
+
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kNormalIdleNum = 6;
 	constexpr int kNormalWalkNum = 6;
@@ -66,7 +66,7 @@ namespace
 	constexpr int kBurningAttackDuration = 5;
 	constexpr int kBurningCopyDuration = 10;
 	constexpr int kBurningDamageDuration = 5;
-	
+
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kBurningIdleNum = 6;
 	constexpr int kBurningWalkNum = 8;
@@ -82,7 +82,7 @@ namespace
 	constexpr int kFrozenAttackDuration = 2;
 	constexpr int kFrozenCopyDuration = 6;
 	constexpr int kFrozenDamageDuration = 5;
-	
+
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kFrozenIdleNum = 6;
 	constexpr int kFrozenWalkNum = 8;
@@ -98,7 +98,7 @@ namespace
 	constexpr int kArcherAttackDuration = 1;
 	constexpr int kArcherCopyDuration = 6;
 	constexpr int kArcherDamageDuration = 5;
-	
+
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kArcherIdleNum = 6;
 	constexpr int kArcherWalkNum = 8;
@@ -122,7 +122,7 @@ namespace
 
 
 
-Player::Player(PlayerType type,int hp,Vec2 pos) :
+Player::Player(PlayerType type, int hp, Vec2 pos) :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -131,8 +131,8 @@ Player::Player(PlayerType type,int hp,Vec2 pos) :
 	arrowFrame(-1),
 	isArrowAttack(false),
 	isJumping(false),
-	BurningPrevPos{0,0},
-	BurningAfterPos{0,0},
+	BurningPrevPos{ 0,0 },
+	BurningAfterPos{ 0,0 },
 	isBurningAttack(false),
 	damageCount(0),
 	m_angle(0.0f),
@@ -194,7 +194,7 @@ void Player::Update(Input& input)
 	{
 		arrowFrame--;
 	}
-	
+
 
 	Rect chipRect;
 	/*if (input.IsPressed("ok"))
@@ -219,7 +219,7 @@ void Player::Update(Input& input)
 	if (input.IsTriggered("left"))dir = -1;
 
 	int nowFrame = m_frame;// 毎フレーム +1 してるカウンタ
-
+	//ダッシュ
 	if (dir != 0 && m_isGround)
 	{
 		//前回と同じ方向を、一定時間内に2回押したらダッシュ
@@ -256,6 +256,43 @@ void Player::Update(Input& input)
 		break;
 	case PlayerState::Attack://アップデートの遷移
 		AttackUpdate();
+		if (isNomove)
+		{
+			//減速処理(慣性)
+			if (m_isGround)//地上
+			{
+				{
+					if (m_vel.x > 0)//右に移動しているとき
+					{
+						m_vel.x += -decel / 1.5f;
+						if (m_vel.x < 0)m_vel.x = 0;
+					}
+					else if (m_vel.x < 0)//左に移動しているとき
+					{
+						m_vel.x += decel / 1.5f;
+						if (m_vel.x > 0)m_vel.x = 0;
+					}
+				}
+			}
+			else//空中
+			{
+				{
+					if (m_vel.x > 0)//右に移動しているとき
+					{
+						m_vel.x += -decel / 4.0f;
+						if (m_vel.x < 0)m_vel.x = 0;
+					}
+					else if (m_vel.x < 0)//左に移動しているとき
+					{
+						m_vel.x += decel / 4.0f;
+						if (m_vel.x > 0)m_vel.x = 0;
+					}
+				}
+			}
+			
+		
+		
+		}
 		break;
 	case PlayerState::Copy://アップデートの遷移
 		CopyUpdate();
@@ -265,6 +302,13 @@ void Player::Update(Input& input)
 		DamageUpdate();
 		break;
 	}
+
+	if (!(m_type == PlayerType::Burning && m_state == PlayerState::Attack))
+	{
+		Character::Gravity();
+	}
+
+
 	m_wasGround = m_isGround;
 
 	m_hitDir = CheckHitMapPlayer(chipRect);
@@ -276,7 +320,7 @@ void Player::Update(Input& input)
 		{
 			if (func)func();//呼び出し
 		}
-		
+
 	}
 
 
@@ -286,14 +330,14 @@ void Player::Update(Input& input)
 
 
 		m_jumpFrame = 0;
-		if(m_anim != Anim::Damage)m_vel.y = 0.0f;
+		if (m_anim != Anim::Damage)m_vel.y = 0.0f;
 		if (m_anim == Anim::Jump)
 		{
 			AnimSelect(Anim::Idle);
 		}
 	}
 
-	
+
 
 	if (m_pos.x < 0)//画面外に出ないようにする
 	{
@@ -301,7 +345,7 @@ void Player::Update(Input& input)
 	}
 	if (m_pos.y < 0 + (ScreenHeight - topPos))//画面外に出ないようにする(本当は+drawOffsetCamera)
 	{
-		m_pos.y = 0 + (ScreenHeight -topPos);
+		m_pos.y = 0 + (ScreenHeight - topPos);
 	}
 
 }
@@ -371,7 +415,7 @@ void Player::Draw(Camera& camera)
 
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y+ kCharaSize/4,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + kCharaSize / 4,
 		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true);
@@ -383,7 +427,7 @@ void Player::Draw(Camera& camera)
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
 	}
-	
+
 #ifdef _DEBUG
 	DrawFormatString(1000, 10, GetColor(255, 0, 0), "_animは%dです", m_anim);
 	DrawFormatString(1000, 20, GetColor(255, 0, 0), "_stateは%dです", m_state);
@@ -453,7 +497,7 @@ void Player::DyingUpdate()
 
 void Player::DyingDraw(Camera& camera)
 {
-	
+
 	if (m_isRight)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + kCharaSize / 4,
@@ -486,7 +530,7 @@ void Player::RotateUpdate()
 		{
 			m_angle = 0;//きれいに戻す
 			isRotateOne = false;
-			
+
 			if (m_rotateNum < 1)//すぐ回転させるため
 			{
 				m_rotateNum++;
@@ -527,7 +571,7 @@ void Player::AutoMoveStart()
 			AnimSelect(Anim::Jump);
 		}
 	}
-	
+
 
 
 	Rect chipRect;
@@ -548,9 +592,9 @@ void Player::AutoMove()
 		if (m_anim == Anim::Jump)
 		{
 			AnimSelect(Anim::Walk);
-			
-			
-			
+
+
+
 		}
 		if (m_vel.x <= 0.1f)
 		{
@@ -563,15 +607,15 @@ void Player::AutoMove()
 		AnimFrameUpdate();
 		//エフェクトを出す
 		if (m_animframe % 3 == 0)
-		for (auto& func : onWalkEvents)
-		{
-			if (func)func();//呼び出し
-		}
-		
-		
+			for (auto& func : onWalkEvents)
+			{
+				if (func)func();//呼び出し
+			}
+
+
 	}
 
-	
+
 }
 
 void Player::InputUpdate(Input& input)
@@ -585,9 +629,18 @@ void Player::InputUpdate(Input& input)
 	{
 		if (attackCoolTimer > 0)return;
 		m_state = PlayerState::Attack;
-		m_vel.x = 0;//攻撃中は動けないようにするため
+		if (m_type == PlayerType::Burning)
+		{
+			m_vel.x = 0;//(慣性付きのバーニングは早すぎるため)
+		}
 		m_vel.y = 0;
 
+		//ジャンプ処理はすべて破棄
+		{
+			isJumping = false;
+			m_jumpFrame = 0;
+		}
+		
 		if (m_type == PlayerType::Archer)
 		{
 			if (arrowFrame >= 0)return;
@@ -607,17 +660,19 @@ void Player::InputUpdate(Input& input)
 	}
 	if (input.IsTriggered("Copy"))
 	{
+		//ノーマル状態限定の技
+		if (m_type != PlayerType::Normal)return;
 		m_state = PlayerState::Copy;
 	}
 
-	
+
 }
 
 void Player::NormalUpdate(Input& input)
 {
 	Move(input);
 	Jump(input);
-	Character::Gravity();
+	//Character::Gravity();
 
 
 	//m_pos += m_vel;
@@ -634,8 +689,8 @@ void Player::JumpUpdate(Input& input)
 void Player::AttackUpdate()
 {
 	burningTimer--;
-	
-	
+
+
 	if (burningTimer >= 0.0f)
 	{
 		if (m_type == PlayerType::Burning)//バーニングの攻撃処理
@@ -649,7 +704,7 @@ void Player::AttackUpdate()
 				//攻撃終了
 
 				burningTimer = 0;
-				 
+
 				m_state = PlayerState::Normal;
 				attackCoolTimer = kAttackCool;
 				//isNomove = false;
@@ -673,7 +728,7 @@ void Player::AttackUpdate()
 				//攻撃終了
 
 				burningTimer = 0;
-				
+
 				m_state = PlayerState::Normal;
 				attackCoolTimer = kAttackCool;
 				//isNomove = false;
@@ -682,10 +737,10 @@ void Player::AttackUpdate()
 			}
 		}
 	}
-	
+
 	//バーニングだけ攻撃中は重力を受けない
 	//微妙だったため一旦なし
-	/*if (!(_type == PlayerType::Burning))
+	/*if (!(m_type == PlayerType::Burning))
 	{
 		Character::Gravity();
 	}*/
@@ -707,13 +762,14 @@ void Player::DamageUpdate()
 {
 	damageCount--;
 	m_vel.x = m_isRight ? -1 : 1;
-	
+
 	if (m_isGround)
 	{
 		m_vel.x = 0;
 	}
 
-	Character::Gravity();
+	//Character::Gravity();
+	
 	//damageCountが0になったらstateをNormalに戻す、
 	//damageを食らっているときは無敵判定
 	if (damageCount <= 0)
@@ -721,7 +777,7 @@ void Player::DamageUpdate()
 		isNomove = false;
 		m_state = PlayerState::Normal;
 		AnimSelect(Anim::Idle);
-		
+
 	}
 }
 
@@ -738,14 +794,30 @@ void Player::ClearAttackRect()
 void Player::Move(Input& input)
 {
 	AnimSelect(m_anim);
-	if (isNomove)return;
+	if (isNomove)
+	{
+		//減速処理(慣性)
+		{
+		if (m_vel.x > 0)//右に移動しているとき
+		{
+			m_vel.x += -decel;
+			if (m_vel.x < 0)m_vel.x = 0;
+		}
+		else if (m_vel.x < 0)//左に移動しているとき
+		{
+			m_vel.x += decel;
+			if (m_vel.x > 0)m_vel.x = 0;
+		}
+		}
+		return;
+	}
 	//ここに処理を追加していく
-	
-	
+
+
 
 	if (Pad::IsPress(PAD_INPUT_LEFT))
 	{
-		
+
 		//そくどの方向が変わるのなら
 		if (m_vel.x > 0 && m_isGround)
 		{
@@ -762,7 +834,7 @@ void Player::Move(Input& input)
 	}
 	else if (Pad::IsPress(PAD_INPUT_RIGHT))
 	{
-		
+
 		//m_vel.x = kSpeed;
 		//そくどの方向が変わるのなら
 		if (m_vel.x < 0 && m_isGround)
@@ -793,9 +865,9 @@ void Player::Move(Input& input)
 
 	}
 
-	
 
-	
+
+
 
 
 	//速度制限
@@ -806,10 +878,10 @@ void Player::Move(Input& input)
 	if (m_isDash)
 	{
 		//ダッシュのスピードに設定
-		m_vel.x = m_isRight ? kSpeed*1.5f : -kSpeed*1.5f;
+		m_vel.x = m_isRight ? kSpeed * 1.5f : -kSpeed * 1.5f;
 	}
 
-	
+
 
 
 	if (m_anim != Anim::Jump)
@@ -868,7 +940,7 @@ void Player::Jump(Input& input)
 		isJumping = false;
 		m_jumpFrame = 0;
 	}
-	
+
 
 	if (isJumping)AnimSelect(Anim::Jump);
 
@@ -947,28 +1019,28 @@ void Player::AnimSelectNormal(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == kNormalAttackNum-1)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kNormalAttackNum - 1)//攻撃アニメーション終了
 		{
-			
+
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 			attackCoolTimer = kAttackCool;
 
 		}
-		if (m_anim == Anim::Copy && charaIdx == kNormalCopyNum-1)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kNormalCopyNum - 1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 
 		}
-		
+
 		if (m_anim == Anim::Attack)return;
 		if (m_anim == Anim::Copy)return;
 
 	}
-	
+
 	if (m_anim != anim)
 	{
 		m_anim = anim;
@@ -984,7 +1056,7 @@ void Player::AnimSelectBurning(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == kBurningAttackNum-1)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kBurningAttackNum - 1)//攻撃アニメーション終了
 		{
 			//if (m_type == PlayerType::Burning)//弱体化(いまはしていない)
 			//{
@@ -995,7 +1067,7 @@ void Player::AnimSelectBurning(const Anim& anim)
 			m_state = PlayerState::Normal;
 			attackCoolTimer = kAttackCool;
 		}
-		if (m_anim == Anim::Copy && charaIdx == kBurningCopyNum-1)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kBurningCopyNum - 1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -1007,7 +1079,7 @@ void Player::AnimSelectBurning(const Anim& anim)
 		if (m_anim == Anim::Copy)return;
 
 	}
-	
+
 
 	if (m_anim != anim)
 	{
@@ -1024,14 +1096,14 @@ void Player::AnimSelectFrozen(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == kFrozenAttackNum-1)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kFrozenAttackNum - 1)//攻撃アニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 			attackCoolTimer = kAttackCool;
 		}
-		if (m_anim == Anim::Copy && charaIdx == kFrozenCopyNum-1)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kFrozenCopyNum - 1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -1042,7 +1114,7 @@ void Player::AnimSelectFrozen(const Anim& anim)
 		if (m_anim == Anim::Attack)return;
 		if (m_anim == Anim::Copy)return;
 	}
-	
+
 
 
 	if (m_anim != anim)
@@ -1060,14 +1132,14 @@ void Player::AnimSelectArcher(const Anim& anim)
 	//damageアニメーションは最優先で変わり、次点では攻撃アニメーション
 	if (anim != Anim::Damage)
 	{
-		if (m_anim == Anim::Attack && charaIdx == kArcherAttackNum-1)//攻撃アニメーション終了
+		if (m_anim == Anim::Attack && charaIdx == kArcherAttackNum - 1)//攻撃アニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
 			m_state = PlayerState::Normal;
 			attackCoolTimer = kAttackCool;
 		}
-		if (m_anim == Anim::Copy && charaIdx == kArcherCopyNum-1)//コピーアニメーション終了
+		if (m_anim == Anim::Copy && charaIdx == kArcherCopyNum - 1)//コピーアニメーション終了
 		{
 			m_anim = Anim::Idle;
 			isNomove = false;
@@ -1119,7 +1191,7 @@ void Player::NormalAnim()
 		charaIdy = 2;
 		break;
 	case Anim::Copy:
-		if(charaIdx == kNormalCopyNum - 1)
+		if (charaIdx == kNormalCopyNum - 1)
 		{
 			charaIdx = kNormalCopyNum - 1;
 			charaIdy = 4;
@@ -1235,7 +1307,7 @@ void Player::FrozenAnim()
 			charaIdx = (m_animframe / kFrozenCopyDuration) % kFrozenCopyNum;
 			charaIdy = 4;
 		}
-		
+
 		break;
 	case Anim::Damage:
 		//ダメージを食らったときのアニメーション
@@ -1265,8 +1337,8 @@ void Player::ArcherAnim()
 	case Anim::Jump:
 		if (charaIdx == 2)
 		{
-			charaIdx = 2; 
-				charaIdy = 1;
+			charaIdx = 2;
+			charaIdy = 1;
 		}
 		else
 		{
@@ -1308,7 +1380,7 @@ bool Player::MoveWithCollisionX(float distance)
 {
 	if (distance == 0.0f) return false;
 
-	
+
 	//1ステップ当たりの移動量
 	const float stepSize = 4.0f;
 	int steps = static_cast<int>(std::ceil(std::abs((distance)) / stepSize));

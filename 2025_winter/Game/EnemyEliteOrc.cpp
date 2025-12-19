@@ -55,6 +55,7 @@ namespace
 
 	//左上限
 	constexpr float kLeftMax = 2000.0f;
+	constexpr float kRightMax = 3800.0f;
 
 }
 
@@ -355,6 +356,11 @@ void EnemyEliteOrc::AttackUpdate()
 		{
 			m_pos.x = kLeftMax;
 		}
+		//右上限を決める
+		if (m_pos.x >= kRightMax)
+		{
+			m_pos.x = kRightMax;
+		}
 
 
 		//ぷれいやーのとの距離が近くなったら攻撃を出す
@@ -430,6 +436,11 @@ void EnemyEliteOrc::AttackUpdate()
 		if (m_pos.x <= kLeftMax)
 		{
 			m_pos.x = kLeftMax;
+		}
+		//右上限を決める
+		if (m_pos.x >= kRightMax)
+		{
+			m_pos.x = kRightMax;
 		}
 
 		//ぷれいやーのとの距離が近くなったら攻撃を出す

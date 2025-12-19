@@ -78,8 +78,10 @@ void Item::Draw()
 }
 void Item::Draw(Camera& camera)
 {
+#ifdef _DEBUG
 	//当たり判定の描画
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
+#endif
 	if (m_state == ItemState::Burning)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,

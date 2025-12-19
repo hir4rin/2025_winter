@@ -352,6 +352,12 @@ void GameScene::CheckArrowHit()
 			if (e == enemy)
 			{
 
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -378,6 +384,11 @@ void GameScene::CheckArrowHit()
 			auto& e = m_pEnemyRiders[i];
 			if (e == enemy)
 			{
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
 
 				//消えるとき絶対する処理
 		//対応するspawnを復活可能にする
@@ -405,6 +416,12 @@ void GameScene::CheckArrowHit()
 			auto& e = m_pEnemyArchers[i];
 			if (e == enemy)
 			{
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
 
 				//消えるとき絶対する処理
 		//対応するspawnを復活可能にする
@@ -744,7 +761,7 @@ void GameScene::CheckHitNormal()
 		auto& e = m_pEnemyWizards[i];
 		if (e == nullptr)continue;
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
 		{
 			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(e->GetColRect());
 
@@ -755,9 +772,11 @@ void GameScene::CheckHitNormal()
 			{
 				//e->DropItem(e);
 				//アイテムを落とす処理
-				m_pItems = std::make_shared<Item>(e);//新しくアイテムを生成
-				m_pItems->SetBgPointer(m_pBg);
-				m_pItems->ChangePos() = e->GetPos();
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
 				////敵のヒット情報をリセット
 				//wizard->HitWizard = nullptr;
 				//ここに敵が攻撃されたときの処理を書く
@@ -779,7 +798,7 @@ void GameScene::CheckHitNormal()
 	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
 		{
 			auto& e = m_pEnemyRiders[i];
 			if (e == nullptr)continue;
@@ -795,9 +814,10 @@ void GameScene::CheckHitNormal()
 				//if (e == nullptr || !rider->HitRider)continue;
 
 				//アイテムを落とす処理
-				m_pItems = std::make_shared<Item>(e);//新しくアイテムを生成//別のアイテムを渡す
-				m_pItems->SetBgPointer(m_pBg);
-				m_pItems->ChangePos() = e->GetPos();
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
 				//敵のヒット情報をリセット
 				//num->HitRider = nullptr;
 
@@ -820,7 +840,7 @@ void GameScene::CheckHitNormal()
 	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
 		{
 			auto& e = m_pEnemyArchers[i];
 			if (e == nullptr)continue;
@@ -836,9 +856,10 @@ void GameScene::CheckHitNormal()
 				//if (num == nullptr || !rider->HitRider)continue;
 
 				//アイテムを落とす処理
-				m_pItems = std::make_shared<Item>(e);//新しくアイテムを生成//別のアイテムを渡す
-				m_pItems->SetBgPointer(m_pBg);
-				m_pItems->ChangePos() = e->GetPos();
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
 				//敵のヒット情報をリセット
 				//num->HitRider = nullptr;
 
@@ -859,11 +880,15 @@ void GameScene::CheckHitNormal()
 
 	if (m_pElite != nullptr)
 	{
-		bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
-		if (isHitAttack)
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
 		{
-			m_pElite->HitBossDamage(10);
-			
+			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
+			if (isHitAttack)
+			{
+				m_pElite->HitBossDamage(10);
+
+			}
 		}
 	}
 }
@@ -884,6 +909,14 @@ void GameScene::CheckHitBurning()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
+
 				//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -910,6 +943,14 @@ void GameScene::CheckHitBurning()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
+
 				//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -936,6 +977,14 @@ void GameScene::CheckHitBurning()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));
+
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -977,6 +1026,13 @@ void GameScene::CheckFastBurning()
 		{
 			//ここに敵が攻撃されたときの処理を書く
 			m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+
+			//アイテムを落とす処理
+			auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+			item->SetBgPointer(m_pBg);
+			item->ChangePos() = e->GetPos();
+			m_pItems.push_back(item);
+
 			//消えるとき絶対する処理
 			//対応するspawnを復活可能にする
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -996,6 +1052,13 @@ void GameScene::CheckFastBurning()
 		{
 			//ここに敵が攻撃されたときの処理を書く
 			m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+
+			//アイテムを落とす処理
+			auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+			item->SetBgPointer(m_pBg);
+			item->ChangePos() = e->GetPos();
+			m_pItems.push_back(item);
+
 			//消えるとき絶対する処理
 			//対応するspawnを復活可能にする
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -1015,6 +1078,13 @@ void GameScene::CheckFastBurning()
 		{
 			//ここに敵が攻撃されたときの処理を書く
 			m_pBurningObjects.push_back(std::make_shared<BurningObject>(e));//演出の炎をpush_back
+
+			//アイテムを落とす処理
+			auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+			item->SetBgPointer(m_pBg);
+			item->ChangePos() = e->GetPos();
+			m_pItems.push_back(item);
+
 			//消えるとき絶対する処理
 			//対応するspawnを復活可能にする
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -1023,6 +1093,15 @@ void GameScene::CheckFastBurning()
 
 			//インスタンスを消す
 			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+		}
+	}
+
+	if (m_pElite != nullptr)
+	{
+		//バーニングの攻撃の矩形との当たり判定チェック
+		if (CheckSweepHit(p0, p1, m_pElite->GetColRect()))
+		{
+			m_pElite->HitBossDamage(20);
 		}
 	}
 
@@ -1046,6 +1125,13 @@ void GameScene::CheckHitFrozen()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -1074,6 +1160,13 @@ void GameScene::CheckHitFrozen()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -1102,6 +1195,13 @@ void GameScene::CheckHitFrozen()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+
+				//アイテムを落とす処理
+				auto item = std::make_shared<Item>(e);//新しくアイテムを生成
+				item->SetBgPointer(m_pBg);
+				item->ChangePos() = e->GetPos();
+				m_pItems.push_back(item);
+
 				//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -1130,6 +1230,8 @@ void GameScene::CheckHitFrozen()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+
+
 			
 
 				//インスタンスを消す
@@ -1330,6 +1432,19 @@ void GameScene::CheckPlayer()
 			OnShake();
 		}
 	}
+	//ボスとの当たり判定
+	if (m_pElite != nullptr)
+	{
+		if (m_pElite->GetColRect().IsCollision(m_pPlayer->GetColRect()))
+		{
+			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
+			//敵がどっちから当たったかどうかを入れる
+			//プレイヤーのダメージ処理
+			m_pPlayer->DamageHit(isLeft);
+			OnShake();
+		}
+	}
+	
 	
 	
 }
@@ -1373,58 +1488,61 @@ void GameScene::OnShake()
 
 void GameScene::CopyAct(Input& input)
 {
-	if (m_pItems)
+	for (auto& item : m_pItems)
 	{
-		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Copy)
-		{
-			if (m_pPlayer->GetAnimIdx() > 3)
+		if (!item)continue;
+			//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
+			if (m_pPlayer->GetState() == PlayerState::Copy)
 			{
-				//プレイヤーの当たり判定とアイテムの当たり判定をチェック
-				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(m_pItems->GetColRect());
-				if (isHitItem)
+				if (m_pPlayer->GetAnimIdx() > 3)
 				{
-					//ここにアイテムを取得したときの処理を書く
-					if (m_pItems->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
+					//プレイヤーの当たり判定とアイテムの当たり判定をチェック
+					bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(item->GetColRect());
+					if (isHitItem)
 					{
+						//ここにアイテムを取得したときの処理を書く
+						if (item->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
+						{
 
-						m_pPlayer->ChangeBurning();
-						m_pItems = nullptr;
-						//ここでアップデートを変える
-						update_ = &GameScene::CopyingUpdate;
-						draw_ = &GameScene::NormalDraw;
-						m_frame = 0;
-						return;
+							m_pPlayer->ChangeBurning();
+							item = nullptr;
+							//ここでアップデートを変える
+							update_ = &GameScene::CopyingUpdate;
+							draw_ = &GameScene::NormalDraw;
+							m_frame = 0;
+							return;
 
-					}
-					else if (m_pItems->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
-					{
+						}
+						else if (item->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
+						{
 
-						m_pPlayer->ChangeFrozen();
-						m_pItems = nullptr;
-						//ここでアップデートを変える
-						update_ = &GameScene::CopyingUpdate;
-						draw_ = &GameScene::NormalDraw;
-						m_frame = 0;
-						return;
-					}
-					else if (m_pItems->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
-					{
+							m_pPlayer->ChangeFrozen();
+							item = nullptr;
+							//ここでアップデートを変える
+							update_ = &GameScene::CopyingUpdate;
+							draw_ = &GameScene::NormalDraw;
+							m_frame = 0;
+							return;
+						}
+						else if (item->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
+						{
 
-						m_pPlayer->ChangeArcher();
-						m_pItems = nullptr;
-						//ここでアップデートを変える
-						update_ = &GameScene::CopyingUpdate;
-						draw_ = &GameScene::NormalDraw;
-						m_frame = 0;
-						return;
+							m_pPlayer->ChangeArcher();
+							item = nullptr;
+							//ここでアップデートを変える
+							update_ = &GameScene::CopyingUpdate;
+							draw_ = &GameScene::NormalDraw;
+							m_frame = 0;
+							return;
+						}
 					}
 				}
+
 			}
 
-		}
-
+		
 	}
+	
 
 	if (input.IsTriggered("CopyOut"))
 	{
@@ -1704,7 +1822,28 @@ void GameScene::NormalUpdate(Input& input)
 	}
 	//アイテム関連
 	{
-		if (m_pItems) m_pItems->Update();
+		//nullptrのアイテムをけす
+		m_pItems.erase(
+			std::remove_if(
+				m_pItems.begin(), m_pItems.end(),
+				[](const std::shared_ptr<Item>& it)
+				{
+					return it == nullptr;
+				}),
+			m_pItems.end()
+		);
+		for (auto item = m_pItems.begin(); item != m_pItems.end(); )
+		{
+		
+			//nullptrのアイテムをけす、違ったらUpdate
+			if (*item == nullptr)
+				item = m_pItems.erase(item);  // ← 安全に削除(いらないけど一応(上でけしてるから))
+			else
+			{
+				(*item)->Update();
+				++item;
+			}
+		}
 		if (m_pDroppedItem)//演出のアイテムのアップデート
 		{
 			m_pDroppedItem->DroppedUpdate();
@@ -1911,8 +2050,12 @@ void GameScene::NormalDraw()
 		m_pBg->Draw(camera);
 		m_doors->Draw(camera);
 		
-		if (m_pItems) m_pItems->Draw(camera);
-		if (m_pItems) m_pDroppedItem->DroppedDraw(camera);
+		for (auto& item : m_pItems)
+		{
+			if (!item)continue;
+			item->Draw(camera);
+		}
+		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
 		for (auto& arrow : m_arrows)//弓矢
 		{
 			if (!arrow) continue;
@@ -1983,10 +2126,7 @@ void GameScene::NormalDraw()
 	{
 		m_pBg->Draw(camera);
 		m_doors->Draw(camera);
-		for (auto& m_pFrozen : m_pFrozens)
-		{
-			if (m_pFrozen) m_pFrozen->Draw(camera);
-		}
+	
 		if (update_ != &GameScene::DyingUpdate) m_pPlayer->Draw(camera);//死に際の描画は別
 		for (auto& enemy : m_pEnemyWizards)//ペンギン
 		{
@@ -2004,9 +2144,18 @@ void GameScene::NormalDraw()
 		{
 			m_pElite->Draw(camera);
 		}
-
-		if (m_pItems) m_pItems->Draw(camera);
+		//アイテム
+		for (auto& item : m_pItems)
+		{
+			if (!item)continue;
+			item->Draw(camera);
+		}
 		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
+		//氷
+		for (auto& m_pFrozen : m_pFrozens)
+		{
+			if (m_pFrozen) m_pFrozen->Draw(camera);
+		}
 		for (auto& arrow : m_arrows)//弓矢
 		{
 			if (!arrow) continue;
