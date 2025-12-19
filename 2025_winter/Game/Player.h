@@ -102,6 +102,10 @@ public:
 	/// プレイヤーがダメージを食らったときに呼ぶ関数
 	/// </summary>
 	void DamageHit(bool ans);
+	/// <summary>
+	/// プレイヤーが回復した時に呼ぶ関数
+	/// </summary>
+	void HealGet(int point);
 	void DroppedOutHp0() { m_hp = 0; }//落下で体力を0にする
 
 	int  GetHp() { return m_hp; }
@@ -151,6 +155,8 @@ private:
 	void AttackUpdate();//攻撃時の更新
 	void CopyUpdate();//コピー時の更新
 	void DamageUpdate();//ダメージを食らったときの更新
+
+
 	 
 	void ClearAttackRect();
 

@@ -23,6 +23,7 @@ class Frozen;
 class BurningObject;
 class Door;
 class Effect;
+class Potion;
 class WaveManager;
 
 
@@ -188,6 +189,8 @@ private:
 	//演出用のアイテム
 	std::shared_ptr<Item> m_pDroppedItem;
 	Item* m_pItem;
+	//回復アイテム
+	std::vector<std::shared_ptr<Potion>> m_pPotions;
 	std::vector<std::shared_ptr<Arrow>> m_arrows;
 	std::vector<std::shared_ptr<EnemyArrow>> m_pEnemyArrows;
 	std::vector<std::shared_ptr<BossShot>> m_pBossShots;

@@ -15,6 +15,7 @@
 #include "BossShot.h"
 #include "Arrow.h"
 #include "Item.h"
+#include "Potion.h"
 #include "Frozen.h"
 #include "BurningObject.h"
 #include <../Door.h>
@@ -55,7 +56,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 {
 	switch (m_stageNum)
 	{
-	case 1:
+	case 1://ステージ1_1
 		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });//移動用
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
@@ -73,7 +74,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 
 		break;
-	case 2:
+	case 2://ステージ1_2
 		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });//移動用
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1000.0f,600.0f), false });
@@ -90,13 +91,16 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5650.0f,200.0f), false });
 		//-----------------------------------------------------------------
 
+		m_pPotions.push_back(std::make_shared<Potion>(Vec2(4566.0f, 992.0f)));
+
+
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
 
 		m_pBg = new Bg(m_pPlayer, 2);
 		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 		break;
-	case 3:
+	case 3://ステージ1_3
 		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(700.0f,600.0f), false });//移動用
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1100.0f,500.0f), false });//上
@@ -158,6 +162,8 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4697.0f,400.0f), false });//上の段
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5291.0f,800.0f), false });//下の段
 		//------------------------------------------------------------------
+		m_pPotions.push_back(std::make_shared<Potion>(Vec2(4707.0f, 800.0f)));
+
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
 
 		m_pBg = new Bg(m_pPlayer, 7);
@@ -1445,7 +1451,17 @@ void GameScene::CheckPlayer()
 		}
 	}
 	
-	
+	//回復アイテムを取ったときの反応
+	for (auto& potion : m_pPotions)
+	{
+		if (!potion)continue;
+
+		if (m_pPlayer->GetColRect().IsCollision(potion->GetColRect()))
+		{
+			m_pPlayer->HealGet(100);
+			potion = nullptr;
+		}
+	}
 	
 }
 
@@ -1852,6 +1868,21 @@ void GameScene::NormalUpdate(Input& input)
 				m_pDroppedItem = nullptr;
 			}
 		}
+		//nullptrのアイテムを消す
+		m_pPotions.erase(
+			std::remove_if(
+				m_pPotions.begin(), m_pPotions.end(),
+				[](const std::shared_ptr<Potion>& it)
+				{
+					return it == nullptr;
+				}),
+			m_pPotions.end()
+		);
+
+		for (auto& potion : m_pPotions)
+		{
+			potion->Update();
+		}
 	}
 	
 	CheckHit();//3種の攻撃の当たり判定
@@ -2113,6 +2144,11 @@ void GameScene::NormalDraw()
 		{
 			m_pElite->Draw(camera);
 		}
+		for (auto& potion : m_pPotions)
+		{
+			if (potion)
+			potion->Draw(camera);
+		}
 		//ステージUI
 		stageUI.Draw(camera);
 
@@ -2149,6 +2185,12 @@ void GameScene::NormalDraw()
 		{
 			if (!item)continue;
 			item->Draw(camera);
+		}
+		//回復アイテム
+		for (auto& potion : m_pPotions)
+		{
+			if (potion)
+				potion->Draw(camera);
 		}
 		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
 		//氷

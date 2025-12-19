@@ -474,6 +474,14 @@ void Player::DamageHit(bool ans)
 	//ダメージ分HPが減る
 	m_hp -= 20;
 }
+void Player::HealGet(int point)
+{
+	m_hp += point;
+	if (m_hp >= 100)
+	{
+		m_hp = 100;
+	}
+}
 
 void Player::Death()
 {
@@ -780,6 +788,8 @@ void Player::DamageUpdate()
 
 	}
 }
+
+
 
 void Player::ClearAttackRect()
 {

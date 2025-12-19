@@ -886,7 +886,7 @@ AttackPattern EnemyEliteOrc::SelectAttack()
 	int flow = 0;
 	//--------------
 	int fmax = 30;
-	int smax = 60;
+	int smax = 65;
 	int thmax = 95;
 	//---------------
 	int fomax = 100;
