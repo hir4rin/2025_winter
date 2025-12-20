@@ -173,6 +173,8 @@
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Scene\StageSelectScene.cpp" />
     <ClCompile Include="StageUI.cpp" />
+    <ClCompile Include="TitleLightEffect.cpp" />
+    <ClCompile Include="TitleStar.cpp" />
     <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="Game\Wave.cpp" />
     <ClCompile Include="Game\WaveManager.cpp" />
@@ -187,6 +189,7 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Game\EnemyEliteOrc.h" />
     <ClInclude Include="Potion.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\PauseScene.h" />
     <ClInclude Include="Scene\GameClearScene.h" />
     <ClInclude Include="Game\Arrow.h" />
@@ -211,9 +214,14 @@
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Scene\StageSelectScene.h" />
     <ClInclude Include="StageUI.h" />
+    <ClInclude Include="TitleLightEffect.h" />
+    <ClInclude Include="TitleStar.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Game\Wave.h" />
     <ClInclude Include="Game\WaveManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="2025_winter.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

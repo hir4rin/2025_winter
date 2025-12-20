@@ -352,7 +352,37 @@ void Player::Update(Input& input)
 
 void Player::Draw()//使わない
 {
+	switch (m_type)
+	{
+	case PlayerType::Normal://アニメーションの遷移
+		NormalAnim();
+		break;
+	case PlayerType::Burning://アニメーションの遷移
+		BurningAnim();
+		break;
+	case PlayerType::Frozen://アニメーションの遷移
+		FrozenAnim();
+		break;
+	case PlayerType::Archer://アニメーションの遷移
+		ArcherAnim();
+		break;
 
+	}
+
+	if (m_isRight)
+	{
+		DrawRectRotaGraph(m_pos.x, m_pos.y + kCharaSize / 4,
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true);
+	}
+	else
+	{
+		DrawRectRotaGraph(m_pos.x, m_pos.y + kCharaSize / 4,
+		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
+		kPlayerCutW, kPlayerCutH,//切り取りの幅
+		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
+	}
 }
 
 void Player::Draw(Camera& camera)

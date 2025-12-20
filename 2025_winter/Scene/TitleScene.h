@@ -1,5 +1,10 @@
 ﻿#pragma once
 #include "Scene.h"
+
+class TitleStar;
+class TitleLightEffect;
+class Player;
+
 class TitleScene :  public Scene	// Sceneから継承したTitleScene
 {
 private:
@@ -26,6 +31,16 @@ public:
 	void Update(Input& input) override;
 	void Draw()override;
 private:
+	int m_frame;
+	int m_playerFrame = 0;
+	 int playerSelect = 0;
+
 	int m_titleH = -1;
+	int m_handleStar = -1;
+	std::vector<std::shared_ptr<TitleStar>> m_stars;
+	std::vector<std::shared_ptr<TitleLightEffect>> m_lights;
+	std::shared_ptr<Player> m_pPlayer;
+
+	
 };
 
