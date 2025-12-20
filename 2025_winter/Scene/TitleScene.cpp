@@ -161,7 +161,8 @@ void TitleScene::NormalDraw()
 
 	DrawFormatString(1920*4/10, 1080 *3/4, 0xffffff, "Title Scene: Press 'ANY BUTTON' to Start");
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	//DrawRotaGraph(wsize.w / 2, wsize.h* 1/ 3, 0.8f, 0.0f, m_titleH, true);
+	if (m_frame > kPlayerDuration * 10)
+	DrawRotaGraph(wsize.w / 2, wsize.h* 1/ 3, 0.8f, 0.0f, m_titleH, true);
 
 }
 
