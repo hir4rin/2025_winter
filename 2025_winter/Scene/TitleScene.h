@@ -36,6 +36,7 @@ private:
 	 int playerSelect = 0;
 
 	int m_titleH = -1;
+	int m_backH = -1;
 	int m_handleStar = -1;
 	std::vector<std::shared_ptr<TitleStar>> m_stars;
 	std::vector<std::shared_ptr<TitleLightEffect>> m_lights;

@@ -4,6 +4,7 @@
 
 
 class Cannon;
+class Sign;
 class Player;
 class Bg;
 class Effect;
@@ -45,6 +46,7 @@ private:
 
 	std::shared_ptr<Player> m_pPlayer;
 	std::shared_ptr<Cannon> m_pCannon;
+	std::vector<std::shared_ptr<Sign>> m_pSigns;
 	Camera camera;
 	Bg* m_pBg;
 

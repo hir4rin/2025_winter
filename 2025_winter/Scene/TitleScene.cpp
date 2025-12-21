@@ -12,7 +12,25 @@ constexpr int fade_interval = 60;
 
 namespace
 {
-	constexpr int kPlayerDuration = 60;
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+
+	constexpr int kPlayerDuration = 45;
+
+	Vec2 starPos = Vec2{ wsize.w / 2.0f, wsize.h * 3.0f / 10.0f };
+
+
+	
+	Vec2 fPos = { wsize.w * 2.0f / 10.0f,wsize.h / 2.0f + 415.0f };
+	Vec2 fPos2 = { wsize.w * 2.0f / 10.0f,wsize.h / 2.0f + 200.0f };
+	Vec2 fPos3 = { wsize.w * 2.0f / 10.0f,wsize.h / 2.0f + 200.0f+ 250.0f };
+
+	Vec2 sPos = { wsize.w * 5.0f / 10.0f,wsize.h / 2.0f + 415.0f };
+	Vec2 sPos2 = { wsize.w * 5.0f / 10.0f,wsize.h / 2.0f + 200.0f };
+	Vec2 sPos3 = { wsize.w * 5.0f / 10.0f,wsize.h / 2.0f + 200.0f + 250.0f };
+
+	Vec2 tPos = { wsize.w * 8.0f / 10.0f,wsize.h / 2.0f + 415.0f };
+	Vec2 tPos2 = { wsize.w * 8.0f / 10.0f,wsize.h / 2.0f + 200.0f };
+	Vec2 tPos3= { wsize.w * 8.0f / 10.0f,wsize.h / 2.0f + 200.0f + 250.0f };
 }
 
 
@@ -28,14 +46,12 @@ void TitleScene::FadeInUpdate(Input&)
 
 void TitleScene::NormalUpdate(Input& input)
 {
-	const auto& wsize = Application::GetInstance().GetWindowSize();
+	
 
 	m_frame++;
 	m_playerFrame++;
 
-	Vec2 fPos = { wsize.w * 2.0f / 10.0f,wsize.h / 2.0f+ 200.0f };
-	Vec2 sPos = { wsize.w * 5.0f / 10.0f,wsize.h / 2.0f + 200.0f };
-	Vec2 tPos = { wsize.w * 8.0f / 10.0f,wsize.h / 2.0f + 200.0f };
+	
 
 
 
@@ -96,17 +112,23 @@ void TitleScene::NormalUpdate(Input& input)
 		if (playerSelect == 0)
 		{
 			m_pPlayer->ChangePos() = fPos;
-			m_lights.push_back(std::make_shared<TitleLightEffect>(Vec2{ wsize.w * 2.0f / 10.0f,wsize.h / 2.0f }));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(fPos2 ,1));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(fPos3,2));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(fPos3,3));
 		}
 		else if (playerSelect == 1)
 		{
 			m_pPlayer->ChangePos() = sPos;
-			m_lights.push_back(std::make_shared<TitleLightEffect>(Vec2{ wsize.w * 5.0f / 10.0f,wsize.h / 2.0f }));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(sPos2,1));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(sPos3, 2));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(sPos3, 3));
 		}
 		else if (playerSelect == 2)
 		{
 			m_pPlayer->ChangePos() = tPos;
-			m_lights.push_back(std::make_shared<TitleLightEffect>(Vec2{ wsize.w * 8.0f / 10.0f,wsize.h / 2.0f }));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(tPos2,1));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(tPos3, 2));
+			m_lights.push_back(std::make_shared<TitleLightEffect>(tPos3, 3));
 		}
 
 	}
@@ -141,6 +163,26 @@ void TitleScene::FadeOutUpdate(Input&)
 
 void TitleScene::NormalDraw()
 {
+	//背景
+	
+	int x = 0;
+	int y = 0;
+
+	GetGraphSize(m_backH, &x, &y);
+
+	DrawRectRotaGraph(wsize.w/2.0f, wsize.h/ 2.0f,
+		0, 0,
+		x, y,
+		10.0f, 0.0f,
+		m_backH, false);
+
+	// 薄暗く
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 140); // 好きな濃さ
+	DrawBox(0, 0, screenWidth, screenHeight, 0x000000, true);
+	//DrawBox(0, 0, screenWidth, screenHeight, 0x303030, true);//
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+
 
 	for (auto& star : m_stars)
 	{
@@ -159,10 +201,13 @@ void TitleScene::NormalDraw()
 
 
 
-	DrawFormatString(1920*4/10, 1080 *3/4, 0xffffff, "Title Scene: Press 'ANY BUTTON' to Start");
+	DrawFormatString(1920*4/10, 1080 *1/2, 0xffffff, "Title Scene: Press 'ANY BUTTON' to Start");
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	if (m_frame > kPlayerDuration * 10)
-	DrawRotaGraph(wsize.w / 2, wsize.h* 1/ 3, 0.8f, 0.0f, m_titleH, true);
+	//とりあえず
+	if (m_frame > kPlayerDuration * 7)
+	DrawRotaGraph(wsize.w / 2, wsize.h* 1/ 5 + 50, 0.5f, 0.0f, m_titleH, true);
+
+	
 
 }
 
@@ -185,17 +230,22 @@ TitleScene::TitleScene(SceneController& controller) : Scene(controller)
 	/*titleH_ = LoadGraph(L"data/title.png");
 	titleLogoH_ = LoadGraph(L"data/game_title.png");*/
 	update_ = &TitleScene::FadeInUpdate;
-	draw_ = &TitleScene::FadeDraw;
+	draw_ = &TitleScene::NormalDraw;
 	frame_ = fade_interval;
 
 	m_titleH = LoadGraph("data/TitleLogo.png");
+	m_backH = LoadGraph("data/TitleBack.png");
+	//初期化
+	playerSelect = 1;
+	m_frame = 0;
+
+	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,100,sPos);
 
 
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,100,Vec2{ wsize.w * 5.0f / 10.0f,wsize.h / 2.0f + 200.0f });
-
-
-	m_stars.push_back(std::make_shared<TitleStar>(Vec2{ 400,800 }));
-	m_lights.push_back(std::make_shared<TitleLightEffect>(Vec2{ wsize.w * 5.0f / 10.0f,wsize.h / 2.0f }));
+	m_stars.push_back(std::make_shared<TitleStar>(starPos,350.0f));
+	m_lights.push_back(std::make_shared<TitleLightEffect>(sPos2,1));
+	m_lights.push_back(std::make_shared<TitleLightEffect>(sPos3,2));
+	m_lights.push_back(std::make_shared<TitleLightEffect>(sPos3,3));
 	
 
 }

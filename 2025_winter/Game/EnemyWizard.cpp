@@ -95,7 +95,7 @@ void EnemyWizard::Draw(Camera& camera)
 	case EnemyState::Walk://Walk
 			charaIdx = (m_animframe / 10) % 6;
 			charaIdy = 3;
-			drawY += enemy_cut_h / 3 * 2;
+			drawY += enemy_cut_h * 4.0f / 5.0f ;
 			break;
 	case EnemyState::Attack://Attack
 			if (isAttack == true)

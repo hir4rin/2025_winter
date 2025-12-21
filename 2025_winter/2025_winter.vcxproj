@@ -172,6 +172,7 @@
     <ClCompile Include="Scene\SceneController.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Sign.cpp" />
     <ClCompile Include="StageUI.cpp" />
     <ClCompile Include="TitleLightEffect.cpp" />
     <ClCompile Include="TitleStar.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="Scene\StageSelectScene.h" />
+    <ClInclude Include="Sign.h" />
     <ClInclude Include="StageUI.h" />
     <ClInclude Include="TitleLightEffect.h" />
     <ClInclude Include="TitleStar.h" />

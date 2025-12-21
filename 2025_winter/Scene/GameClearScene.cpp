@@ -3,6 +3,7 @@
 #include "DxLib.h"
 #include "../Input.h"
 #include "Cannon.h"
+#include "Sign.h"
 #include "TitleScene.h"
 #include "SceneController.h"
 #include "Bg.h"
@@ -31,7 +32,12 @@ GameClearScene::GameClearScene(SceneController& controller,PlayerType type) : Sc
 update_(&GameClearScene::FadeInUpdate),
 draw_(&GameClearScene::FadeDraw)
 {
+
 	m_pCannon = std::make_shared<Cannon>();
+	for (int i = 0; i < 7; i++)
+	{
+		m_pSigns.push_back(std::make_shared<Sign>(Vec2{2000.0f* (i+1)- 100.0f,750.0f},7-i));
+	}
 	m_pPlayer = std::make_shared<Player>(type, 100, Vec2{ 100,800 });
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
@@ -91,6 +97,10 @@ void GameClearScene::NormalUpdate(Input& input)
 
 
 	m_pCannon->Update();
+	for (auto& s : m_pSigns)
+	{
+		s->Update();
+	}
 	//お試し--------------------------------------
 	//if (!isCannon && m_pPlayer != nullptr)m_pPlayer->Update(input);
 	if ((!isCannon && !isFlying) &&  m_pPlayer != nullptr)
@@ -267,6 +277,10 @@ void GameClearScene::NormalDraw()
 	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
 	m_pCannon->Draw(camera);
 
+	for(auto& s: m_pSigns)
+	{
+		s->Draw(camera);
+	}
 
 	for (auto& effect : m_pEffects)
 	{

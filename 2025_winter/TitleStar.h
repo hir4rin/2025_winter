@@ -3,15 +3,29 @@
 class TitleStar
 {
 public:
-	TitleStar(Vec2 pos);
+	/// <summary>
+	/// 座標と半径
+	/// </summary>
+	/// <param name="pos"></param>
+	/// <param name="r"></param>
+	TitleStar(Vec2 pos,float r);
 	virtual ~TitleStar();
 
 	void Update();
 	void Draw();
 
 private:
-	Vec2 m_pos;
-	int m_handle = -1;;
-	int m_angle;
+	int m_frame;
+	Vec2 m_posA;
+	Vec2 m_posB;
+	Vec2 m_center;
+	int m_handle = -1;
+
+	float targetRadius;
+
+	float m_radius;
+	float m_speed;
+	float  m_angle;
+	
 };
 
