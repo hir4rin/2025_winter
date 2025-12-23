@@ -16,7 +16,7 @@ namespace
 	constexpr int kScreenSizeWidth = 1920;
 	constexpr int kScreenSizeHeight = 1080;
 	const int graphHalfW = kScreenSizeWidth / 2;
-	const int graphHalfH = kScreenSizeWidth / 2;
+	const int graphHalfH = kScreenSizeHeight / 2;
 
 	constexpr int kChipNumX = 300;//チップの数X
 	constexpr int kChipNumY = 17;//チップの数Y
@@ -33,6 +33,14 @@ namespace
 	constexpr float kThrough = 0.25f;
 
 
+	//背景
+	constexpr float kBgScale = 3.0f;
+
+	//カメラから持ってきた
+	const float topPos = kScreenSizeHeight * 0.75;
+	//カメラのUI上げ分
+	const float cameraYoffset = kScreenSizeHeight - topPos;
+	
 
 
 }
@@ -50,6 +58,10 @@ Bg::~Bg()
 	DeleteGraph(m_bgH2);
 	DeleteGraph(m_bgH3);
 	DeleteGraph(m_bgH4);
+	DeleteGraph(m_bgH5);
+	DeleteGraph(m_bgH6);
+	DeleteGraph(m_bgH7);
+	DeleteGraph(m_bgH8);
 	DeleteGraph(m_mapH);
 }
 Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
@@ -73,35 +85,55 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 	case 1://1_1
 		m_mapH = LoadGraph("data/map.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_1/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_1/2.png");
+		m_bgH3 = LoadGraph("data/Back/nature_1/3.png");
+		m_bgH4 = LoadGraph("data/Back/nature_1/4.png");
+		m_bgH5 = LoadGraph("data/Back/nature_1/5.png");
+		m_bgH6 = LoadGraph("data/Back/nature_1/6.png");
+		m_bgH7 = LoadGraph("data/Back/nature_1/7.png");
+		m_bgH8 = LoadGraph("data/Back/nature_1/8.png");
 		break;
 	case 2://1_2
 		m_mapH = LoadGraph("data/map1_2.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_7/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_7/2.png");
 		break;
 	case 3://1_3
 		m_mapH = LoadGraph("data/map.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_3/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_3/2.png");
+		m_bgH3 = LoadGraph("data/Back/nature_3/3.png");
+		m_bgH4 = LoadGraph("data/Back/nature_3/4.png");
 		break;
 	case 4://クリアシーン
 		m_mapH = LoadGraph("data/map.png");
-		m_bgH = LoadGraph("data/1.png");
-		m_bgH2 = LoadGraph("data/2.png");
-		m_bgH3= LoadGraph("data/3.png");
-		m_bgH4= LoadGraph("data/4.png");
+		m_bgH = LoadGraph("data/Back/1.png");
+		m_bgH2 = LoadGraph("data/Back/2.png");
+		m_bgH3= LoadGraph("data/Back/3.png");
+		m_bgH4= LoadGraph("data/Back/4.png");
 		break;
 
 	case 6://2_1
 		m_mapH = LoadGraph("data/map.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_2/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
+		//m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
+		//m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
 	case 7://2_2
 		m_mapH = LoadGraph("data/map.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_2/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
+		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
+		//m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
 	case 8://2_3
 		m_mapH = LoadGraph("data/map.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_2/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
+		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
+		m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
@@ -320,54 +352,176 @@ void Bg::Draw(Camera& camera)
 	}
 }
 
-void Bg::BgHSetDraw(Camera& camera, int handle)
+void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 {
+
+
 	//画像サイズを取得
 	//Bgのサイズ
 	Size bgSize = { 0,0 };
 
 	GetGraphSize(handle, &bgSize.width, &bgSize.height);
 
+	//どのくらい普通より上で描画するのか
+	float rateY = 0.5f;
+	switch (StageNum)
+	{
+	case 0:
+	
+		break;
+	case 1://1_1
+		rateY = 0.8f;
+		break;
+	case 2://1_2
+		rateY = 1.0f;
+		break;
+	case 3://1_3
+		rateY = 1.0f;
+		break;
+	case 4://クリアシーン
+		rateY = 1.0f;
+		break;
+
+	case 6://2_1
+		rateY = 1.0f;
+		break;
+	case 7://2_2
+		rateY = 1.0f;
+		break;
+	case 8://2_3
+		rateY = 1.0f;
+		break;
+	default:
+		assert(false && "BgのBgHSetDrawで失敗");
+		break;
+	}
+
+
+	float scaleX = static_cast<float>(kScreenSizeWidth) / bgSize.width;
+	float scaleY = static_cast<float>(kScreenSizeHeight * rateY) / bgSize.height;
+
+	float scale = max(scaleX, scaleY);
+
 	//ループ処理
-	float drawWidth = bgSize.width * 10.0f;
+	float drawWidth = bgSize.width * scale;
 
 	//剰余でループ
-	int looped = static_cast<int>(camera.drawOffset.x) % static_cast<int>(drawWidth);
+	int looped = static_cast<int>(camera.drawOffset.x * rate) % static_cast<int>(drawWidth);
 
 	//float に戻す
 	float bgX = static_cast<float>(looped);
-	
 
-	DrawRectRotaGraph(graphHalfW + bgX, graphHalfH + camera.drawOffset.y,  // 描画位置（中心座標）
+	////どれぐらい暗くするのか
+	//SetDrawBright(c, c, c); // ← 遠景なら暗め(255がMax正常値)
+
+	DrawRectRotaGraph(graphHalfW + bgX, graphHalfH + (camera.drawOffset.y+0 ) - kScreenSizeHeight * (1- rateY),  // 描画位置（中心座標）
 		0, 0, // 元画像の切り取り開始位置（左上）
 		bgSize.width, bgSize.height,  // 切り取るサイズ（幅・高さ）
-		10.0, 0, // 拡大率（1.0で等倍）// 回転角度（ラジアン）
+		scale, 0, // 拡大率（1.0で等倍）// 回転角度（ラジアン）
 		handle, // 画像ハンドル
 		true,// 透過描画フラグ（TRUEで透明色有効）
 		false, false);      // 左右反転フラグ（TRUEで反転）
 
-
-	
 	// 2枚目（右側）
 	DrawRectRotaGraph(
-		graphHalfW + bgX + drawWidth, graphHalfH + camera.drawOffset.y,
+		graphHalfW + bgX + drawWidth, graphHalfH + (camera.drawOffset.y + 0) - kScreenSizeHeight * (1 - rateY),
 		0, 0,
 		bgSize.width, bgSize.height,
-		10.0, 0,
+		scale, 0,
 		handle,
 		TRUE,
 		FALSE, FALSE
 	);
-
+	
+	//SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 }
 
 void Bg::DrawBg(Camera& camera)
 {
+	int t = 170;
+	int m = 140;
+	int b = 190;
+	
+	switch (StageNum)
+	{
+	case 0:
+		
+		break;
+	case 1://1_1
+	
+		SetDrawBright(t, t, t);// ← 中景
+		BgHSetDraw(camera, m_bgH, 0.0);
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		if (m_bgH5 != -1)BgHSetDraw(camera, m_bgH5, 0.3);
+		if (m_bgH6 != -1)BgHSetDraw(camera, m_bgH6, 0.5);
+		if (m_bgH7 != -1)BgHSetDraw(camera, m_bgH7, 0.5);
+		//SetDrawBright(255, 255, 255);// ← 前景
+		if (m_bgH8 != -1)BgHSetDraw(camera, m_bgH8, 1.0);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 
-	BgHSetDraw(camera, m_bgH);
-	if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2);
-	if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3);
-	if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4);
+		break;
+	case 2://1_2
+		SetDrawBright(t, t, t);// ← 中景
+		BgHSetDraw(camera, m_bgH, 0.0);
+	SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.6);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
+		break;
+	case 3://1_3
+		SetDrawBright(t, t, t); // ← 遠景なら暗め
+		BgHSetDraw(camera, m_bgH, 0.0);
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.1);
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
+		break;
+	case 4://クリアシーン
+	//	BgHSetDraw(camera, m_bgH, 0.0);
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		if (m_bgH5 != -1)BgHSetDraw(camera, m_bgH5, 0.3);
+		if (m_bgH6 != -1)BgHSetDraw(camera, m_bgH6, 0.5);
+		if (m_bgH7 != -1)BgHSetDraw(camera, m_bgH7, 0.5);
+		if (m_bgH8 != -1)BgHSetDraw(camera, m_bgH8, 1.0);
+		break;
+
+	case 6://2_1
+		SetDrawBright(t, t, t);// ← 中景
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
+		break;
+	case 7://2_2
+		SetDrawBright(t, t, t);// ← 中景
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
+		break;
+		break;
+	case 8://2_3
+		SetDrawBright(t, t, t);// ← 中景
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
+		break;
+		break;
+	default:
+		assert(false && "Bgの背景スクロールに失敗");
+		break;
+	}
+
+
 }
 
 void Bg::LoadMapData()

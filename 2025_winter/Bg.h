@@ -24,9 +24,17 @@ public:
 	void Init();
 	void Update();
 	void Draw(Camera& camera);
+	/// <summary>
+	/// スクロールする描画
+	/// </summary>
+	/// <param name="camera"></param>
+	/// <param name="handle"></param>
+	void BgHSetDraw(Camera& camera, int handle, float rate);
 
-	void BgHSetDraw(Camera& camera, int handle);
-
+	/// <summary>
+	/// 背景を描画するところ
+	/// </summary>
+	/// <param name="camera"></param>
 	void DrawBg(Camera& camera);
 	/// <summary>
 	/// マップの読み込み
@@ -108,6 +116,10 @@ private:
 	int m_bgH2=-1;
 	int m_bgH3 = -1;
 	int m_bgH4 = -1;
+	int m_bgH5 = -1;
+	int m_bgH6 = -1;
+	int m_bgH7 = -1;
+	int m_bgH8 = -1;
 private:
 	int m_bgH=-1;
 	int m_mapH = -1;
