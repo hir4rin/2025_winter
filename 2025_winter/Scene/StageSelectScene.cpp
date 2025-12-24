@@ -53,12 +53,12 @@ void StageSelectScene::NormalUpdate(Input& input)
 	{
 		if (selectIndex+1 == 1)//ステージ1
 		{
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 1, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 1, PlayerType::Normal, 100,5));
 			return;
 		}
 		if (selectIndex+1 == 2)//ステージ2
 		{
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 6, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 6, PlayerType::Normal, 100,5));
 			return;
 		}
 
@@ -98,7 +98,7 @@ void StageSelectScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	// ブレンドしない
 }
 
-StageSelectScene::StageSelectScene(SceneController& controller) : Scene(controller)
+StageSelectScene::StageSelectScene(SceneController& controller,int Life) : Scene(controller)
 {
 	
 	update_ = &StageSelectScene::NormalUpdate;

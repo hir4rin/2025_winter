@@ -156,7 +156,7 @@ void TitleScene::FadeOutUpdate(Input&)
 {
 	if (frame_++ >= fade_interval)
 	{
-		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,5));
 		return;
 	}
 }
@@ -239,7 +239,7 @@ TitleScene::TitleScene(SceneController& controller) : Scene(controller)
 	playerSelect = 1;
 	m_frame = 0;
 
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,100,sPos);
+	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,100,sPos,5);
 
 
 	m_stars.push_back(std::make_shared<TitleStar>(starPos,350.0f));

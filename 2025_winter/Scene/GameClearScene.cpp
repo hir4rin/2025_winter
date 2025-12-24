@@ -28,7 +28,7 @@ namespace
 }
 
 
-GameClearScene::GameClearScene(SceneController& controller,PlayerType type) : Scene(controller),
+GameClearScene::GameClearScene(SceneController& controller,PlayerType type,int Life) : Scene(controller),
 update_(&GameClearScene::FadeInUpdate),
 draw_(&GameClearScene::FadeDraw)
 {
@@ -38,7 +38,7 @@ draw_(&GameClearScene::FadeDraw)
 	{
 		m_pSigns.push_back(std::make_shared<Sign>(Vec2{2000.0f* (i+1)- 100.0f,750.0f},7-i));
 	}
-	m_pPlayer = std::make_shared<Player>(type, 100, Vec2{ 100,800 });
+	m_pPlayer = std::make_shared<Player>(type, 100, Vec2{ 100,800 },Life);
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);

@@ -22,7 +22,7 @@ private:
 	DrawFunc_t draw_;	// Drawメンバ関数を代入できるメンバ関数ポインタ
 
 public:
-	StageSelectScene(SceneController& controller);
+	StageSelectScene(SceneController& controller,int Life);
 	void Update(Input& input) override;
 	void Draw()override;
 private:

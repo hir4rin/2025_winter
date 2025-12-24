@@ -122,7 +122,7 @@ namespace
 
 
 
-Player::Player(PlayerType type, int hp, Vec2 pos) :
+Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -138,6 +138,7 @@ Player::Player(PlayerType type, int hp, Vec2 pos) :
 	m_angle(0.0f),
 	m_wasGround(false),
 	m_hp(hp),//HPは後で引継ぎできるように変える,
+	m_life(Life),//残機数
 	m_lastTapTime(0),
 	m_lastTapDir(-1),
 	m_isDash(false),
@@ -510,6 +511,15 @@ void Player::HealGet(int point)
 	if (m_hp >= 100)
 	{
 		m_hp = 100;
+	}
+}
+
+void Player::LifeDeg()
+{
+	m_life -= 1;
+	if (m_life <= 0)
+	{
+		m_life = 0;
 	}
 }
 

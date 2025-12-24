@@ -97,7 +97,7 @@ void StageUI::Draw(Camera& camera)
 	CopyDesign();
 	//残機数
 	DrawBox(secondRightX + 50, topPos + 80, thirdRihtX, bottomUI, col, true);//幅120
-
+	DrawFormatString(secondRightX + 150, topPos + 100, GetColor(0, 0, 0), "%d", m_playerLife);
 
 
 
@@ -128,6 +128,11 @@ void StageUI::SetHp(int  m_pPlayerHP)
 void StageUI::SetType(PlayerType m_type)
 {
 	m_displayType = m_type;
+}
+
+void StageUI::SetLife(int m_pPlayerLife)
+{
+	m_playerLife = m_pPlayerLife;
 }
 
 void StageUI::SetBossHp(int m_pBossHp)

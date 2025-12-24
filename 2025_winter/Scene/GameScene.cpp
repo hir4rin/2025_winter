@@ -47,7 +47,7 @@ namespace
 }
 
 
-GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,int hp) :
+GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,int hp,int Life) :
 	Scene(controller),
 	m_stageNum(stageNum),
 	update_(&GameScene::FadeInUpdate),
@@ -66,7 +66,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//-----------------------------------------------------------------
 
 
-		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 });
+		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 },Life);
 
 		m_pBg = new Bg(m_pPlayer, 1);
 		m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
@@ -94,7 +94,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pPotions.push_back(std::make_shared<Potion>(Vec2(4566.0f, 992.0f)));
 
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 		m_pBg = new Bg(m_pPlayer, 2);
 		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
@@ -121,7 +121,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
 		//-----------------------------------------------------------------
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 		m_pBg = new Bg(m_pPlayer, 3);
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
 		break;
@@ -142,7 +142,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//敵スポーン
 		
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 		m_pBg = new Bg(m_pPlayer, 6);
 		m_doors = std::make_shared< Door>(Vec2{ 6050,760 });
@@ -164,7 +164,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//------------------------------------------------------------------
 		m_pPotions.push_back(std::make_shared<Potion>(Vec2(4707.0f, 800.0f)));
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 		m_pBg = new Bg(m_pPlayer, 7);
 		m_doors = std::make_shared< Door>(Vec2{ 6130,600 });
@@ -182,7 +182,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4952.0f,200.0f), false });
 
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 });
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 		
 		m_pBg = new Bg(m_pPlayer, 8);
@@ -1660,6 +1660,8 @@ void GameScene::NormalUpdate(Input& input)
 		stageUI.SetHp(m_pPlayer->GetHp());
 		//プレイヤーのTypeを引き渡す
 		stageUI.SetType(m_pPlayer->GetType());
+		///プレイヤーのlifeを引き渡す
+		stageUI.SetLife(m_pPlayer->GetLife());
 
 		//ボスのHPを引き渡す
 		if (camera.isBoss)stageUI.SetBossHp(m_pElite->GetHp());
@@ -1915,27 +1917,27 @@ void GameScene::FadeOutUpdate(Input&)
 		switch (m_stageNum)
 		{
 		case 1:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum+1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum+1, m_pPlayer->GetType(), m_pPlayer->GetHp(),m_pPlayer->GetLife()));
 			return;
 			break;
 		case 2:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
 		case 3:
-			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType()));
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetLife()));
 			return;
 			break;
 		case 6:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
 		case 7:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
 		case 8:
-			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType()));
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetLife()));
 			return;
 			break;
 		default:
@@ -1969,32 +1971,41 @@ void GameScene::DyingUpdate(Input& input)
 	
 	if (m_frame++ >= fade_interval * 1.5f)
 	{
+		//ライフを1減らす
+		m_pPlayer->LifeDeg();
+		//Lifeが0以下になったら
+		if (m_pPlayer->CheckLife())
+		{
+			delete m_pBg;
+			controller_.ChangeScene(std::make_shared<GameoverScene>(controller_));
+			return;
+		}
 		//delete m_pCharacter;
 		delete m_pBg;
 		switch (m_stageNum)
 		{
 		case 1:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
 		case 2:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
 		case 3:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
 		case 6://ステージ2_1
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
 		case 7:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
 		case 8:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
 		}

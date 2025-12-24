@@ -43,7 +43,7 @@ public:
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="hp"></param>
-	Player(PlayerType type,int hp,Vec2 pos);
+	Player(PlayerType type,int hp,Vec2 pos,int Life);
 	virtual ~Player();
 
 	virtual void Init() override;
@@ -106,9 +106,16 @@ public:
 	/// プレイヤーが回復した時に呼ぶ関数
 	/// </summary>
 	void HealGet(int point);
+
+	/// <summary>
+	/// 残機が減ったとき
+	/// </summary>
+	void LifeDeg();
+	bool CheckLife() { return m_life <= 0; }
 	void DroppedOutHp0() { m_hp = 0; }//落下で体力を0にする
 
-	int  GetHp() { return m_hp; }
+	int  GetHp() { return m_hp; }//ｈｐ
+	int GetLife() { return m_life; }//残機
 
 	void Death();
 	void DyingUpdate();
@@ -227,6 +234,7 @@ private:
 	PlayerState m_state;
 	PlayerType m_type;
 	int m_hp;//playerの体力
+	int m_life;//playerの残機
 	int m_animframe;
 	int m_angle;//回転角度
 	float damageCount;//ダメージを食らったときの秒数

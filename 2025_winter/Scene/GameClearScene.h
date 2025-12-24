@@ -12,7 +12,7 @@ class Effect;
 class GameClearScene :public Scene
 {
 public:
-	GameClearScene(SceneController& controller,PlayerType type);
+	GameClearScene(SceneController& controller,PlayerType type,int Life);
 	void Update(Input& input) override;
 	void Draw() override;
 

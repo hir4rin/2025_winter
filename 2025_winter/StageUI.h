@@ -23,6 +23,11 @@ public:
     /// </summary>
     /// <param name="m_type"></param>
     void SetType(PlayerType m_type);
+	/// <summary>
+	/// プレイヤーのlifeをセットする
+	/// </summary>
+	/// <param name="m_pPlayerLife"></param>
+	void SetLife(int m_pPlayerLife);
 
 
 	/// <summary>
@@ -38,6 +43,8 @@ public:
 private:
 	int m_hpHandle;
 	int m_playerHp;
+
+	int m_playerLife;
 
 	int m_bossHpHandle;
 	int m_bossHp;

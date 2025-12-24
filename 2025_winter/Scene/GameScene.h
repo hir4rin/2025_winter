@@ -34,7 +34,7 @@ class WaveManager;
 class GameScene : public Scene
 {
 public:
-	GameScene(SceneController& controller,int stageNum,PlayerType type,int hp);
+	GameScene(SceneController& controller,int stageNum,PlayerType type,int hp,int Life);
 	~GameScene();//宣言だけ
 	void Update(Input& input) override;
 	void Draw() override;
