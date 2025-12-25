@@ -170,6 +170,7 @@ HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
 	//マップと当たっていなかったらm_isGroundをfalseにする
 	if (!(m_pBg->IsCollisionPlayer(m_colRect, chipRect,hitClear))) m_isGround = false;
 
+
 	
 
 	//assert(m_pBg && "入っていない");

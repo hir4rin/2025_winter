@@ -13,6 +13,8 @@ class EnemyWizard;
 class EnemyRider;
 class EnemyArcher;
 class EnemyEliteOrc;
+class EnemyBear;
+class EnemyWolf;
 class Item;
 class Arrow;
 class EnemyArrow;
@@ -182,6 +184,8 @@ private:
 	std::vector < std::shared_ptr<EnemyArcher>> m_pEnemyArchers;
 	//ボス
 	std::shared_ptr<EnemyEliteOrc> m_pElite;
+	std::shared_ptr<EnemyBear> m_pBear;
+	std::shared_ptr<EnemyWolf> m_pWolf;
 
 
 	//アイテムは今のところ一つだけ→複数に変更

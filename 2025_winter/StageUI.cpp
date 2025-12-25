@@ -52,10 +52,17 @@ StageUI::~StageUI()
 
 
 
-void StageUI::Init(int hp)
+void StageUI::Init(int hp, PlayerType type,int Life)
 {
+	//hp
 	m_playerHp = hp;
 	m_displayHp = hp;
+	//playerType
+	m_displayType = type;
+	//残機
+	m_playerLife = Life;
+	
+	
 }
 void StageUI::Update()
 {

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Scene.h"
 #include "Camera.h"
+#include "StageUI.h"
 
 
 class Cannon;
@@ -12,7 +13,7 @@ class Effect;
 class GameClearScene :public Scene
 {
 public:
-	GameClearScene(SceneController& controller,PlayerType type,int Life);
+	GameClearScene(SceneController& controller,PlayerType type,int hp,int Life);
 	void Update(Input& input) override;
 	void Draw() override;
 
@@ -49,6 +50,7 @@ private:
 	std::vector<std::shared_ptr<Sign>> m_pSigns;
 	Camera camera;
 	Bg* m_pBg;
+	StageUI stageUI;//UI
 
 	bool isCannon = false;//大砲に乗っているかどうか
 	bool isFlying = false;//大砲から飛び出しているかどうか

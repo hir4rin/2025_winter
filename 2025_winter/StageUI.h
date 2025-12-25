@@ -10,7 +10,7 @@ public:
 	StageUI();
 	virtual ~StageUI();
 
-	void Init(int hp);
+	void Init(int hp, PlayerType type, int Life);
 	void Update();
 	void Draw(Camera& camera);
 	/// <summary>

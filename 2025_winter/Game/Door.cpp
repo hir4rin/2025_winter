@@ -14,12 +14,24 @@ Door::Door(Vec2 pos):
 	m_frame(0),
 	m_pos(pos)
 {
+	m_handle = LoadGraph("data/doors.png");
+	assert(m_handle >= 0);
+
+	charaIdx = 0;
+	charaIdy = 0;
+}
+
+Door::Door(Vec2 pos,StageID id):
+	m_frame(0),
+	m_pos(pos)
+{
 	
 	m_handle = LoadGraph("data/doors.png");
 	assert(m_handle >= 0);
 
 	charaIdx = 0;
 	charaIdy = 0;
+	m_id = id;
 }
 
 Door::~Door()

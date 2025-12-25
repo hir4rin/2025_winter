@@ -4,10 +4,20 @@
 
 
 class Camera;
+
+enum class StageID
+{
+	Fstage,
+	Sstage,
+	Tstage
+	
+};
+
 class Door
 {
 public:
 	Door(Vec2 pos);
+	Door(Vec2 pos,StageID id);
 	virtual ~Door();
 	void Init();
 	void Update();
@@ -16,6 +26,7 @@ public:
 	const Rect& GetColRect() { return m_colRect; }
 
 	void OutUpdate();
+	StageID GetDoorID() { return m_id; }
 
 private:
 	Vec2 m_pos;
@@ -29,7 +40,7 @@ private:
 
 	int m_frame;
 
-
+	StageID m_id;
 
 
 };

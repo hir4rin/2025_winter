@@ -5,6 +5,7 @@
 #include "Cannon.h"
 #include "Sign.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
 #include "SceneController.h"
 #include "Bg.h"
 #include "Player.h"
@@ -28,7 +29,7 @@ namespace
 }
 
 
-GameClearScene::GameClearScene(SceneController& controller,PlayerType type,int Life) : Scene(controller),
+GameClearScene::GameClearScene(SceneController& controller,PlayerType type,int hp,int Life) : Scene(controller),
 update_(&GameClearScene::FadeInUpdate),
 draw_(&GameClearScene::FadeDraw)
 {
@@ -38,11 +39,15 @@ draw_(&GameClearScene::FadeDraw)
 	{
 		m_pSigns.push_back(std::make_shared<Sign>(Vec2{2000.0f* (i+1)- 100.0f,750.0f},7-i));
 	}
-	m_pPlayer = std::make_shared<Player>(type, 100, Vec2{ 100,800 },Life);
+	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 },Life);
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
 	InitCamera(camera);//カメラの初期化
+
+	//シーン切り替え後のにゅいーんをなくす
+	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());
+
 
 	m_pPlayer->AddOnWalkEvent([this]() {
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dustForClear"));
@@ -100,6 +105,18 @@ void GameClearScene::NormalUpdate(Input& input)
 	for (auto& s : m_pSigns)
 	{
 		s->Update();
+	}
+	//ステージUI
+	{
+		//プレイヤーのHPを引き渡す
+		stageUI.SetHp(m_pPlayer->GetHp());
+		//プレイヤーのTypeを引き渡す
+		stageUI.SetType(m_pPlayer->GetType());
+		///プレイヤーのlifeを引き渡す
+		stageUI.SetLife(m_pPlayer->GetLife());
+
+		//UIのアップデート
+		stageUI.Update();
 	}
 	//お試し--------------------------------------
 	//if (!isCannon && m_pPlayer != nullptr)m_pPlayer->Update(input);
@@ -213,7 +230,7 @@ void GameClearScene::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp(),m_pPlayer->GetLife()));
 		return;
 	}
 }
@@ -232,7 +249,8 @@ void GameClearScene::FadeDraw()
 void GameClearScene::NormalDraw()
 {
 	m_pBg->Draw(camera);
-
+	//ステージUI
+	stageUI.Draw(camera);
 	DrawString(320, 240, "Game Clear Scene", 0xffffff);
 
 	DrawFormatString(500, 300, GetColor(255, 0, 0), "Your Rank is %d", m_rank);

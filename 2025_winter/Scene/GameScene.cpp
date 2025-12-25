@@ -11,6 +11,8 @@
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
 #include "EnemyEliteOrc.h"
+#include "EnemyBear.h"
+#include "EnemyWolf.h"
 #include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Arrow.h"
@@ -18,11 +20,12 @@
 #include "Potion.h"
 #include "Frozen.h"
 #include "BurningObject.h"
-#include <../Door.h>
+#include <../Game/Door.h>
 #include "Bg.h"
 #include "../input.h"
 #include "GameoverScene.h"
 #include "GameClearScene.h"
+#include "StageSelectScene.h"
 #include "PauseScene.h"
 #include "SceneController.h"
 #include <cassert>
@@ -217,6 +220,29 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 
 		break;
+	case 9:
+		m_pBear = std::make_shared<EnemyBear>();
+		m_pWolf = std::make_shared<EnemyWolf>();
+
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+
+
+		m_pBg = new Bg(m_pPlayer, 8);
+		//熊
+		{
+			m_pBear->SetPlayer(m_pPlayer);
+			m_pBear->SetBgPointer(m_pBg);
+		}
+		//狼
+		{
+			m_pWolf->SetPlayer(m_pPlayer);
+			m_pWolf->SetBgPointer(m_pBg);
+		}
+	
+
+		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
+		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+		break;
 	}
 	
 	m_frame = fade_interval;// フェードインの最初
@@ -224,7 +250,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 	InitCamera(camera);//カメラの初期化
 
 	//シーン切り替え後のにゅいーんをなくす
-	stageUI.Init(hp);
+	stageUI.Init(hp,m_pPlayer->GetType(),m_pPlayer->GetLife());
 
 
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -1477,7 +1503,7 @@ bool  GameScene::CheckDropped()
 		//DyingActと同じ処理
 		{
 			m_pPlayer->Death();
-			stageUI.Init(0);//HPを0にする
+			stageUI.Init(0, m_pPlayer->GetType(), m_pPlayer->GetLife());//HPを0にする
 			StartCameraShake(camera, 20.0f, 0.2f);
 			update_ = &GameScene::ShakingUpdate;
 			
@@ -1631,6 +1657,7 @@ void GameScene::NormalUpdate(Input& input)
 	{
 		update_ = &GameScene::FadeOutUpdate;
 		draw_ = &GameScene::FadeOutDraw;
+		m_frame = 0;
 	}
 #endif
 	//ドアに触れているかつ上入力をしていたらシーン遷移
@@ -1745,6 +1772,30 @@ void GameScene::NormalUpdate(Input& input)
 			if (m_pElite->GetIsDead())
 			{
 				m_pElite = nullptr;
+				camera.ChangeIsBossFalse();
+			}
+		}
+		if (m_pBear != nullptr)//ボス熊
+		{
+			m_pBear->Update();
+
+		
+
+			if (m_pBear->GetIsDead())
+			{
+				m_pBear = nullptr;
+				camera.ChangeIsBossFalse();
+			}
+		}
+		if (m_pWolf != nullptr)//ボス狼
+		{
+			m_pWolf->Update();
+
+		
+
+			if (m_pWolf->GetIsDead())
+			{
+				m_pWolf = nullptr;
 				camera.ChangeIsBossFalse();
 			}
 		}
@@ -1925,7 +1976,7 @@ void GameScene::FadeOutUpdate(Input&)
 			return;
 			break;
 		case 3:
-			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
 		case 6:
@@ -1937,7 +1988,11 @@ void GameScene::FadeOutUpdate(Input&)
 			return;
 			break;
 		case 8:
-			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+			return;
+			break;
+		case 9:
+			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
 		default:
@@ -2190,6 +2245,14 @@ void GameScene::NormalDraw()
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Draw(camera);
+		}
+		if (m_pBear != nullptr)//ボス熊
+		{
+			m_pBear->Draw(camera);
+		}
+		if (m_pWolf != nullptr)//ボス狼
+		{
+			m_pWolf->Draw(camera);
 		}
 		//アイテム
 		for (auto& item : m_pItems)
