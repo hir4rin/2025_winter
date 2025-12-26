@@ -5,9 +5,9 @@ class Camera;
 
 enum class WolfAttackPattern
 {
-	Attack1,//
+	Attack1,//霹靂一千
 	Attack2,//
-	Attack3,//
+	Attack3,//剣の弱攻撃x２回
 	Down//
 };
 
@@ -115,6 +115,9 @@ private:
 
 	//攻撃1用
 	Rect m_attack1Rect;
+	Vec2 m_DashStart;
+	Vec2 m_DashEnd;
+
 
 	//攻撃２用
 	float targetX = 0.0f;//目標までの距離

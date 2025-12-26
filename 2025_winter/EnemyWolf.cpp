@@ -14,7 +14,7 @@ namespace
 	constexpr float  enemy_scale = 5.0f;
 
 
-	constexpr float kAttack1Speed = 6.0f;//攻撃時の速度
+	constexpr float kAttack1Speed = 12.0f;//攻撃時の速度
 	constexpr float kAttack2Speed = 8.0f;//攻撃時の速度
 	constexpr float kJumpSpeed = 20.0f;
 	constexpr float kJumpDownSpeed = 15.0f;
@@ -26,7 +26,7 @@ namespace
 	//1frameあたりのアニメーションの時間
 	constexpr int kIdleDuration = 6;
 	constexpr int kWalkDuration = 8;
-	constexpr int kAttackDuration = 2;
+	constexpr int kAttackDuration = 6;
 	constexpr int kAttack2Duration = 4;
 	constexpr int kAttack3Duration = 12;
 	constexpr int kDamageDuration = 20;
@@ -42,6 +42,14 @@ namespace
 
 
 	constexpr float kAttackTime = 100.0f;  //攻撃の時間
+
+	//攻撃1
+	constexpr float kDashSpeed = 80.0f;
+	constexpr float kThunderReadyTime = kAttackTime * 30 / 100;//攻撃前の見切り
+	constexpr float kThunderDashTime = kAttackTime * 15 / 100;//攻撃中
+	constexpr float kThunderEndTime = kAttackTime * 50 / 100;//攻撃後
+	constexpr float kThunderAfterTime = kAttackTime * 5 / 100;//硬直中
+
 
 
 	//攻撃2
@@ -293,7 +301,7 @@ void EnemyWolf::AttackUpdate()
 				attackTimer = kAttackTime;
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
-				dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
+				//dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
 
 				m_isRight = dir;
 			}
@@ -390,6 +398,7 @@ void EnemyWolf::AttackUpdate()
 	}
 	break;
 	case WolfAttackPattern::Down://波動
+	{
 		coolTimer--;
 
 		//左上限をきめる
@@ -440,7 +449,9 @@ void EnemyWolf::AttackUpdate()
 			AttackDown();
 
 		}
-		break;
+	
+	}
+	break;
 
 	}
 
@@ -501,6 +512,46 @@ void EnemyWolf::AttackAnimIdxy()
 			charaIdx = (m_animframe / kAttackDuration) % kAttackNum;
 			charaIdy = 3;
 			drawY += enemy_cut_h / 4;
+
+			//ここから条件分岐
+			if (attackTimer > kAttackTime - kThunderReadyTime)//最初のフレームはロックオン
+			{
+				//初めて、3fになっているときは光のエフェクトを出す
+				
+				//3fまで
+				if (charaIdx >= 3)
+				{
+					charaIdx = 3;
+				}
+			}
+			else if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime)//ダッシュ中
+			{
+				baseFrame = 4; // フレーム4から開始
+				phaseProgress = ((kAttackTime - kThunderReadyTime) - attackTimer);//前の分岐条件からの数えだしだから0スタート
+				charaIdx = baseFrame + (phaseProgress / kAttackDuration);
+				//7fまで
+				if (charaIdx >= 7)
+				{
+					charaIdx = 7;
+				}
+			
+			}
+			else //if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime - kThunderEndTime)//あと残り
+			{
+				//最後の13fまで
+				baseFrame = 8;
+				phaseProgress = ((kAttackTime - kThunderReadyTime - kThunderDashTime) - attackTimer);
+				charaIdx = baseFrame + (phaseProgress / kAttackDuration);
+				if (charaIdx >= kAttackNum-1)
+				{
+					charaIdx = kAttackNum-1;
+				}
+
+			}
+			//else if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime - kThunderEndTime - kThunderAfterTime)//攻撃硬直
+			//{
+			//	
+			//}
 		}
 		else//Idle状態にする
 		{
@@ -615,11 +666,53 @@ void EnemyWolf::Attack1()
 	//実際に攻撃をする処理
 	attackTimer--;
 
-	//攻撃判定をセット
-	float attackWidth = 200.0f;
-	float attackHeight = 200.0f;
-	float offsetY = 100.0f;
-	m_attack1Rect.SetLT(m_pos.x - attackWidth / 2, m_pos.y - offsetY, attackWidth, attackHeight);
+	if (attackTimer > kAttackTime - kThunderReadyTime)//最初のフレームはロックオン
+	{
+		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
+		//dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
+
+		m_isRight = dir;
+		float offset = 100.0f;
+		//攻撃終わり位置を決める
+		if (m_isRight)
+		{
+			m_DashEnd.x = m_pPlayer->GetPos().x + offset;
+		}
+		else
+		{
+			m_DashEnd.x = m_pPlayer->GetPos().x - offset;
+		}
+	}
+	else if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime)//ダッシュ中
+	{
+		if (m_isRight)
+		{
+			m_vel.x = kDashSpeed;
+		}
+		else
+		{
+			m_vel.x = -kDashSpeed;
+		}
+		
+		//斬撃判定をつける
+	}
+	else if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime- kThunderEndTime)//あと残り
+	{
+		//斬撃判定をつける
+		m_vel.x = 0;
+	}
+	else if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime - kThunderEndTime - kThunderAfterTime)//攻撃硬直
+	{
+		//攻撃硬直
+	}
+
+
+	
+
+	//charaIdxが3fになったら
+	//キャラを瞬間移動させる、アニメーションを進ませる
+
+	
 
 	if (attackTimer <= 0)
 	{
@@ -634,13 +727,13 @@ void EnemyWolf::Attack1()
 		m_isRight = dir;
 
 		//次の攻撃パターンを選択
-		{
+	/*	{
 			WolfAttackPattern prev = m_attackP;
 			do
 			{
 				m_attackP = SelectAttack();
 			} while (m_attackP == prev);
-		}
+		}*/
 
 
 	}

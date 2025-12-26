@@ -6,8 +6,8 @@ class Camera;
 
 enum class BearAttackPattern
 {
-	Attack1,//
-	Attack2,//
+	Attack1,//連続ひっかき攻撃
+	Attack2,//ジャンプ波動
 	Attack3,//
 	Down//
 };

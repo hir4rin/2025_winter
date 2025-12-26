@@ -221,7 +221,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 		break;
 	case 9:
-		m_pBear = std::make_shared<EnemyBear>();
+		//m_pBear = std::make_shared<EnemyBear>();
 		m_pWolf = std::make_shared<EnemyWolf>();
 
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
@@ -230,8 +230,8 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pBg = new Bg(m_pPlayer, 8);
 		//熊
 		{
-			m_pBear->SetPlayer(m_pPlayer);
-			m_pBear->SetBgPointer(m_pBg);
+		/*	m_pBear->SetPlayer(m_pPlayer);
+			m_pBear->SetBgPointer(m_pBg);*/
 		}
 		//狼
 		{
