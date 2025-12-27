@@ -8,6 +8,7 @@ class EnemyWizard;
 class EnemyRider;
 class EnemyArcher;
 class BossShot;
+class Salmon;
 class Frozen :public Character
 {
 public:
@@ -15,6 +16,7 @@ public:
 	Frozen(std::shared_ptr<EnemyRider> _enemyRiders);
 	Frozen(std::shared_ptr<EnemyArcher> _enemyArchers);
 	Frozen(std::shared_ptr<BossShot> _bossShot);
+	Frozen(std::shared_ptr<Salmon> _salmon);
 	virtual ~Frozen();
 	void Init()override;
 	void Update()override;

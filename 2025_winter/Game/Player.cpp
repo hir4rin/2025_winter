@@ -1037,7 +1037,7 @@ void Player::Copy()
 	//アニメーション
 	AnimSelect(Anim::Copy);
 	//判定をつける
-	m_copyRect.SetCenter(m_pos.x, m_pos.y - kCharaSize / 2, 80.0f, 100.0f);
+	m_copyRect.SetCenter(m_pos.x, m_pos.y - kCharaSize / 2, 120.0f, 100.0f);
 }
 
 void Player::AnimSelect(const Anim& anim)

@@ -5,6 +5,7 @@
 #include "../Application.h"
 //#include "KeyConfigScene.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
 
 namespace
 {
@@ -196,6 +197,7 @@ PauseScene::PauseScene(SceneController& controller) :
 		"ゲームに戻る",
 		//"キーコンフィグ",
 		"タイトルに戻る",
+		"ステージセレクトに戻る",
 		"ゲームを終了する"
 	};
 
@@ -213,6 +215,13 @@ PauseScene::PauseScene(SceneController& controller) :
 		draw_ = &PauseScene::YesNoDialogDraw;
 		yesRequestFunction_ = [this]() {
 			controller_.ResetScene(std::make_shared<TitleScene>(controller_));
+			};
+		};
+	execTable_["ステージセレクトに戻る"] = [this](Input&) {
+		update_ = &PauseScene::YesNoDialogUpdate;
+		draw_ = &PauseScene::YesNoDialogDraw;
+		yesRequestFunction_ = [this]() {
+			//controller_.ResetScene(std::make_shared<StageSelectScene>(controller_));
 			};
 		};
 	execTable_["ゲームを終了する"] = [this](Input&) {

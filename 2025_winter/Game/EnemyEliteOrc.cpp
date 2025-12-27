@@ -28,7 +28,7 @@ namespace
 	constexpr int kWalkDuration = 8;
 	constexpr int kAttackDuration = 2;
 	constexpr int kAttack2Duration = 4;
-	constexpr int kAttack3Duration = 12;
+	constexpr int kAttack3Duration = 7;
 	constexpr int kDamageDuration = 20;
 
 	//そのアニメーションが何このコマ数なのか(X)
@@ -336,6 +336,8 @@ void EnemyEliteOrc::AttackUpdate()
 				dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
 
 				m_isRight = dir;
+				//アニメーションを初期化
+				m_animframe = 0;
 			}
 		}
 		if (isAttack == true)
@@ -391,6 +393,8 @@ void EnemyEliteOrc::AttackUpdate()
 				m_vel.x = distance / kJumpAttackUpTime;
 
 				m_vel.y = -kJumpSpeed;
+				//アニメーションを初期化
+				m_animframe = 0;
 			}
 		}
 		if (isAttack == true)
@@ -418,6 +422,8 @@ void EnemyEliteOrc::AttackUpdate()
 
 				bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 				m_isRight = dir;
+				//アニメーションを初期化
+				m_animframe = 0;
 			}
 		}
 		if (isAttack == true)
@@ -471,6 +477,8 @@ void EnemyEliteOrc::AttackUpdate()
 				m_vel.x = distance / kJumpAttackUpTime;
 
 				m_vel.y = -kJumpSpeed;
+				//アニメーションを初期化
+				m_animframe = 0;
 			}
 		}
 		if (isAttack == true)
@@ -883,6 +891,9 @@ void EnemyEliteOrc::AttackDown()
 
 AttackPattern EnemyEliteOrc::SelectAttack()
 {
+	//アニメーションの初期化
+	m_animframe = 0;//アニメーション用
+
 	int flow = 0;
 	//--------------
 	int fmax = 30;

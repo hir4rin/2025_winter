@@ -5,6 +5,7 @@
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
 #include "BossShot.h"
+#include "Salmon.h"
 #include <cassert>
 
 namespace
@@ -49,6 +50,15 @@ Frozen::Frozen(std::shared_ptr<BossShot> _bossShot)
 	assert(m_handle >= 0);
 
 	m_pos = _bossShot->GetPos();
+	kScale = 4.0f;
+	drawY = 1.5f;
+}
+Frozen::Frozen(std::shared_ptr<Salmon> _salmon)
+{
+	m_handle = LoadGraph("data/Game/exp ice.png");
+	assert(m_handle >= 0);
+
+	m_pos = _salmon->GetPos();
 	kScale = 4.0f;
 	drawY = 1.5f;
 }

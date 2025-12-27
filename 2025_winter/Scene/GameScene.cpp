@@ -13,6 +13,7 @@
 #include "EnemyEliteOrc.h"
 #include "EnemyBear.h"
 #include "EnemyWolf.h"
+#include "Salmon.h"
 #include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Arrow.h"
@@ -69,7 +70,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//-----------------------------------------------------------------
 
 
-		m_pPlayer = std::make_shared<Player>(PlayerType::Normal, hp, Vec2{ 100,736 },Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 },Life);
 
 		m_pBg = new Bg(m_pPlayer, 1);
 		m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
@@ -221,7 +222,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 		break;
 	case 9:
-		//m_pBear = std::make_shared<EnemyBear>();
+		m_pBear = std::make_shared<EnemyBear>();
 		m_pWolf = std::make_shared<EnemyWolf>();
 
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
@@ -230,8 +231,41 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pBg = new Bg(m_pPlayer, 8);
 		//熊
 		{
-		/*	m_pBear->SetPlayer(m_pPlayer);
-			m_pBear->SetBgPointer(m_pBg);*/
+			m_pBear->SetPlayer(m_pPlayer);
+			m_pBear->SetBgPointer(m_pBg);
+			//カメラ
+			m_pBear->AddOnAttack1EndEvent([this]() {
+				//カメラを揺らす
+				StartCameraShake(camera, 2.5f, 0.1f);
+});
+
+			//波動
+			m_pBear->AddOnAttackEndEvent([this]() {
+				Vec2 startPos = m_pBear->GetPos();
+				startPos.y += 16;//足元に合わせる
+
+				//左方向
+				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, -1)
+				);
+
+				//右方向
+				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, 1)
+				);
+
+				//カメラを揺らす
+				StartCameraShake(camera, 10.0f, 0.2f);
+			});
+			//鮭
+			m_pBear->AddOnAttack3EndEvent([this]() {
+				for (int i = 0; i < 3; i++)
+				{
+					m_pSalmons.push_back(std::make_shared<Salmon>(m_pBear->GetPos(), m_pBear->Getm_isRight(),i+1));
+			}
+			
+				//カメラを揺らす
+				StartCameraShake(camera, 10.0f, 0.2f);
+			});
+
 		}
 		//狼
 		{
@@ -470,7 +504,7 @@ void GameScene::CheckArrowHit()
 		num->hitEnemyArcher = nullptr;
 	}
 
-	//矢とボスが当たった時の処理
+	//矢とボスエリートが当たった時の処理
 	for (auto& num : m_arrows)
 	{
 		if (num == nullptr || !num->hitEnemyEliteOrc)continue;
@@ -490,7 +524,51 @@ void GameScene::CheckArrowHit()
 			}
 		
 		//矢のヒット情報をリセット
-		num->hitEnemyArcher = nullptr;
+		num->hitEnemyEliteOrc = nullptr;
+	}
+	//矢とボス熊が当たったときの処理
+	for (auto& num : m_arrows)
+	{
+		if (num == nullptr || !num->hitEnemyBear)continue;
+
+		std::shared_ptr<EnemyBear> enemy = num->hitEnemyBear;
+
+		//敵リストから一致するやつを探して削除
+		
+		auto& e = m_pBear;
+			if (e == enemy)
+			{
+
+				
+				//bossにダメージを与える
+				e->HitBossDamage(10);
+				break;
+			}
+		
+		//矢のヒット情報をリセット
+		num->hitEnemyBear = nullptr;
+	}
+	//矢とボス狼が当たったときの処理
+	for (auto& num : m_arrows)
+	{
+		if (num == nullptr || !num->hitEnemyWolf)continue;
+
+		std::shared_ptr<EnemyWolf> enemy = num->hitEnemyWolf;
+
+		//敵リストから一致するやつを探して削除
+		
+		auto& e = m_pWolf;
+			if (e == enemy)
+			{
+
+				
+				//bossにダメージを与える
+				e->HitBossDamage(10);
+				break;
+			}
+		
+		//矢のヒット情報をリセット
+		num->hitEnemyWolf = nullptr;
 	}
 
 	//敵の矢の情報を書く(プレイヤーと当たった時)
@@ -518,6 +596,21 @@ void GameScene::CheckArrowHit()
 		OnShake();
 		e_shot->m_hitPlayer = nullptr;
 
+	}
+	//サーモン
+	for (auto& it : m_pSalmons)
+	{
+		if (it == nullptr)return;
+		if (it->GetColRect().IsCollision(m_pPlayer->GetColRect()))
+		{
+			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+			//敵がどっちから当たったかどうかを入れる
+			//矢とどの方向で当たったかどうか
+			m_pPlayer->DamageHit(isLeft);
+			OnShake();
+			it = nullptr;
+		}
+	
 	}
 
 	
@@ -615,7 +708,7 @@ void GameScene::CheckFrozenHit()
 				}
 
 			}
-			//動いているときに敵と当たる//ボス
+			//動いているときに敵と当たる//ボスエリート
 			{
 				if (m_pElite != nullptr)
 				{
@@ -637,8 +730,54 @@ void GameScene::CheckFrozenHit()
 					}
 				
 			    }
+
+			}
+			//動いているときに敵と当たる//ボス熊
+			{
+				if (m_pBear != nullptr)
+				{
+					if (m_pFrozen)
+					{
+						bool isHitEnemy = m_pBear->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+						if (isHitEnemy)
+						{
+							m_pFrozen = nullptr;
+						
+
+							//インスタンスを消す
+							//ボスにダメージを与える
+							m_pBear->HitBossDamage(20);
+
+
+						}
+					}
 				
+			    }
+
+			}
+			//動いているときに敵と当たる//ボス狼
+			{
+				if (m_pWolf != nullptr)
+				{
+					if (m_pFrozen)
+					{
+						bool isHitEnemy = m_pWolf->GetColRect().IsCollision(m_pFrozen->GetColRect());
+
+						if (isHitEnemy)
+						{
+							m_pFrozen = nullptr;
+						
+
+							//インスタンスを消す
+							//ボスにダメージを与える
+							m_pWolf->HitBossDamage(20);
+
+
+						}
+					}
 				
+			    }
 
 			}
 		}
@@ -662,7 +801,7 @@ void GameScene::CheckFrozenHit()
 				}
 
 			}
-			//動いているときに敵と当たる//オークライダー
+			//動いていないときに敵と当たる//オークライダー
 			for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)
 			{
 				auto& e = m_pEnemyRiders[i];
@@ -678,7 +817,7 @@ void GameScene::CheckFrozenHit()
 					e->Changem_isRight();
 				}
 			}
-			//動いているときに敵と当たる//どくろアーチャー
+			//動いていないときに敵と当たる//どくろアーチャー
 			for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)
 			{
 				auto& e = m_pEnemyArchers[i];
@@ -694,6 +833,7 @@ void GameScene::CheckFrozenHit()
 					e->Changem_isRight();
 				}
 			}
+			//ボスたちはそれをするか迷い中
 		}
 
 		//ついでにカメラの外に出たら消す処理
@@ -738,6 +878,17 @@ void GameScene::CheckFrozenHit()
 			if (e_arrow->GetColRect().IsCollision(frozen->GetColRect()))
 			{
 				e_arrow = nullptr;
+
+			}
+		}
+		//サーモンと当たったとき
+		for (auto& it : m_pSalmons)
+		{
+			if (!frozen)continue;
+			if (!it)continue;
+			if (it->GetColRect().IsCollision(frozen->GetColRect()))
+			{
+				it = nullptr;
 
 			}
 		}
@@ -909,20 +1060,55 @@ void GameScene::CheckHitNormal()
 
 		}
 	}
-
-	if (m_pElite != nullptr)
+	//ボスエリート
 	{
-		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+		if (m_pElite != nullptr)
 		{
-			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
-			if (isHitAttack)
+			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
 			{
-				m_pElite->HitBossDamage(10);
+				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
+				if (isHitAttack)
+				{
+					m_pElite->HitBossDamage(10);
 
+				}
 			}
 		}
 	}
+	//ボス熊
+	{
+		if (m_pBear != nullptr)
+		{
+			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			{
+				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pBear->GetColRect());
+				if (isHitAttack)
+				{
+					m_pBear->HitBossDamage(10);
+
+				}
+			}
+		}
+	}
+	//狼
+	{
+		if (m_pWolf != nullptr)
+		{
+			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			{
+				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pWolf->GetColRect());
+				if (isHitAttack)
+				{
+					m_pWolf->HitBossDamage(10);
+
+				}
+			}
+		}
+	}
+	
 }
 
 void GameScene::CheckHitBurning()
@@ -1029,16 +1215,44 @@ void GameScene::CheckHitBurning()
 
 		}
 	}
-
-	if (m_pElite != nullptr)
+	//ボスエリート
 	{
-		bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(m_pElite->GetColRect());
-		if (isHitAttack)
+		if (m_pElite != nullptr)
 		{
-			m_pElite->HitBossDamage(20);
+			bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(m_pElite->GetColRect());
+			if (isHitAttack)
+			{
+				m_pElite->HitBossDamage(20);
 
+			}
 		}
 	}
+	//ボス熊
+	{
+		if (m_pBear != nullptr)
+		{
+			bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(m_pBear->GetColRect());
+			if (isHitAttack)
+			{
+				m_pBear->HitBossDamage(20);
+
+			}
+		}
+	}
+	
+	//ボス狼
+	{
+		if (m_pWolf != nullptr)
+		{
+			bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(m_pWolf->GetColRect());
+			if (isHitAttack)
+			{
+				m_pWolf->HitBossDamage(20);
+
+			}
+		}
+	}
+	
 
 }
 
@@ -1127,15 +1341,40 @@ void GameScene::CheckFastBurning()
 			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 		}
 	}
-
-	if (m_pElite != nullptr)
+	//ボスエリート
 	{
-		//バーニングの攻撃の矩形との当たり判定チェック
-		if (CheckSweepHit(p0, p1, m_pElite->GetColRect()))
+		if (m_pElite != nullptr)
 		{
-			m_pElite->HitBossDamage(20);
+			//バーニングの攻撃の矩形との当たり判定チェック
+			if (CheckSweepHit(p0, p1, m_pElite->GetColRect()))
+			{
+				m_pElite->HitBossDamage(20);
+			}
 		}
 	}
+	//ボス熊
+	{
+		if (m_pBear != nullptr)
+		{
+			//バーニングの攻撃の矩形との当たり判定チェック
+			if (CheckSweepHit(p0, p1, m_pBear->GetColRect()))
+			{
+				m_pBear->HitBossDamage(20);
+			}
+		}
+	}
+	//ボス狼
+	{
+		if (m_pWolf != nullptr)
+		{
+			//バーニングの攻撃の矩形との当たり判定チェック
+			if (CheckSweepHit(p0, p1, m_pWolf->GetColRect()))
+			{
+				m_pWolf->HitBossDamage(20);
+			}
+		}
+	}
+	
 
 }
 
@@ -1272,16 +1511,69 @@ void GameScene::CheckHitFrozen()
 
 		}
 	}
-
-	if (m_pElite != nullptr)
+	for (int i = (int)m_pSalmons.size() - 1; i >= 0; i--)//サーモン
 	{
-		bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(m_pElite->GetColRect());
-		if (isHitAttack)
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
 		{
-			m_pElite->HitBossDamage(20);
+			auto& e = m_pSalmons[i];
+			if (e == nullptr)continue;
+
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
+			//矢の処理は別の場所(CheckhitArrow)
+
+
+			if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pFrozens.push_back(std::make_shared<Frozen>(e));
+
+
+			
+
+				//インスタンスを消す
+				m_pSalmons.erase(m_pSalmons.begin() + i);
+			}
 
 		}
 	}
+	//ボスエリート
+	{
+		if (m_pElite != nullptr)
+		{
+			bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(m_pElite->GetColRect());
+			if (isHitAttack)
+			{
+				m_pElite->HitBossDamage(20);
+
+			}
+		}
+	}
+	//ボス熊
+	{
+		if (m_pBear != nullptr)
+		{
+			bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(m_pBear->GetColRect());
+			if (isHitAttack)
+			{
+				m_pBear->HitBossDamage(20);
+
+			}
+		}
+	}
+	//ボス狼
+	{
+		if (m_pWolf != nullptr)
+		{
+			bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(m_pWolf->GetColRect());
+			if (isHitAttack)
+			{
+				m_pWolf->HitBossDamage(20);
+
+			}
+		}
+	}
+
 }
 
 void GameScene::CheckPlayer()
@@ -1452,30 +1744,88 @@ void GameScene::CheckPlayer()
 		}
 	}
 
-	//ボスの攻撃
-	if (m_pElite != nullptr)
+	//エリートボス
 	{
-		if (m_pElite->GetColAttack1Rect().IsCollision(m_pPlayer->GetColRect()))
+		//ボスの攻撃
+		if (m_pElite != nullptr)
 		{
-			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
-			//敵がどっちから当たったかどうかを入れる
-			//プレイヤーのダメージ処理
-			m_pPlayer->DamageHit(isLeft);
-			OnShake();
+			if (m_pElite->GetColAttack1Rect().IsCollision(m_pPlayer->GetColRect()))
+			{
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
+		}
+		//ボスとの当たり判定
+		if (m_pElite != nullptr)
+		{
+			if (m_pElite->GetColRect().IsCollision(m_pPlayer->GetColRect()))
+			{
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
 		}
 	}
-	//ボスとの当たり判定
-	if (m_pElite != nullptr)
+	//熊
 	{
-		if (m_pElite->GetColRect().IsCollision(m_pPlayer->GetColRect()))
+		//ボスの攻撃
+		if (m_pBear != nullptr)
 		{
-			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
-			//敵がどっちから当たったかどうかを入れる
-			//プレイヤーのダメージ処理
-			m_pPlayer->DamageHit(isLeft);
-			OnShake();
+			if (m_pBear->GetColAttack1Rect().IsCollision(m_pPlayer->GetColRect()))
+			{
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pBear->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
+		}
+		//ボスとの当たり判定
+		if (m_pBear != nullptr)
+		{
+			if (m_pBear->GetColRect().IsCollision(m_pPlayer->GetColRect()))
+			{
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pBear->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
 		}
 	}
+	//狼
+	{
+		//ボスの攻撃
+		if (m_pWolf != nullptr)
+		{
+			if (m_pWolf->GetColAttack1Rect().IsCollision(m_pPlayer->GetColRect()))
+			{
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pWolf->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
+		}
+		//ボスとの当たり判定
+		if (m_pWolf != nullptr)
+		{
+			if (m_pWolf->GetColRect().IsCollision(m_pPlayer->GetColRect()))
+			{
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pWolf->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+			}
+		}
+	}
+	
 	
 	//回復アイテムを取ったときの反応
 	for (auto& potion : m_pPotions)
@@ -1784,7 +2134,7 @@ void GameScene::NormalUpdate(Input& input)
 			if (m_pBear->GetIsDead())
 			{
 				m_pBear = nullptr;
-				camera.ChangeIsBossFalse();
+				
 			}
 		}
 		if (m_pWolf != nullptr)//ボス狼
@@ -1796,8 +2146,24 @@ void GameScene::NormalUpdate(Input& input)
 			if (m_pWolf->GetIsDead())
 			{
 				m_pWolf = nullptr;
-				camera.ChangeIsBossFalse();
+				
 			}
+		}
+		//salmonを消す処理
+		{
+			m_pSalmons.erase(
+				std::remove_if(
+					m_pSalmons.begin(), m_pSalmons.end(),
+					[](const std::shared_ptr<Salmon>& salmon)
+					{
+						return salmon == nullptr;
+					}
+				), m_pSalmons.end()
+			);
+		}
+		for (auto& it : m_pSalmons)
+		{
+			it->Update();
 		}
 
 		for (auto& wm : m_waveManagers)
@@ -2063,6 +2429,10 @@ void GameScene::DyingUpdate(Input& input)
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 			break;
+		case 9:
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
+			return;
+			break;
 		}
 
 
@@ -2206,6 +2576,10 @@ void GameScene::NormalDraw()
 		{
 			if (enemy) enemy->Draw(camera);
 		}
+		for (auto& it : m_pSalmons)//鮭
+		{
+			it->Draw(camera);
+		}
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Draw(camera);
@@ -2241,6 +2615,10 @@ void GameScene::NormalDraw()
 		for (auto& enemy : m_pEnemyArchers)//狙撃手
 		{
 			if (enemy) enemy->Draw(camera);
+		}
+		for (auto& it : m_pSalmons)//鮭
+		{
+			if(it)it->Draw(camera);
 		}
 		if (m_pElite != nullptr)//ボス
 		{

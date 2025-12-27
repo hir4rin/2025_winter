@@ -136,7 +136,7 @@ void GameClearScene::NormalUpdate(Input& input)
 
 	if (input.IsTriggered("ok") )
 	{
-		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp(),m_pPlayer->GetLife()));
 		return;
 	}
 
