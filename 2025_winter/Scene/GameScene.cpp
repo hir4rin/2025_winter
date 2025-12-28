@@ -14,6 +14,7 @@
 #include "EnemyBear.h"
 #include "EnemyWolf.h"
 #include "Salmon.h"
+#include "Fish.h"
 #include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Arrow.h"
@@ -222,6 +223,11 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 		break;
 	case 9:
+		//
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 800,800 }));
+
+
+		//
 		m_pBear = std::make_shared<EnemyBear>();
 		m_pWolf = std::make_shared<EnemyWolf>();
 
@@ -2166,6 +2172,11 @@ void GameScene::NormalUpdate(Input& input)
 		{
 			it->Update();
 		}
+		//死んだら消す処理を後で入れる
+		for (auto& it : m_pFishers)
+		{
+			it->Update();
+		}
 
 		for (auto& wm : m_waveManagers)
 		{
@@ -2581,6 +2592,10 @@ void GameScene::NormalDraw()
 		{
 			it->Draw(camera);
 		}
+		for (auto& it : m_pFishers)
+		{
+			it->Draw(camera);
+		}
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Draw(camera);
@@ -2620,6 +2635,10 @@ void GameScene::NormalDraw()
 		for (auto& it : m_pSalmons)//鮭
 		{
 			if(it)it->Draw(camera);
+		}
+		for (auto& it : m_pFishers)
+		{
+			it->Draw(camera);
 		}
 		if (m_pElite != nullptr)//ボス
 		{

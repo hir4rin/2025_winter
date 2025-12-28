@@ -20,6 +20,7 @@ class Item;
 class Arrow;
 class EnemyArrow;
 class BossShot;
+class Fish;
 class Bg;
 class Character;
 class Frozen;
@@ -189,6 +190,8 @@ private:
 	std::shared_ptr<EnemyWolf> m_pWolf;
 	//
 	std::vector<std::shared_ptr<Salmon>> m_pSalmons;
+	//
+	std::vector<std::shared_ptr<Fish>> m_pFishers;
 
 
 	//アイテムは今のところ一つだけ→複数に変更
