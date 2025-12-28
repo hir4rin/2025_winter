@@ -1759,7 +1759,7 @@ void GameScene::CheckPlayer()
 			}
 		}
 		//ボスとの当たり判定
-		if (m_pElite != nullptr)
+		if (m_pElite != nullptr && !m_pElite->GetIsDead())
 		{
 			if (m_pElite->GetColRect().IsCollision(m_pPlayer->GetColRect()))
 			{
@@ -1786,7 +1786,7 @@ void GameScene::CheckPlayer()
 			}
 		}
 		//ボスとの当たり判定
-		if (m_pBear != nullptr)
+		if (m_pBear != nullptr&& !m_pBear->GetIsDead())
 		{
 			if (m_pBear->GetColRect().IsCollision(m_pPlayer->GetColRect()))
 			{
@@ -1813,7 +1813,7 @@ void GameScene::CheckPlayer()
 			}
 		}
 		//ボスとの当たり判定
-		if (m_pWolf != nullptr)
+		if (m_pWolf != nullptr && !m_pWolf->GetIsDead())
 		{
 			if (m_pWolf->GetColRect().IsCollision(m_pPlayer->GetColRect()))
 			{
@@ -2021,6 +2021,7 @@ void GameScene::NormalUpdate(Input& input)
 	//ポーズ画面
 	if (input.IsTriggered("pause"))
 	{
+		controller_.SetPlayerInfo(m_pPlayer->GetType(),m_pPlayer->GetHp(),m_pPlayer->GetLife());
 		controller_.PushScene(std::make_shared<PauseScene>(controller_));
 		return;
 	}

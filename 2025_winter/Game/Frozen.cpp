@@ -59,8 +59,7 @@ Frozen::Frozen(std::shared_ptr<Salmon> _salmon)
 	assert(m_handle >= 0);
 
 	m_pos = _salmon->GetPos();
-	kScale = 4.0f;
-	drawY = 1.5f;
+	
 }
 
 Frozen::~Frozen()

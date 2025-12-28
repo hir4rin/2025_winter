@@ -72,7 +72,7 @@ void PauseScene::YesNoDialogUpdate(Input& input)
 		yesNoIndex_ = (yesNoIndex_ + 1) % 2;
 		return;
 	}
-	if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
 	{
 		if (yesNoIndex_ == yes_no_dialig_yes)	// yesのとき
 		{
@@ -220,8 +220,13 @@ PauseScene::PauseScene(SceneController& controller) :
 	execTable_["ステージセレクトに戻る"] = [this](Input&) {
 		update_ = &PauseScene::YesNoDialogUpdate;
 		draw_ = &PauseScene::YesNoDialogDraw;
-		yesRequestFunction_ = [this]() {
-			//controller_.ResetScene(std::make_shared<StageSelectScene>(controller_));
+		yesRequestFunction_ = [this](){
+			//そして、このシーンに変える
+			controller_.ResetScene(std::make_shared<StageSelectScene>(controller_,
+				controller_.m_savePlayer.s_type,
+				controller_.m_savePlayer.s_hp,
+				controller_.m_savePlayer.s_Life));
+
 			};
 		};
 	execTable_["ゲームを終了する"] = [this](Input&) {

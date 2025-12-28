@@ -1,53 +1,69 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 #include <list>
+#include "Player.h"
 
 class Input;
 class Scene;
+
+struct PlayerInformation
+{
+	PlayerType s_type;
+	int s_hp;
+	int s_Life;
+
+
+};
+
 /// <summary>
-/// �V�[��������ɕێ����A�؂�ւ���񋟂���
+/// シーンを内部に保持し、切り替えを提供する
 /// </summary>
 class SceneController
 {
+public:
+	//プレイヤーの情報を保存
+	PlayerInformation m_savePlayer;
+	//プレイヤーの情報を更新
+	void SetPlayerInfo(PlayerType type,int hp,int life);
 private:
-	// ���݃X�^�b�N�ɐς܂�Ă���V�[��
-	// �Ō�ɐς񂾂��̂�����Update�����
+	// 現在スタックに積まれているシーン
+	// 最後に積んだものだけがUpdateされる
 	std::list<std::shared_ptr<Scene>> scenes_;	
 public:
 
 	/// <summary>
-	/// �����I�ȃV�[���̐؂�ւ�(�������A�����œn�点���V�[���݂̂ɂȂ�)
+	/// 強制的なシーンの切り替え(ただし、引数で渡らせたシーンのみになる)
 	/// </summary>
-	/// <param name="scene">�V�����V�[��</param>
-	/// /// <note>�����œn���ꂽ�V�[���݂̂ɂȂ�A�ς܂�Ă�V�[���̐���1�ƂȂ�</note>
+	/// <param name="scene">新しいシーン</param>
+	/// /// <note>引数で渡されたシーンのみになり、積まれてるシーンの数は1つとなる</note>
 	void ResetScene(std::shared_ptr<Scene> scene);
 
 	/// <summary>
-	/// �V�[���̐؂�ւ�
+	/// シーンの切り替え
 	/// </summary>
-	/// <param name="scene">�V�����V�[��</param>
-	/// <note>�Ō�ɐς񂾃V�[����Change�����</note>
+	/// <param name="scene">新しいシーン</param>
+	/// <note>最後に積んだシーンがChangeされる</note>
 	void ChangeScene(std::shared_ptr<Scene> scene);
 
 	/// <summary>
-	/// �V�[����V�����ς݂܂�
+	/// シーンを新しく積みます
 	/// </summary>
-	/// <param name="scene">�ς݂����V�[��</param>
-	/// <note>ChangeScene�ƈ���āA���Ƃ��Ɛς܂�Ă�V�[���͎c�葱����</note>
+	/// <param name="scene">積みたいシーン</param>
+	/// <note>ChangeSceneと違って、もともと積まれてるシーンは残り続ける</note>
 	void PushScene(std::shared_ptr<Scene> scene);
 
 	/// <summary>
-	/// �Ō�ɐς񂾃V�[�������X�g����O��(�����I�ɉ�������)
+	/// 最後に積んだシーンをリストから外す(自動的に解放される)
 	/// </summary>
 	void PopScene();
 
 	/// <summary>
-	/// �����Ɏ����Ă�V�[����Update���Ăяo��
+	/// 内部に持ってるシーンのUpdateを呼び出す
 	/// </summary>
 	void Update(Input& input);
 
 	/// <summary>
-	/// �����Ɏ����Ă�V�[����Draw���Ăяo��
+	/// 内部に持ってるシーンのDrawを呼び出す
 	/// </summary>
 	void Draw();
 };

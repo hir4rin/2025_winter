@@ -1,49 +1,58 @@
-#include "SceneController.h"
+ï»¿#include "SceneController.h"
 #include "Scene.h"
+
+void SceneController::SetPlayerInfo(PlayerType type, int hp, int life)
+{
+	m_savePlayer.s_type = type;
+	m_savePlayer.s_hp = hp;
+	m_savePlayer.s_Life = life;
+}
+
+
 
 void SceneController::ResetScene(std::shared_ptr<Scene> scene)
 {
-	// ƒV[ƒ“‚ğˆê‚Â‚¾‚¯‚É‚µ‚½‚¢‚Ì‚ÅA‚¢‚Á‚½‚ñƒV[ƒ“‚ğ‚·‚×‚ÄƒNƒŠƒA‚µ‚Ü‚·
+	// ã‚·ãƒ¼ãƒ³ã‚’ä¸€ã¤ã ã‘ã«ã—ãŸã„ã®ã§ã€ã„ã£ãŸã‚“ã‚·ãƒ¼ãƒ³ã‚’ã™ã¹ã¦ã‚¯ãƒªã‚¢ã—ã¾ã™
 	scenes_.clear();
 	scenes_.push_back(scene);
 }
 
 void SceneController::ChangeScene(std::shared_ptr<Scene> scene)
 {
-	// ‚à‚µAƒŠƒXƒg‚ª‹ó‚Ìê‡A•’Ê‚É‘ã“ü‚ÅChangeScene‚µ‚æ‚¤‚Æ‚·‚é‚ÆA“–‘Rempty‚Ì” ‚É‘Î‚µ‚ÄChange‚µ‚æ‚¤‚Æ‚·‚é‚Ì‚ÅAƒNƒ‰ƒbƒVƒ…‚µ‚Ü‚·B
-	// ‚±‚Ì‚½‚ßAÅ‰‚Éempty‚©‚Ç‚¤‚©‚ğƒ`ƒFƒbƒN‚µ‚Ü‚·
-	if (scenes_.empty())	// Å‰‚Í—v‘f‚ª‚È‚¢‚½‚ßpush_back‚Å—v‘f”‚ğ‘‚â‚·
+	// ã‚‚ã—ã€ãƒªã‚¹ãƒˆãŒç©ºã®å ´åˆã€æ™®é€šã«ä»£å…¥ã§ChangeSceneã—ã‚ˆã†ã¨ã™ã‚‹ã¨ã€å½“ç„¶emptyã®ç®±ã«å¯¾ã—ã¦Changeã—ã‚ˆã†ã¨ã™ã‚‹ã®ã§ã€ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã—ã¾ã™ã€‚
+	// ã“ã®ãŸã‚ã€æœ€åˆã«emptyã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã—ã¾ã™
+	if (scenes_.empty())	// æœ€åˆã¯è¦ç´ ãŒãªã„ãŸã‚push_backã§è¦ç´ æ•°ã‚’å¢—ã‚„ã™
 	{
-		// ‹ó‚Á‚Û‚Ìê‡‚É‚Íw’è‚Ì—v‘f‚ğpush‚µ‚Ü‚·B­‚È‚­‚Æ‚àˆê‚Â‚ÍÏ‚Ü‚ê‚Ä‚¢‚éó‘Ô‚É‚·‚é
+		// ç©ºã£ã½ã®å ´åˆã«ã¯æŒ‡å®šã®è¦ç´ ã‚’pushã—ã¾ã™ã€‚å°‘ãªãã¨ã‚‚ä¸€ã¤ã¯ç©ã¾ã‚Œã¦ã„ã‚‹çŠ¶æ…‹ã«ã™ã‚‹
 		scenes_.push_back(scene);
 	}
 	else
 	{
-		scenes_.back() = scene;	// ‚±‚Ìs‚Ì“_‚ÅŒ³‚ÌƒV[ƒ“‚Í©“®“I‚Éíœ‚³‚ê‚Ä‚¢‚Ü‚·
+		scenes_.back() = scene;	// ã“ã®è¡Œã®æ™‚ç‚¹ã§å…ƒã®ã‚·ãƒ¼ãƒ³ã¯è‡ªå‹•çš„ã«å‰Šé™¤ã•ã‚Œã¦ã„ã¾ã™
 	}
 }
 
 void SceneController::PushScene(std::shared_ptr<Scene> scene)
 {
-	// V‚µ‚¢ƒV[ƒ“‚ğ––”ö‚ÉÏ‚İ‚Ü‚·
+	// æ–°ã—ã„ã‚·ãƒ¼ãƒ³ã‚’æœ«å°¾ã«ç©ã¿ã¾ã™
 	scenes_.push_back(scene);
 }
 
 void SceneController::PopScene()
 {
-	// ––”ö‚ÌƒV[ƒ“‚ğíœ‚µ‚Ü‚·
+	// æœ«å°¾ã®ã‚·ãƒ¼ãƒ³ã‚’å‰Šé™¤ã—ã¾ã™
 	scenes_.pop_back();
 }
 
 void SceneController::Update(Input& input)
 {
-	// ––”ö‚Ì—v‘f‚É‘Î‚µ‚Ä‚Ì‚İUpdate‚·‚é
+	// æœ«å°¾ã®è¦ç´ ã«å¯¾ã—ã¦ã®ã¿Updateã™ã‚‹
 	scenes_.back()->Update(input);
 }
 
 void SceneController::Draw()
 {
-	// ––”ö‚Ì—v‘f‚É‘Î‚µ‚Ä‚Ì‚İDraw‚·‚é
+	// æœ«å°¾ã®è¦ç´ ã«å¯¾ã—ã¦ã®ã¿Drawã™ã‚‹
 	for (auto& scene : scenes_)
 	{
 		scene->Draw();
