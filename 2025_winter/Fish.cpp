@@ -18,11 +18,23 @@ namespace
 	constexpr int kWalkNumY = 1;
 }
 
-Fish::Fish(Vec2 pos):
-	m_animframe(0)
+Fish::Fish(Vec2 pos,int num):
+	m_animframe(0),
+	m_num(num)
 {
+	switch (m_num)
+	{
+	case 1:
+		m_handle = LoadGraph("data/Game/Fish1.png");
+		break;
+	case 2:
+		m_handle = LoadGraph("data/Game/Fish1.png");
+		break;
+	case 3:
+		m_handle = LoadGraph("data/Game/Fish1.png");
+		break;
+	}
 
-	m_handle = LoadGraph("data/Game/Fish1.png");
 	m_pos = pos;
 }
 

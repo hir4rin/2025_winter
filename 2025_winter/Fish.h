@@ -6,7 +6,7 @@ class Camera;
 class Fish :public Enemy
 {
 public:
-	Fish(Vec2 pos);
+	Fish(Vec2 pos,int num);
 	virtual ~Fish();
 
 	void Init()override;
@@ -19,6 +19,7 @@ public:
 	int GetHp() { return m_hp; }
 
 private:
+	int m_num;
 	int charaIdx;
 	int charaIdy;
 	int m_animframe;

@@ -224,7 +224,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		break;
 	case 9:
 		//
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 800,800 }));
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 800,800 },1));
 
 
 		//
