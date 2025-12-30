@@ -2,6 +2,7 @@
 #include "Bg.h"
 #include "Camera.h"
 #include "Wave.h"
+#include "FishersManager.h"
 
 WaveManager::WaveManager(const Vec2& startPos, int dir):
 	m_startPos(startPos),m_dir(dir)
@@ -11,6 +12,8 @@ WaveManager::WaveManager(const Vec2& startPos, int dir):
 WaveManager::~WaveManager()
 {
 }
+
+
 
 void WaveManager::Update(Bg* bg)
 {
@@ -39,6 +42,7 @@ void WaveManager::Update(Bg* bg)
 
 
 }
+
 void WaveManager::Draw(Camera& camera)
 {
 	for (auto& w : m_waves)

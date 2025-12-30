@@ -224,59 +224,71 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		break;
 	case 9:
 		//
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 800,800 },1));
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3000,800 }, 1));
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3300,800 }, 2));
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3450,800 }, 3));
 
 
 		//
-		m_pBear = std::make_shared<EnemyBear>();
-		m_pWolf = std::make_shared<EnemyWolf>();
+		/*m_pBear = std::make_shared<EnemyBear>();
+		m_pWolf = std::make_shared<EnemyWolf>();*/
 
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 
 		m_pBg = new Bg(m_pPlayer, 8);
-		//熊
+//		//熊
+//		{
+//			m_pBear->SetPlayer(m_pPlayer);
+//			m_pBear->SetBgPointer(m_pBg);
+//			//カメラ
+//			m_pBear->AddOnAttack1EndEvent([this]() {
+//				//カメラを揺らす
+//				StartCameraShake(camera, 2.5f, 0.1f);
+//});
+//
+//			//波動
+//			m_pBear->AddOnAttackEndEvent([this]() {
+//				Vec2 startPos = m_pBear->GetPos();
+//				startPos.y += 16;//足元に合わせる
+//
+//				//左方向
+//				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, -1)
+//				);
+//
+//				//右方向
+//				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, 1)
+//				);
+//
+//				//カメラを揺らす
+//				StartCameraShake(camera, 10.0f, 0.2f);
+//			});
+//			//鮭
+//			m_pBear->AddOnAttack3EndEvent([this]() {
+//				for (int i = 0; i < 3; i++)
+//				{
+//					m_pSalmons.push_back(std::make_shared<Salmon>(m_pBear->GetPos(), m_pBear->Getm_isRight(),i+1));
+//			}
+//			
+//				//カメラを揺らす
+//				StartCameraShake(camera, 10.0f, 0.2f);
+//			});
+//
+//		}
+//		//狼
+//		{
+//			m_pWolf->SetPlayer(m_pPlayer);
+//			m_pWolf->SetBgPointer(m_pBg);
+//		}
+
+
+		//魚
 		{
-			m_pBear->SetPlayer(m_pPlayer);
-			m_pBear->SetBgPointer(m_pBg);
-			//カメラ
-			m_pBear->AddOnAttack1EndEvent([this]() {
-				//カメラを揺らす
-				StartCameraShake(camera, 2.5f, 0.1f);
-});
-
-			//波動
-			m_pBear->AddOnAttackEndEvent([this]() {
-				Vec2 startPos = m_pBear->GetPos();
-				startPos.y += 16;//足元に合わせる
-
-				//左方向
-				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, -1)
-				);
-
-				//右方向
-				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, 1)
-				);
-
-				//カメラを揺らす
-				StartCameraShake(camera, 10.0f, 0.2f);
-			});
-			//鮭
-			m_pBear->AddOnAttack3EndEvent([this]() {
-				for (int i = 0; i < 3; i++)
-				{
-					m_pSalmons.push_back(std::make_shared<Salmon>(m_pBear->GetPos(), m_pBear->Getm_isRight(),i+1));
+			for (auto& it : m_pFishers)
+			{
+				it->SetPlayer(m_pPlayer);
+				it->SetBgPointer(m_pBg);
 			}
-			
-				//カメラを揺らす
-				StartCameraShake(camera, 10.0f, 0.2f);
-			});
-
-		}
-		//狼
-		{
-			m_pWolf->SetPlayer(m_pPlayer);
-			m_pWolf->SetBgPointer(m_pBg);
 		}
 	
 
@@ -1992,6 +2004,24 @@ void GameScene::FadeInUpdate(Input&)
 
 void GameScene::NormalUpdate(Input& input)
 {
+
+	if (input.IsTriggered("Jump"))
+	{
+		m_pFishers.clear();
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3000,900 }, 1));
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3300,900 }, 2));
+		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3450,900 }, 3));
+		//魚
+		{
+			for (auto& it : m_pFishers)
+			{
+				it->SetPlayer(m_pPlayer);
+				it->SetBgPointer(m_pBg);
+			}
+		}
+	}
+
+
 	//復活、生成チェック
 	CheckSpawns();
 

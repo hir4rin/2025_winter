@@ -3,6 +3,14 @@
 
 class Camera;
 
+enum class FishState
+{
+	First,
+	Walk,
+
+
+};
+
 class Fish :public Enemy
 {
 public:
@@ -19,10 +27,27 @@ public:
 	int GetHp() { return m_hp; }
 
 private:
+	//赤のwalk
+	void Walk1();
+	//緑のwalk
+	void Walk2();
+	//青のwalk
+	void Walk3();
+
+private:
+	//本人情報
+	FishState m_state;
 	int m_num;
 	int charaIdx;
 	int charaIdy;
-	int m_animframe;
+	//時間系
+	int m_firstFrame;
+	int m_animFrame;
+	int backFrame;
+	bool m_isBack;
+	int m_backCoolTime;
+
+	//
 	int m_hp;
 
 	bool isDead = false;

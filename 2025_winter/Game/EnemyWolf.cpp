@@ -904,14 +904,9 @@ void EnemyWolf::Attack3()
 		bool  dir = m_pPlayer->GetPos().x > m_pos.x;
 		m_isRight = dir;
 
-		//次の攻撃パターンを選択
-		{
-			WolfAttackPattern prev = m_attackP;
-			do
-			{
+		
 				m_attackP = SelectAttack();
-			} while (m_attackP == prev);
-		}
+	
 
 	}
 }
@@ -1002,7 +997,7 @@ WolfAttackPattern EnemyWolf::SelectAttack()
 
 	int flow = 0;
 	//--------------
-	int fmax = 43;
+	int fmax = 70;
 	int smax = 44;
 	int thmax = 95;
 	//---------------
@@ -1014,14 +1009,11 @@ WolfAttackPattern EnemyWolf::SelectAttack()
 	{
 		return WolfAttackPattern::Attack1;
 	}
-	if (fmax <= ans && ans < thmax)
+	if (fmax <= ans && ans < fomax)
 	{
 		return WolfAttackPattern::Attack3;
 	}
-	if (thmax <= ans && ans < 100)
-	{
-		return WolfAttackPattern::Down;
-	}
+
 
 }
 
