@@ -45,6 +45,7 @@ public :
 	void HitDamaged() { _state = EnemyState::Damage; }
 	void DamageUpdate();
 	bool GetisDead() { return m_isDead; }
+	void ChangeIsDead() { m_isDead = true; }
 
 
 	//ここは引き数を変えるだけにして、簡単にする

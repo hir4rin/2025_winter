@@ -15,6 +15,7 @@
 #include "EnemyWolf.h"
 #include "Salmon.h"
 #include "Fish.h"
+#include "FishersManager.h"
 #include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Arrow.h"
@@ -224,9 +225,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		break;
 	case 9:
 		//
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3000,800 }, 1));
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3300,800 }, 2));
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3450,800 }, 3));
+		m_pFishersManager = std::make_shared<FishersManager>(Vec2 {100,100},1);
 
 
 		//
@@ -284,11 +283,11 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 		//魚
 		{
-			for (auto& it : m_pFishers)
+		/*	for (auto& it : m_pFishers)
 			{
 				it->SetPlayer(m_pPlayer);
 				it->SetBgPointer(m_pBg);
-			}
+			}*/
 		}
 	
 
@@ -1843,6 +1842,25 @@ void GameScene::CheckPlayer()
 			}
 		}
 	}
+	//魚
+	{
+		for (auto& it : m_pFishersManager->GetFish())
+		{
+			if (!it)continue;
+			if (m_pPlayer->GetColRect().IsCollision(it->GetColRect()))
+			{
+
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+				//敵がどっちから当たったかどうかを入れる
+				//プレイヤーのダメージ処理
+				m_pPlayer->DamageHit(isLeft);
+				OnShake();
+
+				//一旦
+				it->ChangeIsDead();
+			}
+		}
+	}
 	
 	
 	//回復アイテムを取ったときの反応
@@ -2005,21 +2023,21 @@ void GameScene::FadeInUpdate(Input&)
 void GameScene::NormalUpdate(Input& input)
 {
 
-	if (input.IsTriggered("Jump"))
-	{
-		m_pFishers.clear();
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3000,900 }, 1));
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3300,900 }, 2));
-		m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3450,900 }, 3));
-		//魚
-		{
-			for (auto& it : m_pFishers)
-			{
-				it->SetPlayer(m_pPlayer);
-				it->SetBgPointer(m_pBg);
-			}
-		}
-	}
+	//if (input.IsTriggered("Jump"))
+	//{
+	//	m_pFishers.clear();
+	//	m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3000,900 }, 1));
+	//	m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3300,900 }, 2));
+	//	m_pFishers.push_back(std::make_shared<Fish>(Vec2{ 3450,900 }, 3));
+	//	//魚
+	//	{
+	//		for (auto& it : m_pFishers)
+	//		{
+	//			it->SetPlayer(m_pPlayer);
+	//			it->SetBgPointer(m_pBg);
+	//		}
+	//	}
+	//}
 
 
 	//復活、生成チェック
@@ -2202,11 +2220,17 @@ void GameScene::NormalUpdate(Input& input)
 		{
 			it->Update();
 		}
-		//死んだら消す処理を後で入れる
-		for (auto& it : m_pFishers)
+		//魚
 		{
-			it->Update();
+				for (auto& it : m_pFishersManager->GetFish())
+				{
+					if (!it)continue;
+					it->SetPlayer(m_pPlayer);
+					it->SetBgPointer(m_pBg);
+				}
 		}
+	
+		if (m_pFishersManager)m_pFishersManager->Update(m_pBg);
 
 		for (auto& wm : m_waveManagers)
 		{
@@ -2666,10 +2690,8 @@ void GameScene::NormalDraw()
 		{
 			if(it)it->Draw(camera);
 		}
-		for (auto& it : m_pFishers)
-		{
-			it->Draw(camera);
-		}
+		if (m_pFishersManager)m_pFishersManager->Draw(camera);
+		
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Draw(camera);

@@ -22,7 +22,8 @@ public:
 	void Draw()override;
 	void Draw(Camera& camera);
 
-	bool GetIsDead() { return isDead; }
+	
+	
 
 	int GetHp() { return m_hp; }
 

@@ -26,18 +26,20 @@ public:
 	void Update(Bg* bg);
 	void Draw(Camera& camera);
 
-	std::shared_ptr<Fish>& GetFish() { return m_pfish; }
+	std::vector<std::shared_ptr<Fish>> GetFish() { return m_pFishers; }
 private:
 	void SpawnFish(Bg* bg);
 private:
 	FisherPhase m_phase;
-	std::shared_ptr<Fish> m_pfish;
+	std::vector<std::shared_ptr<Fish>> m_pFishers;
 	int m_dir;//-1=左,+1=右
 
 	int m_fishIndex;
 	Vec2 m_startPos;
 	
-	
+private:
+	//spawnするかどうか
+	bool m_isSpawn;
 
 };
 

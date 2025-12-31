@@ -22,7 +22,7 @@ namespace
 	constexpr int backCoolTime = 100;
 	
 	//緑と青がアクションを起こすプレイヤーとの距離
-	constexpr float kActionDistance = 100.0f;
+	constexpr float kActionDistance = 150.0f;
 
 
 
@@ -247,7 +247,7 @@ void Fish::Walk3()
 	{
 
 		backFrame++;
-		m_vel.y = -8.0f;
+		m_vel.y = -10.0f;
 		if (backFrame > jumpTime)
 		{
 			backFrame = 0;

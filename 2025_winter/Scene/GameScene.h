@@ -29,6 +29,7 @@ class Door;
 class Effect;
 class Potion;
 class WaveManager;
+class FishersManager;
 
 
 
@@ -192,6 +193,8 @@ private:
 	std::vector<std::shared_ptr<Salmon>> m_pSalmons;
 	//
 	std::vector<std::shared_ptr<Fish>> m_pFishers;
+	//
+	std::shared_ptr<FishersManager> m_pFishersManager;
 
 
 	//アイテムは今のところ一つだけ→複数に変更
