@@ -85,6 +85,8 @@ public:
 	void ChangeBurning();//外部から変身の変更
 	void ChangeFrozen();//外部から変身の変更
 	void ChangeArcher();//外部から変身の変更
+	//無敵中かどうか
+	bool CheckStar() { return damageTimer > 0; }
 
 	//関数
 	std::shared_ptr<Arrow> ShotArrow();//矢を発射させる

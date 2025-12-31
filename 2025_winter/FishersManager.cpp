@@ -84,7 +84,7 @@ void FishersManager::SpawnFish(Bg* bg)
 
 		break;
 	case FisherPhase::SpecialFish:
-		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 3300,900 }, 3));
+		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 3300,900 }, 4));
 		//ここでカウントして、何回目かで終わらせる
 
 		m_phase = FisherPhase::FirstFish;

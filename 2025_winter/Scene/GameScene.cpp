@@ -596,8 +596,9 @@ void GameScene::CheckArrowHit()
 		bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e_arrow->GetColRect());
 		//敵がどっちから当たったかどうかを入れる
 		//矢とどの方向で当たったかどうか
+		if(!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
-		OnShake();
+		
 		e_arrow->m_hitPlayer = nullptr;
 
 	}
@@ -609,8 +610,8 @@ void GameScene::CheckArrowHit()
 		bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e_shot->GetColRect());
 		//敵がどっちから当たったかどうかを入れる
 		//矢とどの方向で当たったかどうか
+		if (!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
-		OnShake();
 		e_shot->m_hitPlayer = nullptr;
 
 	}
@@ -623,8 +624,8 @@ void GameScene::CheckArrowHit()
 			bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
 			//敵がどっちから当たったかどうかを入れる
 			//矢とどの方向で当たったかどうか
+			if (!m_pPlayer->CheckStar())OnShake();
 			m_pPlayer->DamageHit(isLeft);
-			OnShake();
 			it = nullptr;
 		}
 	
@@ -1632,8 +1633,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+				
 				//敵が消える処理
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
@@ -1679,8 +1681,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 				//敵が消える処理
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
@@ -1726,8 +1729,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 				//敵が消える処理
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
@@ -1755,8 +1759,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(wave->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 			}
 		}
 	}
@@ -1771,8 +1776,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 			}
 		}
 		//ボスとの当たり判定
@@ -1783,8 +1789,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pElite->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 			}
 		}
 	}
@@ -1798,8 +1805,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pBear->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 			}
 		}
 		//ボスとの当たり判定
@@ -1810,8 +1818,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pBear->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+				
 			}
 		}
 	}
@@ -1825,8 +1834,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pWolf->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 			}
 		}
 		//ボスとの当たり判定
@@ -1837,13 +1847,15 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(m_pWolf->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+			
 			}
 		}
 	}
 	//魚
 	{
+		if(m_pFishersManager)
 		for (auto& it : m_pFishersManager->GetFish())
 		{
 			if (!it)continue;
@@ -1853,8 +1865,9 @@ void GameScene::CheckPlayer()
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
 				//敵がどっちから当たったかどうかを入れる
 				//プレイヤーのダメージ処理
+				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				OnShake();
+				
 
 				//一旦
 				it->ChangeIsDead();
@@ -2222,6 +2235,7 @@ void GameScene::NormalUpdate(Input& input)
 		}
 		//魚
 		{
+			if(m_pFishersManager)
 				for (auto& it : m_pFishersManager->GetFish())
 				{
 					if (!it)continue;

@@ -52,6 +52,7 @@ private:
 	int m_hp;
 
 	bool isDead = false;
+	int m_angle;
 
 };
 

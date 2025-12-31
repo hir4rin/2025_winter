@@ -20,7 +20,7 @@ namespace
 	constexpr int kPlayerCutW = 100;
 	constexpr int kPlayerCutH = 100;
 
-	constexpr float kDamageInterval = 60;
+	constexpr float kDamageInterval = 100;
 
 	constexpr float  kPlayerScale = 3.0f;
 
@@ -443,6 +443,11 @@ void Player::Draw(Camera& camera)
 		break;
 
 	}
+	if (damageTimer > 0)
+	{
+		if (m_frame % 2 == 0)return;
+	}
+
 
 	if (m_isRight)
 	{
