@@ -40,6 +40,8 @@ private:
 private:
 	//spawnするかどうか
 	bool m_isSpawn;
+	bool m_triSpawn;
+	Vec2 ReleasePos;
 
 };
 

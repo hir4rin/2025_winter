@@ -5,9 +5,11 @@ class Camera;
 
 enum class FishState
 {
-	First,
-	Walk,
-
+	First,//最初に現れるとき
+	Walk,//歩いているとき
+	Dead,//死んだとき
+	Defeat,//倒されたとき
+	Release,//解放されたとき
 
 };
 
@@ -15,6 +17,7 @@ class Fish :public Enemy
 {
 public:
 	Fish(Vec2 pos,int num);
+	Fish(Vec2 pos,int num,int hp,FishState state);
 	virtual ~Fish();
 
 	void Init()override;
@@ -26,6 +29,9 @@ public:
 	
 
 	int GetHp() { return m_hp; }
+
+	void HitFishDamage(int damage);
+	
 
 private:
 	//赤のwalk
@@ -50,8 +56,6 @@ private:
 
 	//
 	int m_hp;
-
-	bool isDead = false;
 	int m_angle;
 
 };

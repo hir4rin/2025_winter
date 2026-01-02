@@ -1126,6 +1126,33 @@ void GameScene::CheckHitNormal()
 			}
 		}
 	}
+	//魚
+	{
+		for (auto& it : m_pFishersManager->GetFish())
+		{
+			
+			if (it == nullptr)continue;
+			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			{
+				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(it->GetColRect());
+
+
+				//矢の処理は別の場所(CheckhitArrow)
+
+				if (isHitAttack)
+				{
+					it->HitFishDamage(50);
+					//エフェクトを出す
+					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+
+					//インスタンスを消す
+				
+
+				}
+			}
+		}
+	}
 	
 }
 
@@ -1869,8 +1896,8 @@ void GameScene::CheckPlayer()
 				m_pPlayer->DamageHit(isLeft);
 				
 
-				//一旦
-				it->ChangeIsDead();
+				//
+				it->HitFishDamage(50);
 			}
 		}
 	}
