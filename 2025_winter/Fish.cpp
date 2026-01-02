@@ -25,7 +25,7 @@ namespace
 	constexpr int backCoolTime = 100;
 	
 	//緑と青がアクションを起こすプレイヤーとの距離
-	constexpr float kActionDistance = 150.0f;
+	constexpr float kActionDistance = 200.0f;
 
 
 
@@ -116,12 +116,28 @@ Fish::Fish(Vec2 pos, int num, int hp, FishState state):
 		switch (m_num)
 		{
 		case 1:
-			m_vel.x = -10.0f;
+			m_vel.x = -6.0f;
 			break;
 		case 2:
 			break;
 		case 3:
-			m_vel.x = 10.0f;
+			m_vel.x = 6.0f;
+			break;
+		case 4:
+			break;
+		}
+	}
+	if (m_state == FishState::Dead)
+	{
+		switch (m_num)
+		{
+		case 1:
+			m_vel.x = -5.0f;
+			break;
+		case 2:
+			break;
+		case 3:
+			m_vel.x = 5.0f;
 			break;
 		case 4:
 			break;
@@ -155,6 +171,7 @@ void Fish::Update()
 	switch (m_state)
 	{
 	case FishState::First:
+	{
 		m_firstFrame++;
 		m_colRect.SetCenter(0, 0, 0, 0);
 		m_pos.y -= 1.5f;
@@ -167,8 +184,10 @@ void Fish::Update()
 			m_vel.x = m_isRight * kSpeed;
 			m_vel.y -= 15.0f;
 		}
+	}
 		break;
 	case FishState::Walk:
+	{
 		Character::BossUpdate();
 		//赤
 		if (m_num == 1)Walk1();
@@ -176,47 +195,70 @@ void Fish::Update()
 		if (m_num == 3)Walk3();
 		if (m_num == 4)Walk1();
 
+	}
 		break;
 	case FishState::Dead:
+	{
+		m_colRect.SetCenter(0, 0, 0, 0);
+		//マップとの当たり判定
+		Character::FishUpdate();
 		m_colRect.SetCenter(0, 0, 0, 0);
 		if (charaIdx <= 3)
 		{
-			m_pos.y -= 3.0f;
+			m_vel.y = -15.0f;
 			m_angle += 2.0f;
 			//回転させてもいい
 		}
 		else
 		{
-			m_pos.y += 4.0f;
+			m_angle = std::lerp(m_angle, 360.0f, 0.5f);
+			m_vel.y += 3.0f;
+			m_vel.x = 0;
 		}
-	/*	if (charaIdx == kDeadNum-1 && m_animFrame > kDeadNum * kDeadDuration - 1)
-		{
-			m_isDead = true;
-		}*/
+		/*	if (charaIdx == kDeadNum-1 && m_animFrame > kDeadNum * kDeadDuration - 1)
+			{
+				m_isDead = true;
+			}*/
+	}
+	
 		break;
 	case FishState::Defeat:
+	{
 		m_firstFrame++;
 		m_colRect.SetCenter(0, 0, 0, 0);
-		m_pos.y += 1.5f;
+		if (m_num == 4)
+		{
+			float shake = sinf(m_firstFrame * 0.6f) * 2.0f;
+			m_pos.x = m_pos.x + shake;
+		}
+		else
+		{
+			m_pos.y += 1.5f;
+		}
 		if (m_firstFrame > InitTime)
 		{
 			m_firstFrame = 0;
 			m_animFrame = 0;
 			m_isDead = true;
-			
+
 		}
+	}
+	
 		break;
 	case FishState::Release:
+	{
 		m_firstFrame++;
 		m_pos.x += m_vel.x;
 		m_pos.y += m_vel.y;
 		m_colRect.SetCenter(0, 0, 0, 0);
-		if (m_animFrame < 50)
+		if (m_animFrame < 45)
 		{
-			m_pos.y -= 10.0f;
+			m_pos.y -= 13.0f;
+			m_angle += 2.0f;
 		}
 		else
 		{
+			m_angle = std::lerp(m_angle, 360, 0.4f);
 			m_vel.y += 1.5f;
 		}
 		if (m_firstFrame > 120)
@@ -226,8 +268,42 @@ void Fish::Update()
 			m_isDead = true;
 
 		}
+	}
+	break;
+	case FishState::Fusion:
+	{
+		m_firstFrame++;
+		m_colRect.SetCenter(0, 0, 0, 0);
+		m_pos.y -= 1.5f;
+		if (m_firstFrame > InitTime)
+		{
+			m_firstFrame = 0;
+			m_animFrame = 0;
+			//stateを変える
+			m_state = FishState::Fusion2;
+			m_vel.y += 5.0f;
+		}
+	}
 		break;
+	case FishState::Fusion2:
+	{
+		m_firstFrame++;
+		m_colRect.SetCenter(0, 0, 0, 0);
+		//マップとの当たり判定
+		Character::BossUpdate();
+		m_colRect.SetCenter(0, 0, 0, 0);
 
+		float shake = sinf(m_firstFrame * 0.6f) * 2.0f;
+		m_pos.x = m_pos.x + shake;
+		if (m_firstFrame > InitTime * 2)
+		{
+			m_firstFrame = 0;
+			m_animFrame = 0;
+			m_isDead = true;
+
+		}
+	}
+	   break;
 	}
 
 	
@@ -351,18 +427,29 @@ void Fish::Draw(Camera& camera)
 		case FishState::Walk:
 			charaIdx = (m_animFrame / kWalkDuration) % kWalkNum;
 			charaIdy = kWalkNumY;
-			
+			drawY = kCharaHeight / 5.0f;
 			srcY = kCharaHeight;
 			break;
 		case FishState::Dead:
 			charaIdx = (m_animFrame / kDeadDuration) % kDeadNum;
 			charaIdy = kDeadNumY;
-			drawY = 0;
+			drawY = kCharaHeight / 5.0f;
+			if (m_animFrame >= kDeadNum * kDeadDuration)
+			{
+				charaIdx = kDeadNum - 1;
+			}
+
+			
 			break;
 		case FishState::Defeat:
 			charaIdx = (m_animFrame / kDeadDuration) % kDeadNum;
 			charaIdy = kDeadNumY;
-			drawY = kCharaHeight / 3.0f;
+			drawY = kCharaHeight / 5.0f;
+			if (m_animFrame >= kDeadNum * kDeadDuration)
+			{
+				charaIdx = kDeadNum - 1;
+			}
+
 			//描画関連
 			{
 				//描画の上とした
@@ -391,6 +478,38 @@ void Fish::Draw(Camera& camera)
 			charaIdy = 3;
 		
 			srcY = kCharaHeight;
+			break;
+		case FishState::Fusion:
+			charaIdx = (m_animFrame / kIdleDuration) % kIdleNum;
+			charaIdy = kIdleNumY;
+			drawY = kCharaHeight / 3.0f;
+			//描画関連
+			{
+				//描画の上とした
+				float bossTop = m_pos.y - kCharaHeight * kScale * 0.5f - drawY;
+				float bossBottom = m_pos.y + kCharaHeight * kScale * 0.5f - drawY;
+				//
+				//描画関連
+				if (bossTop > groundY)//地面の中
+				{
+					return;
+				}
+
+				if (bossTop <= groundY && bossBottom >= groundY)//地面に挟まっているとき
+				{
+					srcY = groundY - bossTop;
+					srcY = srcY / kScale;
+				}
+				else
+				{
+					srcY = kCharaHeight;
+				}
+			}
+			break;
+		case FishState::Fusion2:
+			charaIdx = (m_animFrame / kIdleDuration) % kIdleNum;
+			charaIdy = kIdleNumY;
+			drawY = kCharaHeight / 3.0f;
 			break;
 		}
 

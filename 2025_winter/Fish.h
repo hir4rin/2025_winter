@@ -10,6 +10,8 @@ enum class FishState
 	Dead,//死んだとき
 	Defeat,//倒されたとき
 	Release,//解放されたとき
+	Fusion,//変身するとき
+	Fusion2//変身するとき
 
 };
 

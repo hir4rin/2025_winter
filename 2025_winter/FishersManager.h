@@ -12,6 +12,7 @@ enum class FisherPhase
 	FirstFish,     // 1体目
 	SecondFish,    // 2体目
 	ThirdFish,     // 3体目
+	Fusion,//合体するとき
 	SpecialFish,  // 3体後の別の魚
 	End
 };
@@ -41,6 +42,8 @@ private:
 	//spawnするかどうか
 	bool m_isSpawn;
 	bool m_triSpawn;
+
+	bool m_isfusion;
 	Vec2 ReleasePos;
 
 };

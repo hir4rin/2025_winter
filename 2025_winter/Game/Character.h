@@ -26,6 +26,8 @@ public:
 
 	//ジャンプするように重力を下げたver.
 	void BossUpdate();
+	//当たり判定をなくしたver
+	void FishUpdate();
 
 	/// <summary>
 	/// 当たり判定を取得

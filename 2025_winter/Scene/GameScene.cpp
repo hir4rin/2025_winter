@@ -1128,6 +1128,7 @@ void GameScene::CheckHitNormal()
 	}
 	//魚
 	{
+		if(m_pFishersManager)
 		for (auto& it : m_pFishersManager->GetFish())
 		{
 			
@@ -2714,7 +2715,7 @@ void GameScene::NormalDraw()
 		m_pBg->Draw(camera);
 		m_doors->Draw(camera);
 	
-		if (update_ != &GameScene::DyingUpdate) m_pPlayer->Draw(camera);//死に際の描画は別
+	
 		for (auto& enemy : m_pEnemyWizards)//ペンギン
 		{
 			if (enemy) enemy->Draw(camera);
@@ -2791,6 +2792,7 @@ void GameScene::NormalDraw()
 		{
 			if (effect) effect->Draw(camera);
 		}
+		if (update_ != &GameScene::DyingUpdate) m_pPlayer->Draw(camera);//死に際の描画は別
 
 		//ステージUI
 		stageUI.Draw(camera);
