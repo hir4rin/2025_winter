@@ -27,7 +27,7 @@ public:
 	void Update(Bg* bg);
 	void Draw(Camera& camera);
 
-	std::vector<std::shared_ptr<Fish>> GetFish() { return m_pFishers; }
+	std::vector<std::shared_ptr<Fish>> GetFish() { return m_pFishers;}
 private:
 	void SpawnFish(Bg* bg);
 private:
