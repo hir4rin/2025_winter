@@ -60,5 +60,9 @@ private:
 	int m_hp;
 	int m_angle;
 
+private:
+	int bossTimer;
+	int selectUpdate;
+
 };
 

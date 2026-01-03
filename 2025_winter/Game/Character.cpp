@@ -87,11 +87,12 @@ void Character::BossUpdate()
 	//重力処理
 	Gravity();
 
-	Character::SetRect();
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 2.0f);
 
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
-
+	//当たり判定の再設定
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 2.0f);
 
 	if (m_isGround)
 	{
@@ -108,10 +109,13 @@ void Character::BossUpdate()
 
 void Character::FishUpdate()
 {
-	Character::SetRect();
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 2.0f);
 
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
+	//当たり判定の再設定
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 2.0f);
+
 	if (m_isGround)
 	{
 		m_isGround = true;

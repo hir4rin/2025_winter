@@ -61,6 +61,7 @@ Fish::Fish(Vec2 pos,int num):
 	m_backCoolTime(0),
 	backFrame(0),
 	m_angle(0),
+	bossTimer(0),
 	m_state(FishState::First)
 {
 	switch (m_num)
@@ -90,7 +91,8 @@ Fish::Fish(Vec2 pos, int num, int hp, FishState state):
 	m_isBack(false),
 	m_backCoolTime(0),
 	backFrame(0),
-	m_angle(0)
+	m_angle(0),
+	bossTimer(0)
 {
 	switch (m_num)
 	{
@@ -162,11 +164,7 @@ void Fish::Update()
 
 
 	m_animFrame++;
-	if (m_num == 4)
-	{
-
-		m_angle += m_isRight ?2.0f : -2.0f;
-	}
+	
 
 	switch (m_state)
 	{
@@ -193,7 +191,62 @@ void Fish::Update()
 		if (m_num == 1)Walk1();
 		if (m_num == 2)Walk2();
 		if (m_num == 3)Walk3();
-		if (m_num == 4)Walk1();
+		if (m_num == 4)
+		{
+			bossTimer--;
+			if (bossTimer < 0)
+			{
+				int rate = GetRand(99);
+				int f = 34;
+				int s = 69;
+				int t = 100;
+				if (rate < f)
+				{
+					selectUpdate = 0;
+				}
+				if (rate >= f && rate < s)
+				{
+					selectUpdate = 1;
+				}
+				if (rate >= s && rate < t)
+				{
+					selectUpdate = 2;
+				}
+				bossTimer = 200.0f;
+			}
+			switch (selectUpdate)
+			{
+			case 0:
+				Walk1();
+				if (m_num == 4)
+				{
+
+					m_angle += m_isRight ? 2.0f : -2.0f;
+				}
+				break;
+			case 1:
+				Walk2();
+				if (m_num == 4)
+				{
+
+					m_angle += m_isRight ? 8.0f : -8.0f;
+				}
+				break;
+			case 2:
+				Walk3();
+				if (m_num == 4)
+				{
+
+					m_angle += m_isRight ? 8.0f : -8.0f;
+				}
+				break;
+			default: 
+				Walk1();
+				break;
+
+			}
+
+		}
 
 	}
 		break;
@@ -568,10 +621,19 @@ void Fish::Walk2()
 	//
 	if (m_isBack)
 	{
+
+
 		//ここで汗汗みたいなエフェクトを出す。また、音も出したい
 
 		backFrame++;
 		m_vel.x = m_isRight ? -kSpeed/2.0 : kSpeed / 2.0;
+		if (m_num == 4)
+		{
+
+			m_angle += m_isRight ? 8.0f : -8.0f;
+		}
+
+
 		if (backFrame > backTime)
 		{
 			backFrame = 0;
@@ -607,6 +669,15 @@ void Fish::Walk3()
 
 		backFrame++;
 		m_vel.y = -10.0f;
+
+
+
+		if (m_num == 4)
+		{
+
+			m_angle += m_isRight ? 8.0f : -8.0f;
+		}
+
 		if (backFrame > jumpTime)
 		{
 			backFrame = 0;
