@@ -51,6 +51,9 @@ namespace
 	constexpr int kIdleNumY = 0;
 	constexpr int kWalkNumY = 1;
 	constexpr int kDeadNumY = 6;
+
+	//被ダメージクールタイム
+	constexpr int cool_interval = 60;
 }
 
 Fish::Fish(Vec2 pos,int num):
@@ -62,6 +65,7 @@ Fish::Fish(Vec2 pos,int num):
 	backFrame(0),
 	m_angle(0),
 	bossTimer(0),
+	 m_coolDamageTimer(0),
 	m_state(FishState::First)
 {
 	switch (m_num)
@@ -92,6 +96,7 @@ Fish::Fish(Vec2 pos, int num, int hp, FishState state):
 	m_backCoolTime(0),
 	backFrame(0),
 	m_angle(0),
+	m_coolDamageTimer(0),
 	bossTimer(0)
 {
 	switch (m_num)
@@ -164,6 +169,11 @@ void Fish::Update()
 
 
 	m_animFrame++;
+
+	if (m_coolDamageTimer >= 0)
+	{
+		m_coolDamageTimer--;
+	}
 	
 
 	switch (m_state)
@@ -567,7 +577,10 @@ void Fish::Draw(Camera& camera)
 		}
 
 
-
+		if (m_coolDamageTimer > 0)
+		{
+			if ((m_coolDamageTimer / 5) % 2 == 0)SetDrawBright(255, 100, 100);//赤っぽく
+		}
 
 
 
@@ -579,6 +592,9 @@ void Fish::Draw(Camera& camera)
 		m_handle,
 		true, m_isRight ? false : true);
 	}
+
+	//元に戻す
+	SetDrawBright(255, 255, 255);
 	
 
 #ifdef _DEBUG
@@ -593,8 +609,14 @@ void Fish::Draw(Camera& camera)
 
 void Fish::HitFishDamage(int damage)
 {
+
+	if (m_coolDamageTimer > 0)return;
+
   m_hp += -damage;
-  if (m_hp < 0)
+
+  m_coolDamageTimer = cool_interval;
+
+  if (m_hp <= 0)
   {
 	  m_state = FishState::Defeat;
 	  m_animFrame = 0;

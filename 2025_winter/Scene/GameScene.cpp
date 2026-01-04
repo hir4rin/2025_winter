@@ -1898,7 +1898,7 @@ void GameScene::CheckPlayer()
 				
 
 				//
-				it->HitFishDamage(50);
+				it->HitFishDamage(25);
 			}
 		}
 	}

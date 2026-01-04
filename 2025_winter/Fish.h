@@ -61,6 +61,7 @@ private:
 	int m_angle;
 
 private:
+	int m_coolDamageTimer;
 	int bossTimer;
 	int selectUpdate;
 
