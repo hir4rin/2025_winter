@@ -7,6 +7,7 @@
 #include "EnemyEliteOrc.h"
 #include "EnemyBear.h"
 #include "EnemyWolf.h"
+#include "Fish.h"
 #include "Player.h"
 #include "Camera.h"
 #include <cassert>
@@ -157,6 +158,28 @@ void Arrow::CheckEnemys(std::shared_ptr<EnemyWolf> _enemywolf)
 			//このとき、矢をけす方法を考える
 			
 		}
+	
+}
+void Arrow::CheckEnemys(std::vector<std::shared_ptr<Fish>> _enemyfishers)
+{
+	if (_enemyfishers.size() == 0) return;
+
+	//敵と当たったら消す処理
+	for (auto& num : _enemyfishers)
+	{
+		if (!num) continue;
+		bool isHit = m_colRect.IsCollision(num->GetColRect());
+		if (isHit)
+		{
+			//当たった敵を消す
+			hitEnemyFish = num;
+			//矢を消す
+			isAlive = false;
+			//このとき、矢をけす方法を考える
+			break;
+		}
+	}
+	
 	
 }
 void Arrow::Draw()

@@ -152,6 +152,7 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 	m_handle = LoadGraph("data/Game/player.png");
 	assert(m_handle >= 0);
 	m_anim = Anim::Idle;
+	ClearAttackRect();
 	/*m_state = PlayerState::Normal;
 	m_type = type;*/
 	switch (type)

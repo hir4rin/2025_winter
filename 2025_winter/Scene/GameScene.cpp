@@ -587,6 +587,29 @@ void GameScene::CheckArrowHit()
 		//矢のヒット情報をリセット
 		num->hitEnemyWolf = nullptr;
 	}
+	//矢とボス魚が当たったときの処理
+	for (auto& num : m_arrows)
+	{
+		if (num == nullptr || !num->hitEnemyFish)continue;
+
+		std::shared_ptr<Fish> enemy = num->hitEnemyFish;
+
+		//敵リストから一致するやつを探して削除
+		for(auto& e : m_pFishersManager->GetFish())
+		{
+			
+				if ( e == enemy)
+				{
+					//bossにダメージを与える
+					e->HitFishDamage(10);
+					break;
+				}
+			
+		}
+		
+		//矢のヒット情報をリセット
+		num->hitEnemyFish = nullptr;
+	}
 
 	//敵の矢の情報を書く(プレイヤーと当たった時)
 	for (auto& e_arrow : m_pEnemyArrows)
@@ -1298,7 +1321,25 @@ void GameScene::CheckHitBurning()
 			}
 		}
 	}
-	
+	//魚
+	{
+		if (m_pFishersManager)
+			for (auto& it : m_pFishersManager->GetFish())
+			{
+				if (it == nullptr)continue;
+					bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(it->GetColRect());
+					if (isHitAttack)
+					{
+						it->HitFishDamage(50);
+						//エフェクトを出す
+						//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+
+						//インスタンスを消す
+
+
+					}
+			}
+	}
 
 }
 
@@ -1419,6 +1460,20 @@ void GameScene::CheckFastBurning()
 				m_pWolf->HitBossDamage(20);
 			}
 		}
+	}
+	//魚
+	{
+		if (m_pFishersManager)
+			for (auto& it : m_pFishersManager->GetFish())
+			{
+				if (!it)continue;
+				//バーニングの攻撃の矩形との当たり判定チェック
+				if (CheckSweepHit(p0, p1, it->GetColRect()))
+				{
+					it->HitFishDamage(50);
+				}
+			
+			}
 	}
 	
 
@@ -1618,6 +1673,25 @@ void GameScene::CheckHitFrozen()
 
 			}
 		}
+	}
+	//魚
+	{
+		if (m_pFishersManager)
+			for (auto& it : m_pFishersManager->GetFish())
+			{
+				if (it == nullptr)continue;
+				bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(it->GetColRect());
+				if (isHitAttack)
+				{
+					it->HitFishDamage(50);
+					//エフェクトを出す
+					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+
+					//インスタンスを消す
+
+
+				}
+			}
 	}
 
 }
@@ -2309,6 +2383,9 @@ void GameScene::NormalUpdate(Input& input)
 			arrow->CheckEnemys(m_pEnemyRiders);
 			arrow->CheckEnemys(m_pEnemyArchers);
 			arrow->CheckEnemys(m_pElite);
+			arrow->CheckEnemys(m_pBear);
+			arrow->CheckEnemys(m_pWolf);
+			arrow->CheckEnemys(m_pFishersManager->GetFish());
 		}
 
 		for (auto& arrow : m_pEnemyArrows)//敵の矢のアップデート

@@ -53,7 +53,7 @@ namespace
 	constexpr int kDeadNumY = 6;
 
 	//被ダメージクールタイム
-	constexpr int cool_interval = 60;
+	constexpr int cool_interval = 40;
 }
 
 Fish::Fish(Vec2 pos,int num):
@@ -86,6 +86,8 @@ Fish::Fish(Vec2 pos,int num):
 
 	m_pos = pos;
 	m_hp = 50;
+
+	m_colRect.SetCenter(1000, 0, 0, 0);
 }
 
 Fish::Fish(Vec2 pos, int num, int hp, FishState state):
@@ -118,6 +120,9 @@ Fish::Fish(Vec2 pos, int num, int hp, FishState state):
 	m_pos = pos;
 	m_hp = hp;
 	m_state = state;
+
+	m_colRect.SetCenter(1000, 0, 0, 0);
+
 	if (m_state == FishState::Release)
 	{
 		switch (m_num)
@@ -181,7 +186,7 @@ void Fish::Update()
 	case FishState::First:
 	{
 		m_firstFrame++;
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		m_pos.y -= 1.5f;
 		if (m_firstFrame > InitTime)
 		{
@@ -262,10 +267,10 @@ void Fish::Update()
 		break;
 	case FishState::Dead:
 	{
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		//マップとの当たり判定
 		Character::FishUpdate();
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		if (charaIdx <= 3)
 		{
 			m_vel.y = -15.0f;
@@ -288,7 +293,7 @@ void Fish::Update()
 	case FishState::Defeat:
 	{
 		m_firstFrame++;
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		if (m_num == 4)
 		{
 			float shake = sinf(m_firstFrame * 0.6f) * 2.0f;
@@ -313,7 +318,7 @@ void Fish::Update()
 		m_firstFrame++;
 		m_pos.x += m_vel.x;
 		m_pos.y += m_vel.y;
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		if (m_animFrame < 45)
 		{
 			m_pos.y -= 13.0f;
@@ -336,7 +341,7 @@ void Fish::Update()
 	case FishState::Fusion:
 	{
 		m_firstFrame++;
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		m_pos.y -= 1.5f;
 		if (m_firstFrame > InitTime)
 		{
@@ -351,10 +356,10 @@ void Fish::Update()
 	case FishState::Fusion2:
 	{
 		m_firstFrame++;
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 		//マップとの当たり判定
 		Character::BossUpdate();
-		m_colRect.SetCenter(0, 0, 0, 0);
+		m_colRect.SetCenter(1000, 0, 0, 0);
 
 		float shake = sinf(m_firstFrame * 0.6f) * 2.0f;
 		m_pos.x = m_pos.x + shake;
@@ -440,11 +445,10 @@ void Fish::Draw(Camera& camera)
 			break;
 		}
 
-
-
-
-
-
+		if (m_coolDamageTimer > 0)
+		{
+			if ((m_coolDamageTimer / 5) % 2 == 0)SetDrawBright(255, 100, 100);//赤っぽく
+		}
 
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y - drawY,
 		kSPWidth * 0, kSPHeight * 0,
