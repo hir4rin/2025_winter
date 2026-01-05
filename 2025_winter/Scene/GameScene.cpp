@@ -2494,6 +2494,7 @@ void GameScene::NormalUpdate(Input& input)
 	CheckArrowHit();
 	CheckFrozenHit();
 	CheckPlayer();
+	//プレイヤーが死んだらGameOverSceneへ
 
 	CheckOutCamera();
 

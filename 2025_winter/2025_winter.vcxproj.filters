@@ -150,10 +150,10 @@
     <ClCompile Include="Game\Salmon.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Fish.cpp">
+    <ClCompile Include="Game\Fish.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="FishersManager.cpp">
+    <ClCompile Include="Game\FishersManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -287,10 +287,10 @@
     <ClInclude Include="Game\Salmon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Fish.h">
+    <ClInclude Include="Game\Fish.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="FishersManager.h">
+    <ClInclude Include="Game\FishersManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
