@@ -16,8 +16,11 @@ struct Camera
 	//ボスカメラ用
 	Rect m_cameraRect;
 	bool isBoss = false;
+	bool isFish = false;
 	void ChangeIsBossTrue() { isBoss = true; }
 	void ChangeIsBossFalse() { isBoss = false; }
+	void ChangeIsFishTrue() { isFish = true; }
+	void ChangeIsFishFalse() { isFish = false; }
 
 };
 

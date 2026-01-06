@@ -35,6 +35,11 @@ public:
 	/// </summary>
 	/// <param name="m_pBossHp"></param>
 	void SetBossHp(int m_pBossHp);
+	/// <summary>
+	/// ボス魚のHPをセットする(UI用)
+	/// </summary>
+	/// <param name="m_pBossFishHp"></param>
+	void SetFishHp(int m_pBossFishHp);
 
 	float GetTopX();
 
@@ -48,11 +53,16 @@ private:
 
 	int m_bossHpHandle;
 	int m_bossHp;
+
+	int  m_bossFishHandle;
+	int m_bossFishHp;
+
 	//表示用アニメーション
 	float m_displayHp;
 	PlayerType m_displayType;
 
 	float m_displayBossHp;
+	float m_displayBossFishHp;
 	
 
 };

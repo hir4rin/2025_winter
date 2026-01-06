@@ -154,6 +154,12 @@ void StageSelectScene::FadeOutUpdate(Input&)
 					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 9, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 					return;
 				}
+				//4_1へ
+				if (door->GetDoorID() == StageID::Forthstage)
+				{
+					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 10, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+					return;
+				}
 
 
 			}
@@ -241,6 +247,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 500,736 },StageID::Fstage));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1000,736 },StageID::Sstage));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1600,736 },StageID::Tstage));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 2200,736 },StageID::Forthstage));
 
 }
 

@@ -55,7 +55,10 @@ void Door::Draw(Camera& camera)
 		kCharaWidth * charaIdx, kCharaHeight * charaIdy,//切り取り左上
 		kCharaWidth, kCharaHeight,//切り取りの幅
 		kDoorScale, 0.0f, m_handle, true, false);
+
+#ifdef _DEBUG
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 0, 255), false);
+#endif // _DEBUG
 }
 
 void Door::OutUpdate()

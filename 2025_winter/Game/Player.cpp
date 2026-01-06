@@ -687,7 +687,7 @@ void Player::InputUpdate(Input& input)
 		{
 			m_vel.x = 0;//(慣性付きのバーニングは早すぎるため)
 		}
-		m_vel.y = 0;
+		//m_vel.y = 0;
 
 		//ジャンプ処理はすべて破棄
 		{
@@ -707,6 +707,9 @@ void Player::InputUpdate(Input& input)
 		{
 			if (coolTimer <= 0)
 			{
+				//バーニングの時はy軸の速度を0にする
+				m_vel.y = 0;
+
 				burningTimer = burningTime;
 				coolTimer = 0;
 			}

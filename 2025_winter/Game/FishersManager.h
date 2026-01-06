@@ -28,6 +28,9 @@ public:
 	void Draw(Camera& camera);
 
 	std::vector<std::shared_ptr<Fish>> GetFish() { return m_pFishers;}
+
+	int GetHp() { return m_publicHp; }
+
 private:
 	void SpawnFish(Bg* bg);
 private:
@@ -39,6 +42,7 @@ private:
 	Vec2 m_startPos;
 	
 private:
+	int m_publicHp;
 	//spawnするかどうか
 	bool m_isSpawn;
 	bool m_triSpawn;

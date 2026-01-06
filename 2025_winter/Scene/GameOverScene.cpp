@@ -6,9 +6,14 @@
 
 GameoverScene::GameoverScene(SceneController& controller) : Scene(controller)
 {
+	update_ = &GameoverScene::NormalUpdate;
+	draw_ = &GameoverScene::NormalDraw;
 }
 
-void GameoverScene::Update(Input& input)
+void GameoverScene::FadeInUpdate(Input&)
+{
+}
+void GameoverScene::NormalUpdate(Input& input)
 {
 	if (input.IsTriggered("ok"))
 	{
@@ -16,8 +21,30 @@ void GameoverScene::Update(Input& input)
 		return;
 	}
 }
+void GameoverScene::FadeOutUpdate(Input&)
+{
+}
+void GameoverScene::NormalDraw()
+{
+	DrawString(320, 240, "Game Over Scene", 0xffffff);
+}
+void GameoverScene::FadeInDraw()
+{
+}
+void GameoverScene::FadeOutDraw()
+{
+}
+
+
+void GameoverScene::Update(Input& input)
+{
+	(this->*update_)(input);
+
+}
 
 void GameoverScene::Draw()
 {
-	DrawString(320, 240, "Game Over Scene", 0xffffff);
+	
+	(this->*draw_)();
+
 }

@@ -11,7 +11,8 @@ FishersManager::FishersManager(const Vec2& startPos, int dir):
 	m_startPos(startPos),
 	m_isSpawn(false),
 	m_triSpawn(false),
-	m_isfusion(false)
+	m_isfusion(false),
+	m_publicHp(100)
 {
 
 }
@@ -105,6 +106,8 @@ void FishersManager::Update(Bg* bg)
 		if (!it)continue;
 		if (it->GetisDead())
 		{
+			m_publicHp += -12;
+			if (m_publicHp <= 4)m_publicHp = 0;
 		
 
 			switch (m_phase)

@@ -9,8 +9,8 @@ enum class StageID
 {
 	Fstage,
 	Sstage,
-	Tstage
-	
+	Tstage,
+	Forthstage
 };
 
 class Door

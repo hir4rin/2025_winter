@@ -40,7 +40,9 @@ StageUI::StageUI() :
 	m_playerHp(100),
 	m_displayHp(100),
 	m_bossHp(100),
-	m_displayBossHp(100)
+	m_displayBossHp(100),
+	m_bossFishHp(100),
+	m_displayBossFishHp(100)
 {
 	m_hpHandle;
 }
@@ -77,6 +79,7 @@ void StageUI::Update()
 	}
 
 	m_displayBossHp = std::lerp(m_displayBossHp, static_cast<float>(m_bossHp), t);
+	m_displayBossFishHp = std::lerp(m_displayBossFishHp, static_cast<float>(m_bossFishHp), t);
 
 }
 
@@ -116,6 +119,14 @@ void StageUI::Draw(Camera& camera)
 		DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(255, 0, 0), false);//外枠
 		DrawFormatString(300, topPos + 60 + ktopOffset, GetColor(0, 0, 0), "Boss : ");
 	}
+	if (camera.isFish)
+	{
+		//敵のHPバーを表示
+		DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(0, 0, 0), true);
+		DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + m_displayBossFishHp * hpScale, topPos + 100 + ktopOffset, GetColor(255, 170, 80), true);
+		DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(255, 0, 0), false);//外枠
+		DrawFormatString(300, topPos + 60 + ktopOffset, GetColor(0, 0, 0), "Fishers : ");
+	}
 
 	//フォントサイズを元に戻す(元は16)
 	SetFontSize(oldSize);
@@ -145,6 +156,11 @@ void StageUI::SetLife(int m_pPlayerLife)
 void StageUI::SetBossHp(int m_pBossHp)
 {
 	m_bossHp = m_pBossHp;
+}
+
+void StageUI::SetFishHp(int m_pBossFishHp)
+{
+	m_bossFishHp = m_pBossFishHp;
 }
 
 float StageUI::GetTopX()
