@@ -80,11 +80,11 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 	switch (StageNum)
 	{
 	case 0:
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/background.png");
 		break;
 	case 1://1_1
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/Back/nature_1/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_1/2.png");
 		m_bgH3 = LoadGraph("data/Back/nature_1/3.png");
@@ -95,19 +95,19 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_bgH8 = LoadGraph("data/Back/nature_1/8.png");
 		break;
 	case 2://1_2
-		m_mapH = LoadGraph("data/map1_2.png");
+		m_mapH = LoadGraph("data/Stage/map1_2.png");
 		m_bgH = LoadGraph("data/Back/nature_7/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_7/2.png");
 		break;
 	case 3://1_3
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/Back/nature_3/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_3/2.png");
 		m_bgH3 = LoadGraph("data/Back/nature_3/3.png");
 		m_bgH4 = LoadGraph("data/Back/nature_3/4.png");
 		break;
 	case 4://クリアシーン
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/Back/1.png");
 		m_bgH2 = LoadGraph("data/Back/2.png");
 		m_bgH3= LoadGraph("data/Back/3.png");
@@ -115,21 +115,21 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 
 	case 6://2_1
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/Back/nature_2/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
 		//m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
 		//m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
 	case 7://2_2
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/Back/nature_2/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
 		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
 		//m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
 	case 8://2_3
-		m_mapH = LoadGraph("data/map.png");
+		m_mapH = LoadGraph("data/Stage/map.png");
 		m_bgH = LoadGraph("data/Back/nature_2/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
 		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
@@ -526,7 +526,7 @@ void Bg::DrawBg(Camera& camera)
 
 void Bg::LoadMapData()
 {
-	std::ifstream file("data/map1.csv");
+	std::ifstream file("data/Stage/map1.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -549,7 +549,7 @@ void Bg::LoadMapData()
 }
 void Bg::LoadMapData0()
 {
-	std::ifstream file("data/stage1_1.csv");
+	std::ifstream file("data/Stage/stage1_1.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -572,7 +572,7 @@ void Bg::LoadMapData0()
 }
 void Bg::LoadMapData1_2()
 {
-	std::ifstream file("data/stage1_2.csv");
+	std::ifstream file("data/Stage/stage1_2.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -595,7 +595,7 @@ void Bg::LoadMapData1_2()
 }
 void Bg::LoadMapData1_3()
 {
-	std::ifstream file("data/stage1_3.csv");
+	std::ifstream file("data/Stage/stage1_3.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -618,7 +618,7 @@ void Bg::LoadMapData1_3()
 }
 void Bg::LoadMapDataClear()
 {
-	std::ifstream file("data/stageClear.csv");
+	std::ifstream file("data/Stage/stageClear.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -641,7 +641,7 @@ void Bg::LoadMapDataClear()
 }
 void Bg::LoadMapData2_1()
 {
-	std::ifstream file("data/stage2_1.csv");
+	std::ifstream file("data/Stage/stage2_1.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -664,7 +664,7 @@ void Bg::LoadMapData2_1()
 }
 void Bg::LoadMapData2_2()
 {
-	std::ifstream file("data/stage2_2.csv");
+	std::ifstream file("data/Stage/stage2_2.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -687,7 +687,7 @@ void Bg::LoadMapData2_2()
 }
 void Bg::LoadMapData2_3()
 {
-	std::ifstream file("data/stage2_3.csv");
+	std::ifstream file("data/Stage/stage2_3.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
