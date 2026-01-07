@@ -5,6 +5,7 @@
 #include "GameScene.h"
 #include "Bg.h"
 #include "Door.h"
+#include "Effect.h"
 #include "SceneController.h"
 #include "../Application.h"
 
@@ -64,7 +65,16 @@ void StageSelectScene::NormalUpdate(Input& input)
 	}
 
 	m_pPlayer->Update(input);
+	//エフェクト
+	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
+	{
+		(*effect)->Update();
 
+		if ((*effect)->IsDead())
+			effect = m_pEffects.erase(effect);  // ← 安全に削除
+		else
+			++effect;
+	}
 
 
 	if (input.IsTriggered("up"))
@@ -179,7 +189,10 @@ void StageSelectScene::NormalDraw()
 		door->Draw(camera);
 	}
 	m_pPlayer->Draw(camera);
-
+	for (auto& effect : m_pEffects)
+	{
+		if (effect) effect->Draw(camera);
+	}
 
 	//ステージUI
 	stageUI.Draw(camera);
@@ -234,6 +247,17 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 
 	m_frame = fade_interval;
 	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life);
+	//playerの状態によってエフェクトを出す
+	m_pPlayer->AddOnLandEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star"));
+		});
+	m_pPlayer->AddOnWalkEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
+		});
+	m_pPlayer->AddOnDashEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
+		});
+
 	
 	m_pBg = new Bg(m_pPlayer, 1);
 

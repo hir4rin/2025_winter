@@ -6,6 +6,7 @@
 class Player;
 class Bg;
 class Door;
+class Effect;
 
 class StageSelectScene :  public Scene
 {
@@ -38,6 +39,9 @@ private:
 	int m_handle = -1;
 	int selectIndex = 0;
 	std::shared_ptr<Player> m_pPlayer;
+	//エフェクト
+	std::vector<std::shared_ptr<Effect>> m_pEffects;
+
 	Bg* m_pBg;
 	Camera camera;//カメラのためのオブジェクト
 	StageUI stageUI;//UI
