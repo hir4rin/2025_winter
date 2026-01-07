@@ -27,7 +27,8 @@ namespace
 
 
 Item::Item(std::shared_ptr<EnemyWizard> _enemywiz):
-	m_aliveFrame(30)
+	m_aliveFrame(30),
+	m_initAliveFrame(300)
 {
 	m_handle = LoadGraph("data/Game/ItemWizard.png");
 	assert(m_handle >= 0);
@@ -37,7 +38,8 @@ Item::Item(std::shared_ptr<EnemyWizard> _enemywiz):
 	m_vel.y = -5.0f;
 }
 Item::Item(std::shared_ptr<EnemyRider> _enemyRiders):
-	m_aliveFrame(30)
+	m_aliveFrame(30),
+	m_initAliveFrame(300)
 {
 	m_handle = LoadGraph("data/Game/BurningCard.png");
 	assert(m_handle >= 0);
@@ -47,7 +49,8 @@ Item::Item(std::shared_ptr<EnemyRider> _enemyRiders):
 	m_vel.y = -5.0f;
 }
 Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers):
-	m_aliveFrame(30)
+	m_aliveFrame(30),
+	m_initAliveFrame(300)
 {
 	m_handle = LoadGraph("data/Game/BowAndArrow.png");
 	assert(m_handle >= 0);
@@ -68,7 +71,10 @@ void Item::Init()
 
 void Item::Update()
 {
-	Character::Update();
+	m_initAliveFrame--;
+	//重力
+	m_vel.y += 0.20f;
+	Character::FishUpdate();
 	//Character::SetRect();
 }
 
@@ -82,6 +88,14 @@ void Item::Draw(Camera& camera)
 	//当たり判定の描画
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
 #endif
+
+	if (m_initAliveFrame < 100)
+	{
+		if (m_initAliveFrame % 10 == 0)return;
+		//SetDrawBright(255, 255, 255, m_initAliveFrame * 4);
+	}
+
+
 	if (m_state == ItemState::Burning)
 	{
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,

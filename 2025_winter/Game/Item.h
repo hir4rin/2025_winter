@@ -33,9 +33,12 @@ public:
 	void DroppedDraw(Camera& camera);
 
 	bool IsDead() { return m_aliveFrame <= 0; }
+	bool IsInitDead() { return m_initAliveFrame <= 0; }
 	
 
 private:
+	//アイテムの存在時間
+	int m_initAliveFrame;
 	ItemState m_state;
 	//演出が生きてる時間
 	int m_aliveFrame = 0;

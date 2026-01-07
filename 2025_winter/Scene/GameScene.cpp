@@ -151,7 +151,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 		m_pBg = new Bg(m_pPlayer, 6);
-		m_doors = std::make_shared< Door>(Vec2{ 6050,760 });
+		m_doors = std::make_shared< Door>(Vec2{ 6050,864 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 		break;
 	case 7://ステージ2_2
@@ -2452,6 +2452,15 @@ void GameScene::NormalUpdate(Input& input)
 	}
 	//アイテム関連
 	{
+		for(auto& item : m_pItems)//アイテムのアップデート
+		{
+			if (!item)continue;
+			if(item->IsInitDead())
+			{
+				item = nullptr;
+			}
+		}
+
 		//nullptrのアイテムをけす
 		m_pItems.erase(
 			std::remove_if(
