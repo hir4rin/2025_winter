@@ -1,31 +1,104 @@
 ﻿#include "GameoverScene.h"
 #include "DxLib.h"
 #include "../Input.h"
+#include "Player.h"
 #include "TitleScene.h"
 #include "SceneController.h"
 
-GameoverScene::GameoverScene(SceneController& controller) : Scene(controller)
+namespace
+{
+	constexpr int kScreenWidth = 1920;
+	constexpr int kScreenHeight = 1080;
+
+	const Vec2 PlayerStartPos = Vec2{ kScreenWidth * 1.0f / 2.0f - 25,kScreenHeight * 1.0f / 2.0f + 70 };
+	const Vec2 CirclePos = Vec2{ kScreenWidth * 1.0f / 2.0f,kScreenHeight * 1.0f / 2.0f + 100 };
+	const Vec2 ShadowPos = Vec2{ kScreenWidth * 1.0f / 2.0f,kScreenHeight * 1.0f / 2.0f + 110 };
+
+
+	//下の丸
+	constexpr int kDaenW = 64;
+	constexpr int kDaenH = 64;
+	constexpr float kDaenScale = 2.0f;
+	//その影
+	constexpr int kShadowW = 100;
+	constexpr int kShadowH = 100;
+	constexpr float kShadowScale = 3.0f;
+
+}
+
+
+GameoverScene::GameoverScene(SceneController& controller,PlayerType type) : Scene(controller)
+, frame_(0)
 {
 	update_ = &GameoverScene::NormalUpdate;
 	draw_ = &GameoverScene::NormalDraw;
+
+	m_pPlayer = std::make_shared<Player>(type, PlayerStartPos);
+
+	//画像
+	{
+		m_circleHandle = LoadGraph("data/daen.png");
+		m_shadowHandle = LoadGraph("data/Game/Shadow.png");
+	}
+
+
+	InitCamera(camera);//カメラの初期化
 }
+
+
 
 void GameoverScene::FadeInUpdate(Input&)
 {
 }
 void GameoverScene::NormalUpdate(Input& input)
 {
+	m_pPlayer->GameOverUpdate();
+
+
+
 	if (input.IsTriggered("ok"))
 	{
-		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
+		update_ = &GameoverScene::FadeOutUpdate;
+		draw_ = &GameoverScene::NormalDraw;
+		frame_ = 200;
+		m_pPlayer->AnimChangeStandUp();
 		return;
+	
 	}
 }
 void GameoverScene::FadeOutUpdate(Input&)
 {
+	frame_--;
+	m_pPlayer->GameOverStandUpUpdate(PlayerStartPos.y);
+
+	if (frame_ <= 0)
+	{
+		//画像解放
+		{
+			DeleteGraph(m_circleHandle);
+			DeleteGraph(m_shadowHandle);
+		}
+
+		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
+		return;
+	}
 }
 void GameoverScene::NormalDraw()
 {
+	DrawRectRotaGraph(CirclePos.x, CirclePos.y,
+	kDaenW * 0, kDaenH * 0,//切り取り左上
+	kDaenW, kDaenH,//切り取りの幅
+	kDaenScale, 0, m_circleHandle, true);
+
+
+	DrawRectRotaGraph(ShadowPos.x, ShadowPos.y - 20.0f,
+	kShadowW * 0, kShadowH * 0,//切り取り左上
+	kShadowW, kShadowH,//切り取りの幅
+	kShadowScale, 0, m_shadowHandle, true);
+
+
+
+	m_pPlayer->Draw(camera);
 	DrawString(320, 240, "Game Over Scene", 0xffffff);
 }
 void GameoverScene::FadeInDraw()

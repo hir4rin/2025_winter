@@ -10,7 +10,7 @@
 #include "Bg.h"
 #include <cmath>
 #include <memory>
-#include "Player.h"
+#include <algorithm>
 
 namespace
 {
@@ -50,6 +50,7 @@ namespace
 	constexpr int kNormalAttackDuration = 4;
 	constexpr int kNormalCopyDuration = 10;
 	constexpr int kNormalDamageDuration = 10;
+	constexpr int kNormalDeadDuration = 15;
 
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kNormalIdleNum = 6;
@@ -58,6 +59,7 @@ namespace
 	constexpr int kNormalAttackNum = 7;
 	constexpr int kNormalCopyNum = 6;
 	constexpr int kNormalDamageNum = 4;
+	constexpr int kNormalDeadNum = 4;
 	//Burning用
 	//1frameあたりのアニメーションの時間
 	constexpr int kBurningIdleDuration = 4;
@@ -66,6 +68,7 @@ namespace
 	constexpr int kBurningAttackDuration = 5;
 	constexpr int kBurningCopyDuration = 10;
 	constexpr int kBurningDamageDuration = 5;
+	constexpr int kBurningDeadDuration = 15;
 
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kBurningIdleNum = 6;
@@ -74,6 +77,7 @@ namespace
 	constexpr int kBurningAttackNum = 8;
 	constexpr int kBurningCopyNum = 8;
 	constexpr int kBurningDamageNum = 4;
+	constexpr int kBurningDeadNum = 4;
 	//frozen用
 	//1frameあたりのアニメーションの時間
 	constexpr int kBrozenIdleDuration = 6;
@@ -82,6 +86,7 @@ namespace
 	constexpr int kFrozenAttackDuration = 2;
 	constexpr int kFrozenCopyDuration = 6;
 	constexpr int kFrozenDamageDuration = 5;
+	constexpr int kFrozenDeadDuration = 15;
 
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kFrozenIdleNum = 6;
@@ -90,6 +95,7 @@ namespace
 	constexpr int kFrozenAttackNum = 15;
 	constexpr int kFrozenCopyNum = 10;
 	constexpr int kFrozenDamageNum = 4;
+	constexpr int kFrozenDeadNum = 4;
 	//Archer用
 	//1frameあたりのアニメーションの時間
 	constexpr int kArcherIdleDuration = 6;
@@ -98,6 +104,7 @@ namespace
 	constexpr int kArcherAttackDuration = 1;
 	constexpr int kArcherCopyDuration = 6;
 	constexpr int kArcherDamageDuration = 5;
+	constexpr int kArcherDeadDuration = 15;
 
 	//そのアニメーションが何このコマ数なのか(X)
 	constexpr int kArcherIdleNum = 6;
@@ -106,6 +113,7 @@ namespace
 	constexpr int kArcherAttackNum = 12;
 	constexpr int kArcherCopyNum = 12;
 	constexpr int kArcherDamageNum = 4;
+	constexpr int kArcherDeadNum = 4;
 	//アーチャーの矢をいつ出すか
 	constexpr int kArrowAppearCharaIdx = 9;//矢を出すときのcharaIdx
 	const int arrowAppearFrame = kArcherAttackDuration * kArrowAppearCharaIdx;//charaIdxが9になる瞬間
@@ -121,7 +129,7 @@ namespace
 }
 
 
-
+//ゲームプレイ中用
 Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 	m_frame(0),
 	charaIdx(0),
@@ -171,6 +179,54 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 		break;
 	}
 }
+//ゲームオーバー時用
+Player::Player(PlayerType type, Vec2 pos):
+	m_frame(0),
+	charaIdx(0),
+	charaIdy(0),
+	m_animframe(0),
+	isNomove(false),
+	arrowFrame(-1),
+	isArrowAttack(false),
+	isJumping(false),
+	BurningPrevPos{ 0,0 },
+	BurningAfterPos{ 0,0 },
+	isBurningAttack(false),
+	damageCount(0),
+	m_angle(0.0f),
+	m_wasGround(false),
+	m_lastTapTime(0),
+	m_lastTapDir(-1),
+	m_isDash(false),
+	isRotateOne(false),
+	m_rotateFrame(0),
+	damageTimer(0),
+	attackCoolTimer(0)
+
+{
+	m_pos = pos;
+	m_handle = LoadGraph("data/Game/player.png");
+	assert(m_handle >= 0);
+	m_anim = Anim::Dead;
+	ClearAttackRect();
+	/*m_state = PlayerState::Normal;
+	m_type = type;*/
+	switch (type)
+	{
+	case PlayerType::Normal:
+		ChangeNormal();
+		break;
+	case PlayerType::Burning:
+		ChangeBurning();
+		break;
+	case PlayerType::Frozen:
+		ChangeFrozen();
+		break;
+	case PlayerType::Archer:
+		ChangeArcher();
+		break;
+	}
+}
 Player::~Player()
 {
 	DeleteGraph(m_handle);
@@ -183,6 +239,57 @@ void Player::Init()
 void Player::Update()
 {
 }
+void Player::GameOverUpdate()
+{
+	AnimFrameUpdate();
+}
+
+void Player::AnimChangeStandUp()
+{
+	m_anim = Anim::StandUp;
+	m_animframe = 0;
+
+}
+
+void Player::GameOverStandUpUpdate(float baseY)
+{
+	AnimFrameUpdate();
+	
+	
+	if(m_anim == Anim::StandUp)
+	{
+		if (charaIdx == 0 && m_isTriJump)
+		{
+			if (m_triJumpFrame <= 20.0f * 2)//20x2回分ジャンプしたら
+			{
+				m_triJumpFrame++;
+				float t = fmod(m_triJumpFrame, 20.0f) / 20.0f;
+				float tri = (t < 0.5f) ? t * 2.0f : (1.0f - t) * 2.0f;
+
+				float offsetY = -tri * 40.0f;
+
+				m_pos.y = baseY + offsetY;
+			}
+			else
+			{
+				//ジャンプ終了
+				m_anim = Anim::Walk;
+				m_animframe = 0;
+				m_triJumpFrame = 0;
+				m_pos.y = baseY;
+				//横に移動させる
+			}
+
+
+		}
+	}
+
+	if (m_anim == Anim::Walk)
+	{
+		m_pos.x += 5.0f;
+	}
+
+}
 
 void Player::Update(Input& input)
 {
@@ -191,6 +298,7 @@ void Player::Update(Input& input)
 	attackCoolTimer--;
 	coolTimer--;
 	damageTimer--;
+	//m_animframe++;
 	AnimFrameUpdate();
 	if (arrowFrame >= 0)
 	{
@@ -349,6 +457,16 @@ void Player::Update(Input& input)
 	{
 		m_pos.y = 0 + (ScreenHeight - topPos);
 	}
+
+#ifdef _DEBUG
+
+	if (CheckHitKey(KEY_INPUT_Y))
+	{
+		m_hp = 0;
+		m_life = 0;
+	}
+#endif // _DEBUG
+
 
 }
 
@@ -1266,6 +1384,22 @@ void Player::NormalAnim()
 		charaIdx = (m_animframe / kNormalDamageDuration) % kNormalDamageNum;
 		charaIdy = 6;
 		break;
+	case Anim::Dead:
+		//死んでいる絵
+		charaIdx =3;
+		charaIdy = 7;
+		break;
+	case Anim::StandUp:
+		//死後立ち上がるとき
+		charaIdx =(kNormalDeadNum-1) - (m_animframe / kNormalDeadDuration);
+		if (charaIdx < 0)
+		{
+			m_isTriJump = true;
+		}
+		charaIdy = 7;
+		charaIdx = (std::max)(charaIdx, 0);
+		
+		break;
 	default:
 		// ここに来たら想定外！
 		//assert(false && "Unknown animation type in switch(_anim)");
@@ -1317,6 +1451,21 @@ void Player::BurningAnim()
 		//ダメージを食らったときのアニメーション
 		charaIdx = (m_animframe / kBurningDamageDuration) % kBurningDamageNum;
 		charaIdy = 6;
+		break;
+	case Anim::Dead:
+		//死んでいる絵
+		charaIdx = 3;
+		charaIdy = 7;
+		break;
+	case Anim::StandUp:
+		//死後立ち上がるとき
+		charaIdx = (kBurningDeadNum - 1) - (m_animframe / kBurningDeadDuration);
+		if (charaIdx < 0)
+		{
+			m_isTriJump = true;
+		}
+		charaIdy = 7;
+		charaIdx = (std::max)(charaIdx, 0);
 		break;
 	default:
 		// ここに来たら想定外！
@@ -1373,6 +1522,21 @@ void Player::FrozenAnim()
 		charaIdx = (m_animframe / kFrozenDamageDuration) % kFrozenDamageNum;
 		charaIdy = 8;
 		break;
+	case Anim::Dead:
+		//死んでいる絵
+		charaIdx = 3;
+		charaIdy = 9;
+		break;
+	case Anim::StandUp:
+		//死後立ち上がるとき
+		charaIdx = (kFrozenDeadNum - 1) - (m_animframe / kFrozenDeadDuration);
+		if (charaIdx < 0)
+		{
+			m_isTriJump = true;
+		}
+		charaIdy = 9;
+		charaIdx = (std::max)(charaIdx, 0);
+		break;
 	default:
 		// ここに来たら想定外！
 		//assert(false && "Unknown animation type in switch(_anim)");
@@ -1427,6 +1591,21 @@ void Player::ArcherAnim()
 		charaIdx = (m_animframe / kArcherDamageDuration) % kArcherDamageNum;
 		charaIdy = 4;
 		break;
+	case Anim::Dead:
+		//死んでいる絵
+		charaIdx = 3;
+		charaIdy = 5;
+		break;
+	case Anim::StandUp:
+		//死後立ち上がるとき
+		charaIdx = (kArcherDeadNum - 1) - (m_animframe / kArcherDeadDuration);
+		if (charaIdx < 0)
+		{
+			m_isTriJump = true;
+		}
+		charaIdy = 5;
+		charaIdx = (std::max)(charaIdx, 0);
+		break;
 	default:
 		// ここに来たら想定外！
 		//assert(false && "Unknown animation type in switch(_anim)");
@@ -1480,6 +1659,8 @@ bool Player::MoveWithCollisionX(float distance)
 	//衝突なし
 	return false;
 }
+
+
 
 void Player::ChangeNormal()
 {

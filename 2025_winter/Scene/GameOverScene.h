@@ -1,5 +1,12 @@
 ﻿#pragma once
 #include "Scene.h"
+#include "Camera.h"
+#include <memory>
+#include <cassert>
+
+
+//class Player;
+
 class GameoverScene : public Scene
 {
 
@@ -22,13 +29,16 @@ private:
 	DrawFunc_t draw_;	// Drawメンバ関数を代入できるメンバ関数ポインタ
 
 public:
-	GameoverScene(SceneController& controller);
+	GameoverScene(SceneController& controller,PlayerType type);
 	void Update(Input& input) override;
 	void Draw() override;
 
 private:
+	std::shared_ptr<Player> m_pPlayer;
+	Camera camera;//カメラのためのオブジェクト
 
-
+	int m_circleHandle = -1;
+	int m_shadowHandle = -1;
 
 
 };

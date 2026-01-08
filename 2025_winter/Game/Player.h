@@ -15,7 +15,9 @@ enum class Anim
 	Jump,
 	Attack,
 	Copy,
-	Damage
+	Damage,
+	Dead,
+	StandUp
 
 };
 enum class PlayerState
@@ -44,6 +46,8 @@ public:
 	/// <param name="type"></param>
 	/// <param name="hp"></param>
 	Player(PlayerType type,int hp,Vec2 pos,int Life);
+	//ゲームオーバー時用
+	Player(PlayerType type,Vec2 pos);
 	virtual ~Player();
 
 	virtual void Init() override;
@@ -282,6 +286,14 @@ private:
 	bool m_isDash;
 		//2回押しの猶予時間
 		const float doubleTapThreshold = 30.0f;
+public:
+//ゲームおーばー用
+	void GameOverUpdate();
+	void GameOverStandUpUpdate(float baseY);
+	void AnimChangeStandUp();
+	//ジャンプ用
+	bool m_isTriJump = false;
+	int m_triJumpFrame = 0;
 
 };
 

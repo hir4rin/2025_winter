@@ -2513,7 +2513,7 @@ void GameScene::NormalUpdate(Input& input)
 	CheckArrowHit();
 	CheckFrozenHit();
 	CheckPlayer();
-	//プレイヤーが死んだらGameOverSceneへ
+
 
 	CheckOutCamera();
 
@@ -2607,7 +2607,7 @@ void GameScene::DyingUpdate(Input& input)
 		if (m_pPlayer->CheckLife())
 		{
 			delete m_pBg;
-			controller_.ChangeScene(std::make_shared<GameoverScene>(controller_));
+			controller_.ChangeScene(std::make_shared<GameoverScene>(controller_,m_pPlayer->GetType()));
 			return;
 		}
 		//delete m_pCharacter;
