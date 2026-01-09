@@ -2,6 +2,10 @@
 #include "DxLib.h"
 #include "../Input.h"
 #include "Player.h"
+#include "Item.h"
+#include "EnemyWizard.h"
+#include "EnemyRider.h"
+#include "EnemyArcher.h"
 #include "TitleScene.h"
 #include "SceneController.h"
 
@@ -70,7 +74,49 @@ void GameoverScene::FadeOutUpdate(Input&)
 {
 	frame_--;
 	m_pPlayer->GameOverStandUpUpdate(PlayerStartPos.y);
+	if (m_pDroppedItem)//演出のアイテムのアップデート
+	{
+		m_pDroppedItem->DroppedUpdate();
+		if (m_pDroppedItem->IsDead())
+		{
+			m_pDroppedItem = nullptr;
+		}
+	}
 
+	//30フレーム以下になったらドロップ処理
+	if (frame_ <= 30)
+	{
+		//アイテムドロップ処理
+		{
+			if (!(m_pPlayer->GetType() == PlayerType::Normal))
+			{
+
+				//プレイヤーのタイプに応じて落とすアイテムを変える
+				switch (m_pPlayer->GetType())
+				{
+				case PlayerType::Frozen:
+					m_pDroppedItem = std::make_shared<Item>(std::make_shared<EnemyWizard>());
+					m_pDroppedItem->ChangePos() = m_pPlayer->GetPos();
+					m_pDroppedItem->Setm_isRight(m_pPlayer->Getm_isRight());
+					break;
+				case PlayerType::Burning:
+					m_pDroppedItem = std::make_shared<Item>(std::make_shared<EnemyRider>());
+					m_pDroppedItem->ChangePos() = m_pPlayer->GetPos();
+					m_pDroppedItem->Setm_isRight(m_pPlayer->Getm_isRight());
+					break;
+				case PlayerType::Archer:
+					m_pDroppedItem = std::make_shared<Item>(std::make_shared<EnemyArcher>());
+					m_pDroppedItem->ChangePos() = m_pPlayer->GetPos();
+					m_pDroppedItem->Setm_isRight(m_pPlayer->Getm_isRight());
+					break;
+				}
+				//プレイヤーをノーマルに戻す
+				m_pPlayer->ChangeNormal();
+
+			}
+		}
+	}
+	
 	if (frame_ <= 0)
 	{
 		//画像解放
@@ -99,6 +145,7 @@ void GameoverScene::NormalDraw()
 
 
 	m_pPlayer->Draw(camera);
+	if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
 	DrawString(320, 240, "Game Over Scene", 0xffffff);
 }
 void GameoverScene::FadeInDraw()

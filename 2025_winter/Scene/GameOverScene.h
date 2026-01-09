@@ -5,7 +5,8 @@
 #include <cassert>
 
 
-//class Player;
+class Player;
+class Item;
 
 class GameoverScene : public Scene
 {
@@ -36,6 +37,10 @@ public:
 private:
 	std::shared_ptr<Player> m_pPlayer;
 	Camera camera;//カメラのためのオブジェクト
+
+
+	//演出用のアイテム
+	std::shared_ptr<Item> m_pDroppedItem;
 
 	int m_circleHandle = -1;
 	int m_shadowHandle = -1;
