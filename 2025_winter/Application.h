@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "SoundManager.h"
 
 struct Size
 {
@@ -48,6 +49,12 @@ public:
 	/// アプリケーションを終了する命令を飛ばす
 	/// </summary>
 	void RequestExit();
+
+	SoundManager& GetSoundManager() { return m_soundManager; }
+private:
+	SoundManager m_soundManager;
+
+
 };
 
 

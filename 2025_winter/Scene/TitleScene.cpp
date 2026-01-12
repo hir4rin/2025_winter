@@ -156,7 +156,7 @@ void TitleScene::FadeOutUpdate(Input&)
 {
 	if (frame_++ >= fade_interval)
 	{
-		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,PlayerType::Normal,100,5));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,PlayerType::Normal,100,3));
 		return;
 	}
 }
@@ -225,7 +225,10 @@ void TitleScene::FadeDraw()
 
 TitleScene::TitleScene(SceneController& controller) : Scene(controller)
 {
+	//bgmを流す
+
 	const auto& wsize = Application::GetInstance().GetWindowSize();
+	
 
 	/*titleH_ = LoadGraph(L"data/title.png");
 	titleLogoH_ = LoadGraph(L"data/game_title.png");*/

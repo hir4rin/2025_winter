@@ -19,9 +19,9 @@ namespace
 	constexpr float kSpeed = 1.7f;//ゲージのスピード
 
 	constexpr int margin = 100;//一旦マージンを取る
-	constexpr int kRankWidth = 2000;//位差の幅
+	constexpr int kRankWidth = 1500;//位差の幅
 
-	constexpr float kSlowDownDistance = 1500.0f; // 減速開始距離
+	constexpr float kSlowDownDistance = 1000.0f; // 減速開始距離
 	constexpr float kGravity = 2.5f; // 重力
 
 	constexpr int fade_interval = 60;
@@ -37,7 +37,7 @@ draw_(&GameClearScene::FadeDraw)
 	m_pCannon = std::make_shared<Cannon>();
 	for (int i = 0; i < 7; i++)
 	{
-		m_pSigns.push_back(std::make_shared<Sign>(Vec2{2000.0f* (i+1)- 100.0f,750.0f},7-i));
+		m_pSigns.push_back(std::make_shared<Sign>(Vec2{ kRankWidth * (i+1)- 100.0f,750.0f},7-i));
 	}
 	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 },Life);
 	m_pBg = new Bg(m_pPlayer, 4);
@@ -251,10 +251,9 @@ void GameClearScene::NormalDraw()
 	m_pBg->Draw(camera);
 	//ステージUI
 	stageUI.Draw(camera);
-	DrawString(320, 240, "Game Clear Scene", 0xffffff);
-
+#ifdef _DEBUG
 	DrawFormatString(500, 300, GetColor(255, 0, 0), "Your Rank is %d", m_rank);
-
+	//白線
 	for (int i = 1; i <= 7; i++)
 	{
 		DrawBox(kRankWidth * i + camera.drawOffset.x,//左
@@ -263,7 +262,7 @@ void GameClearScene::NormalDraw()
 			1080 + camera.drawOffset.y,//上
 			GetColor(255, 255, 255), false);
 	}
-
+#endif
 
 	//大砲のゲージ表示
 	if (isCannon ||isFlying)

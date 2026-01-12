@@ -15,7 +15,8 @@
 namespace
 {
 	const Vec2 kInitPos = { 100.0f,700.0f };//初期位置
-	constexpr float kSpeed = 10.0f;//移動速度
+	constexpr float kSpeed = 8.0f;//移動速度
+	constexpr float kMaxSpeed = 12.0f;//最大速度
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ//当たり判定の幅高さに使われている
 	constexpr int kPlayerCutW = 100;
 	constexpr int kPlayerCutH = 100;
@@ -722,6 +723,26 @@ void Player::RotateFinishUpdate()
 	m_angle = std::lerp(m_angle, 360.0f, 0.5);
 }
 
+void Player::AnimOnlyUpdate()
+{
+	switch (m_type)
+	{
+	case PlayerType::Normal://アニメーションの遷移
+		NormalAnim();
+		break;
+	case PlayerType::Burning://アニメーションの遷移
+		BurningAnim();
+		break;
+	case PlayerType::Frozen://アニメーションの遷移
+		FrozenAnim();
+		break;
+	case PlayerType::Archer://アニメーションの遷移
+		ArcherAnim();
+		break;
+
+	}
+}
+
 void Player::AutoMoveStart()
 {
 	Character::Gravity();
@@ -1055,7 +1076,7 @@ void Player::Move(Input& input)
 	if (m_isDash)
 	{
 		//ダッシュのスピードに設定
-		m_vel.x = m_isRight ? kSpeed * 1.5f : -kSpeed * 1.5f;
+		m_vel.x = m_isRight ? kMaxSpeed : -kMaxSpeed;
 	}
 
 

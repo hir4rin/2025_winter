@@ -78,8 +78,9 @@ void BurningObject::Draw(Camera& camera)
 	m_burningObjectDir ? false : true,//反転するかどうか
 		false);
 
+#ifdef _DEBUG
 	//判定の描画
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-
+#endif
 
 }

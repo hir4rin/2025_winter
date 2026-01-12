@@ -19,7 +19,7 @@ namespace
 		constexpr int  kCannonFireDuration = 5;
 		constexpr float drawOffSetY = 50.0f;//描画オフセットY座標
 
-	constexpr float  kCannonScale = 5.0f;
+	constexpr float  kFrozenScale = 5.0f;
 	
 }
 
@@ -91,19 +91,19 @@ void Cannon::Draw(Camera& camera)
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
 		kCannonTransFormCutW * 0, kCannonTransFormCutH,//切り取り左上
 		kCannonTransFormCutW, kCannonTransFormSorcH,//切り取りの幅
-		kCannonScale, 0.0f, m_handle, true, true);
+		kFrozenScale, 0.0f, m_handle, true, true);
 			break;
 		case CannonState::Transform:
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
 		kCannonTransFormCutW * charaIdx, kCannonTransFormCutH,//切り取り左上
 		kCannonTransFormCutW, kCannonTransFormSorcH,//切り取りの幅
-		kCannonScale, 0.0f, m_handle, true, true);
+		kFrozenScale, 0.0f, m_handle, true, true);
 			break;
 		case CannonState::Fire:
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y+ drawOffSetY,
 		kCannonFireCutW * charaIdx, kCannonFireCutH,//切り取り左上
 		kCannonFireCutW, kCannonFireSorcH,//切り取りの幅
-		kCannonScale, 0.0f, m_handle, true, false);
+		kFrozenScale, 0.0f, m_handle, true, false);
 			break;
 	}
 	

@@ -516,9 +516,10 @@ void EnemyEliteOrc::DamageUpdate()
 
 
 
-
+	m_colRect.SetLT(3000, 0, 0, 0);//当たり判定を消す
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
+	m_colRect.SetLT(3000, 0, 0, 0);//当たり判定を消す
 
 
 	if (m_isGround)

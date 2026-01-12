@@ -122,6 +122,9 @@ public:
 
 	int  GetHp() { return m_hp; }//ｈｐ
 	int GetLife() { return m_life; }//残機
+	//画像を取得
+	int GetHandle() { return m_handle; }
+	
 
 	void Death();
 	void DyingUpdate();
@@ -132,6 +135,8 @@ public:
 
 	//m_animFrameを外部から更新するため
 	void AnimFrameUpdate() { m_animframe++; }
+	//アニメーションのみを外部から更新するため
+	void AnimOnlyUpdate();
 
 
 	//クリアシーンで動かすよう

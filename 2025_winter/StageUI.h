@@ -63,6 +63,15 @@ private:
 
 	float m_displayBossHp;
 	float m_displayBossFishHp;
+
+private:
+	int m_frame;
+	int m_normalHandle;
+	int m_burningHandle;
+	int m_frozenHandle;
+	int m_archerHandle;
+	std::shared_ptr<Player> m_pPlayer;
+	//int m_playerHandle;
 	
 
 };

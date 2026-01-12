@@ -860,10 +860,25 @@ void GameScene::CheckFrozenHit()
 
 				if (isHitEnemy)
 				{
+					bool isLeft = e->GetColRect().CheckLeftHit(m_pFrozen->GetColRect());
+
+					if(isLeft)//キャラが左
+					{
+						e->ChangePos().x += -32.0f;//少し左にずらす
+						
+					}
+					else//かyらが右
+					{
+						e->ChangePos().x += 32.0f;//少し右にずらす
+						
+					}
+
 					//X軸の速度を反転する
 					//キャラの向きを変える
 					e->ChangeVel().x *= -1;
 					e->Changem_isRight();
+					//ここで敵のposを少しずらすとがくがくがなくなる
+
 				
 				}
 
@@ -878,6 +893,19 @@ void GameScene::CheckFrozenHit()
 
 				if (isHitEnemy)
 				{
+					bool isLeft = e->GetColRect().CheckLeftHit(m_pFrozen->GetColRect());
+
+					if (isLeft)//キャラが左
+					{
+						e->ChangePos().x += -32.0f;//少し左にずらす
+
+					}
+					else//かyらが右
+					{
+						e->ChangePos().x += 32.0f;//少し右にずらす
+
+					}
+
 					//X軸の速度を反転する
 					//キャラの向きを変える
 					e->ChangeVel().x *= -1;
@@ -894,6 +922,19 @@ void GameScene::CheckFrozenHit()
 
 				if (isHitEnemy)
 				{
+					bool isLeft = e->GetColRect().CheckLeftHit(m_pFrozen->GetColRect());
+
+					if (isLeft)//キャラが左
+					{
+						e->ChangePos().x += -32.0f;//少し左にずらす
+
+					}
+					else//かyらが右
+					{
+						e->ChangePos().x += 32.0f;//少し右にずらす
+
+					}
+
 					//X軸の速度を反転する
 					//キャラの向きを変える
 					e->ChangeVel().x *= -1;
