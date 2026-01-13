@@ -304,5 +304,8 @@ public:
 	bool m_isTriJump = false;
 	int m_triJumpFrame = 0;
 
+	private:
+		int m_NormalAttackHandle = -1;
+
 };
 

@@ -355,7 +355,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust",false));
 		});
 	m_pPlayer->AddOnAttackEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "slash",m_pPlayer->Getm_isRight()));
+		//m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "slash",m_pPlayer->Getm_isRight()));
 		});
 
 }

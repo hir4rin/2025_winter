@@ -43,6 +43,15 @@ namespace
 	constexpr float kDamageFrame = 40.0f;
 	constexpr float kBurningTime = 9.0f;  //バーニングの移動時間
 
+	//Slash
+	constexpr int kSlashCutW = 128;
+	constexpr int kSlashCutH = 128;
+	constexpr int kSlashScale = 1.7f;
+	constexpr int kSlashANimDuration = 5;
+	constexpr int kSlashAnimNum = 5;
+
+
+
 	//Normal用
 	//1frameあたりのアニメーションの時間
 	constexpr int kNormalIdleDuration = 6;
@@ -154,11 +163,13 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 	isRotateOne(false),
 	m_rotateFrame(0),
 	damageTimer(0),
-	attackCoolTimer(0)
+	attackCoolTimer(0),
+	m_NormalAttackHandle(-1)
 
 {
 	m_pos = pos;
 	m_handle = LoadGraph("data/Game/player.png");
+	m_NormalAttackHandle = LoadGraph("data/Game/Effect/Slash/Slash.png");
 	assert(m_handle >= 0);
 	m_anim = Anim::Idle;
 	ClearAttackRect();
@@ -582,6 +593,27 @@ void Player::Draw(Camera& camera)
 		kPlayerCutW * charaIdx, kPlayerCutH * charaIdy,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, m_angle * DX_PI / 180.0f, m_handle, true, true);
+	}
+
+	if(m_type == PlayerType::Normal && m_anim == Anim::Attack)
+	{
+		int charaIdx2;
+		charaIdx2 = (m_animframe / kSlashANimDuration) % kSlashAnimNum;
+		//スラッシュエフェクトの描画
+		if (m_isRight)
+		{
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + 50.0f, m_pos.y + camera.drawOffset.y,
+				kSlashCutW * charaIdx2, 0,//切り取り左上
+				kSlashCutW, kSlashCutH,//切り取りの幅
+				kSlashScale, 0.0f, m_NormalAttackHandle, true);
+		}
+		else
+		{
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x - 50.0f, m_pos.y + camera.drawOffset.y,
+				kSlashCutW * charaIdx2, 0,//切り取り左上
+				kSlashCutW, kSlashCutH,//切り取りの幅
+				kSlashScale, 0.0f, m_NormalAttackHandle, true, true);
+		}
 	}
 
 #ifdef _DEBUG

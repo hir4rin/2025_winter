@@ -36,7 +36,7 @@ namespace
 	//Slash
 	constexpr int kSlashCutW = 128;
 	constexpr int kSlashCutH = 128;
-	constexpr int kSlashScale = 1.0f;
+	constexpr int kSlashScale = 2.0f;
 	constexpr int kSlashANimDuration = 5;
 	constexpr int kSlashAnimNum = 5;
 
@@ -190,15 +190,17 @@ void Effect::Draw(Camera& camera)
 			  false);
 			break;
 	case EffectType::Slash://Slashの描画処理
-		charaIdx = (m_animFrame / kSlashANimDuration) % kBlueStarLightAnimNum;
+		charaIdx = (m_animFrame / kSlashANimDuration) % kSlashAnimNum;
 
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		float offset = m_dir ? +100.0f : -100.0f;
+
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + offset, m_pos.y + camera.drawOffset.y,
 			kSlashCutW * charaIdx, 0,//切り取り座標
 			 kSlashCutW, kSlashCutH,//切り取りの幅
 			 kSlashScale, 0.0f,//左が拡大率、右が回転率
 				 m_handle,
 				 true,
-				 true,//反転するかどうか
+				 m_dir ? false : true,//反転するかどうか
 					false);
 		break;
 	}
