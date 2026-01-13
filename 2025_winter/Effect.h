@@ -11,13 +11,14 @@ enum class EffectType
 	Star,
 	Dust,
 	DustForClear,
-	BlueStarLight
+	BlueStarLight,
+	Slash
 };
 
 class Effect : public Character
 {
 public:
-	Effect(Vec2 pos,std::string name);
+	Effect(Vec2 pos,std::string name,bool dir);
 	virtual ~Effect();
 
 	void Init()override;
@@ -35,6 +36,7 @@ private:
 	bool m_starDir;
 
 	EffectType m_type;
+	bool m_dir;
 
 };
 

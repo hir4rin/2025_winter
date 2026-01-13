@@ -853,6 +853,24 @@ void Player::InputUpdate(Input& input)
 				coolTimer = 0;
 			}
 		}
+		//effect
+		switch (m_type)
+		{
+		case PlayerType::Normal:
+			//エフェクトを出す
+			for (auto& func : onAttackEvents)
+			{
+				if (func)func();//呼び出し
+			}
+			break;
+		case PlayerType::Burning:
+			break;
+		case PlayerType::Frozen:
+			break;
+		case PlayerType::Archer:
+			break;
+		}
+
 	}
 	if (input.IsTriggered("Copy"))
 	{

@@ -72,6 +72,10 @@ private:
 	int m_archerHandle;
 	std::shared_ptr<Player> m_pPlayer;
 	//int m_playerHandle;
+
+
+private:
+	int m_fontHandle;// フォントハンドル
 	
 
 };

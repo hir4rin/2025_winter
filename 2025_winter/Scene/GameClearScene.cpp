@@ -50,7 +50,7 @@ draw_(&GameClearScene::FadeDraw)
 
 
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dustForClear"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dustForClear",false));
 			});
 }
 

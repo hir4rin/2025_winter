@@ -249,13 +249,13 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life);
 	//playerの状態によってエフェクトを出す
 	m_pPlayer->AddOnLandEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star",false));
 		});
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust",false));
 		});
 	m_pPlayer->AddOnDashEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust",false));
 		});
 
 	

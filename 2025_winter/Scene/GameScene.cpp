@@ -41,8 +41,8 @@ namespace
 	constexpr int kScreenWidth = 1920;
 	constexpr int kScreenHeight = 1080;
 
-	constexpr int fade_interval = 75; 
-	constexpr int copy_interval = 30; 
+	constexpr int fade_interval = 75;
+	constexpr int copy_interval = 30;
 
 	constexpr int shake_interval = 30;
 	constexpr int hit_interval = 40;
@@ -50,10 +50,11 @@ namespace
 
 	constexpr float FrozenSpeed = 13.0f;
 
+
 }
 
 
-GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,int hp,int Life) :
+GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type, int hp, int Life) :
 	Scene(controller),
 	m_stageNum(stageNum),
 	update_(&GameScene::FadeInUpdate),
@@ -63,6 +64,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 	switch (m_stageNum)
 	{
 	case 1://ステージ1_1
+	{
 		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1100.0f,500.0f), false });//移動用
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(1500.0f,500.0f), false });
@@ -72,15 +74,16 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//-----------------------------------------------------------------
 
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 },Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life);
 
 		m_pBg = new Bg(m_pPlayer, 1);
 		m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 
-
+	}
 		break;
 	case 2://ステージ1_2
+	{
 		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(700.0f,600.0f), false });//移動用
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1000.0f,600.0f), false });
@@ -105,8 +108,10 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pBg = new Bg(m_pPlayer, 2);
 		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
+	}
 		break;
 	case 3://ステージ1_3
+	{
 		//実質Initの使い方
 	//m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(700.0f,600.0f), false });//移動用
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1100.0f,500.0f), false });//上
@@ -130,8 +135,10 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 		m_pBg = new Bg(m_pPlayer, 3);
 		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
+	}
 		break;
 	case 6://ステージ2_1
+	{
 		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(1225.0f,800.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(1850.0f,850.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(1850.0f,700.0f), false });
@@ -146,16 +153,18 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5700.0f,900.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(6000.0f,800.0f), false });
 		//敵スポーン
-		
+
 		//------------------------------------------------------------------
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 		m_pBg = new Bg(m_pPlayer, 6);
 		m_doors = std::make_shared< Door>(Vec2{ 6050,864 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+	}
 		break;
 	case 7://ステージ2_2
 		//敵スポーン
+	{
 		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Walk, Vec2(776.0f,800.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(1100.0f,600.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Walk, Vec2(1550.0f,800.0f), false });//下の段
@@ -175,9 +184,11 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pBg = new Bg(m_pPlayer, 7);
 		m_doors = std::make_shared< Door>(Vec2{ 6130,600 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
+	}
 		break;
 	case 8://ステージ2_3
 		//敵スポーン
+	{
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(1300.0f,800.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1422.0f,670.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(1544.0f,544.0f), false });
@@ -190,7 +201,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		//------------------------------------------------------------------
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
-		
+
 		m_pBg = new Bg(m_pPlayer, 8);
 
 		m_pElite->SetPlayer(m_pPlayer);
@@ -219,9 +230,8 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_pElite->AddOnDeathEvent([this]() {
 			//カメラを揺らす
 			StartCameraShake(camera, 10.0f, 0.4f);
-});
-
-
+			});
+	}
 		break;
 	case 9:
 	{
@@ -237,52 +247,53 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 
 		m_pBg = new Bg(m_pPlayer, 8);
-				//熊
+		//熊
+		{
+			m_pBear->SetPlayer(m_pPlayer);
+			m_pBear->SetBgPointer(m_pBg);
+			//カメラ
+			m_pBear->AddOnAttack1EndEvent([this]() {
+				//カメラを揺らす
+				StartCameraShake(camera, 2.5f, 0.1f);
+});
+
+			//波動
+			m_pBear->AddOnAttackEndEvent([this]() {
+				Vec2 startPos = m_pBear->GetPos();
+				startPos.y += 16;//足元に合わせる
+
+				//左方向
+				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, -1)
+				);
+
+				//右方向
+				m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, 1)
+				);
+
+				//カメラを揺らす
+				StartCameraShake(camera, 10.0f, 0.2f);
+			});
+			//鮭
+			m_pBear->AddOnAttack3EndEvent([this]() {
+				for (int i = 0; i < 3; i++)
 				{
-					m_pBear->SetPlayer(m_pPlayer);
-					m_pBear->SetBgPointer(m_pBg);
-					//カメラ
-					m_pBear->AddOnAttack1EndEvent([this]() {
-						//カメラを揺らす
-						StartCameraShake(camera, 2.5f, 0.1f);
-		});
-		
-					//波動
-					m_pBear->AddOnAttackEndEvent([this]() {
-						Vec2 startPos = m_pBear->GetPos();
-						startPos.y += 16;//足元に合わせる
-		
-						//左方向
-						m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, -1)
-						);
-		
-						//右方向
-						m_waveManagers.push_back(std::make_unique<WaveManager>(startPos, 1)
-						);
-		
-						//カメラを揺らす
-						StartCameraShake(camera, 10.0f, 0.2f);
-					});
-					//鮭
-					m_pBear->AddOnAttack3EndEvent([this]() {
-						for (int i = 0; i < 3; i++)
-						{
-							m_pSalmons.push_back(std::make_shared<Salmon>(m_pBear->GetPos(), m_pBear->Getm_isRight(),i+1));
-					}
-					
-						//カメラを揺らす
-						StartCameraShake(camera, 10.0f, 0.2f);
-					});
-		
-				}
-				//狼
-				{
-					m_pWolf->SetPlayer(m_pPlayer);
-					m_pWolf->SetBgPointer(m_pBg);
+					m_pSalmons.push_back(std::make_shared<Salmon>(m_pBear->GetPos(), m_pBear->Getm_isRight(), i + 1));
 				}
 
+				//カメラを揺らす
+				StartCameraShake(camera, 10.0f, 0.2f);
+			});
 
-				//魚
+		}
+
+		//狼
+		{
+			m_pWolf->SetPlayer(m_pPlayer);
+			m_pWolf->SetBgPointer(m_pBg);
+		}
+
+
+		//魚
 		{
 			/*	for (auto& it : m_pFishers)
 				{
@@ -295,10 +306,10 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 	}
-		break;
+	break;
 	case 10:
 	{
-		
+
 		//
 		m_pFishersManager = std::make_shared<FishersManager>(Vec2{ 100,100 }, 1);
 
@@ -306,7 +317,7 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 
 		m_pBg = new Bg(m_pPlayer, 8);
-				//魚
+		//魚
 		{
 			/*	for (auto& it : m_pFishers)
 				{
@@ -319,15 +330,15 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 	}
-		break;
+	break;
 	}
-	
+
 	m_frame = fade_interval;// フェードインの最初
-	
+
 	InitCamera(camera);//カメラの初期化
 
 	//シーン切り替え後のにゅいーんをなくす
-	stageUI.Init(hp,m_pPlayer->GetType(),m_pPlayer->GetLife());
+	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());
 
 
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -335,13 +346,16 @@ GameScene::GameScene(SceneController& controller, int stageNum,PlayerType type,i
 
 	//playerの状態によってエフェクトを出す
 	m_pPlayer->AddOnLandEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star",false));
 		});
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust",false));
 		});
 	m_pPlayer->AddOnDashEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust"));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dust",false));
+		});
+	m_pPlayer->AddOnAttackEvent([this]() {
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "slash",m_pPlayer->Getm_isRight()));
 		});
 
 }
@@ -369,7 +383,7 @@ void GameScene::CheckHit()
 		CheckHitFrozen();
 		break;
 	}
-	
+
 
 }
 
@@ -447,7 +461,7 @@ void GameScene::CheckArrowHit()
 
 		++it;
 	}
-	
+
 	for (auto& num : m_arrows)
 	{
 		if (num == nullptr || !num->hitEnemyWizard)continue;
@@ -523,7 +537,7 @@ void GameScene::CheckArrowHit()
 		for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)
 		{
 			auto& e = m_pEnemyArchers[i];
-			if (e == enemy)
+			if (e == enemy) 
 			{
 
 				//アイテムを落とす処理
@@ -533,7 +547,7 @@ void GameScene::CheckArrowHit()
 				m_pItems.push_back(item);
 
 				//消えるとき絶対する処理
-		//対応するspawnを復活可能にする
+				//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
@@ -555,17 +569,17 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<EnemyEliteOrc> enemy = num->hitEnemyEliteOrc;
 
 		//敵リストから一致するやつを探して削除
-		
-		auto& e = m_pElite;
-			if (e == enemy)
-			{
 
-				
-				//bossにダメージを与える
-				e->HitBossDamage(10);
-				break;
-			}
-		
+		auto& e = m_pElite;
+		if (e == enemy)
+		{
+
+
+			//bossにダメージを与える
+			e->HitBossDamage(10);
+			break;
+		}
+
 		//矢のヒット情報をリセット
 		num->hitEnemyEliteOrc = nullptr;
 	}
@@ -577,17 +591,17 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<EnemyBear> enemy = num->hitEnemyBear;
 
 		//敵リストから一致するやつを探して削除
-		
-		auto& e = m_pBear;
-			if (e == enemy)
-			{
 
-				
-				//bossにダメージを与える
-				e->HitBossDamage(10);
-				break;
-			}
-		
+		auto& e = m_pBear;
+		if (e == enemy)
+		{
+
+
+			//bossにダメージを与える
+			e->HitBossDamage(10);
+			break;
+		}
+
 		//矢のヒット情報をリセット
 		num->hitEnemyBear = nullptr;
 	}
@@ -599,17 +613,17 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<EnemyWolf> enemy = num->hitEnemyWolf;
 
 		//敵リストから一致するやつを探して削除
-		
-		auto& e = m_pWolf;
-			if (e == enemy)
-			{
 
-				
-				//bossにダメージを与える
-				e->HitBossDamage(10);
-				break;
-			}
-		
+		auto& e = m_pWolf;
+		if (e == enemy)
+		{
+
+
+			//bossにダメージを与える
+			e->HitBossDamage(10);
+			break;
+		}
+
 		//矢のヒット情報をリセット
 		num->hitEnemyWolf = nullptr;
 	}
@@ -621,18 +635,18 @@ void GameScene::CheckArrowHit()
 		std::shared_ptr<Fish> enemy = num->hitEnemyFish;
 
 		//敵リストから一致するやつを探して削除
-		for(auto& e : m_pFishersManager->GetFish())
+		for (auto& e : m_pFishersManager->GetFish())
 		{
-			
-				if ( e == enemy)
-				{
-					//bossにダメージを与える
-					e->HitFishDamage(10);
-					break;
-				}
-			
+
+			if (e == enemy)
+			{
+				//bossにダメージを与える
+				e->HitFishDamage(10);
+				break;
+			}
+
 		}
-		
+
 		//矢のヒット情報をリセット
 		num->hitEnemyFish = nullptr;
 	}
@@ -645,9 +659,9 @@ void GameScene::CheckArrowHit()
 		bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e_arrow->GetColRect());
 		//敵がどっちから当たったかどうかを入れる
 		//矢とどの方向で当たったかどうか
-		if(!m_pPlayer->CheckStar())OnShake();
+		if (!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
-		
+
 		e_arrow->m_hitPlayer = nullptr;
 
 	}
@@ -677,13 +691,13 @@ void GameScene::CheckArrowHit()
 			m_pPlayer->DamageHit(isLeft);
 			it = nullptr;
 		}
-	
+
 	}
 
-	
+
 	//氷と当たったときの処理は氷の場所でやってる
 
-	
+
 }
 
 void GameScene::CheckFrozenHit()
@@ -786,7 +800,7 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-						
+
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -795,8 +809,8 @@ void GameScene::CheckFrozenHit()
 
 						}
 					}
-				
-			    }
+
+				}
 
 			}
 			//動いているときに敵と当たる//ボス熊
@@ -810,7 +824,7 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-						
+
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -819,8 +833,8 @@ void GameScene::CheckFrozenHit()
 
 						}
 					}
-				
-			    }
+
+				}
 
 			}
 			//動いているときに敵と当たる//ボス狼
@@ -834,7 +848,7 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-						
+
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -843,8 +857,8 @@ void GameScene::CheckFrozenHit()
 
 						}
 					}
-				
-			    }
+
+				}
 
 			}
 		}
@@ -862,15 +876,15 @@ void GameScene::CheckFrozenHit()
 				{
 					bool isLeft = e->GetColRect().CheckLeftHit(m_pFrozen->GetColRect());
 
-					if(isLeft)//キャラが左
+					if (isLeft)//キャラが左
 					{
 						e->ChangePos().x += -32.0f;//少し左にずらす
-						
+
 					}
 					else//かyらが右
 					{
 						e->ChangePos().x += 32.0f;//少し右にずらす
-						
+
 					}
 
 					//X軸の速度を反転する
@@ -879,7 +893,7 @@ void GameScene::CheckFrozenHit()
 					e->Changem_isRight();
 					//ここで敵のposを少しずらすとがくがくがなくなる
 
-				
+
 				}
 
 			}
@@ -975,7 +989,7 @@ void GameScene::CheckFrozenHit()
 			if (e_shot->GetColRect().IsCollision(frozen->GetColRect()))
 			{
 				e_shot = nullptr;
-				
+
 			}
 		}
 		//敵の矢と当たったとき
@@ -1028,7 +1042,7 @@ void GameScene::ReactionBurning()
 			//m_pBurningObject = nullptr;
 		}
 		else
-			{
+		{
 			++m_pBurningObject;//残す//次の要素へ進む
 		}
 
@@ -1076,9 +1090,9 @@ void GameScene::CheckHitNormal()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-				
+
 				//エフェクトを出す
-				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight",false));
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
@@ -1218,33 +1232,36 @@ void GameScene::CheckHitNormal()
 	}
 	//魚
 	{
-		if(m_pFishersManager)
-		for (auto& it : m_pFishersManager->GetFish())
+		if (m_pFishersManager)
 		{
-			
-			if (it == nullptr)continue;
-			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			for (auto& it : m_pFishersManager->GetFish())
 			{
-				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(it->GetColRect());
 
-
-				//矢の処理は別の場所(CheckhitArrow)
-
-				if (isHitAttack)
+				if (it == nullptr)continue;
+				//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+				if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
 				{
-					it->HitFishDamage(50);
-					//エフェクトを出す
-					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+					bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(it->GetColRect());
 
-					//インスタンスを消す
-				
 
+					//矢の処理は別の場所(CheckhitArrow)
+
+					if (isHitAttack)
+					{
+						it->HitFishDamage(50);
+						//エフェクトを出す
+						//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+
+						//インスタンスを消す
+
+
+					}
 				}
 			}
 		}
+
 	}
-	
+
 }
 
 void GameScene::CheckHitBurning()
@@ -1375,7 +1392,7 @@ void GameScene::CheckHitBurning()
 			}
 		}
 	}
-	
+
 	//ボス狼
 	{
 		if (m_pWolf != nullptr)
@@ -1394,17 +1411,17 @@ void GameScene::CheckHitBurning()
 			for (auto& it : m_pFishersManager->GetFish())
 			{
 				if (it == nullptr)continue;
-					bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(it->GetColRect());
-					if (isHitAttack)
-					{
-						it->HitFishDamage(50);
-						//エフェクトを出す
-						//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
+				bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(it->GetColRect());
+				if (isHitAttack)
+				{
+					it->HitFishDamage(50);
+					//エフェクトを出す
+					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
-						//インスタンスを消す
+					//インスタンスを消す
 
 
-					}
+				}
 			}
 	}
 
@@ -1473,6 +1490,7 @@ void GameScene::CheckFastBurning()
 	{
 		auto& e = m_pEnemyArchers[i];
 		if (!e)continue;
+
 		//バーニングの攻撃の矩形との当たり判定チェック
 		if (CheckSweepHit(p0, p1, e->GetColRect()))
 		{
@@ -1539,10 +1557,10 @@ void GameScene::CheckFastBurning()
 				{
 					it->HitFishDamage(50);
 				}
-			
+
 			}
 	}
-	
+
 
 }
 
@@ -1671,7 +1689,7 @@ void GameScene::CheckHitFrozen()
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
 
 
-			
+
 
 				//インスタンスを消す
 				m_pBossShots.erase(m_pBossShots.begin() + i);
@@ -1690,14 +1708,13 @@ void GameScene::CheckHitFrozen()
 			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
 			//矢の処理は別の場所(CheckhitArrow)
 
-
 			if (isHitFrozen)
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
 
 
-			
+
 
 				//インスタンスを消す
 				m_pSalmons.erase(m_pSalmons.begin() + i);
@@ -1804,7 +1821,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				
+
 				//敵が消える処理
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
@@ -1817,7 +1834,7 @@ void GameScene::CheckPlayer()
 			}
 
 
-			
+
 
 		}
 	}
@@ -1852,7 +1869,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 				//敵が消える処理
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
@@ -1864,7 +1881,7 @@ void GameScene::CheckPlayer()
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 			}
 
-		
+
 
 		}
 	}
@@ -1900,7 +1917,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 				//敵が消える処理
 				//消えるとき絶対する処理
 					//対応するspawnを復活可能にする
@@ -1911,7 +1928,7 @@ void GameScene::CheckPlayer()
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			}
-			
+
 
 		}
 	}
@@ -1930,7 +1947,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 			}
 		}
 	}
@@ -1947,7 +1964,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 			}
 		}
 		//ボスとの当たり判定
@@ -1960,7 +1977,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 			}
 		}
 	}
@@ -1976,11 +1993,11 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 			}
 		}
 		//ボスとの当たり判定
-		if (m_pBear != nullptr&& !m_pBear->GetIsDead())
+		if (m_pBear != nullptr && !m_pBear->GetIsDead())
 		{
 			if (m_pBear->GetColRect().IsCollision(m_pPlayer->GetColRect()))
 			{
@@ -1989,7 +2006,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-				
+
 			}
 		}
 	}
@@ -2005,7 +2022,7 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 			}
 		}
 		//ボスとの当たり判定
@@ -2018,33 +2035,33 @@ void GameScene::CheckPlayer()
 				//プレイヤーのダメージ処理
 				if (!m_pPlayer->CheckStar())OnShake();
 				m_pPlayer->DamageHit(isLeft);
-			
+
 			}
 		}
 	}
 	//魚
 	{
-		if(m_pFishersManager)
-		for (auto& it : m_pFishersManager->GetFish())
-		{
-			if (!it)continue;
-			if (m_pPlayer->GetColRect().IsCollision(it->GetColRect()))
+		if (m_pFishersManager)
+			for (auto& it : m_pFishersManager->GetFish())
 			{
+				if (!it)continue;
+				if (m_pPlayer->GetColRect().IsCollision(it->GetColRect()))
+				{
 
-				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
-				//敵がどっちから当たったかどうかを入れる
-				//プレイヤーのダメージ処理
-				if (!m_pPlayer->CheckStar())OnShake();
-				m_pPlayer->DamageHit(isLeft);
-				
+					bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+					//敵がどっちから当たったかどうかを入れる
+					//プレイヤーのダメージ処理
+					if (!m_pPlayer->CheckStar())OnShake();
+					m_pPlayer->DamageHit(isLeft);
 
-				//
-				it->HitFishDamage(25);
+
+					//
+					it->HitFishDamage(25);
+				}
 			}
-		}
 	}
-	
-	
+
+
 	//回復アイテムを取ったときの反応
 	for (auto& potion : m_pPotions)
 	{
@@ -2056,7 +2073,7 @@ void GameScene::CheckPlayer()
 			potion = nullptr;
 		}
 	}
-	
+
 }
 
 
@@ -2065,7 +2082,7 @@ bool  GameScene::CheckDropped()
 {
 	bool dropped = m_pPlayer->GetPos().y > screenHeight + 50;//UIの分上に上がったのでその分
 
-	
+
 	if (dropped)
 	{
 		//DyingActと同じ処理
@@ -2074,10 +2091,10 @@ bool  GameScene::CheckDropped()
 			stageUI.Init(0, m_pPlayer->GetType(), m_pPlayer->GetLife());//HPを0にする
 			StartCameraShake(camera, 20.0f, 0.2f);
 			update_ = &GameScene::ShakingUpdate;
-			
+
 		}
-		
-		return true; 
+
+		return true;
 	}
 	return false;
 }
@@ -2088,7 +2105,7 @@ void GameScene::DyingAct()
 	StartCameraShake(camera, 20.0f, 0.2f);
 	update_ = &GameScene::ShakingUpdate;
 
-	
+
 }
 
 void GameScene::OnShake()
@@ -2101,64 +2118,64 @@ void GameScene::CopyAct(Input& input)
 	for (auto& item : m_pItems)
 	{
 		if (!item)continue;
-			//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
-			if (m_pPlayer->GetState() == PlayerState::Copy)
+		//プレイヤーがコピー状態かつ変身アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Copy)
+		{
+			if (m_pPlayer->GetAnimIdx() > 3)
 			{
-				if (m_pPlayer->GetAnimIdx() > 3)
+				//プレイヤーの当たり判定とアイテムの当たり判定をチェック
+				bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(item->GetColRect());
+				if (isHitItem)
 				{
-					//プレイヤーの当たり判定とアイテムの当たり判定をチェック
-					bool isHitItem = m_pPlayer->GetColCopyRect().IsCollision(item->GetColRect());
-					if (isHitItem)
+					//ここにアイテムを取得したときの処理を書く
+					if (item->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
 					{
-						//ここにアイテムを取得したときの処理を書く
-						if (item->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
-						{
 
-							m_pPlayer->ChangeBurning();
-							item = nullptr;
-							//ここでアップデートを変える
-							update_ = &GameScene::CopyingUpdate;
-							draw_ = &GameScene::NormalDraw;
-							m_frame = 0;
-							return;
+						m_pPlayer->ChangeBurning();
+						item = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene::CopyingUpdate;
+						draw_ = &GameScene::NormalDraw;
+						m_frame = 0;
+						return;
 
-						}
-						else if (item->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
-						{
+					}
+					else if (item->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
+					{
 
-							m_pPlayer->ChangeFrozen();
-							item = nullptr;
-							//ここでアップデートを変える
-							update_ = &GameScene::CopyingUpdate;
-							draw_ = &GameScene::NormalDraw;
-							m_frame = 0;
-							return;
-						}
-						else if (item->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
-						{
+						m_pPlayer->ChangeFrozen();
+						item = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene::CopyingUpdate;
+						draw_ = &GameScene::NormalDraw;
+						m_frame = 0;
+						return;
+					}
+					else if (item->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
+					{
 
-							m_pPlayer->ChangeArcher();
-							item = nullptr;
-							//ここでアップデートを変える
-							update_ = &GameScene::CopyingUpdate;
-							draw_ = &GameScene::NormalDraw;
-							m_frame = 0;
-							return;
-						}
+						m_pPlayer->ChangeArcher();
+						item = nullptr;
+						//ここでアップデートを変える
+						update_ = &GameScene::CopyingUpdate;
+						draw_ = &GameScene::NormalDraw;
+						m_frame = 0;
+						return;
 					}
 				}
-
 			}
 
-		
+		}
+
+
 	}
-	
+
 
 	if (input.IsTriggered("CopyOut"))
 	{
 		if (!(m_pPlayer->GetType() == PlayerType::Normal))
 		{
-		
+
 			//プレイヤーのタイプに応じて落とすアイテムを変える
 			switch (m_pPlayer->GetType())
 			{
@@ -2180,7 +2197,7 @@ void GameScene::CopyAct(Input& input)
 			}
 			//プレイヤーをノーマルに戻す
 			m_pPlayer->ChangeNormal();
-			
+
 		}
 	}
 }
@@ -2191,7 +2208,7 @@ void GameScene::FadeInUpdate(Input&)
 	if (m_pPlayer != nullptr)UpdateCamera(camera, m_pPlayer);
 
 
-	
+
 
 	if (m_frame-- <= 0)
 	{
@@ -2211,13 +2228,13 @@ void GameScene::NormalUpdate(Input& input)
 	//お試しテスト用
 	if (input.IsTriggered("ok"))
 	{
-		
+
 	}
 
 
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	
+
 
 #ifdef _DEBUG
 	if (input.IsTriggered("ok"))
@@ -2238,7 +2255,7 @@ void GameScene::NormalUpdate(Input& input)
 	//ポーズ画面
 	if (input.IsTriggered("pause"))
 	{
-		controller_.SetPlayerInfo(m_pPlayer->GetType(),m_pPlayer->GetHp(),m_pPlayer->GetLife());
+		controller_.SetPlayerInfo(m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife());
 		controller_.PushScene(std::make_shared<PauseScene>(controller_));
 		return;
 	}
@@ -2270,7 +2287,7 @@ void GameScene::NormalUpdate(Input& input)
 
 	//プレイヤー関連
 	{
-	
+
 		//プレイヤーのHpが0以下だったら死ぬ
 		if (m_pPlayer->GetHp() <= 0)
 		{
@@ -2296,10 +2313,10 @@ void GameScene::NormalUpdate(Input& input)
 			m_pPlayer->isArrowAttack = false;
 		}
 	}
-	
+
 	//敵関連
 	{
-	
+
 
 
 		for (auto& enemy : m_pEnemyWizards)//ペンギン
@@ -2337,7 +2354,7 @@ void GameScene::NormalUpdate(Input& input)
 			if (m_pElite->GetIsThrow())
 			{
 				//投げるものを生成
-				m_pBossShots.push_back(std::make_shared<BossShot>(m_pElite->Getm_isRight(),m_pElite->GetPos()));
+				m_pBossShots.push_back(std::make_shared<BossShot>(m_pElite->Getm_isRight(), m_pElite->GetPos()));
 			}
 
 			if (m_pElite->GetIsDead())
@@ -2350,24 +2367,24 @@ void GameScene::NormalUpdate(Input& input)
 		{
 			m_pBear->Update();
 
-		
+
 
 			if (m_pBear->GetIsDead())
 			{
 				m_pBear = nullptr;
-				
+
 			}
 		}
 		if (m_pWolf != nullptr)//ボス狼
 		{
 			m_pWolf->Update();
 
-		
+
 
 			if (m_pWolf->GetIsDead())
 			{
 				m_pWolf = nullptr;
-				
+
 			}
 		}
 		//salmonを消す処理
@@ -2388,7 +2405,7 @@ void GameScene::NormalUpdate(Input& input)
 		}
 		//魚
 		{
-			if(m_pFishersManager)
+			if (m_pFishersManager)
 				for (auto& it : m_pFishersManager->GetFish())
 				{
 					if (!it)continue;
@@ -2396,7 +2413,7 @@ void GameScene::NormalUpdate(Input& input)
 					it->SetBgPointer(m_pBg);
 				}
 		}
-	
+
 		if (m_pFishersManager)m_pFishersManager->Update(m_pBg);
 
 		for (auto& wm : m_waveManagers)
@@ -2415,7 +2432,7 @@ void GameScene::NormalUpdate(Input& input)
 				), m_waveManagers.end()
 			);
 		}
-		
+
 	}
 	//矢関連
 	{
@@ -2436,7 +2453,7 @@ void GameScene::NormalUpdate(Input& input)
 			arrow->CheckEnemys(m_pElite);
 			arrow->CheckEnemys(m_pBear);
 			arrow->CheckEnemys(m_pWolf);
-			if(m_pFishersManager)arrow->CheckEnemys(m_pFishersManager->GetFish());
+			if (m_pFishersManager)arrow->CheckEnemys(m_pFishersManager->GetFish());
 		}
 
 		for (auto& arrow : m_pEnemyArrows)//敵の矢のアップデート
@@ -2480,7 +2497,7 @@ void GameScene::NormalUpdate(Input& input)
 			if (pBurningObject) pBurningObject->Update();
 		}
 	}
-	
+
 	//エフェクト
 	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
 	{
@@ -2493,10 +2510,10 @@ void GameScene::NormalUpdate(Input& input)
 	}
 	//アイテム関連
 	{
-		for(auto& item : m_pItems)//アイテムのアップデート
+		for (auto& item : m_pItems)//アイテムのアップデート
 		{
 			if (!item)continue;
-			if(item->IsInitDead())
+			if (item->IsInitDead())
 			{
 				item = nullptr;
 			}
@@ -2514,7 +2531,7 @@ void GameScene::NormalUpdate(Input& input)
 		);
 		for (auto item = m_pItems.begin(); item != m_pItems.end(); )
 		{
-		
+
 			//nullptrのアイテムをけす、違ったらUpdate
 			if (*item == nullptr)
 				item = m_pItems.erase(item);  // ← 安全に削除(いらないけど一応(上でけしてるから))
@@ -2548,7 +2565,7 @@ void GameScene::NormalUpdate(Input& input)
 			potion->Update();
 		}
 	}
-	
+
 	CheckHit();//3種の攻撃の当たり判定
 	CopyAct(input);//アイテム取得の処理関連
 	CheckArrowHit();
@@ -2567,10 +2584,10 @@ void GameScene::FadeOutUpdate(Input&)
 
 
 
-	
+
 	m_doors->OutUpdate();
-	
-	
+
+
 
 
 	if (m_frame++ >= fade_interval)
@@ -2580,7 +2597,7 @@ void GameScene::FadeOutUpdate(Input&)
 		switch (m_stageNum)
 		{
 		case 1:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum+1, m_pPlayer->GetType(), m_pPlayer->GetHp(),m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
 		case 2:
@@ -2617,7 +2634,7 @@ void GameScene::FadeOutUpdate(Input&)
 		}
 
 
-		
+
 	}
 }
 
@@ -2636,10 +2653,10 @@ void GameScene::CopyingUpdate(Input&)
 
 void GameScene::DyingUpdate(Input& input)
 {
-	
+
 	m_pPlayer->DyingUpdate();
-	
-	
+
+
 	if (m_frame++ >= fade_interval * 1.5f)
 	{
 		//ライフを1減らす
@@ -2648,7 +2665,7 @@ void GameScene::DyingUpdate(Input& input)
 		if (m_pPlayer->CheckLife())
 		{
 			delete m_pBg;
-			controller_.ChangeScene(std::make_shared<GameoverScene>(controller_,m_pPlayer->GetType()));
+			controller_.ChangeScene(std::make_shared<GameoverScene>(controller_, m_pPlayer->GetType()));
 			return;
 		}
 		//delete m_pCharacter;
@@ -2656,42 +2673,31 @@ void GameScene::DyingUpdate(Input& input)
 		switch (m_stageNum)
 		{
 		case 1:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
+			
 		case 2:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
 		case 3:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_,m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
 		case 6://ステージ2_1
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
 		case 7:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
 		case 8:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
 		case 9:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 		case 10:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			break;
 		}
-
-
-
-
-	
 	}
 }
 
@@ -2709,11 +2715,12 @@ void GameScene::ShakingUpdate(Input&)
 
 void GameScene::FadeDraw()
 {
-	
-
 
 	NormalDraw();
-	if(update_ == &GameScene::DyingUpdate)m_pPlayer->DyingDraw(camera);
+	if (update_ == &GameScene::DyingUpdate)
+	{
+		m_pPlayer->DyingDraw(camera);
+	}
 
 	//フェード
 	m_pBg->FadeInBg(camera);
@@ -2731,9 +2738,9 @@ void GameScene::FadeDraw()
 void GameScene::FadeInDraw()
 {
 	NormalDraw();
-	
 
-	//フェード
+
+	//フェード6L
 	m_pBg->FadeInBg(camera);
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
@@ -2762,14 +2769,14 @@ void GameScene::FadeOutDraw()
 void GameScene::NormalDraw()
 {
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	
-	
+
+
 	if (update_ == &GameScene::CopyingUpdate)//変身中の暗転
 	{
 		//灰色にしたいものをここに
 		m_pBg->Draw(camera);
 		m_doors->Draw(camera);
-		
+
 		for (auto& item : m_pItems)
 		{
 			if (!item)continue;
@@ -2844,7 +2851,7 @@ void GameScene::NormalDraw()
 		for (auto& potion : m_pPotions)
 		{
 			if (potion)
-			potion->Draw(camera);
+				potion->Draw(camera);
 		}
 		//ステージUI
 		stageUI.Draw(camera);
@@ -2859,8 +2866,8 @@ void GameScene::NormalDraw()
 	{
 		m_pBg->Draw(camera);
 		m_doors->Draw(camera);
-	
-	
+
+
 		for (auto& enemy : m_pEnemyWizards)//ペンギン
 		{
 			if (enemy) enemy->Draw(camera);
@@ -2875,10 +2882,10 @@ void GameScene::NormalDraw()
 		}
 		for (auto& it : m_pSalmons)//鮭
 		{
-			if(it)it->Draw(camera);
+			if (it)it->Draw(camera);
 		}
 		if (m_pFishersManager)m_pFishersManager->Draw(camera);
-		
+
 		if (m_pElite != nullptr)//ボス
 		{
 			m_pElite->Draw(camera);
@@ -2949,7 +2956,7 @@ void GameScene::NormalDraw()
 		DrawBox(left + camera.drawOffset.x, top, right + camera.drawOffset.x, bottom, GetColor(255, 255, 0), false);
 	}
 
-	
+
 }
 
 bool GameScene::CheckSweepHit(const Vec2& p0, const Vec2& p1, const Rect& rect)
@@ -3135,7 +3142,7 @@ void GameScene::CheckBossCamera()
 {
 	//ステージ8専用処理
 
-	
+
 
 
 

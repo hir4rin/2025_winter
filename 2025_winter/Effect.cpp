@@ -33,10 +33,16 @@ namespace
 	constexpr float kBlueStarLightScale = 4.0f;
 	constexpr int kBlueStarLightAnimDuration = 10;
 	constexpr int kBlueStarLightAnimNum = 4;
+	//Slash
+	constexpr int kSlashCutW = 128;
+	constexpr int kSlashCutH = 128;
+	constexpr int kSlashScale = 1.0f;
+	constexpr int kSlashANimDuration = 5;
+	constexpr int kSlashAnimNum = 5;
 
 }
 
-Effect::Effect(Vec2 pos,std::string name):
+Effect::Effect(Vec2 pos,std::string name,bool dir):
 	m_aliveFrame(20),
 	m_starDir(true),
 	charaIdx(0),
@@ -75,6 +81,12 @@ Effect::Effect(Vec2 pos,std::string name):
 		m_type = EffectType::BlueStarLight;
 		m_handle = LoadGraph("data/Game/WaterEffect.png");
 	}
+	if(name == "slash")
+	{
+		m_type = EffectType::Slash;
+		m_handle = LoadGraph("data/Game/Effect/Slash/Slash.png");
+		m_dir = dir;
+	}
 	
 }
 
@@ -108,6 +120,8 @@ void Effect::Update()
 		case EffectType::BlueStarLight:
 			
 			break;
+		case EffectType::Slash:
+			break;
 
 	}
 
@@ -128,14 +142,14 @@ void Effect::Draw(Camera& camera)
 	{
 	case EffectType::Star:
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		 0, 0,
-		 kStarCutW, kStarCutH,//切り取りの幅
-		 kStarScale, 0.0f,//左が拡大率、右が回転率
-		 m_handle,
-		 true,
-		 m_starDir ? false : true,//反転するかどうか
-		  false);
-		break;
+					0, 0,
+				 kStarCutW, kStarCutH,//切り取りの幅
+					 kStarScale, 0.0f,//左が拡大率、右が回転率
+				 m_handle,
+				 true,
+				 m_starDir ? false : true,//反転するかどうか
+				  false);
+				break;
 	case EffectType::Dust://Dustの描画処理
 		charaIdx = (m_animFrame / kDustAnimDuration) % kDustAnimNum;
 
@@ -154,30 +168,38 @@ void Effect::Draw(Camera& camera)
 		
 		
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		 kDustForClearCutW * charaIdx, 0,//切り取り座標
-		 kDustForClearCutW, kDustForClearCutH,//切り取りの幅
-		 kDustForClearScale, 0.0f,//左が拡大率、右が回転率
-		 m_handle,
-		 true,
-		 true,//反転するかどうか
-		  false);
-		
-		
-		break;
+				 kDustForClearCutW * charaIdx, 0,//切り取り座標
+				 kDustForClearCutW, kDustForClearCutH,//切り取りの幅
+				 kDustForClearScale, 0.0f,//左が拡大率、右が回転率
+				 m_handle,
+				 true,
+				 true,//反転するかどうか
+				  false);
+					break;
 	case EffectType::BlueStarLight://BlueStarLightの描画処理
 		charaIdx = (m_animFrame / kBlueStarLightAnimDuration) % kBlueStarLightAnimNum;
 		
 		
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
-		 kBlueStarLightSorW+ kBlueStarLightCutW * charaIdx, kBlueStarLightSorH,//切り取り座標
-		 kBlueStarLightCutW, kBlueStarLightCutH,//切り取りの幅
-		 kBlueStarLightScale, 0.0f,//左が拡大率、右が回転率
-		 m_handle,
-		 true,
-		 true,//反転するかどうか
-		  false);
-		
-		
+			 kBlueStarLightSorW+ kBlueStarLightCutW * charaIdx, kBlueStarLightSorH,//切り取り座標
+			 kBlueStarLightCutW, kBlueStarLightCutH,//切り取りの幅
+			 kBlueStarLightScale, 0.0f,//左が拡大率、右が回転率
+			 m_handle,
+			 true,
+			 true,//反転するかどうか
+			  false);
+			break;
+	case EffectType::Slash://Slashの描画処理
+		charaIdx = (m_animFrame / kSlashANimDuration) % kBlueStarLightAnimNum;
+
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+			kSlashCutW * charaIdx, 0,//切り取り座標
+			 kSlashCutW, kSlashCutH,//切り取りの幅
+			 kSlashScale, 0.0f,//左が拡大率、右が回転率
+				 m_handle,
+				 true,
+				 true,//反転するかどうか
+					false);
 		break;
 	}
 		

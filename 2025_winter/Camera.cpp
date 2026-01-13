@@ -69,10 +69,10 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 
 	
 	camera.pos.x = std::lerp(camera.pos.x, camerafuture, t);
-
 	
+#ifdef _DEBUG
 	DrawFormatString(camera.pos.x, camera.pos.y, GetColor(255, 0, 0), "camera.pos.x:%f", camera.pos.x);
-
+#endif
 
 		/////////////////////////////////////////////////////////////////////////////
 		// ↓drawOffset補正
@@ -87,7 +87,7 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 	// その時、画面の中央にプレイヤーが来るようにする
 	// (camera.posが画面の中央になるようにする)
 	camera.drawOffset.x = camera.drawOffset.x + (ScreenWidth * 0.5f);
-	camera.drawOffset.y = camera.drawOffset.y - (ScreenHeight - topPos);//+(ScreenHeight * 0.5f) //ScreenHeight * 0.125f
+	camera.drawOffset.y = camera.drawOffset.y - (ScreenHeight - topPos); //ScreenHeight * 0.125f// + (ScreenHeight * 0.5f)
 	//カメラシェイク処理
 	if (camera.shakeTimer > 0.0f)
 	{

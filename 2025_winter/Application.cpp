@@ -35,6 +35,8 @@ bool Application::Init()
 	//SetWindowSize(640, 480);
 
 	ChangeWindowMode(true);
+	//フォントの読み込みを行う
+	AddFontResourceEx("data/Font/x10y12pxDonguriDuel.ttf", FR_PRIVATE, NULL);
 
 
 
@@ -109,6 +111,9 @@ void Application::Run()
 
 void Application::Terminate()
 {
+	//フォントの解放を行う
+	RemoveFontResourceEx("data/Font/x10y12pxDonguriDuel.ttf", FR_PRIVATE, NULL);
+
 	DxLib_End();
 }
 

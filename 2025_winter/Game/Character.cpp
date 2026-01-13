@@ -236,10 +236,10 @@ HitDir  Character::CheckHitMapPlayer(Rect& chipRect)
         m_pos.y += m_vel.y;
 	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize - 1, kCharaSize - 1);
 
-
+#ifdef _DEBUG
 	DrawFormatString(1000, 120, GetColor(255, 0, 0), "m_vel.xは%fです", m_vel.x);
 	DrawFormatString(1000, 140, GetColor(255, 0, 0), "m_vel.yは%fです", m_vel.y);
-
+#endif
 	if (m_pBg->IsCollisionPlayer(m_colRect, chipRect,hitClear))
 	{
 

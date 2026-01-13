@@ -164,6 +164,10 @@ public:
 	void AddOnDashEvent(const std::function<void()>& eventFunc) {
 		onDashEvents.push_back(eventFunc);
 	}
+	std::vector<std::function<void()>> onAttackEvents;
+	void AddOnAttackEvent(const std::function<void()>& eventFunc) {
+		onAttackEvents.push_back(eventFunc);
+	}
 	
 
 private:

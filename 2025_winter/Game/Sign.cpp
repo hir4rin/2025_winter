@@ -48,7 +48,7 @@ void Sign::Draw(Camera& camera)
 	int oldSize = GetFontSize();
 	SetFontSize(32);
 
-	DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d位", m_num);
+	DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d", m_num);
 
 	//フォントサイズを元に戻す(元は16)
 	SetFontSize(oldSize);
