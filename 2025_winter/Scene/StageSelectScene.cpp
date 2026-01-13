@@ -246,7 +246,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	draw_ = &StageSelectScene::FadeInDraw;
 
 	m_frame = fade_interval;
-	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life);
+	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 	//playerの状態によってエフェクトを出す
 	m_pPlayer->AddOnLandEvent([this]() {
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star",false));
@@ -259,19 +259,19 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 		});
 
 	
-	m_pBg = new Bg(m_pPlayer, 1);
+	m_pBg = new Bg(m_pPlayer, 0);
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());
 
 	m_pPlayer->SetBgPointer(m_pBg);
 
-	InitCamera(camera);//カメラの初期化
+	InitCamera(camera,0);//カメラの初期化
 
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 500,736 },StageID::Fstage));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1000,736 },StageID::Sstage));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1600,736 },StageID::Tstage));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 2200,736 },StageID::Forthstage));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 300,800 },StageID::Fstage));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 800,800 },StageID::Sstage));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1300,800 },StageID::Tstage));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1950,672 },StageID::Forthstage));
 
 }
 

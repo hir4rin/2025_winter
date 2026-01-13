@@ -81,7 +81,14 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 	{
 	case 0:
 		m_mapH = LoadGraph("data/Stage/map.png");
-		m_bgH = LoadGraph("data/background.png");
+		m_bgH = LoadGraph("data/Back/nature_1/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_1/2.png");
+		m_bgH3 = LoadGraph("data/Back/nature_1/3.png");
+		m_bgH4 = LoadGraph("data/Back/nature_1/4.png");
+		m_bgH5 = LoadGraph("data/Back/nature_1/5.png");
+		m_bgH6 = LoadGraph("data/Back/nature_1/6.png");
+		m_bgH7 = LoadGraph("data/Back/nature_1/7.png");
+		m_bgH8 = LoadGraph("data/Back/nature_1/8.png");
 		break;
 	case 1://1_1
 		m_mapH = LoadGraph("data/Stage/map.png");
@@ -135,6 +142,7 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
 		m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
+		
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
 		break;
@@ -195,7 +203,7 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 
 	switch (StageNum)
 	{
-	case 0://stage0
+	case 0://stageSelect
 		LoadMapData();
 		break;
 	case 1://最初のマップ
@@ -367,7 +375,7 @@ void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 	switch (StageNum)
 	{
 	case 0:
-	
+		rateY = 0.8f;
 		break;
 	case 1://1_1
 		rateY = 0.8f;
@@ -445,7 +453,19 @@ void Bg::DrawBg(Camera& camera)
 	switch (StageNum)
 	{
 	case 0:
-		
+		SetDrawBright(t, t, t);// ← 中景
+		BgHSetDraw(camera, m_bgH, 0.0);
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		if (m_bgH5 != -1)BgHSetDraw(camera, m_bgH5, 0.3);
+		if (m_bgH6 != -1)BgHSetDraw(camera, m_bgH6, 0.5);
+		if (m_bgH7 != -1)BgHSetDraw(camera, m_bgH7, 0.5);
+		//SetDrawBright(255, 255, 255);// ← 前景
+		if (m_bgH8 != -1)BgHSetDraw(camera, m_bgH8, 1.0);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
+
 		break;
 	case 1://1_1
 	
@@ -523,10 +543,10 @@ void Bg::DrawBg(Camera& camera)
 
 
 }
-
+//ステージセレクと
 void Bg::LoadMapData()
 {
-	std::ifstream file("data/Stage/map1.csv");
+	std::ifstream file("data/Stage/StageSelect.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -541,12 +561,13 @@ void Bg::LoadMapData()
 		while (getline(stream, field, ',') && x < kChipNumX)
 		{
 			// 文字列をint型に変換してm_chipDataに追加する
-			m_chipData[x][y] = std::stoi(field);
+			m_chipData0[x][y] = std::stoi(field);
 			x++;
 		}
 		y++;
 	}
 }
+//1_1のマップデータ
 void Bg::LoadMapData0()
 {
 	std::ifstream file("data/Stage/stage1_1.csv");
@@ -911,14 +932,14 @@ void Bg::DrawMapChip(Camera& camera)
 			int posY = static_cast<int>(y * kChipSize * kChipScale + camera.drawOffset.y);
 
 			// 画面外は描画しない
-			if (posX < 0 - kChipSize) continue;
-			if (posX > kScreenSizeWidth) continue;
+			if (posX < 0 - kChipSize * kChipScale) continue;
+			if (posX > kScreenSizeWidth + kChipSize * kChipScale) continue;
 			if (posY < 0 - kChipSize) continue;
 			if (posY > kScreenSizeHeight) continue;
 
 			// 設置するチップ
-			int chipNo = m_chipData[x][y];
-			if (chipNo == 5) continue; // チップ番号5は空白なので描画しない
+			int chipNo = m_chipData0[x][y];
+			if (chipNo == 0) continue; // チップ番号5は空白なので描画しない
 
 			// マップチップのグラフィック切り出し座標
 			int srcX = kChipSize * (chipNo % m_graphChipNumX);
@@ -933,8 +954,20 @@ void Bg::DrawMapChip(Camera& camera)
 				m_mapH, true);
 
 #ifdef _DEBUG
-			// 当たり判定
-			DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale, 0x00ff00, false);
+			bool clearnness = (m_chipData0[x][y] == 39 ||
+						   m_chipData0[x][y] == 40 ||
+						   m_chipData0[x][y] == 41);
+			if (clearnness)
+			{
+				// 当たり判定
+				DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale * kThrough, 0x00ff00, false);
+			}
+			else
+			{
+				// 当たり判定
+				DrawBoxAA(posX, posY, posX + kChipSize * kChipScale, posY + kChipSize * kChipScale, 0x00ff00, false);
+			}
+
 #endif
 		}
 	}

@@ -12,15 +12,51 @@ namespace
 	const float topPos = ScreenHeight * 0.75;
 
 	constexpr float t = 0.1f;
+
+
 }
 
 // カメラ範囲
 const float CameraScopeRangeW = 400.0f;
 const float CameraScopeRangeH = 300.0f;
 
-void InitCamera(Camera& camera)
+void InitCamera(Camera& camera,int StageNum)
 {
 	camera.pos = { ScreenWidth * 0.5f, 0.0f };
+	//ステージによって右の最大値を変える
+
+	switch (StageNum)
+	{
+	case 0://ステージセレクトシーン
+		camera.cameraRightMax = 2180.0f - ScreenWidth * 0.5f;
+		break;
+	case 1://1-1
+		camera.cameraRightMax = 5438.0f - ScreenWidth * 0.5f;
+		break;
+	case 2://1-2
+		camera.cameraRightMax = 6398.0f - ScreenWidth * 0.5f;
+		break;
+	case 3://1-3
+		camera.cameraRightMax = 6974.0f - ScreenWidth * 0.5f;
+		break;
+	case 4://Clear
+		camera.cameraRightMax = 20000.0f - ScreenWidth * 0.5f;
+		break;
+	case 6://2_1
+		camera.cameraRightMax = 6270.0f - ScreenWidth * 0.5f;
+		break;
+	case 7://2_2
+		camera.cameraRightMax = 6410.0f - ScreenWidth * 0.5f;
+		break;
+	case 8://2_3
+		camera.cameraRightMax = 5118.0f - ScreenWidth * 0.5f;
+		break;
+	default:
+		break;
+	}
+
+	
+	
 }
 
 void StartCameraShake(Camera& camera, float power, float time)
@@ -51,9 +87,9 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 			camerafuture = ScreenWidth * 0.5f;
 			//camera.pos.x = ScreenWidth * 0.5f;
 		}
-		else if (pPlayer->GetPos().x > 20000.0f - ScreenWidth * 0.5f)//最大値のほう
+		else if (pPlayer->GetPos().x > camera.cameraRightMax)//最大値のほう
 		{
-			camerafuture = ScreenWidth * 0.5f;
+			camerafuture = camera.cameraRightMax;
 			//camera.pos.x = 5000.0f - ScreenWidth * 0.5f;
 		}
 		else

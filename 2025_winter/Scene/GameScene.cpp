@@ -107,7 +107,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 
 		m_pBg = new Bg(m_pPlayer, 2);
 		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
-		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
+		m_doors = std::make_shared< Door>(Vec2{ 6300,850 });
 	}
 		break;
 	case 3://ステージ1_3
@@ -134,7 +134,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 		m_pBg = new Bg(m_pPlayer, 3);
-		m_doors = std::make_shared< Door>(Vec2{ 6000,850 });
+		m_doors = std::make_shared< Door>(Vec2{ 6879,928 });
 	}
 		break;
 	case 6://ステージ2_1
@@ -335,7 +335,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 
 	m_frame = fade_interval;// フェードインの最初
 
-	InitCamera(camera);//カメラの初期化
+	InitCamera(camera,m_stageNum);//カメラの初期化
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());

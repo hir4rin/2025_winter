@@ -9,6 +9,7 @@ struct Camera
 	Vec2 pos;				// 実際のカメラのポジション
 	Vec2 drawOffset;		// 全てのDrawObjectに足す値
 
+	//カメラ揺れ用
 	float shakePower = 0.0f;
 	float shakeTimer = 0.0f;
 	float shakeTimerMax = 0.0f;//減衰用のコピー
@@ -22,9 +23,12 @@ struct Camera
 	void ChangeIsFishTrue() { isFish = true; }
 	void ChangeIsFishFalse() { isFish = false; }
 
+	//カメラの右側の最大値
+	float cameraRightMax = 20000.0f - 1920.0f / 2.0f;
+
 };
 
-void InitCamera(Camera& camera);
+void InitCamera(Camera& camera,int stageNum);
 void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer);
 
 /// <summary>

@@ -37,13 +37,13 @@ draw_(&GameClearScene::FadeDraw)
 	m_pCannon = std::make_shared<Cannon>();
 	for (int i = 0; i < 7; i++)
 	{
-		m_pSigns.push_back(std::make_shared<Sign>(Vec2{ kRankWidth * (i+1)- 100.0f,750.0f},7-i));
+		m_pSigns.push_back(std::make_shared<Sign>(Vec2{ kRankWidth * (i+1)- 100.0f,764.0f},7-i));
 	}
 	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 },Life);
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
-	InitCamera(camera);//カメラの初期化
+	InitCamera(camera,4);//カメラの初期化
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());

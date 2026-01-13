@@ -46,7 +46,7 @@ GameoverScene::GameoverScene(SceneController& controller,PlayerType type) : Scen
 	}
 
 
-	InitCamera(camera);//カメラの初期化
+	InitCamera(camera,0);//カメラの初期化
 }
 
 
