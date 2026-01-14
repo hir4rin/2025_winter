@@ -68,6 +68,7 @@ public:
 	/// マップの読み込み(stage2_3)
 	/// </summary>
 	void LoadMapData2_3();
+	void LoadMapDataSub();
 
 
 	/// <summary>

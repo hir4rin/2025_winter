@@ -57,6 +57,7 @@ namespace
 GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type, int hp, int Life) :
 	Scene(controller),
 	m_stageNum(stageNum),
+	m_fishDied(false),
 	update_(&GameScene::FadeInUpdate),
 	draw_(&GameScene::FadeInDraw)
 
@@ -316,7 +317,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 
-		m_pBg = new Bg(m_pPlayer, 8);
+		m_pBg = new Bg(m_pPlayer, 11);
 		//魚
 		{
 			/*	for (auto& it : m_pFishers)
@@ -2406,12 +2407,20 @@ void GameScene::NormalUpdate(Input& input)
 		//魚
 		{
 			if (m_pFishersManager)
+			{
 				for (auto& it : m_pFishersManager->GetFish())
 				{
 					if (!it)continue;
 					it->SetPlayer(m_pPlayer);
 					it->SetBgPointer(m_pBg);
 				}
+				if (m_pFishersManager->GetisDead() && !m_fishDied)
+				{
+					m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
+					m_fishDied = true;
+				}
+			}
+				
 		}
 
 		if (m_pFishersManager)m_pFishersManager->Update(m_pBg);

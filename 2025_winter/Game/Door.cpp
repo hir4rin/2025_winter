@@ -182,7 +182,7 @@ void Door::StarDraw(Camera& camera)
 		break;
 	case 4:
 			// 赤くする
-		SetDrawBright(0, 255, 0);
+		SetDrawBright(0, 0, 255);
 		//星
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x,
 			m_pos.y + camera.drawOffset.y - kCharaHeight * kDoorScale * 1.0f / 2.0f - 20,

@@ -30,6 +30,7 @@ public:
 	std::vector<std::shared_ptr<Fish>> GetFish() { return m_pFishers;}
 
 	int GetHp() { return m_publicHp; }
+	bool GetisDead() { return m_isDead; }
 
 private:
 	void SpawnFish(Bg* bg);
@@ -49,6 +50,7 @@ private:
 
 	bool m_isfusion;
 	Vec2 ReleasePos;
+	bool m_isDead = false;
 
 };
 

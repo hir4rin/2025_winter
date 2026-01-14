@@ -142,7 +142,13 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
 		m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
 		break;
-		
+	case 11:
+		m_mapH = LoadGraph("data/Stage/map.png");
+		m_bgH = LoadGraph("data/Back/nature_2/1.png");
+		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
+		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
+		m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
+		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
 		break;
@@ -191,6 +197,11 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		m_graphChipNumX = graphW / kChipSize;
 		m_graphChipNumY = graphH / kChipSize;
 		break;
+	case 11:
+		m_graphChipNumX = graphW / kChipSize;
+		m_graphChipNumY = graphH / kChipSize;
+		break;
+		
 	default:
 		assert(false && "マップチップの画像読み込みに失敗");
 
@@ -226,6 +237,9 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 	case 8:
 		LoadMapData2_3();
+		break;
+	case 11:
+		LoadMapDataSub();
 		break;
 	default:
 		assert(false && "Bgのマップデータ読み込みに失敗");
@@ -354,6 +368,9 @@ void Bg::Draw(Camera& camera)
 	case 8://2_3のマップ
 		DrawMapChip1_3(camera);
 		break;
+	case 11://fishのマップ
+		DrawMapChip1_3(camera);
+		break;
 	default:
 		assert(false && "Bgのマップチップ描画に失敗");
 		break;
@@ -389,7 +406,6 @@ void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 	case 4://クリアシーン
 		rateY = 1.0f;
 		break;
-
 	case 6://2_1
 		rateY = 1.0f;
 		break;
@@ -397,6 +413,9 @@ void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 		rateY = 1.0f;
 		break;
 	case 8://2_3
+		rateY = 1.0f;
+		break;
+	case 11://
 		rateY = 1.0f;
 		break;
 	default:
@@ -535,7 +554,15 @@ void Bg::DrawBg(Camera& camera)
 		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
 		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 		break;
+	case 11://2_3
+		SetDrawBright(t, t, t);// ← 中景
+		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
+		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
+		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 		break;
+	
 	default:
 		assert(false && "Bgの背景スクロールに失敗");
 		break;
@@ -709,6 +736,29 @@ void Bg::LoadMapData2_2()
 void Bg::LoadMapData2_3()
 {
 	std::ifstream file("data/Stage/stage2_3.csv");
+	std::string line;
+
+	// getline関数で1行ずつ読み込む
+	int y = 0;
+	while (std::getline(file, line) && y < kChipNumY)
+	{
+		std::istringstream stream(line);
+		std::string field;
+
+		// 「,」区切りごとにデータを読み込む
+		int x = 0;
+		while (getline(stream, field, ',') && x < kChipNumX)
+		{
+			// 文字列をint型に変換してm_chipDataに追加する
+			m_chipData0[x][y] = std::stoi(field);
+			x++;
+		}
+		y++;
+	}
+}
+void Bg::LoadMapDataSub()
+{
+	std::ifstream file("data/Stage/FishStage.csv");
 	std::string line;
 
 	// getline関数で1行ずつ読み込む
@@ -1003,6 +1053,9 @@ bool Bg::IsCollision(Rect rect, Rect& chipRect)
 	case 8:
 		ans = IsCollision1_3(rect, chipRect);
 		break;
+	case 11:
+		ans = IsCollision1_3(rect, chipRect);
+		break;
 	default:
 		assert(false && "ここはIsCollisionの判定を変えるところです");
 
@@ -1282,6 +1335,9 @@ bool Bg::IsCollisionPlayer(Rect rect, Rect& chipRect,bool& hitClearness)
 		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
 		break;
 	case 8://2_3のマップ
+		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
+		break;
+	case 11://2_3のマップ
 		ans = IsCollisionPlayer1_3(rect, chipRect, hitClearness);
 		break;
 	default:

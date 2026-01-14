@@ -147,6 +147,7 @@ void FishersManager::Update(Bg* bg)
 				it = nullptr;
 				break;
 			case FisherPhase::End:
+				
 				break;
 			}
 		}
@@ -176,6 +177,7 @@ void FishersManager::Update(Bg* bg)
 			m_triSpawn = false;
 			m_fishIndex++;
 			m_phase = FisherPhase::End;
+			m_isDead = true;
 			
 		}
 	
@@ -204,26 +206,26 @@ void FishersManager::SpawnFish(Bg* bg)
 	switch (m_phase)
 	{
 	case FisherPhase::FirstFish:
-		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 3000,900 }, 1));
+		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 1540,900 }, 1));
 		break;
 	case FisherPhase::SecondFish:
-		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 3300,900 }, 2));
+		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 1540,900 }, 2));
 
 		break;
 	case FisherPhase::ThirdFish:
-		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 3300,900 }, 3));
+		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 1540,900 }, 3));
 
 		break;
 	case FisherPhase::Fusion:
 		//ここで三人出す
-		m_pFishers.push_back(std::make_shared<Fish >(Vec2{ 3000,900 }, 1,50,FishState::Fusion));
-		m_pFishers.push_back(std::make_shared<Fish >(Vec2{ 3100,900 }, 2,50,FishState::Fusion));
-		m_pFishers.push_back(std::make_shared<Fish >(Vec2{ 3200,900 }, 3,50,FishState::Fusion));
+		m_pFishers.push_back(std::make_shared<Fish >(Vec2{ 1440,900 }, 1,50,FishState::Fusion));
+		m_pFishers.push_back(std::make_shared<Fish >(Vec2{ 1540,900 }, 2,50,FishState::Fusion));
+		m_pFishers.push_back(std::make_shared<Fish >(Vec2{ 1640,900 }, 3,50,FishState::Fusion));
 		break;
 	case FisherPhase::SpecialFish:
 	
 
-		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 3100,900 }, 4));
+		m_pFishers.push_back(std::make_shared<Fish > (Vec2{ 1540,900 }, 4));
 		//ここでカウントして、何回目かで終わらせる
 		break;
 	case FisherPhase::End:

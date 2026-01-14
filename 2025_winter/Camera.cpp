@@ -51,6 +51,9 @@ void InitCamera(Camera& camera,int StageNum)
 	case 8://2_3
 		camera.cameraRightMax = 5118.0f - ScreenWidth * 0.5f;
 		break;
+	case 10:
+		camera.cameraRightMax = 1958.0f - ScreenWidth * 0.5f;
+		break;
 	default:
 		break;
 	}
