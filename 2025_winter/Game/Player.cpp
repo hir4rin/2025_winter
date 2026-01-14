@@ -465,6 +465,7 @@ void Player::Update(Input& input)
 	{
 		m_pos.x = 0;
 	}
+
 	if (m_pos.y < 0 + (ScreenHeight - topPos))//画面外に出ないようにする(本当は+drawOffsetCamera)
 	{
 		m_pos.y = 0 + (ScreenHeight - topPos);

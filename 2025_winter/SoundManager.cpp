@@ -9,9 +9,11 @@ void SoundManager::Init()
    // m_sounds["jump"] = LoadSoundMem("res/se/jump.wav");
     //m_sounds["hit"] = LoadSoundMem("res/se/hit.wav");
     m_sounds["bgm"] = LoadSoundMem("data/Sound/TitleSceneBgm.ogg");
+    m_sounds["bgmSelectScene"] = LoadSoundMem("data/Sound/StageSelectBgm.ogg");
 	assert(m_sounds["bgm"] >= 0);
 
     ChangeVolumeSoundMem(m_masterVolume, m_sounds["bgm"]);
+    ChangeVolumeSoundMem(m_masterVolume, m_sounds["bgmSelectScene"]);
 
     
 }

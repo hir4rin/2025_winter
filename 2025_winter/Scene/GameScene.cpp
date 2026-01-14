@@ -2574,6 +2574,20 @@ void GameScene::NormalUpdate(Input& input)
 
 
 	CheckOutCamera();
+	//ゲームシーン8は別の個所でやってる
+	if (m_stageNum != 8)
+	{
+		//プレイヤーはカメラの外にいけない
+		if (m_pPlayer->GetPos().x < 0 + -camera.drawOffset.x)
+		{
+			m_pPlayer->ChangePos().x = -camera.drawOffset.x;
+		}
+		if (m_pPlayer->GetPos().x > kScreenWidth - camera.drawOffset.x)
+		{
+			m_pPlayer->ChangePos().x = kScreenWidth - camera.drawOffset.x;
+		}
+	}
+		
 
 
 
@@ -3160,9 +3174,9 @@ void GameScene::CheckBossCamera()
 	{
 		m_pPlayer->ChangePos().x = -camera.drawOffset.x;
 	}
-	if (m_pPlayer->GetPos().x > kScreenWidth + -camera.drawOffset.x)
+	if (m_pPlayer->GetPos().x > kScreenWidth  -camera.drawOffset.x)
 	{
-		m_pPlayer->ChangePos().x = kScreenWidth + -camera.drawOffset.x;
+		m_pPlayer->ChangePos().x = kScreenWidth - -camera.drawOffset.x;
 	}
 
 
