@@ -28,6 +28,7 @@ private:
 
 public:
 	TitleScene(SceneController& controller);
+	virtual ~TitleScene();
 	void Update(Input& input) override;
 	void Draw()override;
 private:
@@ -41,6 +42,9 @@ private:
 	std::vector<std::shared_ptr<TitleStar>> m_stars;
 	std::vector<std::shared_ptr<TitleLightEffect>> m_lights;
 	std::shared_ptr<Player> m_pPlayer;
+private:
+	int m_fontHandle;// フォントハンドル
+
 
 	
 };

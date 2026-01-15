@@ -154,6 +154,13 @@ void TitleScene::NormalUpdate(Input& input)
 
 void TitleScene::FadeOutUpdate(Input&)
 {
+	m_frame++;
+	//いったんこっちに表示
+	if ((m_frame / 2) % 2 == 0)
+	{
+		DrawStringToHandle(1920 * 3 / 10 + 60, 1080 * 1 / 2, "Press 'ANY BUTTON' to Start", GetColor(255, 255, 255), m_fontHandle);
+	}
+
 	if (frame_++ >= fade_interval)
 	{
 		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,PlayerType::Normal,100,3));
@@ -169,7 +176,7 @@ void TitleScene::NormalDraw()
 	int y = 0;
 
 	GetGraphSize(m_backH, &x, &y);
-
+	//背景
 	DrawRectRotaGraph(wsize.w/2.0f, wsize.h/ 2.0f,
 		0, 0,
 		x, y,
@@ -201,7 +208,10 @@ void TitleScene::NormalDraw()
 
 
 
-	DrawFormatString(1920*4/10, 1080 *1/2, 0xffffff, "Title Scene: Press 'ANY BUTTON' to Start");
+	if ((m_frame / 10) % 2 == 0)
+	{
+	DrawStringToHandle(1920 * 3 / 10 + 60, 1080 * 1 / 2, "Press 'ANY BUTTON' to Start", GetColor(255, 255, 255), m_fontHandle);
+	}
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	//とりあえず
 	if (m_frame > kPlayerDuration * 7)
@@ -223,12 +233,13 @@ void TitleScene::FadeDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);	// ブレンドしない
 }
 
-TitleScene::TitleScene(SceneController& controller) : Scene(controller)
+TitleScene::TitleScene(SceneController& controller) : Scene(controller), m_fontHandle(-1)
 {
 	//bgmを流す
 
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-	
+	//フォントの生成
+	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
 
 	/*titleH_ = LoadGraph(L"data/title.png");
 	titleLogoH_ = LoadGraph(L"data/game_title.png");*/
@@ -251,6 +262,12 @@ TitleScene::TitleScene(SceneController& controller) : Scene(controller)
 	m_lights.push_back(std::make_shared<TitleLightEffect>(sPos3,3));
 	
 
+}
+
+TitleScene::~TitleScene()
+{
+	//生成したフォントの削除
+	DeleteFontToHandle(m_fontHandle);
 }
 
 void TitleScene::Update(Input& input)
