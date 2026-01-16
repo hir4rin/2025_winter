@@ -7,6 +7,7 @@ enum class FishState
 {
 	First,//最初に現れるとき
 	Walk,//歩いているとき
+	knockback,//ノックバックしたとき
 	Dead,//死んだとき
 	Defeat,//倒されたとき
 	Release,//解放されたとき
@@ -32,7 +33,7 @@ public:
 
 	int GetHp() { return m_hp; }
 
-	void HitFishDamage(int damage);
+	void HitFishDamage(int damage,bool dir);
 	
 
 private:

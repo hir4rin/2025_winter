@@ -10,7 +10,8 @@ enum class StageID
 	Fstage,
 	Sstage,
 	Tstage,
-	Forthstage
+	Forthstage,
+	SPstage,
 };
 
 class Door

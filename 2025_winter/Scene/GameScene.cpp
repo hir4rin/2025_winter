@@ -62,6 +62,9 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 	draw_(&GameScene::FadeInDraw)
 
 {
+
+
+
 	switch (m_stageNum)
 	{
 	case 1://ステージ1_1
@@ -247,7 +250,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 
 
-		m_pBg = new Bg(m_pPlayer, 8);
+		m_pBg = new Bg(m_pPlayer,11);
 		//熊
 		{
 			m_pBear->SetPlayer(m_pPlayer);
@@ -286,26 +289,12 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 			});
 
 		}
-
 		//狼
 		{
 			m_pWolf->SetPlayer(m_pPlayer);
 			m_pWolf->SetBgPointer(m_pBg);
 		}
-
-
-		//魚
-		{
-			/*	for (auto& it : m_pFishers)
-				{
-					it->SetPlayer(m_pPlayer);
-					it->SetBgPointer(m_pBg);
-				}*/
-		}
-
-
 		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
-		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 	}
 	break;
 	case 10:
@@ -332,6 +321,19 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 	}
 	break;
+	case 11:
+	{
+		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1000.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(1200.0f,800.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(1400.0f,800.0f), false });
+
+
+
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pBg = new Bg(m_pPlayer, 11);
+		m_doors = std::make_shared< Door>(Vec2{ 500,800 });
+	}
+		break;
 	}
 
 	m_frame = fade_interval;// フェードインの最初
@@ -642,7 +644,8 @@ void GameScene::CheckArrowHit()
 			if (e == enemy)
 			{
 				//bossにダメージを与える
-				e->HitFishDamage(10);
+				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
+				e->HitFishDamage(10, isLeft);
 				break;
 			}
 
@@ -1249,7 +1252,8 @@ void GameScene::CheckHitNormal()
 
 					if (isHitAttack)
 					{
-						it->HitFishDamage(50);
+						bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+						it->HitFishDamage(50, isLeft);
 						//エフェクトを出す
 						//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
@@ -1415,7 +1419,8 @@ void GameScene::CheckHitBurning()
 				bool isHitAttack = m_pPlayer->GetColBurningRect().IsCollision(it->GetColRect());
 				if (isHitAttack)
 				{
-					it->HitFishDamage(50);
+					bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+					it->HitFishDamage(50, isLeft);
 					//エフェクトを出す
 					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
@@ -1556,7 +1561,8 @@ void GameScene::CheckFastBurning()
 				//バーニングの攻撃の矩形との当たり判定チェック
 				if (CheckSweepHit(p0, p1, it->GetColRect()))
 				{
-					it->HitFishDamage(50);
+					bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+					it->HitFishDamage(50, isLeft);
 				}
 
 			}
@@ -1768,7 +1774,8 @@ void GameScene::CheckHitFrozen()
 				bool isHitAttack = m_pPlayer->GetColFrozenRect().IsCollision(it->GetColRect());
 				if (isHitAttack)
 				{
-					it->HitFishDamage(50);
+					bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
+					it->HitFishDamage(50,isLeft);
 					//エフェクトを出す
 					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
@@ -2057,7 +2064,7 @@ void GameScene::CheckPlayer()
 
 
 					//
-					it->HitFishDamage(25);
+					it->HitFishDamage(25, isLeft);
 				}
 			}
 	}
@@ -2648,6 +2655,10 @@ void GameScene::FadeOutUpdate(Input&)
 			return;
 			break;
 		case 10:
+			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+			return;
+			break;
+		case 11:
 			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;

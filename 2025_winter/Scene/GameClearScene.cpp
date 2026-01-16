@@ -26,32 +26,64 @@ namespace
 
 	constexpr int fade_interval = 60;
 
+	constexpr int kGraphWidth = 300;
+	constexpr int kGraphHeight = 300;
+
+
+	constexpr int kScreenWidth = 1920;
+	constexpr int kScreenHeight = 1080;
+
 }
 
 
-GameClearScene::GameClearScene(SceneController& controller,PlayerType type,int hp,int Life) : Scene(controller),
+GameClearScene::GameClearScene(SceneController& controller, PlayerType type, int hp, int Life) : Scene(controller),
 update_(&GameClearScene::FadeInUpdate),
-draw_(&GameClearScene::FadeDraw)
+draw_(&GameClearScene::FadeDraw),
+m_fontHandle(-1)
 {
+	//bgm再生
+	Application::GetInstance().GetSoundManager().PlayBgm("bgmClearScene");
+	//フォントの生成
+	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
+
+	// ゴール画像のファイル名を配列で用意する
+	std::vector<std::string> goalImageFiles = {
+		"data/g.png",
+		"data/o.png",
+		"data/a.png",
+		"data/l.png"
+	};
+
+	// ゴール画像の読み込み
+	for (int i = 0; i < 4; i++)
+	{
+		m_goalHandle[i] = LoadGraph(goalImageFiles[i].c_str());
+
+	}
 
 	m_pCannon = std::make_shared<Cannon>();
 	for (int i = 0; i < 7; i++)
 	{
-		m_pSigns.push_back(std::make_shared<Sign>(Vec2{ kRankWidth * (i+1)- 100.0f,764.0f},7-i));
+		m_pSigns.push_back(std::make_shared<Sign>(Vec2{ kRankWidth * (i + 1) - 100.0f,764.0f }, 7 - i));
 	}
-	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 },Life);
+	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
-	InitCamera(camera,4);//カメラの初期化
+	InitCamera(camera, 4);//カメラの初期化
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());
 
 
 	m_pPlayer->AddOnWalkEvent([this]() {
-		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dustForClear",false));
+		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "dustForClear", false));
 			});
+}
+
+GameClearScene::~GameClearScene()
+{
+	DeleteGraph(m_fontHandle);
 }
 
 void GameClearScene::FadeInUpdate(Input&)
@@ -120,10 +152,10 @@ void GameClearScene::NormalUpdate(Input& input)
 	}
 	//お試し--------------------------------------
 	//if (!isCannon && m_pPlayer != nullptr)m_pPlayer->Update(input);
-	if ((!isCannon && !isFlying) &&  m_pPlayer != nullptr)
+	if ((!isCannon && !isFlying) && m_pPlayer != nullptr)
 	{
 		m_pPlayer->AnimFrameUpdate();
-	
+
 		m_pPlayer->ChangeVel().x = 6.0f;//自動で右に進む//ジャンプするようにしたい
 		m_pPlayer->AutoMoveStart();
 	}
@@ -134,9 +166,9 @@ void GameClearScene::NormalUpdate(Input& input)
 	}
 	//---------------------------------------------
 
-	if (input.IsTriggered("ok") )
+	if (input.IsTriggered("ok"))
 	{
-		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp(),m_pPlayer->GetLife()));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 		return;
 	}
 
@@ -156,7 +188,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	//大砲から発射する処理
 	if (isCannon)
 	{
-		if (input.IsTriggered("Jump") ||input.IsTriggered("Attack"))
+		if (input.IsTriggered("Jump") || input.IsTriggered("Attack"))
 		{
 			isFlying = true;
 			isCannon = false;
@@ -192,14 +224,18 @@ void GameClearScene::NormalUpdate(Input& input)
 			++effect;
 	}
 	if (isArrived)
-			{
+	{
 		update_ = &GameClearScene::FadeOutUpdate;
 		draw_ = &GameClearScene::FadeDraw;
 		m_frame = 0;
 		return;
 	}
+	//goal用
+	for(int i = 0; i < 4; i++)
+	{
+		m_goalFrame[i]++;
+	}
 
-	
 
 
 }
@@ -207,21 +243,21 @@ void GameClearScene::FadeOutUpdate(Input&)
 {
 	//一旦のエリア
 	{
-	//減速処理
-	ToArrivedAtGoal();
-	m_pPlayer->AnimFrameUpdate();
-	m_pPlayer->AutoMove();
+		//減速処理
+		ToArrivedAtGoal();
+		m_pPlayer->AnimFrameUpdate();
+		m_pPlayer->AutoMove();
 
-	//エフェクトのUpdate
-	for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
-	{
-		(*effect)->Update();
+		//エフェクトのUpdate
+		for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
+		{
+			(*effect)->Update();
 
-		if ((*effect)->IsDead())
-			effect = m_pEffects.erase(effect);  // ← 安全に削除
-		else
-			++effect;
-	}
+			if ((*effect)->IsDead())
+				effect = m_pEffects.erase(effect);  // ← 安全に削除
+			else
+				++effect;
+		}
 
 	}
 
@@ -230,7 +266,7 @@ void GameClearScene::FadeOutUpdate(Input&)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
-		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,m_pPlayer->GetType(),m_pPlayer->GetHp(),m_pPlayer->GetLife()));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 		return;
 	}
 }
@@ -265,7 +301,7 @@ void GameClearScene::NormalDraw()
 #endif
 
 	//大砲のゲージ表示
-	if (isCannon ||isFlying)
+	if (isCannon || isFlying)
 	{
 		//ゲージの中
 		DrawBox(m_pCannon->GetPos().x + camera.drawOffset.x + margin + m_gaugeleftX,//左
@@ -294,7 +330,7 @@ void GameClearScene::NormalDraw()
 	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
 	m_pCannon->Draw(camera);
 
-	for(auto& s: m_pSigns)
+	for (auto& s : m_pSigns)
 	{
 		s->Draw(camera);
 	}
@@ -302,6 +338,17 @@ void GameClearScene::NormalDraw()
 	for (auto& effect : m_pEffects)
 	{
 		if (effect) effect->Draw(camera);
+	}
+	//goalの描画
+	for (int i = 0; i < 4; i++)
+	{
+		float y = offsetY(i);
+
+		DrawRectRotaGraph(kScreenWidth * 4 / 10 + i * kGraphWidth * 0.5f,
+			kScreenHeight * 1 / 4 + y,
+			kGraphWidth * 0, kGraphHeight * 0,//切り取り左上
+			kGraphWidth, kGraphHeight,//切り取りの幅
+			0.5f, 0.0f, m_goalHandle[i], true, false);
 	}
 
 }
@@ -316,7 +363,7 @@ void GameClearScene::ToArrivedAtGoal()
 	case 0:
 		break;
 	case 1://1位
-		
+
 		//減速開始判定
 		if (!isSlowDown && m_pPlayer->GetPos().x > targetX - kSlowDownDistance)
 		{
@@ -500,6 +547,29 @@ void GameClearScene::ToArrivedAtGoal()
 	{
 		m_pPlayer->RotateFinishUpdate();
 	}
+}
+
+float GameClearScene::offsetY(int index)
+{
+
+	int startDelay = index * 8;   // 文字ごとの遅延
+	int moveFrame = 30;          // 動く時間
+	int waitFrame = 30;          // 止まる時間
+	int cycle = moveFrame + waitFrame;
+
+
+
+	//m_goalFrameはだんだん大きくなる
+	int f = (m_goalFrame[index] - startDelay) % cycle;
+
+	if (f < 0)
+		return 0.0f;              // まだ開始していない
+
+	if (f >= moveFrame)
+		return 0.0f;              // 止まっている
+
+	float t = (float)f / moveFrame * DX_PI;
+	return sinf(t) * -15.0f;
 }
 
 void GameClearScene::Update(Input& input)

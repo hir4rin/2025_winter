@@ -85,7 +85,7 @@ Fish::Fish(Vec2 pos,int num):
 	}
 
 	m_pos = pos;
-	m_hp = 50;
+	m_hp = 150;
 
 	m_colRect.SetCenter(1000, 0, 0, 0);
 }
@@ -264,6 +264,13 @@ void Fish::Update()
 		}
 
 	}
+		break;
+	case FishState::knockback:
+		if (cool_interval - m_coolDamageTimer >= 10.0f)
+		{
+			m_state = FishState::Walk;
+			m_vel.x = m_isRight ? kSpeed : -kSpeed;
+		}
 		break;
 	case FishState::Dead:
 	{
@@ -611,7 +618,7 @@ void Fish::Draw(Camera& camera)
 #endif
 }
 
-void Fish::HitFishDamage(int damage)
+void Fish::HitFishDamage(int damage,bool dir)
 {
 
 	if (m_coolDamageTimer > 0)return;
@@ -624,6 +631,14 @@ void Fish::HitFishDamage(int damage)
   {
 	  m_state = FishState::Defeat;
 	  m_animFrame = 0;
+  }
+  else
+  {
+	  //被弾したらノックバックさせる
+	  m_state = FishState::knockback;
+	  m_vel.x = dir ? kSpeed/3.0f : -kSpeed/3.0f;
+	  m_isRight = !dir;
+
   }
 }
 

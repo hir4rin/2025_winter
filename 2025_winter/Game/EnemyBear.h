@@ -78,7 +78,7 @@ private:
 	float coolTimer = 0.0f;//クールダウンを図るタイマー
 	float coolTime = 180.0f;//クールタイム
 
-	float catchDistance = 1250.0f;//プレイヤーを見つける距離
+	float catchDistance = 1500.0f;//プレイヤーを見つける距離
 
 public:
 	std::vector<std::function<void()>> onAttack1EndEvents;

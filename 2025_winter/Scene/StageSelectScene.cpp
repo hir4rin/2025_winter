@@ -150,24 +150,41 @@ void StageSelectScene::FadeOutUpdate(Input&)
 				//1_1へ
 				if (door->GetDoorID() == StageID::Fstage)
 				{
+					//bgm再生
+					Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 1,m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 					return;
 				}
+				//倉庫へ
+				if (door->GetDoorID() == StageID::SPstage)
+				{
+					//bgm再生
+					Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
+					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 11,m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+					return;
+				}
+				
 				//2_1へ
 				if (door->GetDoorID() == StageID::Sstage)
 				{
+					//bgm再生
+					Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 6, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 					return;
 				}
 				//3_1へ
 				if (door->GetDoorID() == StageID::Tstage)
 				{
+					//bgm再生
+					Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 9, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 					return;
 				}
 				//4_1へ
 				if (door->GetDoorID() == StageID::Forthstage)
 				{
+					//bgm再生
+					Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 					controller_.ChangeScene(std::make_shared<GameScene>(controller_, 10, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 					return;
 				}
@@ -272,7 +289,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	InitCamera(camera,0);//カメラの初期化
 
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 300,800 },StageID::Fstage,1));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 560,544 },StageID::Fstage,1));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 560,544 },StageID::SPstage,1));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 800,800 },StageID::Sstage,2));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1300,800 },StageID::Tstage,4));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1950,672 },StageID::Forthstage,3));

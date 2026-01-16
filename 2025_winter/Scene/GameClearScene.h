@@ -14,6 +14,7 @@ class GameClearScene :public Scene
 {
 public:
 	GameClearScene(SceneController& controller,PlayerType type,int hp,int Life);
+	virtual ~GameClearScene();
 	void Update(Input& input) override;
 	void Draw() override;
 
@@ -67,5 +68,9 @@ private:
 	//減速用
 	float m_slowDownStartX = 0.0f;
 	bool isSlowDown = false;//減速中かどうか
-
+private:
+	int m_fontHandle;// フォントハンドル
+	int m_goalHandle[4];// ゴール画像ハンドル
+	int m_goalFrame[4] = {0};// ゴール画像フレーム
+	float offsetY(int index);// ゴール画像のYオフセット計算
 };

@@ -144,7 +144,7 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 	case 11:
 		m_mapH = LoadGraph("data/Stage/map.png");
-		m_bgH = LoadGraph("data/Back/nature_2/1.png");
+		m_bgH =	 LoadGraph("data/Back/nature_2/1.png");
 		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
 		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
 		m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
@@ -519,7 +519,7 @@ void Bg::DrawBg(Camera& camera)
 		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 		break;
 	case 4://クリアシーン
-	//	BgHSetDraw(camera, m_bgH, 0.0);
+		BgHSetDraw(camera, m_bgH, 0.0);
 		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
 		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
 		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
@@ -530,6 +530,7 @@ void Bg::DrawBg(Camera& camera)
 		break;
 
 	case 6://2_1
+		BgHSetDraw(camera, m_bgH, 0.0);
 		SetDrawBright(t, t, t);// ← 中景
 		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
 		SetDrawBright(b, b, b);// ← 中景
@@ -538,6 +539,7 @@ void Bg::DrawBg(Camera& camera)
 		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 		break;
 	case 7://2_2
+		BgHSetDraw(camera, m_bgH, 0.0);
 		SetDrawBright(t, t, t);// ← 中景
 		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
 		SetDrawBright(b, b, b);// ← 中景
@@ -547,6 +549,7 @@ void Bg::DrawBg(Camera& camera)
 		break;
 		break;
 	case 8://2_3
+		BgHSetDraw(camera, m_bgH, 0.0);
 		SetDrawBright(t, t, t);// ← 中景
 		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
 		SetDrawBright(b, b, b);// ← 中景
@@ -555,6 +558,7 @@ void Bg::DrawBg(Camera& camera)
 		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 		break;
 	case 11://2_3
+		BgHSetDraw(camera, m_bgH, 0.0);
 		SetDrawBright(t, t, t);// ← 中景
 		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
 		SetDrawBright(b, b, b);// ← 中景

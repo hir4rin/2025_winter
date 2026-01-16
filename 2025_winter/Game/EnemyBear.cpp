@@ -7,7 +7,7 @@
 
 namespace
 {
-	const Vec2 kInitPos = { 3330.0f,800.0f };//初期位置
+	const Vec2 kInitPos = { 1540.0f,800.0f };//初期位置
 	constexpr float kSpeed = 3.0f;//移動速度
 	constexpr int enemy_cut_w = 100;
 	constexpr int enemy_cut_h = 100;
@@ -54,8 +54,8 @@ namespace
 	constexpr float kDownTime = 100.0f;
 
 	//左上限
-	constexpr float kLeftMax = 2000.0f;
-	constexpr float kRightMax = 3800.0f;
+	constexpr float kLeftMax = 90.0f;
+	constexpr float kRightMax = 2000.0f;
 
 }
 
@@ -77,6 +77,7 @@ EnemyBear::EnemyBear():
 	m_pos = kInitPos;
 	m_isRight = false;
 	_state = EnemyState::Attack;
+	coolTimer = coolTime * 0.5;
 }
 
 EnemyBear::~EnemyBear()
