@@ -98,6 +98,10 @@ public:
 	/// </summary>
 	void OnShake();
 	/// <summary>
+	/// 攻撃を当てた時のカメラの揺れ
+	/// </summary>
+	void HitShake();
+	/// <summary>
 	/// 変身関連
 	/// </summary>
 	void CopyAct(Input& input);

@@ -247,6 +247,9 @@ void GameClearScene::FadeOutUpdate(Input&)
 		ToArrivedAtGoal();
 		m_pPlayer->AnimFrameUpdate();
 		m_pPlayer->AutoMove();
+		//プレイヤーのHPを引き渡す
+		stageUI.SetHp(m_pPlayer->GetHp());
+		stageUI.Update();
 
 		//エフェクトのUpdate
 		for (auto effect = m_pEffects.begin(); effect != m_pEffects.end(); )
@@ -387,6 +390,7 @@ void GameClearScene::ToArrivedAtGoal()
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
 			isArrived = true;
+			m_pPlayer->HealGet(100);
 		}
 		break;
 	case 2://2位
@@ -411,6 +415,7 @@ void GameClearScene::ToArrivedAtGoal()
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
 			isArrived = true;
+			m_pPlayer->HealGet(100);
 		}
 		break;
 	case 3://3位
@@ -435,6 +440,7 @@ void GameClearScene::ToArrivedAtGoal()
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
 			isArrived = true;
+			m_pPlayer->HealGet(100);
 		}
 		break;
 	case 4://4位

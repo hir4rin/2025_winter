@@ -13,6 +13,7 @@ struct Camera
 	float shakePower = 0.0f;
 	float shakeTimer = 0.0f;
 	float shakeTimerMax = 0.0f;//減衰用のコピー
+	bool isShaking = false;//今カメラが揺れているかどうか
 
 	//ボスカメラ用
 	Rect m_cameraRect;

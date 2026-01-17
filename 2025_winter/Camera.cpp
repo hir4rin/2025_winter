@@ -67,6 +67,7 @@ void StartCameraShake(Camera& camera, float power, float time)
 	camera.shakePower = power;
 	camera.shakeTimer = time;
 	camera.shakeTimerMax = time;
+	camera.isShaking = true;
 }
 
 void SetBossCamera(Camera& camera)
@@ -140,5 +141,9 @@ void UpdateCamera(Camera& camera, const std::shared_ptr<Player> pPlayer)
 
 		camera.drawOffset.x += magX;
 		camera.drawOffset.y += magY;
+	}
+	else
+	{
+		camera.isShaking = false;
 	}
 }

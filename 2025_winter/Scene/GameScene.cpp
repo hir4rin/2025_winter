@@ -64,7 +64,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 {
 
 
-
+	
 	switch (m_stageNum)
 	{
 	case 1://ステージ1_1
@@ -809,7 +809,8 @@ void GameScene::CheckFrozenHit()
 							//インスタンスを消す
 							//ボスにダメージを与える
 							m_pElite->HitBossDamage(20);
-
+							//カメラシェイク
+							HitShake();
 
 						}
 					}
@@ -834,7 +835,8 @@ void GameScene::CheckFrozenHit()
 							//ボスにダメージを与える
 							m_pBear->HitBossDamage(20);
 
-
+							//カメラシェイク
+							HitShake();
 						}
 					}
 
@@ -858,7 +860,8 @@ void GameScene::CheckFrozenHit()
 							//ボスにダメージを与える
 							m_pWolf->HitBossDamage(20);
 
-
+							//カメラシェイク
+							HitShake();
 						}
 					}
 
@@ -1100,6 +1103,7 @@ void GameScene::CheckHitNormal()
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+			
 
 			}
 		}
@@ -1301,6 +1305,8 @@ void GameScene::CheckHitBurning()
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1335,6 +1341,8 @@ void GameScene::CheckHitBurning()
 
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1369,6 +1377,8 @@ void GameScene::CheckHitBurning()
 
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1381,7 +1391,8 @@ void GameScene::CheckHitBurning()
 			if (isHitAttack)
 			{
 				m_pElite->HitBossDamage(20);
-
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1393,7 +1404,8 @@ void GameScene::CheckHitBurning()
 			if (isHitAttack)
 			{
 				m_pBear->HitBossDamage(20);
-
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1406,7 +1418,8 @@ void GameScene::CheckHitBurning()
 			if (isHitAttack)
 			{
 				m_pWolf->HitBossDamage(20);
-
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1425,7 +1438,8 @@ void GameScene::CheckHitBurning()
 					//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
 					//インスタンスを消す
-
+					//カメラシェイク
+					HitShake();
 
 				}
 			}
@@ -1464,6 +1478,8 @@ void GameScene::CheckFastBurning()
 
 			//インスタンスを消す
 			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+			//カメラシェイク
+			HitShake();
 		}
 	}
 	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
@@ -1490,6 +1506,8 @@ void GameScene::CheckFastBurning()
 
 			//インスタンスを消す
 			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+			//カメラシェイク
+			HitShake();
 		}
 	}
 	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//オークライダー
@@ -1517,6 +1535,8 @@ void GameScene::CheckFastBurning()
 
 			//インスタンスを消す
 			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+			//カメラシェイク
+			HitShake();
 		}
 	}
 	//ボスエリート
@@ -1527,6 +1547,8 @@ void GameScene::CheckFastBurning()
 			if (CheckSweepHit(p0, p1, m_pElite->GetColRect()))
 			{
 				m_pElite->HitBossDamage(20);
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1538,6 +1560,8 @@ void GameScene::CheckFastBurning()
 			if (CheckSweepHit(p0, p1, m_pBear->GetColRect()))
 			{
 				m_pBear->HitBossDamage(20);
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1549,6 +1573,8 @@ void GameScene::CheckFastBurning()
 			if (CheckSweepHit(p0, p1, m_pWolf->GetColRect()))
 			{
 				m_pWolf->HitBossDamage(20);
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1563,6 +1589,8 @@ void GameScene::CheckFastBurning()
 				{
 					bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(it->GetColRect());
 					it->HitFishDamage(50, isLeft);
+					//カメラシェイク
+					HitShake();
 				}
 
 			}
@@ -1604,6 +1632,8 @@ void GameScene::CheckHitFrozen()
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1639,6 +1669,8 @@ void GameScene::CheckHitFrozen()
 
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1674,6 +1706,8 @@ void GameScene::CheckHitFrozen()
 
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1700,6 +1734,8 @@ void GameScene::CheckHitFrozen()
 
 				//インスタンスを消す
 				m_pBossShots.erase(m_pBossShots.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1720,11 +1756,10 @@ void GameScene::CheckHitFrozen()
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
 
-
-
-
 				//インスタンスを消す
 				m_pSalmons.erase(m_pSalmons.begin() + i);
+				//カメラシェイク
+				HitShake();
 			}
 
 		}
@@ -1737,7 +1772,8 @@ void GameScene::CheckHitFrozen()
 			if (isHitAttack)
 			{
 				m_pElite->HitBossDamage(20);
-
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1749,7 +1785,8 @@ void GameScene::CheckHitFrozen()
 			if (isHitAttack)
 			{
 				m_pBear->HitBossDamage(20);
-
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1761,7 +1798,8 @@ void GameScene::CheckHitFrozen()
 			if (isHitAttack)
 			{
 				m_pWolf->HitBossDamage(20);
-
+				//カメラシェイク
+				HitShake();
 			}
 		}
 	}
@@ -1781,7 +1819,8 @@ void GameScene::CheckHitFrozen()
 
 					//インスタンスを消す
 
-
+						//カメラシェイク
+					HitShake();
 				}
 			}
 	}
@@ -2119,6 +2158,12 @@ void GameScene::DyingAct()
 void GameScene::OnShake()
 {
 	StartCameraShake(camera, 15.0f, 0.1f);
+}
+
+void GameScene::HitShake()
+{
+	//カメラを揺らす
+	StartCameraShake(camera, 3.0f, 0.1f);
 }
 
 void GameScene::CopyAct(Input& input)
