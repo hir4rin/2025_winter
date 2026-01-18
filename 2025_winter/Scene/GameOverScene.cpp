@@ -8,6 +8,7 @@
 #include "EnemyArcher.h"
 #include "TitleScene.h"
 #include "SceneController.h"
+#include "Application.h"
 
 namespace
 {
@@ -34,6 +35,9 @@ namespace
 GameoverScene::GameoverScene(SceneController& controller,PlayerType type) : Scene(controller)
 , frame_(0)
 {
+	//bgm再生
+	Application::GetInstance().GetSoundManager().PlayBgm("bgmGameOverScene");
+
 	update_ = &GameoverScene::NormalUpdate;
 	draw_ = &GameoverScene::NormalDraw;
 
@@ -62,6 +66,9 @@ void GameoverScene::NormalUpdate(Input& input)
 
 	if (input.IsTriggered("ok"))
 	{
+		//bgm再生
+		Application::GetInstance().GetSoundManager().PlaySE("ok");
+
 		update_ = &GameoverScene::FadeOutUpdate;
 		draw_ = &GameoverScene::NormalDraw;
 		frame_ = 200;
@@ -124,7 +131,8 @@ void GameoverScene::FadeOutUpdate(Input&)
 			DeleteGraph(m_circleHandle);
 			DeleteGraph(m_shadowHandle);
 		}
-
+		//bgm再生
+		Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
 		return;
 	}

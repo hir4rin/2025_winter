@@ -145,6 +145,9 @@ void TitleScene::NormalUpdate(Input& input)
 
 	if (input.IsTriggered("ok") || input.IsTriggered("Attack")|| input.IsTriggered("Jump")|| input.IsTriggered("Copy")|| input.IsTriggered("CopyOut")|| input.IsTriggered("pause"))
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("ok");
+
 		update_ = &TitleScene::FadeOutUpdate;
 		draw_ = &TitleScene::FadeDraw;
 		frame_ = 0;	// フェードアウトの最初

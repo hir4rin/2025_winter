@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "../input.h"
 #include "GameScene.h"
+#include "PauseScene.h"
 #include "Bg.h"
 #include "Door.h"
 #include "Effect.h"
@@ -102,7 +103,7 @@ void StageSelectScene::NormalUpdate(Input& input)
 	{
 		if (m_pPlayer->GetColRect().IsCollision(door->GetColRect()) && input.IsTriggered("up"))
 		{
-
+			Application::GetInstance().GetSoundManager().PlaySE("openDoor");//ドアの音
 			update_ = &StageSelectScene::FadeOutUpdate;
 			draw_ = &StageSelectScene::FadeOutDraw;
 			m_frame = 0;
@@ -111,20 +112,13 @@ void StageSelectScene::NormalUpdate(Input& input)
 	}
 	
 
-	//if (input.IsTriggered("Jump"))//決定
-	//{
-	//	if (selectIndex+1 == 1)//ステージ1
-	//	{
-	//		controller_.ChangeScene(std::make_shared<GameScene>(controller_, 1, PlayerType::Normal, 100,5));
-	//		return;
-	//	}
-	//	if (selectIndex+1 == 2)//ステージ2
-	//	{
-	//		controller_.ChangeScene(std::make_shared<GameScene>(controller_, 6, PlayerType::Normal, 100,5));
-	//		return;
-	//	}
-
-	//}
+	//ポーズ画面
+	if (input.IsTriggered("pause"))
+	{
+		controller_.SetPlayerInfo(m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife());
+		controller_.PushScene(std::make_shared<PauseScene>(controller_));
+		return;
+	}
 }
 
 void StageSelectScene::FadeOutUpdate(Input&)

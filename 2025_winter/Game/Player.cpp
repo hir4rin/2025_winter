@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Arrow.h"
 #include "Bg.h"
+#include "Application.h"
 #include <cmath>
 #include <memory>
 #include <algorithm>
@@ -890,6 +891,8 @@ void Player::InputUpdate(Input& input)
 		switch (m_type)
 		{
 		case PlayerType::Normal:
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("airSlash");
 			//エフェクトを出す
 			for (auto& func : onAttackEvents)
 			{
@@ -897,10 +900,15 @@ void Player::InputUpdate(Input& input)
 			}
 			break;
 		case PlayerType::Burning:
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("burningSE");
 			break;
 		case PlayerType::Frozen:
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("frozenSE");
 			break;
 		case PlayerType::Archer:
+			
 			break;
 		}
 
@@ -909,6 +917,8 @@ void Player::InputUpdate(Input& input)
 	{
 		//ノーマル状態限定の技
 		if (m_type != PlayerType::Normal)return;
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("copyAction");
 		m_state = PlayerState::Copy;
 	}
 
@@ -1157,6 +1167,8 @@ void Player::Jump(Input& input)
 		isJumping = true;
 		m_isGround = false;
 		//AnimSelect(Anim::Jump);
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("jump");
 	}
 
 	if (input.IsPressed("Jump") && isJumping)
@@ -1750,6 +1762,7 @@ void Player::ChangeNormal()
 
 void Player::ChangeBurning()
 {
+	
 	// 1. 現在の画像を解放
 	DeleteGraph(m_handle);
 

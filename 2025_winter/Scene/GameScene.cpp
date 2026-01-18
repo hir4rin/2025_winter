@@ -2183,7 +2183,8 @@ void GameScene::CopyAct(Input& input)
 					//ここにアイテムを取得したときの処理を書く
 					if (item->GetItemState() == ItemState::Burning)//バーニングのアイテムでの変身
 					{
-
+						//SE再生
+						Application::GetInstance().GetSoundManager().PlaySE("copySE");
 						m_pPlayer->ChangeBurning();
 						item = nullptr;
 						//ここでアップデートを変える
@@ -2195,7 +2196,8 @@ void GameScene::CopyAct(Input& input)
 					}
 					else if (item->GetItemState() == ItemState::Frozen)//フローズンのアイテムでの変身
 					{
-
+						//SE再生
+						Application::GetInstance().GetSoundManager().PlaySE("copySE");
 						m_pPlayer->ChangeFrozen();
 						item = nullptr;
 						//ここでアップデートを変える
@@ -2206,7 +2208,8 @@ void GameScene::CopyAct(Input& input)
 					}
 					else if (item->GetItemState() == ItemState::Archer)//アーチャーのアイテムでの変身
 					{
-
+						//SE再生
+						Application::GetInstance().GetSoundManager().PlaySE("copySE");
 						m_pPlayer->ChangeArcher();
 						item = nullptr;
 						//ここでアップデートを変える
@@ -2228,7 +2231,8 @@ void GameScene::CopyAct(Input& input)
 	{
 		if (!(m_pPlayer->GetType() == PlayerType::Normal))
 		{
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("copyOut");
 			//プレイヤーのタイプに応じて落とすアイテムを変える
 			switch (m_pPlayer->GetType())
 			{
@@ -2277,17 +2281,7 @@ void GameScene::NormalUpdate(Input& input)
 
 	//復活、生成チェック
 	CheckSpawns();
-
-	//お試しテスト用
-	if (input.IsTriggered("ok"))
-	{
-
-	}
-
-
-
 	const auto& wsize = Application::GetInstance().GetWindowSize();
-
 
 #ifdef _DEBUG
 	if (input.IsTriggered("ok"))
@@ -2300,6 +2294,7 @@ void GameScene::NormalUpdate(Input& input)
 	//ドアに触れているかつ上入力をしていたらシーン遷移
 	if (m_pPlayer->GetColRect().IsCollision(m_doors->GetColRect()) && input.IsTriggered("up"))
 	{
+		Application::GetInstance().GetSoundManager().PlaySE("openDoor");//ドアの音
 		update_ = &GameScene::FadeOutUpdate;
 		draw_ = &GameScene::FadeOutDraw;
 		m_frame = 0;
@@ -2359,7 +2354,8 @@ void GameScene::NormalUpdate(Input& input)
 		{
 			//ポインタを作ってその座標を入れる
 			std::shared_ptr<Arrow> arrow = m_pPlayer->ShotArrow();
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("shotArrow");
 			//それをpush_backする
 			m_arrows.push_back(arrow);
 

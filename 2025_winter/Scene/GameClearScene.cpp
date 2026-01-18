@@ -165,13 +165,13 @@ void GameClearScene::NormalUpdate(Input& input)
 		if (isFlying)m_pPlayer->AutoMove();
 	}
 	//---------------------------------------------
-
+#ifdef _DEBUG
 	if (input.IsTriggered("ok"))
 	{
 		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 		return;
 	}
-
+#endif
 	//大砲に乗ったら。。の処理
 	if (!isCannon && !isFlying)
 	{

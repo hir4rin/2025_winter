@@ -1,6 +1,14 @@
 ﻿#pragma once
 #include <string>
 #include <unordered_map>
+
+
+struct SeSlot
+{
+	int handle;
+	
+};
+
 class SoundManager
 {
 public:
@@ -17,8 +25,12 @@ public:
 
 private:
 	std::unordered_map<std::string, int> m_sounds;
-	int m_masterVolume = 32;//255が最大
+	int m_masterVolume = 16;//255が最大
+	int m_masterVolume2 = 50;//255が最大
 	int m_currentBgm = -1;
 	
+	//3重再生用スロット
+	std::vector<SeSlot> m_seSlots;
 };
+
 

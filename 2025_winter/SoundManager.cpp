@@ -6,19 +6,68 @@
 
 void SoundManager::Init()
 {
-   // m_sounds["jump"] = LoadSoundMem("res/se/jump.wav");
-    //m_sounds["hit"] = LoadSoundMem("res/se/hit.wav");
+	//BGmの読み込み
     m_sounds["bgm"] = LoadSoundMem("data/Sound/TitleSceneBgm.ogg");
     m_sounds["bgmSelectScene"] = LoadSoundMem("data/Sound/StageSelectBgm.ogg");
     m_sounds["bgmStageScene"] = LoadSoundMem("data/Sound/stageBgm.ogg");
     m_sounds["bgmClearScene"] = LoadSoundMem("data/Sound/StageClearBgm.ogg");
+    m_sounds["bgmGameOverScene"] = LoadSoundMem("data/Sound/GameOverBgm.ogg");
 	assert(m_sounds["bgm"] >= 0);
 
-    ChangeVolumeSoundMem(m_masterVolume, m_sounds["bgm"]);
-    ChangeVolumeSoundMem(m_masterVolume, m_sounds["bgmSelectScene"]);
-    ChangeVolumeSoundMem(m_masterVolume, m_sounds["bgmStageScene"]);
-    ChangeVolumeSoundMem(m_masterVolume, m_sounds["bgmClearScene"]);
+	//SEの読み込み
+	//環境音
+	m_sounds["ok"] = LoadSoundMem("data/Sound/SE/ok.mp3");
+	m_sounds["openDoor"] = LoadSoundMem("data/Sound/SE/openDoor.mp3");
+	//攻撃音
+	m_sounds["airSlash"] = LoadSoundMem("data/Sound/SE/airSlash.mp3");
+	m_sounds["burningSE"] = LoadSoundMem("data/Sound/SE/BurningSE.mp3");
+	m_sounds["frozenSE"] = LoadSoundMem("data/Sound/SE/FrozenSE.mp3");
+	m_sounds["shotArrow"] = LoadSoundMem("data/Sound/SE/shotArrow.mp3");
+	m_sounds["copyAction"] = LoadSoundMem("data/Sound/SE/copyAction.mp3");
+	m_sounds["copyOut"] = LoadSoundMem("data/Sound/SE/copyOut.mp3");
+    //playerからでる音
+	m_sounds["copySE"] = LoadSoundMem("data/Sound/SE/CopySE.mp3");
+	m_sounds["jump"] = LoadSoundMem("data/Sound/SE/jump.mp3");
 
+	// サウンド名のリスト
+    const std::vector<std::string> soundNames = {
+        "bgm",
+        "bgmSelectScene",
+        "bgmStageScene",
+        "bgmClearScene",
+        "bgmGameOverScene",
+    };
+	//SEのリスト
+    const std::vector<std::string> seNames = {
+        "ok",
+        "airSlash",
+        "openDoor",
+        "burningSE",
+        "frozenSE",
+        "shotArrow",
+        "copyAction",
+        "copySE",
+		"jump",
+        "copyOut",
+	};
+	
+	//BGmの音量設定
+  // BGM音量
+    for (const auto& key : soundNames)
+    {
+        ChangeVolumeSoundMem(m_masterVolume, m_sounds[key]);
+    }
+	//SEの音量設定
+    for (const auto& key : seNames)
+    {
+        ChangeVolumeSoundMem(m_masterVolume2, m_sounds[key]);
+    }
+	//3重再生用スロットの初期化
+    for (int i = 0; i < 3; ++i)
+    {
+        int h = LoadSoundMem("data/Sound/SE/shotArrow.mp3");
+        m_seSlots.push_back({ h });
+    }
     
 }
 
@@ -27,8 +76,34 @@ void SoundManager::PlaySE(const std::string& name)
     auto it = m_sounds.find(name);
     if (it == m_sounds.end()) return;
 
-    ChangeVolumeSoundMem(m_masterVolume, it->second);
-    PlaySoundMem(it->second, DX_PLAYTYPE_BACK);
+    if(name == "shotArrow")
+    {
+        // 3重再生用スロットを探す
+        for (auto& slot : m_seSlots)
+        {
+            if ( CheckSoundMem(slot.handle) == 0)
+            {
+              //二回目が鳴らない
+                ChangeVolumeSoundMem(m_masterVolume2, slot.handle);
+                PlaySoundMem(slot.handle, DX_PLAYTYPE_BACK);
+                return;
+            }
+        }
+        // 全てのスロットが再生中の場合、最初のスロットを強制的に再生
+        auto& slot = m_seSlots[0];
+        StopSoundMem(slot.handle);
+        ChangeVolumeSoundMem(m_masterVolume2, slot.handle);
+        PlaySoundMem(slot.handle, DX_PLAYTYPE_BACK);
+        return;
+	}
+    else
+    {
+        ChangeVolumeSoundMem(m_masterVolume2, it->second);
+        PlaySoundMem(it->second, DX_PLAYTYPE_BACK);
+    }
+
+
+ 
 }
 
 void SoundManager::PlayBgm(const std::string& name)
