@@ -33,10 +33,15 @@ namespace
 
 
 GameoverScene::GameoverScene(SceneController& controller,PlayerType type) : Scene(controller)
-, frame_(0)
+, frame_(0),
+m_fontHandle(-1)
 {
+	//SE止まる
+	Application::GetInstance().GetSoundManager().StopSE("yarareSE");
 	//bgm再生
 	Application::GetInstance().GetSoundManager().PlayBgm("bgmGameOverScene");
+	//背景
+	m_bgHandle = LoadGraph("data/Back/GameOverBg.png");
 
 	update_ = &GameoverScene::NormalUpdate;
 	draw_ = &GameoverScene::NormalDraw;
@@ -48,9 +53,17 @@ GameoverScene::GameoverScene(SceneController& controller,PlayerType type) : Scen
 		m_circleHandle = LoadGraph("data/daen.png");
 		m_shadowHandle = LoadGraph("data/Game/Shadow.png");
 	}
-
+	//フォントの生成
+	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
 
 	InitCamera(camera,0);//カメラの初期化
+}
+
+GameoverScene::~GameoverScene()
+{
+	DeleteGraph(m_bgHandle);
+	//生成したフォントの削除
+	DeleteFontToHandle(m_fontHandle);
 }
 
 
@@ -97,7 +110,8 @@ void GameoverScene::FadeOutUpdate(Input&)
 		{
 			if (!(m_pPlayer->GetType() == PlayerType::Normal))
 			{
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("copyOut");
 				//プレイヤーのタイプに応じて落とすアイテムを変える
 				switch (m_pPlayer->GetType())
 				{
@@ -139,6 +153,19 @@ void GameoverScene::FadeOutUpdate(Input&)
 }
 void GameoverScene::NormalDraw()
 {
+	//背景
+
+	int x = 0;
+	int y = 0;
+
+	GetGraphSize(m_bgHandle, &x, &y);
+	//背景
+	DrawRectRotaGraph(kScreenWidth / 2.0f, kScreenHeight / 2.0f,
+		0, 0,
+		x, y,
+		1.5f, 0.0f,
+		m_bgHandle, false);
+
 	DrawRectRotaGraph(CirclePos.x, CirclePos.y,
 	kDaenW * 0, kDaenH * 0,//切り取り左上
 	kDaenW, kDaenH,//切り取りの幅
@@ -154,7 +181,7 @@ void GameoverScene::NormalDraw()
 
 	m_pPlayer->Draw(camera);
 	if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
-	DrawString(320, 240, "Game Over Scene", 0xffffff);
+	DrawStringToHandle(kScreenWidth/2,kScreenHeight* 1.0f/3.0f, " GameOver", GetColor(0, 0, 0), m_fontHandle);
 }
 void GameoverScene::FadeInDraw()
 {

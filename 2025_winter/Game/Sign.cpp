@@ -1,6 +1,7 @@
 ﻿#include "Sign.h"
 #include "Camera.h"
 #include "DxLib.h"
+#include <string>
 
 
 namespace
@@ -11,16 +12,21 @@ namespace
 	constexpr float kScale = 3.0f;
 }
 
-Sign::Sign(Vec2 pos,int num)
+Sign::Sign(Vec2 pos,int num):
+	m_fontHandle(-1)
 {
 	m_handle = LoadGraph("data/sign.png");
 	m_pos = pos;
 	m_num = num;
+	//フォントの生成
+	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
 }
 
 Sign::~Sign()
 {
 	DeleteGraph(m_handle);
+	//生成したフォントの削除
+	DeleteFontToHandle(m_fontHandle);
 }
 
 void Sign::Init()
@@ -48,7 +54,10 @@ void Sign::Draw(Camera& camera)
 	int oldSize = GetFontSize();
 	SetFontSize(32);
 
-	DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d", m_num);
+	//DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d", m_num);
+	std::string i = std::to_string(m_num);
+
+	DrawStringToHandle(m_pos.x + camera.drawOffset.x - 15.0f, m_pos.y + camera.drawOffset.y - 40.0f, i.c_str(), GetColor(0, 0, 0), m_fontHandle);
 
 	//フォントサイズを元に戻す(元は16)
 	SetFontSize(oldSize);

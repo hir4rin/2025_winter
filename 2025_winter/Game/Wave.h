@@ -26,7 +26,7 @@ public:
 private:
 	int m_handle = -1;
 	int m_aliveFrame;//寿命
-
+	int m_frame;//経過フレーム
 	Vec2 m_pos;
 	 Rect m_colRect;
 };

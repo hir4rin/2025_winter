@@ -283,7 +283,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	InitCamera(camera,0);//カメラの初期化
 
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 300,800 },StageID::Fstage,1));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 560,544 },StageID::SPstage,1));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 560,544 },StageID::SPstage,5));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 800,800 },StageID::Sstage,2));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1300,800 },StageID::Tstage,4));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1950,672 },StageID::Forthstage,3));

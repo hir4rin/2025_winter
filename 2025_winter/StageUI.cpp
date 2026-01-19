@@ -163,13 +163,13 @@ void StageUI::Draw(Camera& camera)
 	DrawBox(leftHpX, topPos + 62, leftHpX + m_displayHp * hpScale, topPos + 105, GetColor(255, 170, 80), true);//hpバー
 	//DrawBox(leftHpX, topPos + 50, leftHpX + 100 * hpScale, topPos + 100, GetColor(255, 0, 0), false);//外枠
 	DrawRectRotaGraph(leftHpX + 79, topPos + 79,
-kHpBarW * 0, kHpBarH * 0,//切り取り左上
-kHpBarW, kHpBarH,//切り取りの幅
-kHpBarScale, 0, m_hpHandle, true);
+		kHpBarW * 0, kHpBarH * 0,//切り取り左上
+		kHpBarW, kHpBarH,//切り取りの幅
+		kHpBarScale, 0, m_hpHandle, true);
 	DrawStringToHandle(360, topPos + 60, " Player : ", GetColor(0, 0, 0), m_fontHandle);
 
 	//変身のデザイン
-	DrawBox(firstRightX + 50, topPos + 30, secondRightX, bottomUI, col, true);//幅200
+	DrawBox(firstRightX + 50, topPos + 20, secondRightX, bottomUI, col, true);//幅200
 	CopyDesign();
 	//残機数
 	DrawBox(secondRightX + 50, topPos + 80, thirdRihtX, bottomUI, col, true);//幅120

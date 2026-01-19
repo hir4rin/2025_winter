@@ -13,7 +13,7 @@ class GameoverScene : public Scene
 
 private:
 	int frame_;	// 経過フレーム
-
+	int m_bgHandle = -1; // 背景画像ハンドル
 	// メンバ関数ポインタを使用して内部状態を書き換える
 	// update関数とdraw関数を、現在のGameoverSceneの状態に合わせて
 	// 切り替えていく
@@ -31,6 +31,7 @@ private:
 
 public:
 	GameoverScene(SceneController& controller,PlayerType type);
+	~GameoverScene();
 	void Update(Input& input) override;
 	void Draw() override;
 
@@ -44,6 +45,8 @@ private:
 
 	int m_circleHandle = -1;
 	int m_shadowHandle = -1;
+private:
+	int m_fontHandle;// フォントハンドル
 
 
 };

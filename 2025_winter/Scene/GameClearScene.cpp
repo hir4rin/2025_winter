@@ -45,6 +45,7 @@ m_fontHandle(-1)
 	Application::GetInstance().GetSoundManager().PlayBgm("bgmClearScene");
 	//フォントの生成
 	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
+	
 
 	// ゴール画像のファイル名を配列で用意する
 	std::vector<std::string> goalImageFiles = {
@@ -84,6 +85,7 @@ m_fontHandle(-1)
 GameClearScene::~GameClearScene()
 {
 	DeleteGraph(m_fontHandle);
+
 }
 
 void GameClearScene::FadeInUpdate(Input&)
@@ -330,7 +332,7 @@ void GameClearScene::NormalDraw()
 	}
 
 
-	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
+	
 	m_pCannon->Draw(camera);
 
 	for (auto& s : m_pSigns)
@@ -342,6 +344,8 @@ void GameClearScene::NormalDraw()
 	{
 		if (effect) effect->Draw(camera);
 	}
+	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
+
 	//goalの描画
 	for (int i = 0; i < 4; i++)
 	{

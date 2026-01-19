@@ -275,6 +275,12 @@ void Player::GameOverStandUpUpdate(float baseY)
 		{
 			if (m_triJumpFrame <= 20.0f * 2)//20x2回分ジャンプしたら
 			{
+				if (m_triJumpFrame == 0 || m_triJumpFrame == 20)
+				{
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("jump");
+				}
+
 				m_triJumpFrame++;
 				float t = fmod(m_triJumpFrame, 20.0f) / 20.0f;
 				float tri = (t < 0.5f) ? t * 2.0f : (1.0f - t) * 2.0f;
@@ -648,7 +654,8 @@ void Player::DamageHit(bool ans)
 	{
 		return;
 	}
-
+	//SE再生
+	Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 
 	//被弾後
 	damageTimer = kDamageInterval;

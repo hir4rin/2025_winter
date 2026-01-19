@@ -181,8 +181,20 @@ void Door::StarDraw(Camera& camera)
 		kStarScale, 0.0f, m_starHandle, true, false);
 		break;
 	case 4:
-			// 赤くする
-		SetDrawBright(255, 0, 0);
+		// 青くする
+		SetDrawBright(255, 0, 255);
+		//星
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x,
+			m_pos.y + camera.drawOffset.y - kCharaHeight * kDoorScale * 1.0f / 2.0f - 20,
+			kStarWidth * starIdx, kStarHeight * 0,//切り取り左上
+			kStarWidth, kStarHeight,//切り取りの幅
+			kStarScale, 0.0f, m_starHandle, true, false);
+		// 描画色を元に戻す
+		SetDrawBright(255, 255, 255);
+		break;
+	case 5:
+			// 青くする
+		SetDrawBright(150, 255, 150); // 回復・草
 		//星
 		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x,
 			m_pos.y + camera.drawOffset.y - kCharaHeight * kDoorScale * 1.0f / 2.0f - 20,

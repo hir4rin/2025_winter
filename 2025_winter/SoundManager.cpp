@@ -7,7 +7,7 @@
 void SoundManager::Init()
 {
 	//BGmの読み込み
-    m_sounds["bgm"] = LoadSoundMem("data/Sound/TitleSceneBgm.ogg");
+    m_sounds["bgm"] = LoadSoundMem("data/Sound/TitleSceneBgm.mp3");
     m_sounds["bgmSelectScene"] = LoadSoundMem("data/Sound/StageSelectBgm.ogg");
     m_sounds["bgmStageScene"] = LoadSoundMem("data/Sound/stageBgm.ogg");
     m_sounds["bgmClearScene"] = LoadSoundMem("data/Sound/StageClearBgm.ogg");
@@ -18,16 +18,22 @@ void SoundManager::Init()
 	//環境音
 	m_sounds["ok"] = LoadSoundMem("data/Sound/SE/ok.mp3");
 	m_sounds["openDoor"] = LoadSoundMem("data/Sound/SE/openDoor.mp3");
+	m_sounds["iceMove"] = LoadSoundMem("data/Sound/SE/IceMove.mp3");
 	//攻撃音
 	m_sounds["airSlash"] = LoadSoundMem("data/Sound/SE/airSlash.mp3");
 	m_sounds["burningSE"] = LoadSoundMem("data/Sound/SE/BurningSE.mp3");
 	m_sounds["frozenSE"] = LoadSoundMem("data/Sound/SE/FrozenSE.mp3");
 	m_sounds["shotArrow"] = LoadSoundMem("data/Sound/SE/shotArrow.mp3");
+	m_sounds["hitArrow"] = LoadSoundMem("data/Sound/SE/hitArrow.mp3");
 	m_sounds["copyAction"] = LoadSoundMem("data/Sound/SE/copyAction.mp3");
 	m_sounds["copyOut"] = LoadSoundMem("data/Sound/SE/copyOut.mp3");
+	m_sounds["hitOut"] = LoadSoundMem("data/Sound/SE/hitOut.mp3");
+	m_sounds["hitSE"] = LoadSoundMem("data/Sound/SE/hitSE.mp3");
     //playerからでる音
 	m_sounds["copySE"] = LoadSoundMem("data/Sound/SE/CopySE.mp3");
 	m_sounds["jump"] = LoadSoundMem("data/Sound/SE/jump.mp3");
+	m_sounds["playerHit"] = LoadSoundMem("data/Sound/SE/playerHit.mp3");
+	m_sounds["yarareSE"] = LoadSoundMem("data/Sound/SE/yarareSE.mp3");
 
 	// サウンド名のリスト
     const std::vector<std::string> soundNames = {
@@ -41,14 +47,20 @@ void SoundManager::Init()
     const std::vector<std::string> seNames = {
         "ok",
         "airSlash",
+		"iceMove",
         "openDoor",
         "burningSE",
         "frozenSE",
         "shotArrow",
+        "hitArrow",
         "copyAction",
         "copySE",
 		"jump",
         "copyOut",
+        "hitOut",
+        "hitSE",
+        "playerHit",
+        "yarareSE"
 	};
 	
 	//BGmの音量設定
@@ -128,6 +140,13 @@ void SoundManager::StopBgm()
         StopSoundMem(m_currentBgm);
         m_currentBgm = -1;
     }
+}
+
+void SoundManager::StopSE(const std::string& name)
+{
+    auto it = m_sounds.find(name);
+    if (it == m_sounds.end()) return;
+    StopSoundMem(it->second);
 }
 
 void SoundManager::SetMasterVolume(int volume)

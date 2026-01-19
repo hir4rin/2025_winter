@@ -62,7 +62,8 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 	draw_(&GameScene::FadeInDraw)
 
 {
-
+	//SE止まる
+	Application::GetInstance().GetSoundManager().StopSE("yarareSE");
 
 	
 	switch (m_stageNum)
@@ -489,7 +490,9 @@ void GameScene::CheckArrowHit()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
+				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 				break;
@@ -521,7 +524,9 @@ void GameScene::CheckArrowHit()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
+				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 				break;
@@ -554,7 +559,9 @@ void GameScene::CheckArrowHit()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
+				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 				break;
@@ -577,7 +584,8 @@ void GameScene::CheckArrowHit()
 		if (e == enemy)
 		{
 
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 			//bossにダメージを与える
 			e->HitBossDamage(10);
 			break;
@@ -599,7 +607,8 @@ void GameScene::CheckArrowHit()
 		if (e == enemy)
 		{
 
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 			//bossにダメージを与える
 			e->HitBossDamage(10);
 			break;
@@ -621,7 +630,8 @@ void GameScene::CheckArrowHit()
 		if (e == enemy)
 		{
 
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 			//bossにダメージを与える
 			e->HitBossDamage(10);
 			break;
@@ -643,6 +653,8 @@ void GameScene::CheckArrowHit()
 
 			if (e == enemy)
 			{
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 				//bossにダメージを与える
 				bool isLeft = m_pPlayer->GetColRect().CheckLeftHit(e->GetColRect());
 				e->HitFishDamage(10, isLeft);
@@ -665,7 +677,8 @@ void GameScene::CheckArrowHit()
 		//矢とどの方向で当たったかどうか
 		if (!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
-
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 		e_arrow->m_hitPlayer = nullptr;
 
 	}
@@ -679,6 +692,8 @@ void GameScene::CheckArrowHit()
 		//矢とどの方向で当たったかどうか
 		if (!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 		e_shot->m_hitPlayer = nullptr;
 
 	}
@@ -693,6 +708,8 @@ void GameScene::CheckArrowHit()
 			//矢とどの方向で当たったかどうか
 			if (!m_pPlayer->CheckStar())OnShake();
 			m_pPlayer->DamageHit(isLeft);
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 			it = nullptr;
 		}
 
@@ -720,6 +737,8 @@ void GameScene::CheckFrozenHit()
 			m_pFrozen->AddVel(add);
 
 			m_pFrozen->isMove = true;
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("iceMove");
 		}
 		if (m_pFrozen->isMove)
 		{
@@ -739,7 +758,8 @@ void GameScene::CheckFrozenHit()
 					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 					spawn.spawned = false;
 					spawn.wasKilled = true;
-
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 					//インスタンスを消す
 					m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 				}
@@ -762,7 +782,8 @@ void GameScene::CheckFrozenHit()
 					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 					spawn.spawned = false;
 					spawn.wasKilled = true;
-
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 					//インスタンスを消す
 					m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 
@@ -785,7 +806,8 @@ void GameScene::CheckFrozenHit()
 					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 					spawn.spawned = false;
 					spawn.wasKilled = true;
-
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 					//インスタンスを消す
 					m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 
@@ -805,7 +827,8 @@ void GameScene::CheckFrozenHit()
 						{
 							m_pFrozen = nullptr;
 
-
+							//SE再生
+							Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 							//インスタンスを消す
 							//ボスにダメージを与える
 							m_pElite->HitBossDamage(20);
@@ -829,7 +852,8 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-
+							//SE再生
+							Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -854,7 +878,8 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-
+							//SE再生
+							Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -1100,6 +1125,9 @@ void GameScene::CheckHitNormal()
 
 				//エフェクトを出す
 				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight",false));
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
@@ -1143,6 +1171,9 @@ void GameScene::CheckHitNormal()
 				spawn.spawned = false;
 				spawn.wasKilled = true;
 
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 
@@ -1181,7 +1212,9 @@ void GameScene::CheckHitNormal()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 
@@ -1200,8 +1233,10 @@ void GameScene::CheckHitNormal()
 				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
 				if (isHitAttack)
 				{
-					m_pElite->HitBossDamage(10);
 
+					m_pElite->HitBossDamage(10);
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				}
 			}
 		}
@@ -1217,7 +1252,8 @@ void GameScene::CheckHitNormal()
 				if (isHitAttack)
 				{
 					m_pBear->HitBossDamage(10);
-
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				}
 			}
 		}
@@ -1233,7 +1269,8 @@ void GameScene::CheckHitNormal()
 				if (isHitAttack)
 				{
 					m_pWolf->HitBossDamage(10);
-
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				}
 			}
 		}
@@ -1262,7 +1299,8 @@ void GameScene::CheckHitNormal()
 						//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
 						//インスタンスを消す
-
+						//SE再生
+						Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 
 					}
 				}
@@ -1302,7 +1340,8 @@ void GameScene::CheckHitBurning()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 				//カメラシェイク
@@ -1338,7 +1377,8 @@ void GameScene::CheckHitBurning()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 				//カメラシェイク
@@ -1374,7 +1414,8 @@ void GameScene::CheckHitBurning()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 				//カメラシェイク
@@ -1393,6 +1434,8 @@ void GameScene::CheckHitBurning()
 				m_pElite->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1406,6 +1449,8 @@ void GameScene::CheckHitBurning()
 				m_pBear->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1420,6 +1465,8 @@ void GameScene::CheckHitBurning()
 				m_pWolf->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1440,7 +1487,8 @@ void GameScene::CheckHitBurning()
 					//インスタンスを消す
 					//カメラシェイク
 					HitShake();
-
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				}
 			}
 	}
@@ -1475,7 +1523,8 @@ void GameScene::CheckFastBurning()
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
 			spawn.wasKilled = true;
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			//インスタンスを消す
 			m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 			//カメラシェイク
@@ -1503,7 +1552,8 @@ void GameScene::CheckFastBurning()
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
 			spawn.wasKilled = true;
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			//インスタンスを消す
 			m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 			//カメラシェイク
@@ -1532,7 +1582,8 @@ void GameScene::CheckFastBurning()
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
 			spawn.wasKilled = true;
-
+			//SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			//インスタンスを消す
 			m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			//カメラシェイク
@@ -1549,6 +1600,8 @@ void GameScene::CheckFastBurning()
 				m_pElite->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1562,6 +1615,8 @@ void GameScene::CheckFastBurning()
 				m_pBear->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1575,6 +1630,8 @@ void GameScene::CheckFastBurning()
 				m_pWolf->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1591,6 +1648,8 @@ void GameScene::CheckFastBurning()
 					it->HitFishDamage(50, isLeft);
 					//カメラシェイク
 					HitShake();
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				}
 
 			}
@@ -1629,7 +1688,8 @@ void GameScene::CheckHitFrozen()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 				//カメラシェイク
@@ -1666,7 +1726,8 @@ void GameScene::CheckHitFrozen()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 				//カメラシェイク
@@ -1703,7 +1764,8 @@ void GameScene::CheckHitFrozen()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 				//カメラシェイク
@@ -1728,14 +1790,12 @@ void GameScene::CheckHitFrozen()
 			{
 				//ここに敵が攻撃されたときの処理を書く
 				m_pFrozens.push_back(std::make_shared<Frozen>(e));
-
-
-
-
 				//インスタンスを消す
 				m_pBossShots.erase(m_pBossShots.begin() + i);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 
 		}
@@ -1760,6 +1820,8 @@ void GameScene::CheckHitFrozen()
 				m_pSalmons.erase(m_pSalmons.begin() + i);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 
 		}
@@ -1774,6 +1836,8 @@ void GameScene::CheckHitFrozen()
 				m_pElite->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1787,6 +1851,8 @@ void GameScene::CheckHitFrozen()
 				m_pBear->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1800,6 +1866,8 @@ void GameScene::CheckHitFrozen()
 				m_pWolf->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 		}
 	}
@@ -1821,6 +1889,8 @@ void GameScene::CheckHitFrozen()
 
 						//カメラシェイク
 					HitShake();
+					//SE再生
+					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				}
 			}
 	}
@@ -2782,6 +2852,8 @@ void GameScene::ShakingUpdate(Input&)
 
 	if (m_shakeTime++ >= shake_interval)
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("yarareSE");
 		m_shakeTime = 0;
 		update_ = &GameScene::DyingUpdate;
 		draw_ = &GameScene::FadeDraw;
@@ -2942,6 +3014,12 @@ void GameScene::NormalDraw()
 		m_pBg->Draw(camera);
 		m_doors->Draw(camera);
 
+		//アイテム
+		for (auto& item : m_pItems)
+		{
+			if (!item)continue;
+			item->Draw(camera);
+		}
 
 		for (auto& enemy : m_pEnemyWizards)//ペンギン
 		{
@@ -2973,12 +3051,7 @@ void GameScene::NormalDraw()
 		{
 			m_pWolf->Draw(camera);
 		}
-		//アイテム
-		for (auto& item : m_pItems)
-		{
-			if (!item)continue;
-			item->Draw(camera);
-		}
+		
 		//回復アイテム
 		for (auto& potion : m_pPotions)
 		{

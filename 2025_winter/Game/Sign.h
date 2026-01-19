@@ -17,6 +17,8 @@ public:
 
 private:
 	int m_num;
+private:
+	int m_fontHandle;// フォントハンドル
 
 };
 
