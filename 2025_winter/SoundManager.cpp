@@ -19,6 +19,8 @@ void SoundManager::Init()
 	m_sounds["ok"] = LoadSoundMem("data/Sound/SE/ok.mp3");
 	m_sounds["openDoor"] = LoadSoundMem("data/Sound/SE/openDoor.mp3");
 	m_sounds["iceMove"] = LoadSoundMem("data/Sound/SE/IceMove.mp3");
+	m_sounds["cursor"] = LoadSoundMem("data/Sound/SE/cursor.mp3");
+	m_sounds["cursorError"] = LoadSoundMem("data/Sound/SE/cursorError.mp3");
 	//攻撃音
 	m_sounds["airSlash"] = LoadSoundMem("data/Sound/SE/airSlash.mp3");
 	m_sounds["burningSE"] = LoadSoundMem("data/Sound/SE/BurningSE.mp3");
@@ -48,6 +50,8 @@ void SoundManager::Init()
         "ok",
         "airSlash",
 		"iceMove",
+		"cursor",
+		"cursorError",
         "openDoor",
         "burningSE",
         "frozenSE",

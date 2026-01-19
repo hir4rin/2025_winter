@@ -2409,6 +2409,7 @@ void GameScene::NormalUpdate(Input& input)
 		//プレイヤーのHpが0以下だったら死ぬ
 		if (m_pPlayer->GetHp() <= 0)
 		{
+			m_frame = 0;
 			DyingAct();
 			return;
 		}
@@ -2802,7 +2803,7 @@ void GameScene::DyingUpdate(Input& input)
 	m_pPlayer->DyingUpdate();
 
 
-	if (m_frame++ >= fade_interval * 1.5f)
+	if (m_frame++ >= fade_interval * 1.8f)
 	{
 		//ライフを1減らす
 		m_pPlayer->LifeDeg();
@@ -2815,6 +2816,7 @@ void GameScene::DyingUpdate(Input& input)
 		}
 		//delete m_pCharacter;
 		delete m_pBg;
+		Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 		switch (m_stageNum)
 		{
 		case 1:
@@ -2854,6 +2856,7 @@ void GameScene::ShakingUpdate(Input&)
 	{
 		//SE再生
 		Application::GetInstance().GetSoundManager().PlaySE("yarareSE");
+		Application::GetInstance().GetSoundManager().StopBgm();
 		m_shakeTime = 0;
 		update_ = &GameScene::DyingUpdate;
 		draw_ = &GameScene::FadeDraw;
