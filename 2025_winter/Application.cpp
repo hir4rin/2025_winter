@@ -1,5 +1,6 @@
 ﻿#include "Application.h"
 #include "DxLib.h"
+#include "EffeckseerForDXLib.h"
 #include <cassert>
 #include "input.h"
 #include "Input.h"
@@ -47,6 +48,42 @@ bool Application::Init()
 	//音の初期化かつBgmの再生
 	m_soundManager.Init();
 	m_soundManager.PlayBgm("bgm");
+	//------------------------------//
+	// エフェクトの初期化
+	//------------------------------//
+	{
+		// DirectX9を使用するようにする。(DirectX11も可)
+		// Effekseerを使用するには必ず設定する。
+		SetUseDirect3DVersion(DX_DIRECT3D_9);
+
+		// Effekseerを初期化する。
+		// 引数には画面に表示する最大パーティクル数を設定する。
+		if (Effkseer_Init(8000) == -1)
+		{
+			DxLib_End();
+			return -1;
+		}
+
+		// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
+		// Effekseerを使用する場合は必ず設定する。
+		SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+
+		// DXライブラリのデバイスロストした時のコールバックを設定する。
+		// ウインドウとフルスクリーンの切り替えが発生する場合は必ず実行する。
+		// ただし、DirectX11を使用する場合は実行する必要はない。
+		Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+
+		// Effekseerに2D描画の設定をする。
+		Effekseer_Set2DSetting(640, 480);
+
+		// Zバッファを有効にする。
+		// Effekseerを使用する場合、2DゲームでもZバッファを使用する。
+		SetUseZBuffer3D(TRUE);
+
+		// Zバッファへの書き込みを有効にする。
+		// Effekseerを使用する場合、2DゲームでもZバッファを使用する。
+		SetWriteZBuffer3D(TRUE);
+	}
 	return true;
 }
 
