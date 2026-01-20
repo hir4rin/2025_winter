@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Character.h"
+#include <vector>
 
 class EnemyWizard;
 class EnemyRider;

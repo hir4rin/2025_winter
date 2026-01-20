@@ -1098,7 +1098,7 @@ void GameScene::CheckHitNormal()
 		auto& e = m_pEnemyWizards[i];
 		if (e == nullptr)continue;
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+		if (m_pPlayer->GetState() == PlayerState::Attack)
 		{
 			bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(e->GetColRect());
 
@@ -1139,7 +1139,7 @@ void GameScene::CheckHitNormal()
 	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+		if (m_pPlayer->GetState() == PlayerState::Attack)
 		{
 			auto& e = m_pEnemyRiders[i];
 			if (e == nullptr)continue;
@@ -1184,7 +1184,7 @@ void GameScene::CheckHitNormal()
 	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+		if (m_pPlayer->GetState() == PlayerState::Attack)
 		{
 			auto& e = m_pEnemyArchers[i];
 			if (e == nullptr)continue;
@@ -1228,7 +1228,7 @@ void GameScene::CheckHitNormal()
 		if (m_pElite != nullptr)
 		{
 			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			if (m_pPlayer->GetState() == PlayerState::Attack)
 			{
 				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pElite->GetColRect());
 				if (isHitAttack)
@@ -1246,7 +1246,7 @@ void GameScene::CheckHitNormal()
 		if (m_pBear != nullptr)
 		{
 			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			if (m_pPlayer->GetState() == PlayerState::Attack)
 			{
 				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pBear->GetColRect());
 				if (isHitAttack)
@@ -1263,7 +1263,7 @@ void GameScene::CheckHitNormal()
 		if (m_pWolf != nullptr)
 		{
 			//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-			if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+			if (m_pPlayer->GetState() == PlayerState::Attack)
 			{
 				bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(m_pWolf->GetColRect());
 				if (isHitAttack)
@@ -1284,7 +1284,7 @@ void GameScene::CheckHitNormal()
 
 				if (it == nullptr)continue;
 				//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-				if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 2)
+				if (m_pPlayer->GetState() == PlayerState::Attack)
 				{
 					bool isHitAttack = m_pPlayer->GetColAttackRect().IsCollision(it->GetColRect());
 
@@ -1663,7 +1663,7 @@ void GameScene::CheckHitFrozen()
 	for (int i = (int)m_pEnemyWizards.size() - 1; i >= 0; i--)//ペンギン
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
 			auto& e = m_pEnemyWizards[i];
 			if (!e)continue;
@@ -1701,7 +1701,7 @@ void GameScene::CheckHitFrozen()
 	for (int i = (int)m_pEnemyRiders.size() - 1; i >= 0; i--)//オークライダー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
 			auto& e = m_pEnemyRiders[i];
 			if (!e)continue;
@@ -1739,7 +1739,7 @@ void GameScene::CheckHitFrozen()
 	for (int i = (int)m_pEnemyArchers.size() - 1; i >= 0; i--)//どくろアーチャー
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
 			auto& e = m_pEnemyArchers[i];
 			if (e == nullptr)continue;
@@ -1777,7 +1777,7 @@ void GameScene::CheckHitFrozen()
 	for (int i = (int)m_pBossShots.size() - 1; i >= 0; i--)//ボスの弾
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
 			auto& e = m_pBossShots[i];
 			if (e == nullptr)continue;
@@ -1803,7 +1803,7 @@ void GameScene::CheckHitFrozen()
 	for (int i = (int)m_pSalmons.size() - 1; i >= 0; i--)//サーモン
 	{
 		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
-		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 3)
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
 		{
 			auto& e = m_pSalmons[i];
 			if (e == nullptr)continue;

@@ -4,9 +4,13 @@
 #include "StageUI.h"
 
 
+
 class Cannon;
 class Sign;
 class Player;
+class EnemyWizard;
+class EnemyRider;
+class EnemyArcher;
 class Bg;
 class Effect;
 
@@ -17,7 +21,8 @@ public:
 	virtual ~GameClearScene();
 	void Update(Input& input) override;
 	void Draw() override;
-
+	void CheckHit();
+	void Spawn(float enemyPos);
 	
 
 private:
@@ -49,6 +54,9 @@ private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::shared_ptr<Cannon> m_pCannon;
 	std::vector<std::shared_ptr<Sign>> m_pSigns;
+	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;
+	std::vector<std::shared_ptr<EnemyRider>>  m_pEnemyRiders;
+	std::vector < std::shared_ptr<EnemyArcher>> m_pEnemyArchers;
 	Camera camera;
 	Bg* m_pBg;
 	StageUI stageUI;//UI

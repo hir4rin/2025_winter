@@ -1,5 +1,6 @@
 ﻿#include "Player.h"
 #include "DxLib.h"
+#include "EffekseerForDXLib.h"
 #include "Character.h"
 #include "Pad.h"
 #include "Vec2.h"
@@ -165,7 +166,8 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 	m_rotateFrame(0),
 	damageTimer(0),
 	attackCoolTimer(0),
-	m_NormalAttackHandle(-1)
+	m_NormalAttackHandle(-1),
+	m_burningEfHandle(-1)
 
 {
 	m_pos = pos;
@@ -191,6 +193,9 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 		ChangeArcher();
 		break;
 	}
+	//effect用の変数初期化
+	m_burningEfHandle = LoadEffekseerEffect("data/Game/Effect/Burning.efk");
+
 }
 //ゲームオーバー時用
 Player::Player(PlayerType type, Vec2 pos):
@@ -243,6 +248,8 @@ Player::Player(PlayerType type, Vec2 pos):
 Player::~Player()
 {
 	DeleteGraph(m_handle);
+	// エフェクトリソースを削除する。(Effekseer終了時に破棄されるので削除しなくてもいい)
+	DeleteEffekseerEffect(m_burningEfHandle);
 }
 
 void Player::Init()
@@ -312,6 +319,7 @@ void Player::GameOverStandUpUpdate(float baseY)
 
 void Player::Update(Input& input)
 {
+	
 
 	m_frame++;
 	attackCoolTimer--;
@@ -450,6 +458,11 @@ void Player::Update(Input& input)
 			if (func)func();//呼び出し
 		}
 
+	}
+	if (playingEffectHandle >= 0)
+	{
+	// Effekseerにより再生中のエフェクトを更新する。
+	UpdateEffekseer2D();
 	}
 
 
@@ -622,6 +635,33 @@ void Player::Draw(Camera& camera)
 				kSlashCutW, kSlashCutH,//切り取りの幅
 				kSlashScale, 0.0f, m_NormalAttackHandle, true, true);
 		}
+	}
+	//------------------------------//
+	// エフェクトルーチン
+	//------------------------------//
+	if (playingEffectHandle >= 0) // 再生中エフェクトのハンドルがあれば.
+	{
+		float rotation = 0.0f;
+
+		if (m_isRight) // 左向き
+		{
+			rotation = DX_PI_F; // 180度
+		}
+
+		// 再生中のエフェクトをたまと同じ位置に移動。
+		SetPosPlayingEffekseer2DEffect(playingEffectHandle, m_pos.x+camera.drawOffset.x, m_pos.y+camera.drawOffset.y, 0);
+
+		// 回転更新
+		SetRotationPlayingEffekseer2DEffect(playingEffectHandle,0.0f,0.0f,rotation);
+
+		
+
+		
+	}
+	if (playingEffectHandle >= 0)
+	{
+	// Effekseerにより再生中のエフェクトを描画する。
+	DrawEffekseer2D();
 	}
 
 #ifdef _DEBUG
@@ -909,6 +949,11 @@ void Player::InputUpdate(Input& input)
 		case PlayerType::Burning:
 			//SE再生
 			Application::GetInstance().GetSoundManager().PlaySE("burningSE");
+			// エフェクトを再生する。
+			playingEffectHandle = PlayEffekseer2DEffect(m_burningEfHandle);
+			// エフェクトの拡大率を設定する。
+				// Effekseerで作成したエフェクトは2D表示の場合、小さすぎることが殆どなので必ず拡大する。
+			SetScalePlayingEffekseer2DEffect(playingEffectHandle, 1.0f, 1.0f, 1.0f);
 			break;
 		case PlayerType::Frozen:
 			//SE再生

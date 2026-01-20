@@ -4,6 +4,9 @@
 #include "../Input.h"
 #include "Cannon.h"
 #include "Sign.h"
+#include "EnemyWizard.h"
+#include "EnemyRider.h"
+#include "EnemyArcher.h"
 #include "TitleScene.h"
 #include "StageSelectScene.h"
 #include "SceneController.h"
@@ -197,14 +200,101 @@ void GameClearScene::NormalUpdate(Input& input)
 			//ここで大砲から発射するアニメーション
 			m_pCannon->CannonFire();
 			//大砲からプレイヤーを発射
-		/*	m_pPlayer = std::make_shared<Player>(PlayerType::Normal, 100);
+			/*	m_pPlayer = std::make_shared<Player>(PlayerType::Normal, 100);
 			m_pPlayer->SetBgPointer(m_pBg);*/
-			m_pPlayer->ChangePos() = m_pCannon->GetPos();//大砲の先端に座標を合わせる//+ Vec2{ 50.0f,0.0f }
+			m_pPlayer->ChangePos() = m_pCannon->GetPos() + Vec2{ 0.0f ,+40.0f};//大砲の先端に座標を合わせる//+ Vec2{ 50.0f,0.0f }
 			m_pPlayer->ChangeVel() = Vec2{ 30.0f * kPower,0.0f };//右上に飛ばす
 			m_pPlayer->AnimSelect(Anim::Jump);
 
+			///SE再生
+			Application::GetInstance().GetSoundManager().PlaySE("bom");
+
+
 			//順位づけの処理
 			m_finalTri = tri;
+			if (m_finalTri < 1 / 7.0f)m_rank = 7;//7位
+			else if (m_finalTri < 2 / 7.0f)m_rank = 6;//6位
+			else if (m_finalTri < 3 / 7.0f)m_rank = 5;//5位
+			else if (m_finalTri < 4 / 7.0f)m_rank = 4;//4位
+			else if (m_finalTri < 5 / 7.0f)m_rank = 3;//3位
+			else if (m_finalTri < 6 / 7.0f)m_rank = 2;//2位
+			else   m_rank = 1;//6/7.0f~1.0f//1位
+
+			//順位によって、敵をスポーンさせる
+			switch (m_rank)
+			{
+			case 1://1位
+				//敵を6体スポーンさせる
+				for (int i = 0; i < 6; i++)//6区間で出す
+				{
+					for(int j = 0; j < 6; j++)//1区間で6体ずつ出す
+					{
+						float enemyX = i * kRankWidth + kRankWidth + j * 200.0f+200;
+						Spawn(enemyX);
+					}
+					
+				}
+				break;
+			case 2://2位
+				//敵を5体スポーンさせる
+				for (int i = 0; i < 5; i++)//5区間で出す
+				{
+					for (int j = 0; j < 5; j++)//1区間で5体ずつ出す
+					{
+						float enemyX = i * kRankWidth + kRankWidth + j * 200.0f + 200;
+						Spawn(enemyX);
+					}
+
+				}
+				break;
+			case 3://3位
+				//敵を4体スポーンさせる
+				for (int i = 0; i < 4; i++)//4区間で出す
+				{
+					for (int j = 0; j < 4; j++)//1区間で4体ずつ出す
+					{
+						float enemyX = i * kRankWidth + kRankWidth + j * 200.0f + 200;
+						Spawn(enemyX);
+					}
+				}
+				break;
+			case 4://4位
+				//敵を3体スポーンさせる
+				for (int i = 0; i < 3; i++)//3区間で出す
+				{
+					for (int j = 0; j < 3; j++)//1区間で3体ずつ出す
+					{
+						float enemyX = i * kRankWidth + kRankWidth + j * 200.0f + 200;
+						Spawn(enemyX);
+					}
+				}
+				break;
+			case 5://5位
+				//敵を2体スポーンさせる
+				for (int i = 0; i < 2; i++)//2区間で出す
+				{
+					for (int j = 0; j < 2; j++)//1区間で2体ずつ出す
+					{
+						float enemyX = i * kRankWidth + kRankWidth + j * 200.0f + 200;
+						Spawn(enemyX);
+					}
+				}
+				break;
+			case 6://6位
+				//敵を1体スポーンさせる
+				for (int i = 0; i < 1; i++)//1区間で出す
+				{
+					for (int j = 0; j < 1; j++)//1区間で1体ずつ出す
+					{
+						float enemyX = i * kRankWidth + kRankWidth + j * 200.0f + 200;
+						Spawn(enemyX);
+					}
+				}
+				break;
+			case 7://7位
+				break;
+				
+			}
 		}
 	}
 	if (isFlying)//順位によって止まる位置を変える
@@ -236,6 +326,19 @@ void GameClearScene::NormalUpdate(Input& input)
 	for(int i = 0; i < 4; i++)
 	{
 		m_goalFrame[i]++;
+	}
+	//敵とプレイヤーが当たった時の処理
+	CheckHit();
+	m_pEnemyWizards.erase(std::remove_if(
+		m_pEnemyWizards.begin(), m_pEnemyWizards.end(),
+		[](const std::shared_ptr<EnemyWizard>& it)
+		{
+			return it == nullptr;
+		}), m_pEnemyWizards.end());
+	//敵のupdate
+	for (auto& e :  m_pEnemyWizards)
+	{
+		e->Update();
 	}
 
 
@@ -338,6 +441,11 @@ void GameClearScene::NormalDraw()
 	for (auto& s : m_pSigns)
 	{
 		s->Draw(camera);
+	}
+	//敵のDraw
+	for (auto& e : m_pEnemyWizards)
+	{
+		e->Draw(camera);
 	}
 
 	for (auto& effect : m_pEffects)
@@ -589,4 +697,30 @@ void GameClearScene::Update(Input& input)
 void GameClearScene::Draw()
 {
 	(this->*draw_)();
+}
+void GameClearScene::CheckHit()
+{
+	for(auto& e:m_pEnemyWizards)
+	if(m_pPlayer->GetColRect().IsCollision(e->GetColRect()))
+	{
+		//当たったときの処理
+		///SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("hitOut");
+			//エフェクトを出す
+		m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
+		e = nullptr;//敵を消す
+	}
+}
+
+void GameClearScene::Spawn(float enemyPos)
+{
+	//敵の生成
+	auto enemy = std::make_shared<EnemyWizard>();
+	enemy->SetBgPointer(m_pBg);
+
+	enemy->SetPlayer(m_pPlayer);
+	enemy->SetState(EnemyState::Normal);
+	enemy->AddPos(Vec2{ enemyPos,800.0f });
+	//enemy->SetInitialID(Vec2{enemyX,800.0f});
+	m_pEnemyWizards.push_back(enemy);
 }

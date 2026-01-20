@@ -1,7 +1,7 @@
 ﻿#include "PauseScene.h"
 #include "../Input.h"
 #include "SceneController.h"
-#include "Dxlib.h"
+#include "DxLib.h"
 #include "../Application.h"
 //#include "KeyConfigScene.h"
 #include "TitleScene.h"
@@ -113,7 +113,7 @@ void PauseScene::IntervalDraw()
 			center_y - frame_height,
 			center_x + frame_width,
 			center_y + frame_height,
-			0xaaaaff, false, 3);
+			0xaaaaff, false);
 }
 
 void PauseScene::NormalDraw()
@@ -124,7 +124,7 @@ void PauseScene::NormalDraw()
 	DrawBox(frame_margin, frame_margin, wsize.w - frame_margin, wsize.h - frame_margin, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawBox(frame_margin, frame_margin, wsize.w - frame_margin, wsize.h - frame_margin, 0xaaaaff, false, 3);
+	DrawBox(frame_margin, frame_margin, wsize.w - frame_margin, wsize.h - frame_margin, 0xaaaaff, false);
 	DrawString(280, frame_margin + 20, "Pause Scene", 0xffffff);
 	DrawMenu();
 }
@@ -164,7 +164,7 @@ void PauseScene::YesNoDialogDraw()
 		0x8888bb, true);
 	DrawBox(320 - yes_no_dialog_width / 2, centerY - yes_no_dialog_height / 2,
 		centerX + yes_no_dialog_width / 2, centerY + yes_no_dialog_height / 2,
-		0xffffff, false,3);
+		0xffffff, false);
 
 
 	int y = centerY;	// 画面中心から文字サイズの半分引く

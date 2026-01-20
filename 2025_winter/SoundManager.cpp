@@ -10,7 +10,7 @@ void SoundManager::Init()
     m_sounds["bgm"] = LoadSoundMem("data/Sound/TitleSceneBgm.mp3");
     m_sounds["bgmSelectScene"] = LoadSoundMem("data/Sound/StageSelectBgm.ogg");
     m_sounds["bgmStageScene"] = LoadSoundMem("data/Sound/stageBgm.ogg");
-    m_sounds["bgmClearScene"] = LoadSoundMem("data/Sound/StageClearBgm.ogg");
+    m_sounds["bgmClearScene"] = LoadSoundMem("data/Sound/StageClear.mp3");
     m_sounds["bgmGameOverScene"] = LoadSoundMem("data/Sound/GameOverBgm.ogg");
 	assert(m_sounds["bgm"] >= 0);
 
@@ -21,6 +21,7 @@ void SoundManager::Init()
 	m_sounds["iceMove"] = LoadSoundMem("data/Sound/SE/IceMove.mp3");
 	m_sounds["cursor"] = LoadSoundMem("data/Sound/SE/cursor.mp3");
 	m_sounds["cursorError"] = LoadSoundMem("data/Sound/SE/cursorError.mp3");
+	m_sounds["bom"] = LoadSoundMem("data/Sound/SE/Bom.mp3");
 	//攻撃音
 	m_sounds["airSlash"] = LoadSoundMem("data/Sound/SE/airSlash.mp3");
 	m_sounds["burningSE"] = LoadSoundMem("data/Sound/SE/BurningSE.mp3");
@@ -52,6 +53,7 @@ void SoundManager::Init()
 		"iceMove",
 		"cursor",
 		"cursorError",
+        "bom",
         "openDoor",
         "burningSE",
         "frozenSE",

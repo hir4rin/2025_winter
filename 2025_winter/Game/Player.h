@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Game/Character.h"
+#include "Character.h"
 #include <vector>
 #include <functional>
 
@@ -304,8 +304,11 @@ public:
 	bool m_isTriJump = false;
 	int m_triJumpFrame = 0;
 
-	private:
+private:
 		int m_NormalAttackHandle = -1;
+private:
+	int m_burningEfHandle = -1;
+	int playingEffectHandle = -1;//再生中のエフェクトハンドル
 
 };
 

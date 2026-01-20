@@ -1,9 +1,8 @@
 ﻿#include "Application.h"
 #include "DxLib.h"
-#include "EffeckseerForDXLib.h"
+#include "EffekseerForDXLib.h"
 #include <cassert>
 #include "input.h"
-#include "Input.h"
 #include "Pad.h"
 #include "Scene/SceneController.h"
 #include "Scene/TitleScene.h"
@@ -45,6 +44,10 @@ bool Application::Init()
 	{
 		return -1;			// エラーが起きたら直ちに終了
 	}
+
+	//ダブルバッファモード
+	SetDrawScreen(DX_SCREEN_BACK);
+
 	//音の初期化かつBgmの再生
 	m_soundManager.Init();
 	m_soundManager.PlayBgm("bgm");
@@ -54,11 +57,11 @@ bool Application::Init()
 	{
 		// DirectX9を使用するようにする。(DirectX11も可)
 		// Effekseerを使用するには必ず設定する。
-		SetUseDirect3DVersion(DX_DIRECT3D_9);
+		SetUseDirect3DVersion(DX_DIRECT3D_11);
 
 		// Effekseerを初期化する。
 		// 引数には画面に表示する最大パーティクル数を設定する。
-		if (Effkseer_Init(8000) == -1)
+		if (Effkseer_Init(16000) == -1)
 		{
 			DxLib_End();
 			return -1;
@@ -74,7 +77,7 @@ bool Application::Init()
 		Effekseer_SetGraphicsDeviceLostCallbackFunctions();
 
 		// Effekseerに2D描画の設定をする。
-		Effekseer_Set2DSetting(640, 480);
+		Effekseer_Set2DSetting(1920, 1080);
 
 		// Zバッファを有効にする。
 		// Effekseerを使用する場合、2DゲームでもZバッファを使用する。
@@ -89,8 +92,7 @@ bool Application::Init()
 
 void Application::Run()
 {
-	//ダブルバッファモード
-	SetDrawScreen(DX_SCREEN_BACK);
+
 
 	Input input;//入力のためのオブジェクト
 
@@ -150,7 +152,7 @@ void Application::Terminate()
 {
 	//フォントの解放を行う
 	RemoveFontResourceEx("data/Font/x10y12pxDonguriDuel.ttf", FR_PRIVATE, NULL);
-
+	Effkseer_End();				// Effekseerを終了する。
 	DxLib_End();
 }
 
