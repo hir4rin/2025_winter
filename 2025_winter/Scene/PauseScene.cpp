@@ -34,6 +34,8 @@ void PauseScene::AppearUpdate(Input& input)
 
 void PauseScene::NormalUpdate(Input& input)
 {
+	//タイマー更新
+	m_frame++;
 	if (input.IsTriggered("pause"))
 	{
 		controller_.PopScene();	// この時点で自分は解放されている
@@ -69,6 +71,8 @@ void PauseScene::DisappearUpdate(Input& input)
 
 void PauseScene::YesNoDialogUpdate(Input& input)
 {
+	//タイマー更新
+	m_frame++;
 	if (input.IsTriggered("left") || input.IsTriggered("right"))
 	{
 		yesNoIndex_ = (yesNoIndex_ + 1) % 2;
@@ -117,6 +121,14 @@ void PauseScene::NormalDraw()
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	//タイトル
 	DrawRotaGraph(kScreenWidth / 2.0f, kScreenHeight / 2.0f,1.0f,0.0f, m_LogoHandle, true);
+	//ポーズ中の文字
+	DrawStringToHandle(kScreenWidth / 2.0f - 140.0f,kScreenHeight *4.0f/ 20.0f, "ポーズちゅう", GetColor(0, 0, 0), m_fontHandle);
+	for (int i = 0; i < 3; i++)
+	{
+		float drawY = offsetY(i);
+		//・・・の文字
+		DrawStringToHandle(kScreenWidth *2.0f/ 3.0f-200.0f + 40 * i, kScreenHeight * 4.0f / 20.0f+10.0f + drawY, "・", GetColor(0, 0, 0), m_fontHandle);
+	}
 	DrawMenu();
 }
 
@@ -125,7 +137,7 @@ void PauseScene::DrawMenu()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	float baseY = wsize.w * 1.0f / 8.0f;
 	int menuStartX = wsize.w * 1.0f / 3.0f;
-	int indicatorX = menuStartX - 30;
+	int indicatorX = menuStartX - 60;
 	int menuY = wsize.h * 1.0f/8.0f;
 	for (int idx = 0; idx < menuList_.size(); idx++)
 	{
@@ -133,8 +145,9 @@ void PauseScene::DrawMenu()
 		uint32_t col = 0xffffff;
 		if (idx == selectIndex_)
 		{
-			//DrawString(indicatorX, baseY + menuY, "⇒", 0xffaaaa);
-			DrawStringToHandle(indicatorX, baseY + menuY, "→", GetColor(0, 0, 0), m_fontHandle);
+			float rad = m_frame / 100.0f * DX_PI;
+			float drawX = sin(rad) * -15.0f;
+			DrawStringToHandle(indicatorX + drawX, baseY + menuY, "→", GetColor(0, 0, 0), m_fontHandle);
 			offsetX = 10;
 			col = GetColor(128, 255, 192);
 		}
@@ -147,33 +160,60 @@ void PauseScene::DrawMenu()
 
 void PauseScene::YesNoDialogDraw()
 {
-	NormalDraw();
-
+	//ポーズ画面の土台
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(0, 0, wsize.w, wsize.h, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//タイトル
+	DrawRotaGraph(kScreenWidth / 2.0f, kScreenHeight / 2.0f, 1.0f, 0.0f, m_LogoHandle, true);
+	//ポーズ中の文字
+	DrawStringToHandle(kScreenWidth / 2.0f - 140.0f, kScreenHeight * 4.0f / 20.0f, "ポーズちゅう", GetColor(0, 0, 0), m_fontHandle);
+	for (int i = 0; i < 3; i++)
+	{
+		float drawY = offsetY(i);
+		//・・・の文字
+		DrawStringToHandle(kScreenWidth * 2.0f / 3.0f - 200.0f + 40 * i, kScreenHeight * 4.0f / 20.0f + 10.0f + drawY, "・", GetColor(0, 0, 0), m_fontHandle);
+	}
+	//YesNoDialogの内容
 	 int yes_no_dialog_height = Application::GetInstance().GetWindowSize().w * 1.0f / 8.0f;
 	constexpr int yes_no_dialog_width = 300;
 	const int centerX = Application::GetInstance().GetWindowSize().w *1.0f/ 3.0f;
-	const int centerY = Application::GetInstance().GetWindowSize().h / 2;
+	const int centerY = Application::GetInstance().GetWindowSize().h * 2.0f / 8.0f;
+	float baseY = Application::GetInstance().GetWindowSize().w * 1.0f / 8.0f;
 
 	const int dialog_left = centerX - 150;
 
 	int y = centerY;	// 画面中心から文字サイズの半分引く
-	int x = dialog_left + 80;	// はい、いいえが真ん中に来るように
+	int x = dialog_left + 250;	// はい、いいえが真ん中に来るように
 	std::array<std::string, 2> answers = { "はい","いいえ" };
 
 	// ダイアログタイトルを表示
-	DrawFormatString(centerX - 60, centerY - yes_no_dialog_height / 2 + 10,
-		0xffffff,"%s", menuList_[selectIndex_].c_str());
-
+	/*DrawFormatString(centerX + 600, centerY - yes_no_dialog_height / 2 + 10,
+		0xffffff,"%s", menuList_[selectIndex_].c_str());*/
+	std::string text = menuList_[selectIndex_];
+	if (selectIndex_ == 2)//ステージセレクトに戻る
+	{
+		DrawStringToHandle(centerX + 50, centerY - yes_no_dialog_height / 2 + baseY, text.c_str(), GetColor(0, 0, 0), m_fontHandle);
+	}
+	else//その他
+	{
+		DrawStringToHandle(centerX + 150, centerY - yes_no_dialog_height / 2 + baseY, text.c_str(), GetColor(0, 0, 0), m_fontHandle);
+	}
 	for (int idx = 0; idx < 2; idx++)
 	{
 		uint32_t col = 0xffffff;
 		if (yesNoIndex_ == idx)
 		{
-			DrawString(x - 20, y, "⇒", 0xaaffaa);
+			float rad = m_frame / 100.0f * DX_PI;
+			float drawX = sin(rad) * -15.0f;
+			DrawStringToHandle(x-60+drawX , baseY + y, "→", GetColor(0, 0, 0), m_fontHandle);
 			col = 0xff4444;
 		}
-		DrawFormatString(x, y, col, "%s", answers[idx].c_str());
-		x += 100;
+		//はい、いいえの文字
+		std::string text = answers[idx];
+		DrawStringToHandle(x, baseY + y, text.c_str(), GetColor(0, 0, 0), m_fontHandle);
+		x += 300;
 	}
 }
 
@@ -181,7 +221,8 @@ PauseScene::PauseScene(SceneController& controller) :
 	Scene(controller),
 	update_(&PauseScene::NormalUpdate),
 	draw_(&PauseScene::NormalDraw),
-	m_fontHandle(-1)
+	m_fontHandle(-1),
+	m_frame(0)
 {
 	m_LogoHandle = LoadGraph("data/Pause.png");
 	//フォントの生成
@@ -195,20 +236,20 @@ PauseScene::PauseScene(SceneController& controller) :
 	};
 
 	// メニューで選ばれる文字列と実行される内容のペアを定義
-	execTable_["ゲームに戻る"] = [this](Input&) {
+	execTable_["ゲームにもどる"] = [this](Input&) {
 		controller_.PopScene();	// この時点で自分は解放されている
 		};
 	//execTable_[L"キーコンフィグ"] = [this](Input& input) {
 	//	controller_.PushScene(std::make_shared<KeyConfigScene>(controller_, input));
 	//	};
-	execTable_["タイトルに戻る"] = [this](Input&) {
+	execTable_["タイトルにもどる"] = [this](Input&) {
 		update_ = &PauseScene::YesNoDialogUpdate;
 		draw_ = &PauseScene::YesNoDialogDraw;
 		yesRequestFunction_ = [this]() {
 			controller_.ResetScene(std::make_shared<TitleScene>(controller_));
 			};
 		};
-	execTable_["ステージセレクトに戻る"] = [this](Input&) {
+	execTable_["ステージセレクトにもどる"] = [this](Input&) {
 		update_ = &PauseScene::YesNoDialogUpdate;
 		draw_ = &PauseScene::YesNoDialogDraw;
 		yesRequestFunction_ = [this](){
@@ -220,7 +261,7 @@ PauseScene::PauseScene(SceneController& controller) :
 
 			};
 		};
-	execTable_["ゲームを終了する"] = [this](Input&) {
+	execTable_["ゲームをおわる"] = [this](Input&) {
 		update_ = &PauseScene::YesNoDialogUpdate;
 		draw_ = &PauseScene::YesNoDialogDraw;
 		yesRequestFunction_ = []() {
@@ -244,4 +285,26 @@ void PauseScene::Update(Input& input)
 void PauseScene::Draw()
 {
 	(this->*draw_)();
+}
+float PauseScene::offsetY(int index)
+{
+
+	int startDelay = index * 8;   // 文字ごとの遅延
+	int moveFrame = 30;          // 動く時間
+	int waitFrame = 30;          // 止まる時間
+	int cycle = moveFrame + waitFrame;
+
+
+
+	//m_goalFrameはだんだん大きくなる
+	int f = (m_frame - startDelay) % cycle;
+
+	if (f < 0)
+		return 0.0f;              // まだ開始していない
+
+	if (f >= moveFrame)
+		return 0.0f;              // 止まっている
+
+	float t = (float)f / moveFrame * DX_PI;
+	return sinf(t) * -15.0f;
 }

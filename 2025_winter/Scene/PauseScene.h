@@ -37,7 +37,6 @@ private:
 	void DrawMenu();
 
 	void YesNoDialogDraw();
-	
 public:
 	PauseScene(SceneController& controller);
 	virtual ~PauseScene();
@@ -47,6 +46,8 @@ private:
 	int m_LogoHandle = -1;
 private:
 	int m_fontHandle;// フォントハンドル
+	float offsetY(int index);// ・・・の文字のYオフセット計算
+	int m_frame;//タイマー
 
 };
 
