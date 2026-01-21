@@ -56,7 +56,7 @@ timer(0)
 	update_ = &GameoverScene::FadeInUpdate;
 	draw_ = &GameoverScene::FadeInDraw;
 
-	m_pPlayer = std::make_shared<Player>(type, PlayerStartPos);
+	m_pPlayer = std::make_shared<Player>(type, PlayerStartPos,controller.GetEffekseerResourceManager());
 
 	//画像
 	{

@@ -251,7 +251,7 @@ void StageSelectScene::FadeOutDraw()
 
 }
 
-StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,int hp,int Life) : Scene(controller)
+StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,int hp,int Life) : Scene(controller), stageUI(controller)
 {
 	//bgm再生
 	Application::GetInstance().GetSoundManager().PlayBgm("bgmSelectScene");
@@ -260,7 +260,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	draw_ = &StageSelectScene::FadeInDraw;
 
 	m_frame = fade_interval;
-	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 	//playerの状態によってエフェクトを出す
 	m_pPlayer->AddOnLandEvent([this]() {
 		m_pEffects.push_back(std::make_shared<Effect>(m_pPlayer->GetPos(), "star",false));
@@ -285,8 +285,8 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 300,800 },StageID::Fstage,1));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 560,544 },StageID::SPstage,5));
 	m_doors.push_back(  std::make_shared< Door>(Vec2{ 800,800 },StageID::Sstage,2));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1300,800 },StageID::Tstage,4));
-	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1950,672 },StageID::Forthstage,3));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1300,800 },StageID::Forthstage,3));
+	m_doors.push_back(  std::make_shared< Door>(Vec2{ 1950,672 },StageID::Tstage,4));
 
 }
 

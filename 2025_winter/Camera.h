@@ -19,10 +19,15 @@ struct Camera
 	Rect m_cameraRect;
 	bool isBoss = false;
 	bool isFish = false;
+	bool isBearWolf = false;
 	void ChangeIsBossTrue() { isBoss = true; }
 	void ChangeIsBossFalse() { isBoss = false; }
+	//魚
 	void ChangeIsFishTrue() { isFish = true; }
 	void ChangeIsFishFalse() { isFish = false; }
+	//熊と狼
+	void ChangeIsBearWolfTrue() { isBearWolf = true; }
+	void ChangeIsBearWolfFalse() { isBearWolf = false; }
 
 	//カメラの右側の最大値
 	float cameraRightMax = 20000.0f - 1920.0f / 2.0f;

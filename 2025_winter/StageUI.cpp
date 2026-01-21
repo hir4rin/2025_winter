@@ -1,5 +1,6 @@
 ﻿#include "StageUI.h"
 #include "DxLib.h"
+#include "Scene/SceneController.h"
 #include "Camera.h"
 #include <cmath>
 #include <string>
@@ -67,7 +68,7 @@ namespace
 }
 
 
-StageUI::StageUI() :
+StageUI::StageUI(SceneController& controller) :
 	m_frame(0),
 	m_playerHp(100),
 	m_displayHp(100),
@@ -75,8 +76,10 @@ StageUI::StageUI() :
 	m_displayBossHp(100),
 	m_bossFishHp(100),
 	m_displayBossFishHp(100),
+	m_BearWolfHp(100),
+	m_displayBearWolfhp(100),
 	m_fontHandle(-1),
-	m_pPlayer(std::make_shared<Player>(PlayerType::Normal, 100, Vec2(secondRightX + 100, topPos + 100), 3))
+	m_pPlayer(std::make_shared<Player>(PlayerType::Normal, 100, Vec2(secondRightX + 100, topPos + 100),2, controller.GetEffekseerResourceManager()))
 {
 	m_hpHandle = LoadGraph("data/Game/HpBar.png");
 	m_bossHpHandle = LoadGraph("data/Game/HpBossBar.png");
@@ -139,6 +142,7 @@ void StageUI::Update()
 
 	m_displayBossHp = std::lerp(m_displayBossHp, static_cast<float>(m_bossHp), t);
 	m_displayBossFishHp = std::lerp(m_displayBossFishHp, static_cast<float>(m_bossFishHp), t);
+	m_displayBearWolfhp = std::lerp(m_displayBearWolfhp, static_cast<float>(m_BearWolfHp), t);
 
 	if (m_frame % 2 == 0)m_pPlayer->AnimFrameUpdate();
 	m_pPlayer->AnimOnlyUpdate();
@@ -206,6 +210,18 @@ void StageUI::Draw(Camera& camera)
 			kHpBossBarScale, 0, m_bossHpHandle, true);
 		DrawStringToHandle(360, topPos + 57 + ktopOffset, "Fishers : ", GetColor(0, 0, 0), m_fontHandle);
 	}
+	if (camera.isBearWolf)
+	{
+		//敵のHPバーを表示
+		DrawBox(leftHpX, topPos + 55 + ktopOffset, leftHpX + 100 * hpScale * 1.3f, topPos + 92 + ktopOffset, GetColor(0, 0, 0), true);
+		DrawBox(leftHpX, topPos + 55 + ktopOffset, leftHpX + m_displayBearWolfhp * hpScale * 0.5f * 1.3f, topPos + 92 + ktopOffset, GetColor(80, 200, 255), true);
+		//DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(255, 0, 0), false);//外枠
+		DrawRectRotaGraph(leftHpX + 135, topPos + 50 + ktopOffset + 25,
+			kHpBossBarW * 0, kHpBossBarH * 0,//切り取り左上
+			kHpBossBarW, kHpBossBarH,//切り取りの幅
+			kHpBossBarScale, 0, m_bossHpHandle, true);
+		DrawStringToHandle(280, topPos + 57 + ktopOffset, "Bear&Wolf : ", GetColor(0, 0, 0), m_fontHandle);
+	}
 
 	//フォントサイズを元に戻す(元は16)
 	SetFontSize(oldSize);
@@ -260,6 +276,11 @@ void StageUI::SetBossHp(int m_pBossHp)
 void StageUI::SetFishHp(int m_pBossFishHp)
 {
 	m_bossFishHp = m_pBossFishHp;
+}
+
+void StageUI::SetBearWolfHp(int bearHp, int WolfHp)
+{
+	m_BearWolfHp = bearHp + WolfHp;
 }
 
 float StageUI::GetTopX()

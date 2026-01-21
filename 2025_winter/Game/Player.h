@@ -6,6 +6,7 @@
 class Input;
 class Arrow;
 
+class EffekseerResourceManager;
 class Bg;
 class Camera;
 enum class Anim
@@ -45,9 +46,9 @@ public:
 	/// </summary>
 	/// <param name="type"></param>
 	/// <param name="hp"></param>
-	Player(PlayerType type,int hp,Vec2 pos,int Life);
+	Player(PlayerType type,int hp,Vec2 pos,int Life, std::shared_ptr<EffekseerResourceManager> effRes);
 	//ゲームオーバー時用
-	Player(PlayerType type,Vec2 pos);
+	Player(PlayerType type,Vec2 pos, std::shared_ptr<EffekseerResourceManager> effRes);
 	virtual ~Player();
 
 	virtual void Init() override;
@@ -309,6 +310,8 @@ private:
 private:
 	int m_burningEfHandle = -1;
 	int playingEffectHandle = -1;//再生中のエフェクトハンドル
+private:
+	std::shared_ptr<EffekseerResourceManager> m_effRes;
 
 };
 

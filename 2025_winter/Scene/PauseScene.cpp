@@ -11,11 +11,14 @@ namespace
 {
 constexpr int frame_margin = 10;	// 枠が画面端からどれくらい離れてるか
 constexpr int appear_interval = 10;	// 枠が出現するまでのフレーム数
-constexpr int menu_row_height = 50;	// メニューの行の高さ
-constexpr int menu_left_margin = 200;	// メニュー枠からの左余白
+constexpr int menu_row_height = 130;	// メニューの行の高さ
+constexpr int menu_left_margin = 100;	// メニュー枠からの左余白
 constexpr int menu_top_margin = 120;	// メニュー枠からの上余白
 constexpr int yes_no_dialig_yes = 0;	// yesnodialogでyes
 constexpr int yes_no_dialig_no = 1;		// yesnodialogでno
+
+constexpr int kScreenWidth = 1920;
+constexpr int kScreenHeight = 1080;
 }
 
 void PauseScene::AppearUpdate(Input& input)
@@ -33,9 +36,7 @@ void PauseScene::NormalUpdate(Input& input)
 {
 	if (input.IsTriggered("pause"))
 	{
-		update_ = &PauseScene::DisappearUpdate;
-		draw_ = &PauseScene::IntervalDraw;
-		frame_ = appear_interval;
+		controller_.PopScene();	// この時点で自分は解放されている
 		return;
 	}
 	if (input.IsTriggered("up"))
@@ -58,6 +59,7 @@ void PauseScene::NormalUpdate(Input& input)
 
 void PauseScene::DisappearUpdate(Input& input)
 {
+	//今は使っていない
 	if (frame_ == 0)
 	{
 		controller_.PopScene();	// この時点で自分は解放されている
@@ -101,19 +103,9 @@ void PauseScene::IntervalDraw()
 	frame_height *= rate;	// 表示する高さを割合で調節
 	//frame_width *= rate;
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-	DrawBox(center_x - frame_width,
-			center_y - frame_height,
-			center_x + frame_width,
-			center_y + frame_height,
-			0x000000, true);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	DrawRotaGraph(kScreenWidth / 2.0f, kScreenHeight / 2.0f, 1.0f, 0.0f, m_LogoHandle, true);
 
-	DrawBox(center_x - frame_width,
-			center_y - frame_height,
-			center_x + frame_width,
-			center_y + frame_height,
-			0xaaaaff, false);
+
 }
 
 void PauseScene::NormalDraw()
@@ -121,30 +113,34 @@ void PauseScene::NormalDraw()
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-	DrawBox(frame_margin, frame_margin, wsize.w - frame_margin, wsize.h - frame_margin, 0x000000, true);
+	DrawBox(0, 0, wsize.w, wsize.h, 0x000000, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	DrawBox(frame_margin, frame_margin, wsize.w - frame_margin, wsize.h - frame_margin, 0xaaaaff, false);
-	DrawString(280, frame_margin + 20, "Pause Scene", 0xffffff);
+	//タイトル
+	DrawRotaGraph(kScreenWidth / 2.0f, kScreenHeight / 2.0f,1.0f,0.0f, m_LogoHandle, true);
 	DrawMenu();
 }
 
 void PauseScene::DrawMenu()
 {
-	int menuStartX = frame_margin + menu_left_margin;
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	float baseY = wsize.w * 1.0f / 8.0f;
+	int menuStartX = wsize.w * 1.0f / 3.0f;
 	int indicatorX = menuStartX - 30;
-	int menuY = frame_margin + menu_top_margin;
+	int menuY = wsize.h * 1.0f/8.0f;
 	for (int idx = 0; idx < menuList_.size(); idx++)
 	{
 		int offsetX = 0;
 		uint32_t col = 0xffffff;
 		if (idx == selectIndex_)
 		{
-			DrawString(indicatorX, menuY, "⇒", 0xffaaaa);
+			//DrawString(indicatorX, baseY + menuY, "⇒", 0xffaaaa);
+			DrawStringToHandle(indicatorX, baseY + menuY, "→", GetColor(0, 0, 0), m_fontHandle);
 			offsetX = 10;
 			col = GetColor(128, 255, 192);
 		}
-		DrawFormatString(menuStartX + offsetX, menuY, col, "%s", menuList_[idx].c_str());
+		std::string text = menuList_[idx];
+		//DrawFormatString(menuStartX + offsetX, menuY, col, "%s", menuList_[idx].c_str());
+		DrawStringToHandle(menuStartX + offsetX, baseY +menuY, text.c_str(), GetColor(0, 0, 0), m_fontHandle);
 		menuY += menu_row_height;
 	}
 }
@@ -153,19 +149,12 @@ void PauseScene::YesNoDialogDraw()
 {
 	NormalDraw();
 
-	constexpr int yes_no_dialog_height = 100;
+	 int yes_no_dialog_height = Application::GetInstance().GetWindowSize().w * 1.0f / 8.0f;
 	constexpr int yes_no_dialog_width = 300;
-	const int centerX = Application::GetInstance().GetWindowSize().w / 2;
+	const int centerX = Application::GetInstance().GetWindowSize().w *1.0f/ 3.0f;
 	const int centerY = Application::GetInstance().GetWindowSize().h / 2;
 
 	const int dialog_left = centerX - 150;
-	DrawBox(dialog_left, centerY - yes_no_dialog_height / 2,
-		centerX + yes_no_dialog_width / 2, centerY + yes_no_dialog_height / 2,
-		0x8888bb, true);
-	DrawBox(320 - yes_no_dialog_width / 2, centerY - yes_no_dialog_height / 2,
-		centerX + yes_no_dialog_width / 2, centerY + yes_no_dialog_height / 2,
-		0xffffff, false);
-
 
 	int y = centerY;	// 画面中心から文字サイズの半分引く
 	int x = dialog_left + 80;	// はい、いいえが真ん中に来るように
@@ -190,22 +179,24 @@ void PauseScene::YesNoDialogDraw()
 
 PauseScene::PauseScene(SceneController& controller) : 
 	Scene(controller),
-	update_(&PauseScene::AppearUpdate),
-	draw_(&PauseScene::IntervalDraw)
+	update_(&PauseScene::NormalUpdate),
+	draw_(&PauseScene::NormalDraw),
+	m_fontHandle(-1)
 {
+	m_LogoHandle = LoadGraph("data/Pause.png");
+	//フォントの生成
+	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
 	menuList_ = {
-		"ゲームに戻る",
+		"ゲームにもどる",
 		//"キーコンフィグ",
-		"タイトルに戻る",
-		"ステージセレクトに戻る",
-		"ゲームを終了する"
+		"タイトルにもどる",
+		"ステージセレクトにもどる",
+		"ゲームをおわる"
 	};
 
 	// メニューで選ばれる文字列と実行される内容のペアを定義
 	execTable_["ゲームに戻る"] = [this](Input&) {
-		update_ = &PauseScene::DisappearUpdate;
-		draw_ = &PauseScene::IntervalDraw;
-		frame_ = appear_interval;
+		controller_.PopScene();	// この時点で自分は解放されている
 		};
 	//execTable_[L"キーコンフィグ"] = [this](Input& input) {
 	//	controller_.PushScene(std::make_shared<KeyConfigScene>(controller_, input));
@@ -236,6 +227,13 @@ PauseScene::PauseScene(SceneController& controller) :
 			Application::GetInstance().RequestExit();
 			};
 		};
+}
+
+PauseScene::~PauseScene()
+{
+	DeleteGraph(m_LogoHandle);
+	//生成したフォントの削除
+	DeleteFontToHandle(m_fontHandle);
 }
 
 void PauseScene::Update(Input& input)

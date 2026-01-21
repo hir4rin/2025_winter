@@ -12,6 +12,8 @@ enum class EffectType
 	Dust,
 	DustForClear,
 	BlueStarLight,
+	RedStarLight,
+	GreenStarLight,
 	Slash
 };
 

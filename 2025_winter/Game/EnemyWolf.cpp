@@ -164,6 +164,10 @@ void EnemyWolf::Draw(Camera& camera)
 	case EnemyState::Damage://死亡演出
 		charaIdx = (m_animframe / kDamageDuration) % kDamageNum;
 		charaIdy = 5;
+		if (m_animframe >= kDamageDuration * kDamageNum)
+		{
+			charaIdx = kDamageNum - 1;
+		}
 		drawY = 0;
 		break;
 	default:
@@ -490,10 +494,10 @@ void EnemyWolf::DamageUpdate()
 
 
 
-
+	m_colRect.SetLT(0, 5000, 0, 0);
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
-
+	m_colRect.SetLT(0, 5000, 0, 0);
 
 	if (m_isGround)
 	{

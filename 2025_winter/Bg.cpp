@@ -345,7 +345,7 @@ void Bg::Draw(Camera& camera)
 	switch (StageNum)
 	{
 	case 0://stage0
-		DrawMapChip(camera);
+		DrawMapChip0(camera);
 		break;
 	case 1://最初のマップ
 		DrawMapChip0(camera);

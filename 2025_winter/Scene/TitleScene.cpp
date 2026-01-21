@@ -239,7 +239,7 @@ void TitleScene::FadeDraw()
 TitleScene::TitleScene(SceneController& controller) : Scene(controller), m_fontHandle(-1)
 {
 	//bgmを流す
-
+	
 	const auto& wsize = Application::GetInstance().GetWindowSize();
 	//フォントの生成
 	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
@@ -256,7 +256,7 @@ TitleScene::TitleScene(SceneController& controller) : Scene(controller), m_fontH
 	playerSelect = 1;
 	m_frame = 0;
 
-	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,100,sPos,5);
+	m_pPlayer = std::make_shared<Player>(PlayerType::Normal,100,sPos,3, controller.GetEffekseerResourceManager());
 
 
 	m_stars.push_back(std::make_shared<TitleStar>(starPos,350.0f));

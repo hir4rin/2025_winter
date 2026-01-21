@@ -1,13 +1,14 @@
 ﻿#pragma once
 #include "Player.h"
 class Camera;
+class SceneController;
 
 
 
 class StageUI
 {
 public:
-	StageUI();
+	StageUI(SceneController& controller);
 	virtual ~StageUI();
 
 	void Init(int hp, PlayerType type, int Life);
@@ -40,6 +41,12 @@ public:
 	/// </summary>
 	/// <param name="m_pBossFishHp"></param>
 	void SetFishHp(int m_pBossFishHp);
+	/// <summary>
+	/// 熊と狼のhpをセットする(UI用)
+	/// </summary>
+	/// <param name="bearHp"></param>
+	/// <param name="WolfHp"></param>
+	void SetBearWolfHp(int bearHp, int WolfHp);
 
 	float GetTopX();
 
@@ -57,12 +64,19 @@ private:
 	int  m_bossFishHandle;
 	int m_bossFishHp;
 
+	int m_BearWolfHandle;
+	int m_BearWolfHp; //熊と狼
+
 	//表示用アニメーション
 	float m_displayHp;
 	PlayerType m_displayType;
-
+	//ボス
 	float m_displayBossHp;
+	//魚
 	float m_displayBossFishHp;
+	//熊と狼
+	float m_displayBearWolfhp;
+
 
 private:
 	int m_frame;
@@ -76,7 +90,6 @@ private:
 
 private:
 	int m_fontHandle;// フォントハンドル
-	
 
 };
 

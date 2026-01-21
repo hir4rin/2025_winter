@@ -1,5 +1,11 @@
 ﻿#include "SceneController.h"
+#include "EffekseerResourceManager.h"
 #include "Scene.h"
+
+SceneController::SceneController()
+{
+	m_EfReManager = std::make_shared< EffekseerResourceManager>();
+}
 
 void SceneController::SetPlayerInfo(PlayerType type, int hp, int life)
 {
@@ -57,4 +63,9 @@ void SceneController::Draw()
 	{
 		scene->Draw();
 	}
+}
+
+std::shared_ptr<EffekseerResourceManager> SceneController::GetEffekseerResourceManager()
+{
+	return m_EfReManager;
 }

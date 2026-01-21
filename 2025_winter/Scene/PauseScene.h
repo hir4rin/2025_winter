@@ -40,8 +40,13 @@ private:
 	
 public:
 	PauseScene(SceneController& controller);
-	
+	virtual ~PauseScene();
 	void Update(Input& input) override;
 	void Draw() override;
+private:
+	int m_LogoHandle = -1;
+private:
+	int m_fontHandle;// フォントハンドル
+
 };
 

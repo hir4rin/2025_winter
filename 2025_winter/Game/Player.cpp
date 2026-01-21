@@ -13,6 +13,8 @@
 #include <cmath>
 #include <memory>
 #include <algorithm>
+#include "../Scene/SceneController.h"
+#include "../EffekseerResourceManager.h"
 
 namespace
 {
@@ -142,7 +144,7 @@ namespace
 
 
 //ゲームプレイ中用
-Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
+Player::Player(PlayerType type, int hp, Vec2 pos,int Life, std::shared_ptr<EffekseerResourceManager> effRes) :
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -167,7 +169,8 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 	damageTimer(0),
 	attackCoolTimer(0),
 	m_NormalAttackHandle(-1),
-	m_burningEfHandle(-1)
+	m_burningEfHandle(-1),
+	m_effRes(effRes)
 
 {
 	m_pos = pos;
@@ -194,11 +197,13 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life) :
 		break;
 	}
 	//effect用の変数初期化
-	m_burningEfHandle = LoadEffekseerEffect("data/Game/Effect/Burning.efk");
+	
+	//m_burningEfHandle = LoadEffekseerEffect("data/Game/Effect/Burning.efk");
+	m_burningEfHandle = m_effRes->LoadEffect("data/Game/Effect/Burning.efk");
 
 }
 //ゲームオーバー時用
-Player::Player(PlayerType type, Vec2 pos):
+Player::Player(PlayerType type, Vec2 pos, std::shared_ptr<EffekseerResourceManager> effRes):
 	m_frame(0),
 	charaIdx(0),
 	charaIdy(0),
@@ -219,7 +224,8 @@ Player::Player(PlayerType type, Vec2 pos):
 	isRotateOne(false),
 	m_rotateFrame(0),
 	damageTimer(0),
-	attackCoolTimer(0)
+	attackCoolTimer(0),
+	m_effRes(effRes)//エラー防止用
 
 {
 	m_pos = pos;
@@ -244,12 +250,15 @@ Player::Player(PlayerType type, Vec2 pos):
 		ChangeArcher();
 		break;
 	}
+	//エラー防止用
+	m_burningEfHandle = m_effRes->LoadEffect("data/Game/Effect/Burning.efk");
 }
 Player::~Player()
 {
 	DeleteGraph(m_handle);
 	// エフェクトリソースを削除する。(Effekseer終了時に破棄されるので削除しなくてもいい)
-	DeleteEffekseerEffect(m_burningEfHandle);
+	//DeleteEffekseerEffect(m_burningEfHandle);
+	m_effRes->DeleteEffect(m_burningEfHandle);
 }
 
 void Player::Init()
@@ -443,6 +452,7 @@ void Player::Update(Input& input)
 	if (!(m_type == PlayerType::Burning && m_state == PlayerState::Attack))
 	{
 		Character::Gravity();
+		//m_vel.y -= 0.5f;//重力微調整
 	}
 
 
@@ -951,6 +961,7 @@ void Player::InputUpdate(Input& input)
 			Application::GetInstance().GetSoundManager().PlaySE("burningSE");
 			// エフェクトを再生する。
 			playingEffectHandle = PlayEffekseer2DEffect(m_burningEfHandle);
+			assert(playingEffectHandle >= 0);
 			// エフェクトの拡大率を設定する。
 				// Effekseerで作成したエフェクトは2D表示の場合、小さすぎることが殆どなので必ず拡大する。
 			SetScalePlayingEffekseer2DEffect(playingEffectHandle, 1.0f, 1.0f, 1.0f);

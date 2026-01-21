@@ -185,6 +185,7 @@ private:
 	int m_shakeTime = 0;//カメラが揺れてる間ほかを止める
 	int m_hitCoolFrame = 0;//被弾後のクールタイム
 	bool m_fishDied = false;//魚が死んだかどうか
+	bool m_bearWolfDied = false;//熊と狼が死んだかどうか
 private:
 	std::shared_ptr<Player> m_pPlayer;
 	std::vector<std::shared_ptr<EnemyWizard>> m_pEnemyWizards;

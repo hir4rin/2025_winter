@@ -24,6 +24,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="EffekseerResourceManager.h" />
     <ClInclude Include="Game\Arrow.h" />
     <ClInclude Include="Game\BossShot.h" />
     <ClInclude Include="Game\BurningObject.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EffekseerResourceManager.cpp" />
     <ClCompile Include="Game\Arrow.cpp" />
     <ClCompile Include="Game\BossShot.cpp" />
     <ClCompile Include="Game\BurningObject.cpp" />

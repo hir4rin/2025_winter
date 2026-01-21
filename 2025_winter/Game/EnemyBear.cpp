@@ -155,6 +155,10 @@ void EnemyBear::Draw(Camera& camera)
 		charaIdx = (m_animframe / kDamageDuration) % kDamageNum;
 		charaIdy = 6;
 		drawY = 0;
+		if (m_animframe >= kDamageDuration * kDamageNum)
+		{
+			charaIdx = kDamageNum - 1;
+		}
 		break;
 	default:
 		break;
@@ -477,9 +481,10 @@ void EnemyBear::DamageUpdate()
 
 
 
-
+	m_colRect.SetLT(0, 5000, 0, 0);
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
+	m_colRect.SetLT(0, 5000, 0, 0);
 
 
 	if (m_isGround)

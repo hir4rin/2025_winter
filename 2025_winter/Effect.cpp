@@ -33,6 +33,22 @@ namespace
 	constexpr float kBlueStarLightScale = 4.0f;
 	constexpr int kBlueStarLightAnimDuration = 10;
 	constexpr int kBlueStarLightAnimNum = 4;
+	//RedStarLight
+	constexpr int kRedStarLightCutW = 16;
+	constexpr int kRedStarLightCutH = 16;
+	constexpr int kRedStarLightSorW = 14*16;
+	constexpr int kRedStarLightSorH = 12*16;
+	constexpr float kRedStarLightScale = 4.0f;
+	constexpr int kRedStarLightAnimDuration = 10;
+	constexpr int kRedStarLightAnimNum = 4;
+	//GreenStarLight
+	constexpr int kGreenStarLightCutW = 16;
+	constexpr int kGreenStarLightCutH = 16;
+	constexpr int kGreenStarLightSorW = 14*16;
+	constexpr int kGreenStarLightSorH = 12*16;
+	constexpr float kGreenStarLightScale = 4.0f;
+	constexpr int kGreenStarLightAnimDuration = 10;
+	constexpr int kGreenStarLightAnimNum = 4;
 	//Slash
 	constexpr int kSlashCutW = 128;
 	constexpr int kSlashCutH = 128;
@@ -81,6 +97,16 @@ Effect::Effect(Vec2 pos,std::string name,bool dir):
 		m_type = EffectType::BlueStarLight;
 		m_handle = LoadGraph("data/Game/WaterEffect.png");
 	}
+	if (name == "redStarLight")
+	{
+		m_type = EffectType::RedStarLight;
+		m_handle = LoadGraph("data/Game/RedEffect.png");
+	}
+	if (name == "greenStarLight")
+	{
+		m_type = EffectType::GreenStarLight;
+		m_handle = LoadGraph("data/Game/GreenEffect.png");
+	}
 	if(name == "slash")
 	{
 		m_type = EffectType::Slash;
@@ -118,7 +144,10 @@ void Effect::Update()
 			
 			break;
 		case EffectType::BlueStarLight:
-			
+			break;
+		case EffectType::RedStarLight:
+			break;
+		case EffectType::GreenStarLight:
 			break;
 		case EffectType::Slash:
 			break;
@@ -184,6 +213,32 @@ void Effect::Draw(Camera& camera)
 			 kBlueStarLightSorW+ kBlueStarLightCutW * charaIdx, kBlueStarLightSorH,//切り取り座標
 			 kBlueStarLightCutW, kBlueStarLightCutH,//切り取りの幅
 			 kBlueStarLightScale, 0.0f,//左が拡大率、右が回転率
+			 m_handle,
+			 true,
+			 true,//反転するかどうか
+			  false);
+			break;
+	case EffectType::RedStarLight://BlueStarLightの描画処理
+		charaIdx = (m_animFrame / kRedStarLightAnimDuration) % kRedStarLightAnimNum;
+		
+		
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+			 kRedStarLightSorW + kRedStarLightCutW * charaIdx, kRedStarLightSorH,//切り取り座標
+			 kRedStarLightCutW, kRedStarLightCutH,//切り取りの幅
+			 kRedStarLightScale, 0.0f,//左が拡大率、右が回転率
+			 m_handle,
+			 true,
+			 true,//反転するかどうか
+			  false);
+			break;
+	case EffectType::GreenStarLight://BlueStarLightの描画処理
+		charaIdx = (m_animFrame / kGreenStarLightAnimDuration) % kGreenStarLightAnimNum;
+		
+		
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+			 kGreenStarLightSorW + kGreenStarLightCutW * charaIdx, kGreenStarLightSorH,//切り取り座標
+			 kGreenStarLightCutW, kGreenStarLightCutH,//切り取りの幅
+			 kGreenStarLightScale, 0.0f,//左が拡大率、右が回転率
 			 m_handle,
 			 true,
 			 true,//反転するかどうか

@@ -39,7 +39,7 @@ namespace
 }
 
 
-GameClearScene::GameClearScene(SceneController& controller, PlayerType type, int hp, int Life) : Scene(controller),
+GameClearScene::GameClearScene(SceneController& controller, PlayerType type, int hp, int Life) : Scene(controller),  stageUI(controller),
 update_(&GameClearScene::FadeInUpdate),
 draw_(&GameClearScene::FadeDraw),
 m_fontHandle(-1)
@@ -70,7 +70,7 @@ m_fontHandle(-1)
 	{
 		m_pSigns.push_back(std::make_shared<Sign>(Vec2{ kRankWidth * (i + 1) - 100.0f,764.0f }, 7 - i));
 	}
-	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+	m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 	m_pBg = new Bg(m_pPlayer, 4);
 	m_frame = fade_interval;// フェードインの最初
 	m_pPlayer->SetBgPointer(m_pBg);
@@ -435,7 +435,7 @@ void GameClearScene::NormalDraw()
 	}
 
 
-	
+	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
 	m_pCannon->Draw(camera);
 
 	for (auto& s : m_pSigns)
@@ -452,7 +452,7 @@ void GameClearScene::NormalDraw()
 	{
 		if (effect) effect->Draw(camera);
 	}
-	if (!isCannon || isFlying)m_pPlayer->Draw(camera);
+	
 
 	//goalの描画
 	for (int i = 0; i < 4; i++)

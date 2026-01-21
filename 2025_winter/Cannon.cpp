@@ -111,7 +111,7 @@ void Cannon::Draw(Camera& camera)
 	//		break;
 	//}
 	
-	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + 50.0f,
+	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + 43.0f,
 	kCannonTransFormCutW * 0, 0,//切り取り左上
 	kCannonWidth, kCannonHeight,//切り取りの幅
 	0.3f, 0.0f, m_handle, true, false);

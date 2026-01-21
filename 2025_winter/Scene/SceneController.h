@@ -5,6 +5,7 @@
 
 class Input;
 class Scene;
+class EffekseerResourceManager;
 
 struct PlayerInformation
 {
@@ -21,10 +22,13 @@ struct PlayerInformation
 class SceneController
 {
 public:
+	SceneController();
 	//プレイヤーの情報を保存
 	PlayerInformation m_savePlayer;
 	//プレイヤーの情報を更新
 	void SetPlayerInfo(PlayerType type,int hp,int life);
+	std::shared_ptr<EffekseerResourceManager> m_EfReManager;
+
 private:
 	// 現在スタックに積まれているシーン
 	// 最後に積んだものだけがUpdateされる
@@ -66,5 +70,6 @@ public:
 	/// 内部に持ってるシーンのDrawを呼び出す
 	/// </summary>
 	void Draw();
+	std::shared_ptr<EffekseerResourceManager> GetEffekseerResourceManager();
 };
 

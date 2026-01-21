@@ -57,7 +57,7 @@ void Sign::Draw(Camera& camera)
 	//DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d", m_num);
 	std::string i = std::to_string(m_num);
 
-	DrawStringToHandle(m_pos.x + camera.drawOffset.x - 15.0f, m_pos.y + camera.drawOffset.y - 40.0f, i.c_str(), GetColor(0, 0, 0), m_fontHandle);
+	DrawStringToHandle(m_pos.x + camera.drawOffset.x - 13.0f, m_pos.y + camera.drawOffset.y - 40.0f, i.c_str(), GetColor(0, 0, 0), m_fontHandle);
 
 	//フォントサイズを元に戻す(元は16)
 	SetFontSize(oldSize);

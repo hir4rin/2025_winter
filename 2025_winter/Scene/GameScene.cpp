@@ -56,6 +56,7 @@ namespace
 
 GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type, int hp, int Life) :
 	Scene(controller),
+	stageUI(controller),
 	m_stageNum(stageNum),
 	m_fishDied(false),
 	update_(&GameScene::FadeInUpdate),
@@ -79,7 +80,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		//-----------------------------------------------------------------
 
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life, controller.GetEffekseerResourceManager());
 
 		m_pBg = new Bg(m_pPlayer, 1);
 		m_doors = std::make_shared< Door>(Vec2{ 5200,660 });
@@ -108,7 +109,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pPotions.push_back(std::make_shared<Potion>(Vec2(4566.0f, 992.0f)));
 
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 		m_pBg = new Bg(m_pPlayer, 2);
 		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
@@ -137,7 +138,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
 		//-----------------------------------------------------------------
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 		m_pBg = new Bg(m_pPlayer, 3);
 		m_doors = std::make_shared< Door>(Vec2{ 6879,928 });
 	}
@@ -160,7 +161,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		//敵スポーン
 
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 		m_pBg = new Bg(m_pPlayer, 6);
 		m_doors = std::make_shared< Door>(Vec2{ 6050,864 });
@@ -184,7 +185,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		//------------------------------------------------------------------
 		m_pPotions.push_back(std::make_shared<Potion>(Vec2(4707.0f, 800.0f)));
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 		m_pBg = new Bg(m_pPlayer, 7);
 		m_doors = std::make_shared< Door>(Vec2{ 6130,600 });
@@ -204,7 +205,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4952.0f,200.0f), false });
 
 		//------------------------------------------------------------------
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 
 		m_pBg = new Bg(m_pPlayer, 8);
@@ -248,7 +249,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pBear = std::make_shared<EnemyBear>();
 		m_pWolf = std::make_shared<EnemyWolf>();
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 
 		m_pBg = new Bg(m_pPlayer,11);
@@ -295,6 +296,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 			m_pWolf->SetPlayer(m_pPlayer);
 			m_pWolf->SetBgPointer(m_pBg);
 		}
+		camera.ChangeIsBearWolfTrue();
 		m_doors = std::make_shared< Door>(Vec2{ 4953,660 });
 	}
 	break;
@@ -304,7 +306,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		//
 		m_pFishersManager = std::make_shared<FishersManager>(Vec2{ 100,100 }, 1);
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 
 		m_pBg = new Bg(m_pPlayer, 11);
@@ -330,7 +332,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 
 
 
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 		m_pBg = new Bg(m_pPlayer, 11);
 		m_doors = std::make_shared< Door>(Vec2{ 500,800 });
 	}
@@ -490,6 +492,8 @@ void GameScene::CheckArrowHit()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "greenStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
@@ -524,6 +528,8 @@ void GameScene::CheckArrowHit()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "greenStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
@@ -559,6 +565,8 @@ void GameScene::CheckArrowHit()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "greenStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitArrow");
 				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
@@ -758,6 +766,8 @@ void GameScene::CheckFrozenHit()
 					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 					spawn.spawned = false;
 					spawn.wasKilled = true;
+					//エフェクトを出す
+					m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
 					//SE再生
 					Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 					//インスタンスを消す
@@ -782,6 +792,8 @@ void GameScene::CheckFrozenHit()
 					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 					spawn.spawned = false;
 					spawn.wasKilled = true;
+					//エフェクトを出す
+					m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
 					//SE再生
 					Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 					//インスタンスを消す
@@ -806,6 +818,8 @@ void GameScene::CheckFrozenHit()
 					EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 					spawn.spawned = false;
 					spawn.wasKilled = true;
+					//エフェクトを出す
+					m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
 					//SE再生
 					Application::GetInstance().GetSoundManager().PlaySE("hitOut");
 					//インスタンスを消す
@@ -1124,7 +1138,7 @@ void GameScene::CheckHitNormal()
 				spawn.wasKilled = true;
 
 				//エフェクトを出す
-				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight",false));
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "greenStarLight",false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
@@ -1170,7 +1184,8 @@ void GameScene::CheckHitNormal()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "greenStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
@@ -1212,6 +1227,8 @@ void GameScene::CheckHitNormal()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "greenStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				Application::GetInstance().GetSoundManager().PlaySE("hitOut");
@@ -1340,6 +1357,8 @@ void GameScene::CheckHitBurning()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
@@ -1377,6 +1396,8 @@ void GameScene::CheckHitBurning()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
@@ -1414,6 +1435,8 @@ void GameScene::CheckHitBurning()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
@@ -1523,6 +1546,8 @@ void GameScene::CheckFastBurning()
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
 			spawn.wasKilled = true;
+			//エフェクトを出す
+			m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redStarLight", false));
 			//SE再生
 			Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			//インスタンスを消す
@@ -1552,6 +1577,8 @@ void GameScene::CheckFastBurning()
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
 			spawn.wasKilled = true;
+			//エフェクトを出す
+			m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redStarLight", false));
 			//SE再生
 			Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			//インスタンスを消す
@@ -1582,6 +1609,8 @@ void GameScene::CheckFastBurning()
 			EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 			spawn.spawned = false;
 			spawn.wasKilled = true;
+			//エフェクトを出す
+			m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redStarLight", false));
 			//SE再生
 			Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			//インスタンスを消す
@@ -1688,6 +1717,8 @@ void GameScene::CheckHitFrozen()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
@@ -1726,6 +1757,8 @@ void GameScene::CheckHitFrozen()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
@@ -1764,6 +1797,8 @@ void GameScene::CheckHitFrozen()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight", false));
 				//SE再生
 				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 				//インスタンスを消す
@@ -2397,6 +2432,11 @@ void GameScene::NormalUpdate(Input& input)
 		if (camera.isBoss)stageUI.SetBossHp(m_pElite->GetHp());
 		//ボスの魚のHPを引き渡す
 		if (camera.isFish)stageUI.SetFishHp(m_pFishersManager->GetHp());
+		//ボスの熊と狼のHPを引き渡す
+		if (camera.isBearWolf)
+		{
+			stageUI.SetBearWolfHp(m_pBear->GetHp(),m_pWolf->GetHp());
+		}
 
 
 		//UIのアップデート
@@ -2491,7 +2531,7 @@ void GameScene::NormalUpdate(Input& input)
 
 			if (m_pBear->GetIsDead())
 			{
-				m_pBear = nullptr;
+				
 
 			}
 		}
@@ -2503,8 +2543,14 @@ void GameScene::NormalUpdate(Input& input)
 
 			if (m_pWolf->GetIsDead())
 			{
-				m_pWolf = nullptr;
+				
 
+			}
+			//二人の処理用
+			if ((m_pWolf->GetIsDead() && m_pBear->GetIsDead()) && !m_bearWolfDied)
+			{
+				m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
+				m_bearWolfDied = true;
 			}
 		}
 		//salmonを消す処理
@@ -3313,7 +3359,7 @@ void GameScene::CheckBossCamera()
 	}
 	if (m_pPlayer->GetPos().x > kScreenWidth  -camera.drawOffset.x)
 	{
-		m_pPlayer->ChangePos().x = kScreenWidth - -camera.drawOffset.x;
+		m_pPlayer->ChangePos().x = kScreenWidth  -camera.drawOffset.x;
 	}
 
 
