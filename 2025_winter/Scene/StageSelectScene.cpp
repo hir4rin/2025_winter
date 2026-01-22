@@ -1,6 +1,7 @@
 ﻿#include "StageSelectScene.h"
 #include "DxLib.h"
 #include "Player.h"
+#include "TutorialManager.h"
 #include "../input.h"
 #include "GameScene.h"
 #include "PauseScene.h"
@@ -60,6 +61,11 @@ void StageSelectScene::NormalUpdate(Input& input)
 
 		//UIのアップデート
 		stageUI.Update();
+	}
+	//看板
+	for (auto& it : m_tutorialManagers)
+	{
+		it->Update();
 	}
 	for (auto& door : m_doors)
 	{
@@ -195,7 +201,11 @@ void StageSelectScene::NormalDraw()
 {
 
 	m_pBg->Draw(camera);
-	
+	//看板
+	for (auto& it : m_tutorialManagers)
+	{
+		it->Draw(camera);
+	}
 	for (auto& door : m_doors)
 	{
 		door->Draw(camera);
@@ -274,6 +284,8 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 
 	
 	m_pBg = new Bg(m_pPlayer, 0);
+	//看板
+	m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 150,740 }, TutorialPhase::Up, controller.GetEffekseerResourceManager()));
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());

@@ -7,6 +7,7 @@ class Sign : public Character
 {
 public:
 	Sign(Vec2 pos,int num);
+	Sign(Vec2 pos,int num,int num2);//num2は上との識別用
 	virtual ~Sign();
 
 
@@ -17,6 +18,8 @@ public:
 
 private:
 	int m_num;
+	int m_progress;
+	bool isForm = false;
 private:
 	int m_fontHandle;// フォントハンドル
 

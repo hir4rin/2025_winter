@@ -30,6 +30,7 @@ class Effect;
 class Potion;
 class WaveManager;
 class FishersManager;
+class TutorialManager;
 
 
 
@@ -218,8 +219,10 @@ private:
 	std::vector<std::shared_ptr<BurningObject>> m_pBurningObjects;
 	//敵の波動
 	std::vector<std::unique_ptr<WaveManager>> m_waveManagers;
-
-
+	//チュートリアル
+	std::vector<std::shared_ptr<TutorialManager>> m_tutorialManagers;
+	//演出用のアイテム(チュートリアル用)
+	std::shared_ptr<Item> m_pDroppedItemTu;
 	Bg* m_pBg;
 	Character* m_pCharacter;
 

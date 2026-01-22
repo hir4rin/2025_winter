@@ -16,6 +16,7 @@
 #include "Salmon.h"
 #include "Fish.h"
 #include "FishersManager.h"
+#include "TutorialManager.h"
 #include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Arrow.h"
@@ -78,6 +79,10 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(3000.0f,500.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(4000.0f,200.0f), false });
 		//-----------------------------------------------------------------
+	//看板
+		m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 800,675 }, TutorialPhase::Attack, controller.GetEffekseerResourceManager()));
+		m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 2625,675 }, TutorialPhase::Copy, controller.GetEffekseerResourceManager()));
+		m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 4040,612 }, TutorialPhase::CopyOut, controller.GetEffekseerResourceManager()));
 
 
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,736 }, Life, controller.GetEffekseerResourceManager());
@@ -2332,7 +2337,7 @@ void GameScene::CopyAct(Input& input)
 	}
 
 
-	if (input.IsTriggered("CopyOut"))
+	if (input.IsTriggered("Copy"))//CopyOutからいったんかえた//追記：成功
 	{
 		if (!(m_pPlayer->GetType() == PlayerType::Normal))
 		{
@@ -2359,6 +2364,7 @@ void GameScene::CopyAct(Input& input)
 			}
 			//プレイヤーをノーマルに戻す
 			m_pPlayer->ChangeNormal();
+			m_pPlayer->SetCopyCool();
 
 		}
 	}
@@ -2441,10 +2447,26 @@ void GameScene::NormalUpdate(Input& input)
 
 		//UIのアップデート
 		stageUI.Update();
+		//看板
+		for (auto& it : m_tutorialManagers)
+		{
+			if (!it)continue;
+			it->Update();
+			if (it->GetTutorialPlayer()->GetTutorialItemDrop())
+			{
+				//アイテムを落とす
+				m_pDroppedItemTu = std::make_shared<Item>(std::make_shared<EnemyWizard>());
+				m_pDroppedItemTu->ChangePos() = it->GetTutorialPlayer()->GetPos();
+				m_pDroppedItemTu->Setm_isRight(true);
+				//boolを変える
+				it->GetTutorialPlayer()->FalseTutorialItemDrop();
+			}
+		}
 	}
 
 	//プレイヤー関連
 	{
+		CopyAct(input);//アイテム取得の処理関連
 
 		//プレイヤーのHpが0以下だったら死ぬ
 		if (m_pPlayer->GetHp() <= 0)
@@ -2723,6 +2745,14 @@ void GameScene::NormalUpdate(Input& input)
 				m_pDroppedItem = nullptr;
 			}
 		}
+		if (m_pDroppedItemTu)//演出のアイテムのアップデート(チュートリアル)
+		{
+			m_pDroppedItemTu->DroppedUpdate();
+			if (m_pDroppedItemTu->IsDead())
+			{
+				m_pDroppedItemTu = nullptr;
+			}
+		}
 		//nullptrのアイテムを消す
 		m_pPotions.erase(
 			std::remove_if(
@@ -2741,7 +2771,7 @@ void GameScene::NormalUpdate(Input& input)
 	}
 
 	CheckHit();//3種の攻撃の当たり判定
-	CopyAct(input);//アイテム取得の処理関連
+	
 	CheckArrowHit();
 	CheckFrozenHit();
 	CheckPlayer();
@@ -2971,6 +3001,12 @@ void GameScene::NormalDraw()
 	{
 		//灰色にしたいものをここに
 		m_pBg->Draw(camera);
+		//看板
+		for (auto& it : m_tutorialManagers)
+		{
+			if (!it)continue;
+			it->Draw(camera);
+		}
 		m_doors->Draw(camera);
 
 		for (auto& item : m_pItems)
@@ -2979,6 +3015,12 @@ void GameScene::NormalDraw()
 			item->Draw(camera);
 		}
 		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
+		if (m_pDroppedItemTu)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+			m_pDroppedItemTu->DroppedDraw(camera);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
 		for (auto& arrow : m_arrows)//弓矢
 		{
 			if (!arrow) continue;
@@ -3051,6 +3093,7 @@ void GameScene::NormalDraw()
 		}
 		//ステージUI
 		stageUI.Draw(camera);
+	
 
 		float left = camera.pos.x - screenWidth / 2 - cameraframeMargin;
 		float right = camera.pos.x + screenWidth / 2 + cameraframeMargin;
@@ -3061,6 +3104,12 @@ void GameScene::NormalDraw()
 	else
 	{
 		m_pBg->Draw(camera);
+		//看板
+		for (auto& it : m_tutorialManagers)
+		{
+			if (!it)continue;
+			it->Draw(camera);
+		}
 		m_doors->Draw(camera);
 
 		//アイテム
@@ -3108,6 +3157,12 @@ void GameScene::NormalDraw()
 				potion->Draw(camera);
 		}
 		if (m_pDroppedItem) m_pDroppedItem->DroppedDraw(camera);
+		if (m_pDroppedItemTu)
+		{
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 180);
+			m_pDroppedItemTu->DroppedDraw(camera);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
 		//氷
 		for (auto& m_pFrozen : m_pFrozens)
 		{

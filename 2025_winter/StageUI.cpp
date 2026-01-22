@@ -190,7 +190,7 @@ void StageUI::Draw(Camera& camera)
 
 		//敵のHPバーを表示
 		DrawBox(leftHpX, topPos + 55 + ktopOffset, leftHpX + 100 * hpScale * 1.3f, topPos + 92 + ktopOffset, GetColor(0, 0, 0), true);
-		DrawBox(leftHpX, topPos + 55 + ktopOffset, leftHpX + m_displayBossHp * hpScale*1.3f, topPos + 92 + ktopOffset, GetColor(80, 200, 255), true);
+		DrawBox(leftHpX, topPos + 55 + ktopOffset, leftHpX + m_displayBossHp * hpScale*0.65f, topPos + 92 + ktopOffset, GetColor(80, 200, 255), true);
 		//DrawBox(leftHpX, topPos + 50 + ktopOffset, leftHpX + 100 * hpScale, topPos + 100 + ktopOffset, GetColor(255, 0, 0), false);//外枠
 		DrawRectRotaGraph(leftHpX + 135, topPos + 50 + ktopOffset + 25,
 			kHpBossBarW * 0, kHpBossBarH * 0,//切り取り左上

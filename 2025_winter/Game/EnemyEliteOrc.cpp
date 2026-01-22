@@ -67,7 +67,7 @@ EnemyEliteOrc::EnemyEliteOrc() :
 	isAttack(false),
 	isThrow(false),
 	m_coolDamageTimer(0),
-	m_hp(100),
+	m_hp(200),
 	m_attackP(AttackPattern::Attack3)
 {
 	m_handle = LoadGraph("data/Game/Elite Orc.png");

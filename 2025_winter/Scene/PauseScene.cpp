@@ -38,19 +38,26 @@ void PauseScene::NormalUpdate(Input& input)
 	m_frame++;
 	if (input.IsTriggered("pause"))
 	{
+		//戻った時の音
 		controller_.PopScene();	// この時点で自分は解放されている
 		return;
 	}
 	if (input.IsTriggered("up"))
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("cursor");
 		selectIndex_ = (selectIndex_ + menuList_.size() - 1) % menuList_.size();
 	}
 	if (input.IsTriggered("down"))
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("cursor");
 		selectIndex_ = (selectIndex_ + 1) % menuList_.size();
 	}
 	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("ok2");
 		// 現在選択中のメニューアイテム名を取得する
 		auto& menuName = menuList_[selectIndex_];
 		// そのメニューアイテムの名前に対応付けられたラムダ式を実行する
@@ -75,11 +82,15 @@ void PauseScene::YesNoDialogUpdate(Input& input)
 	m_frame++;
 	if (input.IsTriggered("left") || input.IsTriggered("right"))
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("cursor");
 		yesNoIndex_ = (yesNoIndex_ + 1) % 2;
 		return;
 	}
 	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
 	{
+		//SE再生
+		Application::GetInstance().GetSoundManager().PlaySE("ok2");
 		if (yesNoIndex_ == yes_no_dialig_yes)	// yesのとき
 		{
 			yesRequestFunction_();

@@ -150,6 +150,7 @@ public:
 	/// </summary>
 	/// <param name="anim"></param>
 	void AnimSelect(const Anim& anim);//アニメーション
+	void SetCopyCool() { m_copyCoolTime = 30; }//変身のコピークールタイム
 public:
 	//着地イベント
 	std::vector<std::function<void()>> onLandEvents;
@@ -229,8 +230,16 @@ private:
 
 	bool MoveWithCollisionX(float distance);
 
-	
-
+public:
+	bool GetTutorialFinish() { return m_tutorialFinished; }
+	bool GetTutorialItemDrop() { return m_tutorialDrop; }
+	void FalseTutorialItemDrop() { m_tutorialDrop = false; }
+	//チュートリアルのアニメーション用
+	bool m_tutorialFinished = false;
+	void TutorialAttackUpdate();
+	void TutorialCopyUpdate();
+	void TutorialCopyOutUpdate();
+	bool m_tutorialDrop = false;
 	
 	
 private:
@@ -252,6 +261,7 @@ private:
 	int m_hp;//playerの体力
 	int m_life;//playerの残機
 	int m_animframe;
+	int m_copyCoolTime;
 	int m_angle;//回転角度
 	float damageCount;//ダメージを食らったときの秒数
 	float damageTimer;//被ダメ秒数

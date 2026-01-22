@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Bg.h" />
+    <ClInclude Include="ButtonUI.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="Effect.h" />
@@ -65,11 +66,13 @@
     <ClInclude Include="StageUI.h" />
     <ClInclude Include="TitleLightEffect.h" />
     <ClInclude Include="TitleStar.h" />
+    <ClInclude Include="TutorialManager.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Bg.cpp" />
+    <ClCompile Include="ButtonUI.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -114,6 +117,7 @@
     <ClCompile Include="StageUI.cpp" />
     <ClCompile Include="TitleLightEffect.cpp" />
     <ClCompile Include="TitleStar.cpp" />
+    <ClCompile Include="TutorialManager.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

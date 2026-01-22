@@ -17,6 +17,7 @@ void SoundManager::Init()
 	//SEの読み込み
 	//環境音
 	m_sounds["ok"] = LoadSoundMem("data/Sound/SE/ok.mp3");
+	m_sounds["ok2"] = LoadSoundMem("data/Sound/SE/ok2.mp3");
 	m_sounds["openDoor"] = LoadSoundMem("data/Sound/SE/openDoor.mp3");
 	m_sounds["iceMove"] = LoadSoundMem("data/Sound/SE/IceMove.mp3");
 	m_sounds["cursor"] = LoadSoundMem("data/Sound/SE/cursor.mp3");
@@ -37,6 +38,7 @@ void SoundManager::Init()
 	m_sounds["jump"] = LoadSoundMem("data/Sound/SE/jump.mp3");
 	m_sounds["playerHit"] = LoadSoundMem("data/Sound/SE/playerHit.mp3");
 	m_sounds["yarareSE"] = LoadSoundMem("data/Sound/SE/yarareSE.mp3");
+	m_sounds["heal"] = LoadSoundMem("data/Sound/SE/heal.wav");
 
 	// サウンド名のリスト
     const std::vector<std::string> soundNames = {
@@ -49,6 +51,7 @@ void SoundManager::Init()
 	//SEのリスト
     const std::vector<std::string> seNames = {
         "ok",
+        "ok2",
         "airSlash",
 		"iceMove",
 		"cursor",
@@ -66,7 +69,8 @@ void SoundManager::Init()
         "hitOut",
         "hitSE",
         "playerHit",
-        "yarareSE"
+        "yarareSE",
+        "heal"
 	};
 	
 	//BGmの音量設定

@@ -9,16 +9,28 @@ namespace
 	constexpr int kWidth = 48;
 	constexpr int kHeight = 48;
 
-	constexpr float kScale = 3.0f;
+	 float kScale = 3.0f;
 }
 
 Sign::Sign(Vec2 pos,int num):
 	m_fontHandle(-1)
 {
+	kScale = 3.0f;
 	m_handle = LoadGraph("data/sign.png");
 	m_pos = pos;
 	m_num = num;
 	//フォントの生成
+	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
+}
+
+Sign::Sign(Vec2 pos, int num, int num2)
+{
+	kScale = 5.0f;
+	m_handle = LoadGraph("data/sign.png");
+	m_pos = pos;
+	isForm = true;
+	m_progress = num;
+	//フォントの生成//使わない
 	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
 }
 
@@ -43,22 +55,42 @@ void Sign::Draw()
 }
 void Sign::Draw(Camera& camera)
 {
-	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+	if (!isForm)//ゴールシーンの看板
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+			0, 0,
+			kWidth, kHeight,//切り取りの幅
+			kScale, 0.0f,//左が拡大率、右が回転率
+			m_handle,
+			true);
+
+		//フォントの大きさを変える
+		int oldSize = GetFontSize();
+		SetFontSize(32);
+
+		//DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d", m_num);
+		std::string i = std::to_string(m_num);
+
+		DrawStringToHandle(m_pos.x + camera.drawOffset.x - 13.0f, m_pos.y + camera.drawOffset.y - 40.0f, i.c_str(), GetColor(0, 0, 0), m_fontHandle);
+
+		//フォントサイズを元に戻す(元は16)
+		SetFontSize(oldSize);
+	}
+	if (isForm)//チュートリアル用
+	{
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
 		0, 0,
-		kWidth, kHeight,//切り取りの幅
+		kWidth, kHeight * 0.8,//切り取りの幅
 		kScale, 0.0f,//左が拡大率、右が回転率
 		m_handle,
 		true);
+		switch (m_progress)
+		{
+		case 0:
+			break;
+		case 1:
+			break;
+		}
+	}
 
-	//フォントの大きさを変える
-	int oldSize = GetFontSize();
-	SetFontSize(32);
-
-	//DrawFormatString(m_pos.x + camera.drawOffset.x-20.0f, m_pos.y + camera.drawOffset.y- 30.0f, GetColor(0, 0, 0), "%d", m_num);
-	std::string i = std::to_string(m_num);
-
-	DrawStringToHandle(m_pos.x + camera.drawOffset.x - 13.0f, m_pos.y + camera.drawOffset.y - 40.0f, i.c_str(), GetColor(0, 0, 0), m_fontHandle);
-
-	//フォントサイズを元に戻す(元は16)
-	SetFontSize(oldSize);
 }

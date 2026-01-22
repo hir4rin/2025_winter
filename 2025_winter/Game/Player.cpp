@@ -146,6 +146,7 @@ namespace
 //ゲームプレイ中用
 Player::Player(PlayerType type, int hp, Vec2 pos,int Life, std::shared_ptr<EffekseerResourceManager> effRes) :
 	m_frame(0),
+	m_copyCoolTime(0),
 	charaIdx(0),
 	charaIdy(0),
 	m_animframe(0),
@@ -331,6 +332,7 @@ void Player::Update(Input& input)
 	
 
 	m_frame++;
+	m_copyCoolTime--;
 	attackCoolTimer--;
 	coolTimer--;
 	damageTimer--;
@@ -724,6 +726,8 @@ void Player::DamageHit(bool ans)
 void Player::HealGet(int point)
 {
 	m_hp += point;
+	//SE再生
+	Application::GetInstance().GetSoundManager().PlaySE("heal");
 	if (m_hp >= 100)
 	{
 		m_hp = 100;
@@ -978,7 +982,8 @@ void Player::InputUpdate(Input& input)
 	}
 	if (input.IsTriggered("Copy"))
 	{
-		//ノーマル状態限定の技
+		if (m_copyCoolTime > 0)return;
+		//ノーマル状態限定の技//ほかの状態だったら変身を脱ぐ
 		if (m_type != PlayerType::Normal)return;
 		//SE再生
 		Application::GetInstance().GetSoundManager().PlaySE("copyAction");
@@ -1806,6 +1811,72 @@ bool Player::MoveWithCollisionX(float distance)
 	//衝突なし
 	return false;
 }
+
+void Player::TutorialAttackUpdate()
+{
+	m_frame++;
+	if (m_frame % 4 != 0)
+	{
+		m_animframe++;
+	}
+	if (m_state != PlayerState::Attack)
+	{
+		m_state = PlayerState::Attack;
+		m_anim = Anim::Attack;
+	}
+}
+
+void Player::TutorialCopyUpdate()
+{
+	int margin = 20;
+	m_frame++;
+	if (m_frame % 4 != 0)
+	{
+		m_animframe++;
+	}
+	if (m_type == PlayerType::Normal)
+	{
+		m_state = PlayerState::Copy;
+		m_anim = Anim::Copy;
+	}
+	if (m_type == PlayerType::Frozen && m_animframe >= kNormalCopyDuration * kNormalCopyNum * 0.9f)
+	{
+		m_tutorialFinished = true;
+	}
+
+
+	if (m_animframe >= kNormalCopyDuration * kNormalCopyNum)
+	{
+		ChangeFrozen();
+		m_anim = Anim::Idle;
+	}
+
+
+}
+
+void Player::TutorialCopyOutUpdate()
+{
+	m_frame++;
+	if (m_frame % 4 != 0)
+	{
+		m_animframe++;
+	}
+
+	if (m_type == PlayerType::Normal && m_animframe >= kNormalCopyDuration * kNormalCopyNum * 0.9f)
+	{
+		m_tutorialFinished = true;
+	}
+
+	if (m_animframe >= kNormalCopyDuration * kNormalCopyNum)
+	{
+		
+		ChangeNormal();
+		m_anim = Anim::Idle;
+		m_tutorialDrop = true;
+	}
+
+}
+
 
 
 

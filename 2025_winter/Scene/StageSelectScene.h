@@ -7,6 +7,7 @@ class Player;
 class Bg;
 class Door;
 class Effect;
+class TutorialManager;
 
 class StageSelectScene :  public Scene
 {
@@ -47,5 +48,7 @@ private:
 	StageUI stageUI;//UI
 
 	std::vector<std::shared_ptr<Door>> m_doors;
+	//チュートリアル
+	std::vector<std::shared_ptr<TutorialManager>> m_tutorialManagers;
 };
 
