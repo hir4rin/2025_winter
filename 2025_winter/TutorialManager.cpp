@@ -70,6 +70,13 @@ void TutorialManager::Update()
 		{
 		case TutorialPhase::Attack://攻撃
 			m_pPlayer->TutorialAttackUpdate();
+			if (m_pPlayer->GetTutorialFinish())
+			{
+				m_pPlayer = nullptr;
+				//プレイヤーを作り直す
+				m_pPlayer = std::make_shared<Player>(PlayerType::Normal, 100, m_startPos + m_offset, 1, m_effRes);
+
+			}
 			break;
 		case TutorialPhase::Copy://コピー
 			m_pPlayer->TutorialCopyUpdate();

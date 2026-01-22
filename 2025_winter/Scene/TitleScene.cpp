@@ -166,7 +166,7 @@ void TitleScene::FadeOutUpdate(Input&)
 
 	if (frame_++ >= fade_interval)
 	{
-		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,PlayerType::Normal,100,3));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_,PlayerType::Normal,100,2));
 		return;
 	}
 }

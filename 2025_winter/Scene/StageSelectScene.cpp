@@ -265,7 +265,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 {
 	//bgm再生
 	Application::GetInstance().GetSoundManager().PlayBgm("bgmSelectScene");
-	
+
 	update_ = &StageSelectScene::FadeInUpdate;
 	draw_ = &StageSelectScene::FadeInDraw;
 
@@ -285,7 +285,7 @@ StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,i
 	
 	m_pBg = new Bg(m_pPlayer, 0);
 	//看板
-	m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 150,740 }, TutorialPhase::Up, controller.GetEffekseerResourceManager()));
+	m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 160,740 }, TutorialPhase::Up, controller.GetEffekseerResourceManager()));
 
 	//シーン切り替え後のにゅいーんをなくす
 	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());

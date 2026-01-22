@@ -17,6 +17,7 @@
 #include "Fish.h"
 #include "FishersManager.h"
 #include "TutorialManager.h"
+#include "ItemFactory.h"
 #include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Arrow.h"
@@ -62,12 +63,9 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 	m_fishDied(false),
 	update_(&GameScene::FadeInUpdate),
 	draw_(&GameScene::FadeInDraw)
-
 {
 	//SE止まる
 	Application::GetInstance().GetSoundManager().StopSE("yarareSE");
-
-	
 	switch (m_stageNum)
 	{
 	case 1://ステージ1_1
@@ -106,7 +104,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Attack, Vec2(3700.0f,200.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Attack, Vec2(4750.0f,800.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(4000.0f,1000.0f), false });//地下
-		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(5100.0f,200.0f), false });
+		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Attack, Vec2(5120.0f,200.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5600.0f,200.0f), false });
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Walk, Vec2(5650.0f,200.0f), false });
 		//-----------------------------------------------------------------
@@ -257,7 +255,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 
-		m_pBg = new Bg(m_pPlayer,11);
+		m_pBg = new Bg(m_pPlayer,12);
 		//熊
 		{
 			m_pBear->SetPlayer(m_pPlayer);
@@ -314,7 +312,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 
-		m_pBg = new Bg(m_pPlayer, 11);
+		m_pBg = new Bg(m_pPlayer, 12);
 		//魚
 		{
 			/*	for (auto& it : m_pFishers)
@@ -329,17 +327,14 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		//m_doors = std::make_shared< Door>(Vec2{ 500,660 });
 	}
 	break;
-	case 11:
+	case 11://武器セレクトシーン
 	{
-		m_enemySpawns.push_back({ EnemyType::Rider,EnemyState::Normal, Vec2(1000.0f,800.0f), false });
-		m_enemySpawns.push_back({ EnemyType::Archer,EnemyState::Normal, Vec2(1200.0f,800.0f), false });
-		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(1400.0f,800.0f), false });
-
-
-
-		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
+		//bgm再生
+		Application::GetInstance().GetSoundManager().PlayBgm("bgmWeaponSelectScene");
+		m_pItemFactory = std::make_shared<ItemFactory>(m_pItems);
+		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,864 }, Life, controller.GetEffekseerResourceManager());
 		m_pBg = new Bg(m_pPlayer, 11);
-		m_doors = std::make_shared< Door>(Vec2{ 500,800 });
+		m_doors = std::make_shared< Door>(Vec2{ 100,864 });
 	}
 		break;
 	}
@@ -349,8 +344,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 	InitCamera(camera,m_stageNum);//カメラの初期化
 
 	//シーン切り替え後のにゅいーんをなくす
-	stageUI.Init(hp, m_pPlayer->GetType(), m_pPlayer->GetLife());
-
+	stageUI.Init(hp, m_pPlayer->GetType(),m_pPlayer->GetLife());
 
 	m_pPlayer->SetBgPointer(m_pBg);
 	//m_pItems->SetBgPointer(m_pBg);
@@ -2768,6 +2762,7 @@ void GameScene::NormalUpdate(Input& input)
 		{
 			potion->Update();
 		}
+		if(m_pItemFactory)m_pItemFactory->Update(m_pBg);//武器セレクトシーン
 	}
 
 	CheckHit();//3種の攻撃の当たり判定
@@ -2834,19 +2829,19 @@ void GameScene::FadeOutUpdate(Input&)
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum + 1, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
-		case 8:
+		case 8://2_3
 			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
-		case 9:
-			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+		case 9://熊と狼
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
-		case 10:
-			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+		case 10://魚
+			controller_.ChangeScene(std::make_shared<GameClearScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
-		case 11:
+		case 11://武器
 			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 			break;
@@ -2914,11 +2909,11 @@ void GameScene::DyingUpdate(Input& input)
 		case 8:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-		case 9:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
+		case 9://熊と狼
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 11, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
 			return;
-		case 10:
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
+		case 10://魚
+			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 11, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
 			return;
 		}
 	}

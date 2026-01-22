@@ -31,6 +31,7 @@ class Potion;
 class WaveManager;
 class FishersManager;
 class TutorialManager;
+class ItemFactory;
 
 
 
@@ -230,7 +231,8 @@ private:
 
 	//エフェクト
 	std::vector<std::shared_ptr<Effect>> m_pEffects;
-	
+	//アイテムシーン用のやつ
+	std::shared_ptr<ItemFactory> m_pItemFactory;
 
 
 	

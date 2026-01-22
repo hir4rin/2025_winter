@@ -69,6 +69,7 @@ public:
 	/// </summary>
 	void LoadMapData2_3();
 	void LoadMapDataSub();
+	void LoadMapDataBoss();
 
 
 	/// <summary>

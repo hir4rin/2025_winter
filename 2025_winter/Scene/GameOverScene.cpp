@@ -7,6 +7,7 @@
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
 #include "TitleScene.h"
+#include "StageSelectScene.h"
 #include "SceneController.h"
 #include "Application.h"
 
@@ -143,8 +144,7 @@ void GameoverScene::NormalUpdate(Input& input)
 		}
 		if(m_select == GameOverSelect::End)
 		{
-			//アプリケーション終了
-			Application::GetInstance().RequestExit();
+			controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
 			return;
 		}
 	}
@@ -212,7 +212,7 @@ void GameoverScene::FadeOutUpdate2(Input&)
 	{
 
 		Application::GetInstance().GetSoundManager().PlayBgm("bgm");
-		controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
+		controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, PlayerType::Normal, 100, 2));
 		return;
 	}
 	

@@ -1819,10 +1819,18 @@ void Player::TutorialAttackUpdate()
 	{
 		m_animframe++;
 	}
-	if (m_state != PlayerState::Attack)
+	if (m_state != PlayerState::Attack && m_animframe < kNormalAttackDuration * kNormalAttackNum)
 	{
 		m_state = PlayerState::Attack;
 		m_anim = Anim::Attack;
+	}
+	if (m_animframe >= kNormalAttackDuration * kNormalAttackNum)
+	{
+		m_anim = Anim::Idle;
+	}
+	if (m_animframe >= kNormalAttackDuration * kNormalAttackNum * 2.5)
+	{
+		m_tutorialFinished = true;
 	}
 }
 

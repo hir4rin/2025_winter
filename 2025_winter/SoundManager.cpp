@@ -12,6 +12,7 @@ void SoundManager::Init()
     m_sounds["bgmStageScene"] = LoadSoundMem("data/Sound/stageBgm.ogg");
     m_sounds["bgmClearScene"] = LoadSoundMem("data/Sound/StageClear.mp3");
     m_sounds["bgmGameOverScene"] = LoadSoundMem("data/Sound/GameOverBgm.ogg");
+    m_sounds["bgmWeaponSelectScene"] = LoadSoundMem("data/Sound/WeaponSelectSceneBgm.ogg");
 	assert(m_sounds["bgm"] >= 0);
 
 	//SEの読み込み
@@ -47,6 +48,7 @@ void SoundManager::Init()
         "bgmStageScene",
         "bgmClearScene",
         "bgmGameOverScene",
+        "bgmWeaponSelectScene"
     };
 	//SEのリスト
     const std::vector<std::string> seNames = {
