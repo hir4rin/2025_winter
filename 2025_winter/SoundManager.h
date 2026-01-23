@@ -26,8 +26,8 @@ public:
 
 private:
 	std::unordered_map<std::string, int> m_sounds;
-	int m_masterVolume = 32;//255が最大
-	int m_masterVolume2 = 32;//255が最大
+	int m_masterVolume = 200;//255が最大
+	int m_masterVolume2 = 200;//255が最大
 	int m_currentBgm = -1;
 	
 	//3重再生用スロット

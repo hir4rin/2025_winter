@@ -2910,10 +2910,12 @@ void GameScene::DyingUpdate(Input& input)
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 		case 9://熊と狼
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 11, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
+			//controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
+			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 		case 10://魚
-			controller_.ChangeScene(std::make_shared<GameScene>(controller_, 11, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
+			//controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
+			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
 			return;
 		}
 	}
