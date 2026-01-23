@@ -78,6 +78,7 @@ bool Application::Init()
 
 		// Effekseerに2D描画の設定をする。
 		Effekseer_Set2DSetting(1920, 1080);
+		Effekseer_InitDistortion();//歪み
 
 		// Zバッファを有効にする。
 		// Effekseerを使用する場合、2DゲームでもZバッファを使用する。

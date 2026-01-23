@@ -13,6 +13,7 @@ void SoundManager::Init()
     m_sounds["bgmClearScene"] = LoadSoundMem("data/Sound/StageClear.mp3");
     m_sounds["bgmGameOverScene"] = LoadSoundMem("data/Sound/GameOverBgm.ogg");
     m_sounds["bgmWeaponSelectScene"] = LoadSoundMem("data/Sound/WeaponSelectSceneBgm.ogg");
+    m_sounds["bgmElite"] = LoadSoundMem("data/Sound/EliteBossBgm.ogg");
 	assert(m_sounds["bgm"] >= 0);
 
 	//SEの読み込み
@@ -48,7 +49,8 @@ void SoundManager::Init()
         "bgmStageScene",
         "bgmClearScene",
         "bgmGameOverScene",
-        "bgmWeaponSelectScene"
+        "bgmWeaponSelectScene",
+        "bgmElite",
     };
 	//SEのリスト
     const std::vector<std::string> seNames = {
@@ -161,8 +163,16 @@ void SoundManager::StopSE(const std::string& name)
     StopSoundMem(it->second);
 }
 
-void SoundManager::SetMasterVolume(int volume)
+void SoundManager::SetBgmVolume(int volume)
 {
     m_masterVolume = volume;
+    ChangeVolumeSoundMem(m_masterVolume, m_currentBgm);
+}
+
+void SoundManager::SetSEVolume(int volume)
+{
+    m_masterVolume2 = volume;
+    //SEを流す
+    PlaySE("cursor");
 }
 

@@ -27,16 +27,23 @@ private:
 	void DisappearUpdate(Input& input);
 
 	void YesNoDialogUpdate(Input& input);
+	void YesNoDialogUpdate2(Input& input);
+	void ConfigUpdate(Input& input);
+	void VolumeSetUpdate(Input& input);
 
 	using DrawFunc_t = void(PauseScene::*)();
 	DrawFunc_t draw_;
 	void IntervalDraw();
 	void NormalDraw();
+	void ConfigDraw();
 
 	std::vector<std::string> menuList_;	// ポーズ画面中に表示するメニューリスト
-	void DrawMenu();
+	std::vector<std::string> menuList2_;	// 2ページ目に表示するメニューリスト
+	void DrawMenu();//1ぺージ目の表示
+	void DrawMenuPage2();//2ページ目の表示
 
 	void YesNoDialogDraw();
+	void YesNoDialogDraw2();
 public:
 	PauseScene(SceneController& controller);
 	virtual ~PauseScene();
@@ -48,6 +55,11 @@ private:
 	int m_fontHandle;// フォントハンドル
 	float offsetY(int index);// ・・・の文字のYオフセット計算
 	int m_frame;//タイマー
+	int m_frame2;//【】を動かすようのタイマー
+	int m_displayBGM;
+	int m_displaySE;
+	float m_volumeRate = 255.0f / 100.0f;//100で割って、255をかける
+	float m_seRate = 1.4f;
 
 };
 

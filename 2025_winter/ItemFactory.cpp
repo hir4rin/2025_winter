@@ -16,7 +16,7 @@ ItemFactory::~ItemFactory()
 
 void ItemFactory::Update(Bg* bg)
 {
-	m_frame++;
+	
 
 	if (m_frame % 300 == 0)
 	{
@@ -37,5 +37,5 @@ void ItemFactory::Update(Bg* bg)
 		m_pItems.push_back(item3);
 	}
 	
-
+	m_frame++;
 }

@@ -609,7 +609,7 @@ void Player::Draw(Camera& camera)
 	}
 	if (damageTimer > 0)
 	{
-		if (m_frame % 2 == 0)return;
+		if (m_frame % 2 == 1)return;
 	}
 
 

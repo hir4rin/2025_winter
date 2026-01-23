@@ -367,7 +367,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 
 GameScene::~GameScene()
 {
-
+	delete m_pBg;
 }
 
 
@@ -1959,7 +1959,8 @@ void GameScene::CheckPlayer()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redLight", false));
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 			}
@@ -1979,7 +1980,8 @@ void GameScene::CheckPlayer()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redLight", false));
 				//インスタンスを消す
 				m_pEnemyWizards.erase(m_pEnemyWizards.begin() + i);
 			}
@@ -2008,7 +2010,8 @@ void GameScene::CheckPlayer()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redLight", false));
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 			}
@@ -2027,7 +2030,8 @@ void GameScene::CheckPlayer()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redLight", false));
 				//インスタンスを消す
 				m_pEnemyRiders.erase(m_pEnemyRiders.begin() + i);
 			}
@@ -2056,7 +2060,8 @@ void GameScene::CheckPlayer()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redLight", false));
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			}
@@ -2075,7 +2080,8 @@ void GameScene::CheckPlayer()
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
 				spawn.spawned = false;
 				spawn.wasKilled = true;
-
+				//エフェクトを出す
+				m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "redLight", false));
 				//インスタンスを消す
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 			}
@@ -2537,6 +2543,8 @@ void GameScene::NormalUpdate(Input& input)
 			{
 				m_pElite = nullptr;
 				camera.ChangeIsBossFalse();
+				//Bgm変える
+				Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 			}
 		}
 		if (m_pBear != nullptr)//ボス熊
@@ -2803,10 +2811,9 @@ void GameScene::FadeOutUpdate(Input&)
 
 
 
-	if (m_frame++ >= fade_interval)
+	if (m_frame++ >= fade_interval*1.5f)
 	{
 		//delete m_pCharacter;
-		delete m_pBg;
 		switch (m_stageNum)
 		{
 		case 1:
@@ -2881,12 +2888,9 @@ void GameScene::DyingUpdate(Input& input)
 		//Lifeが0以下になったら
 		if (m_pPlayer->CheckLife())
 		{
-			delete m_pBg;
 			controller_.ChangeScene(std::make_shared<GameoverScene>(controller_, m_pPlayer->GetType()));
 			return;
 		}
-		//delete m_pCharacter;
-		delete m_pBg;
 		Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
 		switch (m_stageNum)
 		{
@@ -3416,10 +3420,12 @@ void GameScene::CheckBossCamera()
 
 
 	SetBossCamera(camera);
-	if (m_pPlayer->GetColRect().IsCollision(camera.m_cameraRect))
+	if (m_pPlayer->GetColRect().IsCollision(camera.m_cameraRect) && !camera.isBoss)
 	{
 		//カメラを固定する
 		camera.ChangeIsBossTrue();
+		//Bgm変える
+		Application::GetInstance().GetSoundManager().PlayBgm("bgmElite");
 
 	}
 

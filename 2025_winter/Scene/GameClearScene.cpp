@@ -317,6 +317,18 @@ void GameClearScene::NormalUpdate(Input& input)
 	}
 	if (isArrived)
 	{
+		switch (m_rank)
+		{
+		case 0:
+			break;
+		case 1://1位
+			m_pPlayer->HealGet(100);
+		case 2: 
+		case 3:
+			break;
+		default:
+			break;
+		}
 		update_ = &GameClearScene::FadeOutUpdate;
 		draw_ = &GameClearScene::FadeDraw;
 		m_frame = 0;
@@ -502,7 +514,6 @@ void GameClearScene::ToArrivedAtGoal()
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
 			isArrived = true;
-			m_pPlayer->HealGet(100);
 		}
 		break;
 	case 2://2位
@@ -527,7 +538,6 @@ void GameClearScene::ToArrivedAtGoal()
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
 			isArrived = true;
-			m_pPlayer->HealGet(100);
 		}
 		break;
 	case 3://3位
@@ -552,7 +562,6 @@ void GameClearScene::ToArrivedAtGoal()
 		{
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };
 			isArrived = true;
-			m_pPlayer->HealGet(100);
 		}
 		break;
 	case 4://4位

@@ -55,6 +55,14 @@ namespace
 	constexpr int kSlashScale = 2.0f;
 	constexpr int kSlashANimDuration = 5;
 	constexpr int kSlashAnimNum = 5;
+	//RedLight
+	constexpr int kRedLightCutW = 16;
+	constexpr int kRedLightCutH = 16;
+	constexpr int kRedLightSorW = 14 * 16;
+	constexpr int kRedLightSorH = 3 * 16;
+	constexpr float kRedLightScale = 4.0f;
+	constexpr int kRedLightAnimDuration = 10;
+	constexpr int kRedLightAnimNum = 4;
 
 }
 
@@ -113,6 +121,11 @@ Effect::Effect(Vec2 pos,std::string name,bool dir):
 		m_handle = LoadGraph("data/Game/Effect/Slash/Slash.png");
 		m_dir = dir;
 	}
+	if (name == "redLight")
+	{
+		m_type = EffectType::RedLight;
+		m_handle = LoadGraph("data/Game/RedEffect.png");
+	}
 	
 }
 
@@ -150,6 +163,8 @@ void Effect::Update()
 		case EffectType::GreenStarLight:
 			break;
 		case EffectType::Slash:
+			break;
+		case EffectType::RedLight:
 			break;
 
 	}
@@ -218,7 +233,7 @@ void Effect::Draw(Camera& camera)
 			 true,//反転するかどうか
 			  false);
 			break;
-	case EffectType::RedStarLight://BlueStarLightの描画処理
+	case EffectType::RedStarLight://RedStarLightの描画処理
 		charaIdx = (m_animFrame / kRedStarLightAnimDuration) % kRedStarLightAnimNum;
 		
 		
@@ -247,16 +262,29 @@ void Effect::Draw(Camera& camera)
 	case EffectType::Slash://Slashの描画処理
 		charaIdx = (m_animFrame / kSlashANimDuration) % kSlashAnimNum;
 
-		float offset = m_dir ? +100.0f : -100.0f;
+		//float offset = m_dir ? +100.0f : -100.0f;
 
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + offset, m_pos.y + camera.drawOffset.y,
-			kSlashCutW * charaIdx, 0,//切り取り座標
-			 kSlashCutW, kSlashCutH,//切り取りの幅
-			 kSlashScale, 0.0f,//左が拡大率、右が回転率
-				 m_handle,
-				 true,
-				 m_dir ? false : true,//反転するかどうか
-					false);
+		//DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + offset, m_pos.y + camera.drawOffset.y,
+		//	kSlashCutW * charaIdx, 0,//切り取り座標
+		//	 kSlashCutW, kSlashCutH,//切り取りの幅
+		//	 kSlashScale, 0.0f,//左が拡大率、右が回転率
+		//		 m_handle,
+		//		 true,
+		//		 m_dir ? false : true,//反転するかどうか
+		//			false);
+		break;
+	case EffectType::RedLight://RedLightの描画処理
+		charaIdx = (m_animFrame / kRedLightAnimDuration) % kRedLightAnimNum;
+
+
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		 kRedLightSorW + kRedLightCutW * charaIdx, kRedLightSorH,//切り取り座標
+		 kRedLightCutW, kRedLightCutH,//切り取りの幅
+		 kRedLightScale, 0.0f,//左が拡大率、右が回転率
+		 m_handle,
+		 true,
+		 true,//反転するかどうか
+		  false);
 		break;
 	}
 		

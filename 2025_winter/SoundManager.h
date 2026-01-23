@@ -21,13 +21,17 @@ public:
 
 	void StopBgm();
 	void StopSE(const std::string& name);
-
-	void SetMasterVolume(int volume);//0～255
+	//セット
+	void SetBgmVolume(int volume);//0～255
+	void SetSEVolume(int volume);//0～255
+	//音量設定用
+	int GetBgmVolume() { return m_masterVolume; }
+	int GetSEVolume() { return m_masterVolume2; }
 
 private:
 	std::unordered_map<std::string, int> m_sounds;
-	int m_masterVolume = 200;//255が最大
-	int m_masterVolume2 = 200;//255が最大
+	int m_masterVolume = 32;//255が最大
+	int m_masterVolume2 = 32;//255が最大
 	int m_currentBgm = -1;
 	
 	//3重再生用スロット

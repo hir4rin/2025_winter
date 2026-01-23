@@ -144,6 +144,7 @@ void GameoverScene::NormalUpdate(Input& input)
 		}
 		if(m_select == GameOverSelect::End)
 		{
+			Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 			controller_.ChangeScene(std::make_shared<TitleScene>(controller_));
 			return;
 		}

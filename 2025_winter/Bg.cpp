@@ -305,6 +305,7 @@ void Bg::FadeInBg(Camera& camera)
 void Bg::FadeOutBg(Camera& camera)
 {
 	m_extRate -= 0.2;
+	if (m_extRate <= 0)m_extRate = 0;
 
 	//画像サイズを取得
 	//Bgのサイズ

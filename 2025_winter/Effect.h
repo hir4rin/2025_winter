@@ -14,7 +14,8 @@ enum class EffectType
 	BlueStarLight,
 	RedStarLight,
 	GreenStarLight,
-	Slash
+	Slash,
+	RedLight
 };
 
 class Effect : public Character
