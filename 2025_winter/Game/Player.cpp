@@ -171,7 +171,9 @@ Player::Player(PlayerType type, int hp, Vec2 pos,int Life, std::shared_ptr<Effek
 	attackCoolTimer(0),
 	m_NormalAttackHandle(-1),
 	m_burningEfHandle(-1),
-	m_effRes(effRes)
+	m_effRes(effRes),
+	drawOffsetOfcameraX(0),
+	drawOffsetOfcameraY(0)
 
 {
 	m_pos = pos;
@@ -226,7 +228,9 @@ Player::Player(PlayerType type, Vec2 pos, std::shared_ptr<EffekseerResourceManag
 	m_rotateFrame(0),
 	damageTimer(0),
 	attackCoolTimer(0),
-	m_effRes(effRes)//エラー防止用
+	m_effRes(effRes),//エラー防止用
+	drawOffsetOfcameraX(0),
+	drawOffsetOfcameraY(0)
 
 {
 	m_pos = pos;
@@ -257,6 +261,8 @@ Player::Player(PlayerType type, Vec2 pos, std::shared_ptr<EffekseerResourceManag
 Player::~Player()
 {
 	DeleteGraph(m_handle);
+	//前の残っているのを止める
+	StopEffekseer2DEffect(playingEffectHandle);
 	// エフェクトリソースを削除する。(Effekseer終了時に破棄されるので削除しなくてもいい)
 	//DeleteEffekseerEffect(m_burningEfHandle);
 	m_effRes->DeleteEffect(m_burningEfHandle);
@@ -552,6 +558,9 @@ void Player::Draw()//使わない
 
 void Player::Draw(Camera& camera)
 {
+	//バーニングのエフェクト用
+	drawOffsetOfcameraX = camera.drawOffset.x;
+	drawOffsetOfcameraY = camera.drawOffset.y;
 
 #ifdef _DEBUG
 	//当たり判定の描画
@@ -963,12 +972,17 @@ void Player::InputUpdate(Input& input)
 		case PlayerType::Burning:
 			//SE再生
 			Application::GetInstance().GetSoundManager().PlaySE("burningSE");
+			//前の残っているのを止める
+			StopEffekseer2DEffect(playingEffectHandle);
 			// エフェクトを再生する。
 			playingEffectHandle = PlayEffekseer2DEffect(m_burningEfHandle);
 			assert(playingEffectHandle >= 0);
 			// エフェクトの拡大率を設定する。
 				// Effekseerで作成したエフェクトは2D表示の場合、小さすぎることが殆どなので必ず拡大する。
 			SetScalePlayingEffekseer2DEffect(playingEffectHandle, 1.0f, 1.0f, 1.0f);
+			// 再生中のエフェクトをたまと同じ位置に移動。
+			SetPosPlayingEffekseer2DEffect(playingEffectHandle, m_pos.x + drawOffsetOfcameraX, m_pos.y + drawOffsetOfcameraY, 0);
+			
 			break;
 		case PlayerType::Frozen:
 			//SE再生

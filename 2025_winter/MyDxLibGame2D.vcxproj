@@ -50,7 +50,7 @@
     <ClInclude Include="Game\Wave.h" />
     <ClInclude Include="Game\WaveManager.h" />
     <ClInclude Include="Input.h" />
-    <ClInclude Include="ItemFactory.h" />
+    <ClInclude Include="Game\ItemFactory.h" />
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="resource.h" />
@@ -102,7 +102,7 @@
     <ClCompile Include="Game\Wave.cpp" />
     <ClCompile Include="Game\WaveManager.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="ItemFactory.cpp" />
+    <ClCompile Include="Game\ItemFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pad.cpp" />
     <ClCompile Include="Rect.cpp" />

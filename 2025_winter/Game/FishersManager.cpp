@@ -2,6 +2,7 @@
 #include "Bg.h"
 #include "Camera.h"
 #include "Fish.h"
+#include "Application.h"
 
 
 
@@ -40,6 +41,7 @@ void FishersManager::Update(Bg* bg)
 
 	if (m_phase == FisherPhase::Fusion)
 	{
+		
 		bool allDead = true;
 		for (auto& it : m_pFishers)
 		{
@@ -60,7 +62,8 @@ void FishersManager::Update(Bg* bg)
 			//すべて、消えた
 			m_isSpawn = false;
 			m_phase = FisherPhase::SpecialFish;
-			
+			//Bgm
+			Application::GetInstance().GetSoundManager().PlayBgm("bgmFishAfter");
 		}
 
 
@@ -166,6 +169,9 @@ void FishersManager::Update(Bg* bg)
 
 			m_fishIndex++;
 			m_triSpawn = false;
+			//BGm変える
+			//Bgm
+			Application::GetInstance().GetSoundManager().PlayBgm("bgmFishBefore");
 		}
 		else
 		{
@@ -178,6 +184,8 @@ void FishersManager::Update(Bg* bg)
 			m_fishIndex++;
 			m_phase = FisherPhase::End;
 			m_isDead = true;
+			//Bgm
+			Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 			
 		}
 	

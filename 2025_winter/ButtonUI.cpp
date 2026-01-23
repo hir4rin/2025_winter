@@ -7,7 +7,7 @@ namespace
 {
 	constexpr int graphWidth = 64;
 	constexpr int graphHeight = 64;
-	constexpr int kDuration = 30;
+	constexpr int kDuration = 25;
 	constexpr float kScale = 1.0f;
 	constexpr float buttonOffset = 0.0f;
 }

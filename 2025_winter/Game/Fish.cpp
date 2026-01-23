@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Camera.h"
 #include "Player.h"
+#include "Application.h"
 
 namespace
 {
@@ -266,7 +267,15 @@ void Fish::Update()
 	}
 		break;
 	case FishState::knockback:
-		if (cool_interval - m_coolDamageTimer >= 10.0f)
+		/*if (cool_interval - m_coolDamageTimer >= 10.0f)
+		{
+			m_state = FishState::Walk;
+			m_vel.x = m_isRight ? kSpeed : -kSpeed;
+		}*/
+
+		//新しいほう
+		Character::BossUpdate();
+		if (m_coolDamageTimer < 0)
 		{
 			m_state = FishState::Walk;
 			m_vel.x = m_isRight ? kSpeed : -kSpeed;
@@ -622,7 +631,8 @@ void Fish::HitFishDamage(int damage,bool dir)
 {
 
 	if (m_coolDamageTimer > 0)return;
-
+	//SE再生
+	Application::GetInstance().GetSoundManager().PlaySE("hitSE");
   m_hp += -damage;
 
   m_coolDamageTimer = cool_interval;
@@ -636,8 +646,8 @@ void Fish::HitFishDamage(int damage,bool dir)
   {
 	  //被弾したらノックバックさせる
 	  m_state = FishState::knockback;
-	  m_vel.x = dir ? kSpeed/3.0f : -kSpeed/3.0f;
-	  m_isRight = !dir;
+	  m_vel.x = dir ? kSpeed/3.0f : -kSpeed / 3.0f;
+	 // m_isRight = !dir;
 
   }
 }

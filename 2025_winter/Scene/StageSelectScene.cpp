@@ -121,6 +121,7 @@ void StageSelectScene::NormalUpdate(Input& input)
 	//ポーズ画面
 	if (input.IsTriggered("pause"))
 	{
+		Application::GetInstance().GetSoundManager().PlaySE("pauseOP");
 		controller_.SetPlayerInfo(m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife());
 		controller_.PushScene(std::make_shared<PauseScene>(controller_));
 		return;
@@ -263,6 +264,9 @@ void StageSelectScene::FadeOutDraw()
 
 StageSelectScene::StageSelectScene(SceneController& controller,PlayerType type,int hp,int Life) : Scene(controller), stageUI(controller)
 {
+
+	//SE止まる
+	Application::GetInstance().GetSoundManager().StopSE("yarareSE");
 	//bgm再生
 	Application::GetInstance().GetSoundManager().PlayBgm("bgmSelectScene");
 

@@ -305,7 +305,8 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 	break;
 	case 10:
 	{
-
+		//Bgm
+		Application::GetInstance().GetSoundManager().PlayBgm("bgmFishBefore");
 		//
 		m_pFishersManager = std::make_shared<FishersManager>(Vec2{ 100,100 }, 1);
 
@@ -840,8 +841,7 @@ void GameScene::CheckFrozenHit()
 						{
 							m_pFrozen = nullptr;
 
-							//SE再生
-							Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+							
 							//インスタンスを消す
 							//ボスにダメージを与える
 							m_pElite->HitBossDamage(20);
@@ -865,8 +865,7 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-							//SE再生
-							Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+							
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -891,8 +890,7 @@ void GameScene::CheckFrozenHit()
 						if (isHitEnemy)
 						{
 							m_pFrozen = nullptr;
-							//SE再生
-							Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+						
 
 							//インスタンスを消す
 							//ボスにダメージを与える
@@ -1350,7 +1348,6 @@ void GameScene::CheckHitBurning()
 				item->ChangePos() = e->GetPos();
 				m_pItems.push_back(item);
 
-
 				//消えるとき絶対する処理
 				//対応するspawnを復活可能にする
 				EnemySpawn& spawn = FindSpawnData(e->GetInitialID());
@@ -1456,8 +1453,7 @@ void GameScene::CheckHitBurning()
 				m_pElite->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1471,8 +1467,7 @@ void GameScene::CheckHitBurning()
 				m_pBear->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+			
 			}
 		}
 	}
@@ -1487,8 +1482,7 @@ void GameScene::CheckHitBurning()
 				m_pWolf->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1509,8 +1503,7 @@ void GameScene::CheckHitBurning()
 					//インスタンスを消す
 					//カメラシェイク
 					HitShake();
-					//SE再生
-					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+					
 				}
 			}
 	}
@@ -1628,8 +1621,7 @@ void GameScene::CheckFastBurning()
 				m_pElite->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+			
 			}
 		}
 	}
@@ -1643,8 +1635,7 @@ void GameScene::CheckFastBurning()
 				m_pBear->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1658,8 +1649,7 @@ void GameScene::CheckFastBurning()
 				m_pWolf->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1676,8 +1666,7 @@ void GameScene::CheckFastBurning()
 					it->HitFishDamage(50, isLeft);
 					//カメラシェイク
 					HitShake();
-					//SE再生
-					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+					
 				}
 
 			}
@@ -1870,8 +1859,7 @@ void GameScene::CheckHitFrozen()
 				m_pElite->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1885,8 +1873,7 @@ void GameScene::CheckHitFrozen()
 				m_pBear->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1900,8 +1887,7 @@ void GameScene::CheckHitFrozen()
 				m_pWolf->HitBossDamage(20);
 				//カメラシェイク
 				HitShake();
-				//SE再生
-				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 			}
 		}
 	}
@@ -1923,8 +1909,7 @@ void GameScene::CheckHitFrozen()
 
 						//カメラシェイク
 					HitShake();
-					//SE再生
-					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+					
 				}
 			}
 	}
@@ -2414,6 +2399,7 @@ void GameScene::NormalUpdate(Input& input)
 	//ポーズ画面
 	if (input.IsTriggered("pause"))
 	{
+		Application::GetInstance().GetSoundManager().PlaySE("pauseOP");
 		controller_.SetPlayerInfo(m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife());
 		controller_.PushScene(std::make_shared<PauseScene>(controller_));
 		return;
@@ -2545,6 +2531,7 @@ void GameScene::NormalUpdate(Input& input)
 				camera.ChangeIsBossFalse();
 				//Bgm変える
 				Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
+				Application::GetInstance().GetSoundManager().PlaySE("clear");
 			}
 		}
 		if (m_pBear != nullptr)//ボス熊
@@ -2575,6 +2562,7 @@ void GameScene::NormalUpdate(Input& input)
 			{
 				m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
 				m_bearWolfDied = true;
+				Application::GetInstance().GetSoundManager().PlaySE("clear");
 			}
 		}
 		//salmonを消す処理
@@ -2607,6 +2595,7 @@ void GameScene::NormalUpdate(Input& input)
 				{
 					m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
 					m_fishDied = true;
+					Application::GetInstance().GetSoundManager().PlaySE("clear");
 				}
 			}
 				
@@ -2897,7 +2886,6 @@ void GameScene::DyingUpdate(Input& input)
 		case 1:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
-			
 		case 2:
 			controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
@@ -2915,11 +2903,11 @@ void GameScene::DyingUpdate(Input& input)
 			return;
 		case 9://熊と狼
 			//controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
-			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 		case 10://魚
 			//controller_.ChangeScene(std::make_shared<GameScene>(controller_, m_stageNum, PlayerType::Normal, 100, m_pPlayer->GetLife()));//武器庫へ
-			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, m_pPlayer->GetType(), m_pPlayer->GetHp(), m_pPlayer->GetLife()));
+			controller_.ChangeScene(std::make_shared<StageSelectScene>(controller_, PlayerType::Normal, 100, m_pPlayer->GetLife()));
 			return;
 		}
 	}

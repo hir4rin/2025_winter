@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Camera.h"
 #include <cassert>
+#include "Application.h"
 
 
 namespace
@@ -239,7 +240,8 @@ void EnemyBear::HitBossDamage(int damage)
 
 	//死んでるアニメーションの時は、被ダメしない
 	if (_state == EnemyState::Damage)return;
-
+	//SE再生
+	Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 	m_hp -= damage;
 	m_coolDamageTimer = cool_interval;
 	if (m_hp <= 0)

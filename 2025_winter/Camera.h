@@ -4,8 +4,9 @@
 #include "Rect.h"
 
 class  Player;
-struct Camera
+class Camera
 {
+public:
 	Vec2 pos;				// 実際のカメラのポジション
 	Vec2 drawOffset;		// 全てのDrawObjectに足す値
 

@@ -322,6 +322,8 @@ private:
 	int playingEffectHandle = -1;//再生中のエフェクトハンドル
 private:
 	std::shared_ptr<EffekseerResourceManager> m_effRes;
+	float drawOffsetOfcameraX = 0;
+	float drawOffsetOfcameraY = 0;
 
 };
 
