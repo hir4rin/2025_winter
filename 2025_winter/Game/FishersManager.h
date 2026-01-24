@@ -2,6 +2,7 @@
 #include "Vec2.h"
 #include <vector>
 #include <memory>
+#include <functional>
 
 class Bg;
 class Camera;
@@ -51,6 +52,13 @@ private:
 	bool m_isfusion;
 	Vec2 ReleasePos;
 	bool m_isDead = false;
+public:
+	//着地イベント
+	std::vector<std::function<void()>> onLandEvents;
+	//リスナー追加用(使いやすくするため)
+	void AddOnLandEvent(const std::function<void()>& eventFunc) {
+		onLandEvents.push_back(eventFunc);
+	}
 
 };
 

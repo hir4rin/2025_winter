@@ -6,7 +6,6 @@
 struct SeSlot
 {
 	int handle;
-	
 };
 
 class SoundManager

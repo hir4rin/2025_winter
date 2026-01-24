@@ -30,6 +30,11 @@ void FishersManager::Update(Bg* bg)
 	{
 		SpawnFish(bg);
 		m_isSpawn = true;
+		//エフェクトを出す
+		for (auto& func : onLandEvents)
+		{
+			if (func)func();//呼び出し
+		}
 	}
 
 	//
@@ -63,7 +68,7 @@ void FishersManager::Update(Bg* bg)
 			m_isSpawn = false;
 			m_phase = FisherPhase::SpecialFish;
 			//Bgm
-			//Application::GetInstance().GetSoundManager().PlayBgm("bgmFishAfter");
+			Application::GetInstance().GetSoundManager().PlayBgm("bgmFishAfter");
 		}
 
 
@@ -185,7 +190,7 @@ void FishersManager::Update(Bg* bg)
 			m_phase = FisherPhase::End;
 			m_isDead = true;
 			//Bgm
-			Application::GetInstance().GetSoundManager().PlayBgm("bgm");
+			//Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 			
 		}
 	

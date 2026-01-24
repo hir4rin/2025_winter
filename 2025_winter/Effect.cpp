@@ -2,6 +2,7 @@
 #include "Effect.h"
 #include "Player.h"
 #include "Camera.h"
+#include "EffekseerForDXLib.h"
 #include <cassert>
 
 namespace
@@ -126,12 +127,43 @@ Effect::Effect(Vec2 pos,std::string name,bool dir):
 		m_type = EffectType::RedLight;
 		m_handle = LoadGraph("data/Game/RedEffect.png");
 	}
+	if (name == "spawn")
+	{
+		m_aliveFrame = 100;
+		m_type = EffectType::Spawn;
+		m_spawnEfHandle = LoadEffekseerEffect("data/Game/Effect/spawn.efk");
+		// エフェクトを再生する。
+		playingEffectHandle = PlayEffekseer2DEffect(m_spawnEfHandle);
+		assert(playingEffectHandle >= 0);
+		// エフェクトの拡大率を設定する。
+			// Effekseerで作成したエフェクトは2D表示の場合、小さすぎることが殆どなので必ず拡大する。
+		SetScalePlayingEffekseer2DEffect(playingEffectHandle, 1.5f, 1.5f, 1.5f);
+		// 再生中のエフェクトをたまと同じ位置に移動。
+		SetPosPlayingEffekseer2DEffect(playingEffectHandle, pos.x, pos.y, 0);
+
+	}
+	if (name == "spawn2")
+	{
+		m_aliveFrame = 50;
+		m_type = EffectType::Spawn;
+		m_spawnEfHandle = LoadEffekseerEffect("data/Game/Effect/spawn.efk");
+		// エフェクトを再生する。
+		playingEffectHandle = PlayEffekseer2DEffect(m_spawnEfHandle);
+		assert(playingEffectHandle >= 0);
+		// エフェクトの拡大率を設定する。
+			// Effekseerで作成したエフェクトは2D表示の場合、小さすぎることが殆どなので必ず拡大する。
+		SetScalePlayingEffekseer2DEffect(playingEffectHandle, 1.5f, 1.5f, 1.5f);
+		// 再生中のエフェクトをたまと同じ位置に移動。
+		SetPosPlayingEffekseer2DEffect(playingEffectHandle, pos.x, pos.y, 0);
+
+	}
 	
 }
 
 Effect::~Effect()
 {
 	DeleteGraph(m_handle);
+	DeleteEffekseerEffect(m_spawnEfHandle);
 }
 
 void Effect::Init()
@@ -173,6 +205,11 @@ void Effect::Update()
 	
 
 	m_pos += m_vel;
+	if (playingEffectHandle >= 0)
+	{
+		// Effekseerにより再生中のエフェクトを更新する。
+		UpdateEffekseer2D();
+	}
 }
 void Effect::Draw()
 {
@@ -286,6 +323,34 @@ void Effect::Draw(Camera& camera)
 		 true,//反転するかどうか
 		  false);
 		break;
+	case EffectType::Spawn:
+		//------------------------------//
+	// エフェクトルーチン
+	//------------------------------//
+		if (playingEffectHandle >= 0) // 再生中エフェクトのハンドルがあれば.
+		{
+			float rotation = 0.0f;
+
+			if (m_isRight) // 左向き
+			{
+				rotation = DX_PI_F; // 180度
+			}
+
+			// 再生中のエフェクトをたまと同じ位置に移動。
+			SetPosPlayingEffekseer2DEffect(playingEffectHandle, m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y, 0);
+
+			// 回転更新
+			SetRotationPlayingEffekseer2DEffect(playingEffectHandle, 0.0f, 0.0f, rotation);
+
+
+
+
+		}
+		if (playingEffectHandle >= 0)
+		{
+			// Effekseerにより再生中のエフェクトを描画する。
+			DrawEffekseer2D();
+		}
 	}
 		
 	

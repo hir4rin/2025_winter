@@ -287,7 +287,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 				{
 					m_pSalmons.push_back(std::make_shared<Salmon>(m_pBear->GetPos(), m_pBear->Getm_isRight(), i + 1));
 				}
-
+				m_pEffects.push_back(std::make_shared<Effect>(m_pBear->GetPos(), "spawn2", false));
 				//カメラを揺らす
 				StartCameraShake(camera, 10.0f, 0.2f);
 			});
@@ -315,11 +315,9 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pBg = new Bg(m_pPlayer, 12);
 		//魚
 		{
-			/*	for (auto& it : m_pFishers)
-				{
-					it->SetPlayer(m_pPlayer);
-					it->SetBgPointer(m_pBg);
-				}*/
+			m_pFishersManager->AddOnLandEvent([this]() {
+				m_pEffects.push_back(std::make_shared<Effect>(Vec2{ 1540,830 }, "spawn", false));
+		});
 		}
 		camera.ChangeIsFishTrue();
 
@@ -1248,8 +1246,7 @@ void GameScene::CheckHitNormal()
 				{
 
 					m_pElite->HitBossDamage(10);
-					//SE再生
-					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+					
 				}
 			}
 		}
@@ -1265,8 +1262,7 @@ void GameScene::CheckHitNormal()
 				if (isHitAttack)
 				{
 					m_pBear->HitBossDamage(10);
-					//SE再生
-					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+					
 				}
 			}
 		}
@@ -1282,8 +1278,7 @@ void GameScene::CheckHitNormal()
 				if (isHitAttack)
 				{
 					m_pWolf->HitBossDamage(10);
-					//SE再生
-					Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+				
 				}
 			}
 		}
@@ -1312,8 +1307,7 @@ void GameScene::CheckHitNormal()
 						//m_pEffects.push_back(std::make_shared<Effect>(e->GetPos(), "blueStarLight"));
 
 						//インスタンスを消す
-						//SE再生
-						Application::GetInstance().GetSoundManager().PlaySE("hitSE");
+						
 
 					}
 				}

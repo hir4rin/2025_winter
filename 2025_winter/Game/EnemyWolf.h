@@ -37,6 +37,9 @@ private:
 	int charaIdx;
 	int charaIdy;
 	int m_animframe;
+	//エフェクト
+	int m_handle2 = -1;
+	int charaIdx2 = 0;
 
 	void CheckHit();
 

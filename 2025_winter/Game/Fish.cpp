@@ -566,6 +566,7 @@ void Fish::Draw(Camera& camera)
 			charaIdx = (m_animFrame / kIdleDuration) % kIdleNum;
 			charaIdy = kIdleNumY;
 			drawY = kCharaHeight / 3.0f;
+			//drawY = 0;
 			//描画関連
 			{
 				//描画の上とした
@@ -592,7 +593,7 @@ void Fish::Draw(Camera& camera)
 		case FishState::Fusion2:
 			charaIdx = (m_animFrame / kIdleDuration) % kIdleNum;
 			charaIdy = kIdleNumY;
-			drawY = kCharaHeight / 3.0f;
+			drawY = kCharaHeight / 4.5f;
 			break;
 		}
 

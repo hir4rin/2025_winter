@@ -15,7 +15,8 @@ enum class EffectType
 	RedStarLight,
 	GreenStarLight,
 	Slash,
-	RedLight
+	RedLight,
+	Spawn,
 };
 
 class Effect : public Character
@@ -40,6 +41,10 @@ private:
 
 	EffectType m_type;
 	bool m_dir;
+private:
+	int m_spawnEfHandle = -1;
+	int playingEffectHandle = -1;//再生中のエフェクトハンドル
+
 
 };
 

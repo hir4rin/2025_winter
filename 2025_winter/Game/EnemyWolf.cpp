@@ -47,6 +47,11 @@ namespace
 	constexpr float kThunderDashTime = kAttackTime * 15 / 100;//攻撃中
 	constexpr float kThunderEndTime = kAttackTime * 10 / 100;//攻撃後
 	constexpr float kThunderAfterTime = kAttackTime * 5 / 100;//硬直中
+	//攻撃1のエフェクト
+	constexpr int kThunderWidth = 32;
+	constexpr int kThunderHeight = 32;
+	constexpr int kScale = 1.0f;
+	constexpr int kThunderNum = 5;
 
 
 
@@ -80,6 +85,7 @@ EnemyWolf::EnemyWolf() :
 	m_attackP(WolfAttackPattern::Attack3)
 {
 	m_handle = LoadGraph("data/Game/Werewolf.png");
+	m_handle2 = LoadGraph("data/Game/ThunderEffect.png");
 	assert(m_handle >= 0);
 
 	m_pos = kInitPos;
@@ -202,16 +208,27 @@ void EnemyWolf::Draw(Camera& camera)
 	{
 		m_drawoffset = { 0,0 };
 	}
-
-
+	//雷
+	charaIdx2 = (m_animframe / 5) % kThunderNum;
+	float marginX = 50.0f;
+	float marginY = 10.0f;
 
 	if (m_isRight)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x ,
 			m_pos.y + camera.drawOffset.y + drawY + m_drawoffset.y,
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f, m_handle, true, false);
+		if (isAttack)
+		{
+
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x - marginX,
+			m_pos.y + camera.drawOffset.y + drawY + m_drawoffset.y- marginY,
+		kThunderWidth * charaIdx2, kThunderHeight * 0,//切り取り左上
+		kThunderWidth, kThunderHeight,//切り取りの幅
+		kThunderNum, 0.0f, m_handle2, true, false);
+		}
 	}
 	else
 	{
@@ -221,6 +238,14 @@ void EnemyWolf::Draw(Camera& camera)
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f,
 			m_handle, true, true);
+		if (isAttack)
+		{
+			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x + marginX,
+			m_pos.y + camera.drawOffset.y + drawY + m_drawoffset.y- marginY,
+		kThunderWidth * charaIdx2, kThunderHeight * 0,//切り取り左上
+		kThunderWidth, kThunderHeight,//切り取りの幅
+		kThunderNum, 0.0f, m_handle2, true, true);
+		}
 	}
 	//元に戻す
 	SetDrawBright(255, 255, 255);

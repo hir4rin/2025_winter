@@ -33,6 +33,7 @@ bool Application::Init()
 	//画面サイズの変更
 	SetGraphMode(1920, 1080, 32);
 	//SetWindowSize(640, 480);
+	//名前の変更
 	SetMainWindowText("☆ジョブチェンジャーナイト☆");
 
 	ChangeWindowMode(true);
