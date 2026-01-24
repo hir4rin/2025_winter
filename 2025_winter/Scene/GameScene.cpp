@@ -244,9 +244,8 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		break;
 	case 9:
 	{
-		//
-		//m_pFishersManager = std::make_shared<FishersManager>(Vec2{ 100,100 }, 1);
-
+		//Bgm
+		Application::GetInstance().GetSoundManager().PlayBgm("bgmBearWolf");
 
 		//
 		m_pBear = std::make_shared<EnemyBear>();
@@ -2563,6 +2562,8 @@ void GameScene::NormalUpdate(Input& input)
 				m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
 				m_bearWolfDied = true;
 				Application::GetInstance().GetSoundManager().PlaySE("clear");
+				//Bgm
+				Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 			}
 		}
 		//salmonを消す処理
@@ -2596,6 +2597,8 @@ void GameScene::NormalUpdate(Input& input)
 					m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
 					m_fishDied = true;
 					Application::GetInstance().GetSoundManager().PlaySE("clear");
+					//Bgm
+					Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 				}
 			}
 				

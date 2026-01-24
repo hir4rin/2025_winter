@@ -16,6 +16,7 @@ void SoundManager::Init()
     m_sounds["bgmElite"] = LoadSoundMem("data/Sound/EliteBossBgm.ogg");
     m_sounds["bgmFishBefore"] = LoadSoundMem("data/Sound/FishBefore.ogg");
     m_sounds["bgmFishAfter"] = LoadSoundMem("data/Sound/FishAfter.ogg");
+    m_sounds["bgmBearWolf"] = LoadSoundMem("data/Sound/BearWolfBgm.ogg");
 	assert(m_sounds["bgm"] >= 0);
 
 	//SEの読み込み
@@ -57,7 +58,8 @@ void SoundManager::Init()
         "bgmWeaponSelectScene",
         "bgmElite",
         "bgmFishBefore",
-        "bgmFishAfter"
+        "bgmFishAfter",
+        "bgmBearWolf"
     };
 	//SEのリスト
     const std::vector<std::string> seNames = {

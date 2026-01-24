@@ -19,6 +19,7 @@ public:
 	void FadeInBg(Camera& camera);
 
 	void FadeOutBg(Camera& camera);
+	void FadeOutBg2(Camera& camera);
 
 
 	void Init();
@@ -146,6 +147,7 @@ private:
 		int width;
 		int height;
 	};
+	int m_cloudFrame = 0;//雲を動かす用
 
 };
 

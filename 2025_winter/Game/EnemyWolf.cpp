@@ -23,7 +23,6 @@ namespace
 	//被ダメージクールタイム
 	constexpr int cool_interval = 60;
 
-
 	//1frameあたりのアニメーションの時間
 	constexpr int kIdleDuration = 6;
 	constexpr int kWalkDuration = 8;
@@ -40,15 +39,13 @@ namespace
 	constexpr int kAttack3Num = 9;
 	constexpr int kDamageNum = 4;
 
-
-
 	constexpr float kAttackTime = 100.0f;  //攻撃の時間
 
 	//攻撃1
 	constexpr float kDashSpeed = 80.0f;
-	constexpr float kThunderReadyTime = kAttackTime * 50 / 100;//攻撃前の見切り
+	constexpr float kThunderReadyTime = kAttackTime * 70 / 100;//攻撃前の見切り
 	constexpr float kThunderDashTime = kAttackTime * 15 / 100;//攻撃中
-	constexpr float kThunderEndTime = kAttackTime * 30 / 100;//攻撃後
+	constexpr float kThunderEndTime = kAttackTime * 10 / 100;//攻撃後
 	constexpr float kThunderAfterTime = kAttackTime * 5 / 100;//硬直中
 
 

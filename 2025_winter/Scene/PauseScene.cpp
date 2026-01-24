@@ -54,7 +54,7 @@ void PauseScene::NormalUpdate(Input& input)
 		Application::GetInstance().GetSoundManager().PlaySE("cursor");
 		selectIndex_ = (selectIndex_ + 1) % menuList_.size();
 	}
-	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
+	if ( input.IsTriggered("Jump"))
 	{
 		//SE再生
 		Application::GetInstance().GetSoundManager().PlaySE("ok2");
@@ -62,6 +62,12 @@ void PauseScene::NormalUpdate(Input& input)
 		auto& menuName = menuList_[selectIndex_];
 		// そのメニューアイテムの名前に対応付けられたラムダ式を実行する
 		execTable_[menuName](input);
+		return;
+	}
+	if (input.IsTriggered("ok"))
+	{
+		//１つ前に戻る
+		controller_.PopScene();	// この時点で自分は解放されている
 		return;
 	}
 }
@@ -156,7 +162,7 @@ void PauseScene::ConfigUpdate(Input& input)
 		Application::GetInstance().GetSoundManager().PlaySE("cursor");
 		selectIndex_ = (selectIndex_ + 1) % menuList_.size();
 	}
-	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
+	if (input.IsTriggered("Jump"))
 	{
 		//SE再生
 		Application::GetInstance().GetSoundManager().PlaySE("ok2");
@@ -165,6 +171,12 @@ void PauseScene::ConfigUpdate(Input& input)
 		// そのメニューアイテムの名前に対応付けられたラムダ式を実行する
 		execTable_[menuName](input);
 		return;
+	}
+	if (input.IsTriggered("ok"))
+	{
+		//１つ前に戻る
+		update_ = &PauseScene::NormalUpdate;
+		draw_ = &PauseScene::NormalDraw;
 	}
 	
 }

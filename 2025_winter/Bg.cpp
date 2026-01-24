@@ -70,7 +70,7 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 	m_graphChipNumY(0),
 	m_chipData(),
 	StageNum(stagenum),
-	m_extRate(0.5)
+	m_extRate(0.25)
 {
 	//フェード
 	m_fadeH = LoadGraph("data/fade.png");
@@ -151,10 +151,10 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 		break;
 	case 12://ボス戦
 		m_mapH = LoadGraph("data/Stage/map.png");
-		m_bgH = LoadGraph("data/Back/nature_2/2.png");
-		m_bgH2 = LoadGraph("data/Back/nature_2/2.png");
-		m_bgH3 = LoadGraph("data/Back/nature_2/3.png");
-		m_bgH4 = LoadGraph("data/Back/nature_2/4.png");
+		m_bgH = LoadGraph("data/Back/Ocean_6/1.png");
+		m_bgH2 = LoadGraph("data/Back/Ocean_6/2.png");
+		m_bgH3 = LoadGraph("data/Back/Ocean_6/3.png");
+		m_bgH4 = LoadGraph("data/Back/Ocean_6/4.png");
 		break;
 	default:
 		assert(false && "Bgの画像読み込みに失敗");
@@ -264,7 +264,8 @@ Bg::Bg(std::shared_ptr<Player> pPlayer, int stagenum) :
 
 void Bg::FadeInBg(Camera& camera)
 {
-	m_extRate += 0.2;
+	m_extRate += 0.2;//丸フェード
+	//m_extRate += 0.1;
 
 	//画像サイズを取得
 	//Bgのサイズ
@@ -304,8 +305,66 @@ void Bg::FadeInBg(Camera& camera)
 
 void Bg::FadeOutBg(Camera& camera)
 {
-	m_extRate -= 0.2;
+	m_extRate -= 0.2;//丸フェード
+	//m_extRate -= 0.05;
+	//if (m_extRate <= 0.01)m_extRate = 0.05;
 	if (m_extRate <= 0)m_extRate = 0;
+	//m_extRate = std::lerp(m_extRate, 0.1f, 0.3f);
+
+	//画像サイズを取得
+	//Bgのサイズ
+	Size bgSize = { 0,0 };
+
+	GetGraphSize(m_fadeH, &bgSize.width, &bgSize.height);
+
+	//画像の4てんの座標を求める用
+
+	float cx = m_pPlayer->GetPos().x + camera.drawOffset.x;
+	float cy = m_pPlayer->GetPos().y + camera.drawOffset.y;
+	/*float cx = kScreenSizeWidth/2.0f;
+	float cy = kScreenSizeHeight/2.0f;*/
+
+	float halfW = bgSize.width * m_extRate / 2.0f;//拡大した後の画像の二分の一
+	float halfH = bgSize.height * m_extRate / 2.0f;
+
+	float leftX = cx - halfW+10;
+	float rightX = cx + halfW;
+	float topY = cy - halfH+10;
+	float bottomY = cy + halfH;
+	if (m_extRate == 0)
+	{
+		leftX = cx - halfW;
+		topY = cy - halfH;
+	}
+
+	//左上
+	DrawBox(0, 0, rightX, topY, GetColor(0, 0, 0), true);
+	//左下
+	DrawBox(0, kScreenSizeHeight, leftX, topY, GetColor(0, 0, 0), true);
+	//右上
+	DrawBox(rightX, 0, kScreenSizeWidth, bottomY, GetColor(0, 0, 0), true);
+	//右下
+	DrawBox(leftX, bottomY, kScreenSizeWidth, kScreenSizeHeight, GetColor(0, 0, 0), true);
+
+	DrawRectRotaGraph(m_pPlayer->GetPos().x + camera.drawOffset.x, m_pPlayer->GetPos().y + camera.drawOffset.y,
+		0, 0,
+		bgSize.width, bgSize.height,
+		m_extRate, 0,//拡大率、回転
+		m_fadeH, true);
+	//DrawRectRotaGraph(cx, cy,
+	//	0, 0,
+	//	bgSize.width, bgSize.height,
+	//	m_extRate, 0,//拡大率、回転
+	//	m_fadeH, true);
+}
+
+void Bg::FadeOutBg2(Camera& camera)
+{
+	//m_extRate += 0.2;//丸フェード
+	/*m_extRate -= 0.05;
+	if (m_extRate <= 0.01)m_extRate = 0.05;
+	if (m_extRate <= 0)m_extRate = 0;*/
+	m_extRate = std::lerp(m_extRate, 0.1f, 0.3f);
 
 	//画像サイズを取得
 	//Bgのサイズ
@@ -318,7 +377,7 @@ void Bg::FadeOutBg(Camera& camera)
 	float cx = m_pPlayer->GetPos().x + camera.drawOffset.x;
 	float cy = m_pPlayer->GetPos().y + camera.drawOffset.y;
 
-	float halfW = bgSize.width * m_extRate / 2.0f;
+	float halfW = bgSize.width * m_extRate / 2.0f;//拡大した後の画像の二分の一
 	float halfH = bgSize.height * m_extRate / 2.0f;
 
 	float leftX = cx - halfW;
@@ -341,9 +400,6 @@ void Bg::FadeOutBg(Camera& camera)
 		m_extRate, 0,//拡大率、回転
 		m_fadeH, true);
 }
-
-
-
 
 void Bg::Init()
 {
@@ -459,10 +515,43 @@ void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 	//float に戻す
 	float bgX = static_cast<float>(looped);
 
-	////どれぐらい暗くするのか
-	//SetDrawBright(c, c, c); // ← 遠景なら暗め(255がMax正常値)
+	if (rate == 0.25)//ボス戦の雲
+	{
+		//勝手に動かす
+		m_cloudFrame++;
 
-	DrawRectRotaGraph(graphHalfW + bgX, graphHalfH + (camera.drawOffset.y+0 ) - kScreenSizeHeight * (1- rateY),  // 描画位置（中心座標）
+		// スクロール量を計算（カメラ位置 + 雲の自動移動）
+		float totalOffset = camera.drawOffset.x + m_cloudFrame * rate;
+
+		// ループ処理（負の値にも対応）
+		float loopedX = fmod(totalOffset, drawWidth);
+		// 右方向にスクロールする場合は調整
+		while (loopedX > 0) loopedX -= drawWidth;
+		while (loopedX < -drawWidth) loopedX += drawWidth;
+		//float に戻す
+		 bgX = static_cast<float>(looped);
+
+		DrawRectRotaGraph(graphHalfW + loopedX, graphHalfH + (camera.drawOffset.y + 0) - kScreenSizeHeight * (1 - rateY),  // 描画位置（中心座標）
+			0, 0, // 元画像の切り取り開始位置（左上）
+			bgSize.width, bgSize.height,  // 切り取るサイズ（幅・高さ）
+			scale, 0, // 拡大率（1.0で等倍）// 回転角度（ラジアン）
+			handle, // 画像ハンドル
+			true,// 透過描画フラグ（TRUEで透明色有効）
+			false, false);      // 左右反転フラグ（TRUEで反転）
+
+		// 2枚目（右側）
+		DrawRectRotaGraph(
+			graphHalfW + loopedX + drawWidth, graphHalfH + (camera.drawOffset.y + 0) - kScreenSizeHeight * (1 - rateY),
+			0, 0,
+			bgSize.width, bgSize.height,
+			scale, 0,
+			handle,
+			TRUE,
+			FALSE, FALSE);
+	}
+	else
+	{
+		DrawRectRotaGraph(graphHalfW + bgX, graphHalfH + (camera.drawOffset.y + 0) - kScreenSizeHeight * (1 - rateY),  // 描画位置（中心座標）
 		0, 0, // 元画像の切り取り開始位置（左上）
 		bgSize.width, bgSize.height,  // 切り取るサイズ（幅・高さ）
 		scale, 0, // 拡大率（1.0で等倍）// 回転角度（ラジアン）
@@ -470,16 +559,19 @@ void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 		true,// 透過描画フラグ（TRUEで透明色有効）
 		false, false);      // 左右反転フラグ（TRUEで反転）
 
-	// 2枚目（右側）
-	DrawRectRotaGraph(
-		graphHalfW + bgX + drawWidth, graphHalfH + (camera.drawOffset.y + 0) - kScreenSizeHeight * (1 - rateY),
-		0, 0,
-		bgSize.width, bgSize.height,
-		scale, 0,
-		handle,
-		TRUE,
-		FALSE, FALSE
-	);
+		// 2枚目（右側）
+		DrawRectRotaGraph(
+			graphHalfW + bgX + drawWidth, graphHalfH + (camera.drawOffset.y + 0) - kScreenSizeHeight * (1 - rateY),
+			0, 0,
+			bgSize.width, bgSize.height,
+			scale, 0,
+			handle,
+			TRUE,
+			FALSE, FALSE);
+	}
+	
+
+	
 	
 	//SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 }
@@ -589,10 +681,11 @@ void Bg::DrawBg(Camera& camera)
 		break;
 	case 12://2_3
 		BgHSetDraw(camera, m_bgH, 0.0);
-		SetDrawBright(t, t, t);// ← 中景
+		//SetDrawBright(t, t, t);// ← 中景
 		if (m_bgH2 != -1)BgHSetDraw(camera, m_bgH2, 0.3);
+		//SetDrawBright(b, b, b);// ← 中景
+		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.25);
 		SetDrawBright(b, b, b);// ← 中景
-		if (m_bgH3 != -1)BgHSetDraw(camera, m_bgH3, 0.3);
 		if (m_bgH4 != -1)BgHSetDraw(camera, m_bgH4, 0.3);
 		SetDrawBright(255, 255, 255); // ← ★必ず元に戻す
 		break;

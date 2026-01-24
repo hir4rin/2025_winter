@@ -41,7 +41,7 @@ namespace
 
 GameClearScene::GameClearScene(SceneController& controller, PlayerType type, int hp, int Life) : Scene(controller),  stageUI(controller),
 update_(&GameClearScene::FadeInUpdate),
-draw_(&GameClearScene::FadeDraw),
+draw_(&GameClearScene::FadeInDraw),
 m_fontHandle(-1)
 {
 	//bgm再生
@@ -330,7 +330,7 @@ void GameClearScene::NormalUpdate(Input& input)
 			break;
 		}
 		update_ = &GameClearScene::FadeOutUpdate;
-		draw_ = &GameClearScene::FadeDraw;
+		draw_ = &GameClearScene::FadeOutDraw;
 		m_frame = 0;
 		return;
 	}
@@ -382,7 +382,7 @@ void GameClearScene::FadeOutUpdate(Input&)
 	}
 
 	//NormalDraw();
-	if (m_frame++ >= fade_interval * 5)
+	if (m_frame++ >= fade_interval * 10)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
@@ -478,6 +478,34 @@ void GameClearScene::NormalDraw()
 			0.5f, 0.0f, m_goalHandle[i], true, false);
 	}
 
+}
+void GameClearScene::FadeInDraw()
+{
+	NormalDraw();
+
+
+	//フェード6L
+	m_pBg->FadeInBg(camera);
+
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
+	//DrawBox(0, 0, screenWidth, screenHeight, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+void GameClearScene::FadeOutDraw()
+{
+	//フェードアウト用の処理
+	NormalDraw();
+
+	//フェード
+	m_pBg->FadeOutBg(camera);
+
+	const auto& wsize = Application::GetInstance().GetWindowSize();
+	float rate = static_cast<float>(m_frame) / static_cast<float>(fade_interval);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 * rate);
+	//DrawBox(0, 0, screenWidth, screenHeight, 0x000000, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 void GameClearScene::ToArrivedAtGoal()

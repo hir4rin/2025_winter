@@ -33,6 +33,7 @@ bool Application::Init()
 	//画面サイズの変更
 	SetGraphMode(1920, 1080, 32);
 	//SetWindowSize(640, 480);
+	SetMainWindowText("☆ジョブチェンジャーナイト☆");
 
 	ChangeWindowMode(true);
 	//フォントの読み込みを行う

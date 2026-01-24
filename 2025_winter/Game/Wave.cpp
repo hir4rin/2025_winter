@@ -52,7 +52,7 @@ void Wave::Draw(Camera& camera)
 	int charaIdx = 0;
 	charaIdx = 2+ (m_frame / kBlueStarLightAnimDuration) % kBlueStarLightAnimNum;
 
-	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y - kBlueStarLightCutH* kBlueStarLightScale*1/4,
 			 kBlueStarLightSorW + kBlueStarLightCutW * charaIdx, kBlueStarLightSorH,//切り取り座標
 			 kBlueStarLightCutW, kBlueStarLightCutH,//切り取りの幅
 			 kBlueStarLightScale, 0.0f,//左が拡大率、右が回転率

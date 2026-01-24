@@ -54,6 +54,7 @@
     <ClInclude Include="Pad.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="Scene\GameClearScene.h" />
     <ClInclude Include="Scene\GameOverScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
@@ -121,6 +122,12 @@
     <ClCompile Include="TitleStar.cpp" />
     <ClCompile Include="TutorialManager.cpp" />
     <ClCompile Include="Vec2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{229C6CCE-D20D-4863-AA78-E2C8A1C45EF6}</ProjectGuid>

@@ -63,7 +63,7 @@ void FishersManager::Update(Bg* bg)
 			m_isSpawn = false;
 			m_phase = FisherPhase::SpecialFish;
 			//Bgm
-			Application::GetInstance().GetSoundManager().PlayBgm("bgmFishAfter");
+			//Application::GetInstance().GetSoundManager().PlayBgm("bgmFishAfter");
 		}
 
 

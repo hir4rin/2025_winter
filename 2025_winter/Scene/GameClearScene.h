@@ -42,6 +42,8 @@ private:
 
 	void FadeDraw();
 	void NormalDraw();
+	void FadeInDraw();
+	void FadeOutDraw();
 	using DrawFunc_t = void(GameClearScene::*)();
 	DrawFunc_t draw_;	// Draw系を受け取るメンバ関数ポインタ
 	//------------------------------------------------------------

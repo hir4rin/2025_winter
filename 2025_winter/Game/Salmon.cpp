@@ -128,8 +128,6 @@ void Salmon::Draw()
 }
 void Salmon::Draw(Camera& camera)
 {
-
-
 	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y - enemy_cut_h / 3 * 2,
 	0, 0,
 	enemy_cut_w, enemy_cut_h,//切り取りの幅
@@ -139,8 +137,9 @@ void Salmon::Draw(Camera& camera)
 	m_isGround ? false : true,//反転するかどうか
 		false);
 
+#ifdef _DEBUG
 	//判定の描画
 	m_colRect.DrawCamera(camera.drawOffset.x, camera.drawOffset.y, GetColor(0, 255, 0), false);
-
+#endif
 
 }
