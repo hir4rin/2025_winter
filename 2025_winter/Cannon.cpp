@@ -46,6 +46,7 @@ Cannon::Cannon():
 
 Cannon::~Cannon()
 {
+	DeleteGraph(m_handle);
 }
 
 void Cannon::Init()
