@@ -337,14 +337,17 @@ void EnemyWolf::AttackUpdate()
 				m_isRight = dir;
 				//アニメーションを初期化
 				m_animframe = 0;
+				//剣を構える音
+				Application::GetInstance().GetSoundManager().PlaySE("setSword");
 			}
 		}
 		if (isAttack == true)
 		{
+		
 			//敵はプレイヤーの向きに攻撃する
 			//攻撃終わり処理
 			Attack1();
-
+			
 		}
 	}
 	break;
@@ -423,14 +426,17 @@ void EnemyWolf::AttackUpdate()
 				m_isRight = dir;
 				//アニメーションを初期化
 				m_animframe = 0;
+				//剣を構える音
+				Application::GetInstance().GetSoundManager().PlaySE("setSword");
 			}
 		}
 		if (isAttack == true)
 		{
+			
 			//敵はプレイヤーの向きに攻撃する
 			//攻撃終わり処理も入っている
 			Attack3();
-
+		
 		}
 	}
 	break;
@@ -486,12 +492,13 @@ void EnemyWolf::AttackUpdate()
 			//敵はプレイヤーの向きに攻撃する
 			//攻撃終わり処理も入っている
 			AttackDown();
+		
 
 		}
 	
 	}
 	break;
-
+	
 	}
 
 
@@ -747,6 +754,11 @@ void EnemyWolf::Attack1()
 	}
 	else if (attackTimer > kAttackTime - kThunderReadyTime - kThunderDashTime)//ダッシュ中
 	{
+		if (attackTimer == kAttackTime - kThunderReadyTime)
+		{
+			//ちょうど
+			Application::GetInstance().GetSoundManager().PlaySE("wolfSlash");
+		}
 		if (m_isRight)
 		{
 			m_vel.x = kDashSpeed;
@@ -894,7 +906,9 @@ void EnemyWolf::Attack3()
 	if (attackTimer <= kAttackTime - kThunderReadyTime)
 	{
 		m_ready = true;
+		
 	}
+
 	if (m_ready && !m_wasReady)
 	{
 		m_animframe = 0;//アニメーション用
@@ -906,6 +920,11 @@ void EnemyWolf::Attack3()
 		//dir ? m_vel.x = kAttack1Speed : m_vel.x = -kAttack1Speed;
 
 		m_isRight = dir;
+	}
+	if (attackTimer == kAttackTime - kThunderReadyTime)
+	{
+		//ちょうど
+		Application::GetInstance().GetSoundManager().PlaySE("wolfAirSlash");
 	}
 	
 

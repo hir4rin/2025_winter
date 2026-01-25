@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Camera.h"
 #include <cassert>
+#include <cmath>
 
 namespace
 {
@@ -22,6 +23,7 @@ namespace
 		//大砲
 		constexpr int  kCannonWidth = 500;
 		constexpr int kCannonHeight = 550;
+		
 
 	constexpr float  kFrozenScale = 5.0f;
 	
@@ -114,8 +116,32 @@ void Cannon::Draw(Camera& camera)
 	DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y + 43.0f,
 	kCannonTransFormCutW * 0, 0,//切り取り左上
 	kCannonWidth, kCannonHeight,//切り取りの幅
-	0.3f, 0.0f, m_handle, true, false);
+	m_Scale, 0.0f, m_handle, true, false);
 }
 void Cannon::Fire()
 {
 }
+
+void Cannon::TakeCannon()
+{
+	m_count++;
+	//lerpで計算してからsinにする
+	t = std::lerp(t, DX_PI, 0.2);
+	//sin
+	//float targetScale = 1.0f + std::sin(m_count * 0.2f) * 0.3f;
+
+	m_Scale = 0.3f + std::sinf(t) * 0.15f;
+}
+
+void Cannon::FireCannon()
+{
+	m_count++;
+	//lerpで計算してからsinにする
+	s = std::lerp(s, DX_PI, 0.2);
+	//sin
+	//float targetScale = 1.0f + std::sin(m_count * 0.2f) * 0.3f;
+
+	m_Scale = 0.3f - std::sinf(s) * 0.12f;
+}
+
+

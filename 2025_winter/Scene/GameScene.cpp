@@ -290,6 +290,8 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 				m_pEffects.push_back(std::make_shared<Effect>(m_pBear->GetPos(), "spawn2", false));
 				//カメラを揺らす
 				StartCameraShake(camera, 10.0f, 0.2f);
+				//音を鳴らす
+				Application::GetInstance().GetSoundManager().PlaySE("bearsplash");
 			});
 
 		}
@@ -2524,6 +2526,7 @@ void GameScene::NormalUpdate(Input& input)
 				camera.ChangeIsBossFalse();
 				//Bgm変える
 				Application::GetInstance().GetSoundManager().PlayBgm("bgmStageScene");
+				Application::GetInstance().GetSoundManager().PlaySE("bossDown");
 				Application::GetInstance().GetSoundManager().PlaySE("clear");
 			}
 		}
@@ -2555,6 +2558,7 @@ void GameScene::NormalUpdate(Input& input)
 			{
 				m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
 				m_bearWolfDied = true;
+				Application::GetInstance().GetSoundManager().PlaySE("bossDown");
 				Application::GetInstance().GetSoundManager().PlaySE("clear");
 				//Bgm
 				Application::GetInstance().GetSoundManager().PlayBgm("bgm");
@@ -2590,7 +2594,9 @@ void GameScene::NormalUpdate(Input& input)
 				{
 					m_doors = std::make_shared< Door>(Vec2{ 1850,800 });
 					m_fishDied = true;
+					Application::GetInstance().GetSoundManager().PlaySE("bossDown");
 					Application::GetInstance().GetSoundManager().PlaySE("clear");
+
 					//Bgm
 					Application::GetInstance().GetSoundManager().PlayBgm("bgm");
 				}

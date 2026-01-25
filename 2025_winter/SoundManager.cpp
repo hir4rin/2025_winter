@@ -47,6 +47,13 @@ void SoundManager::Init()
 	m_sounds["playerHit"] = LoadSoundMem("data/Sound/SE/playerHit.mp3");
 	m_sounds["yarareSE"] = LoadSoundMem("data/Sound/SE/yarareSE.mp3");
 	m_sounds["heal"] = LoadSoundMem("data/Sound/SE/heal.wav");
+    //敵の音
+    m_sounds["setSword"] = LoadSoundMem("data/Sound/SE/SetSword.mp3");
+    m_sounds["wolfSlash"] = LoadSoundMem("data/Sound/SE/wolfSlash.mp3");
+    m_sounds["wolfAirSlash"] = LoadSoundMem("data/Sound/SE/wolfAirSlash.mp3");
+    m_sounds["bearsplash"] = LoadSoundMem("data/Sound/SE/bearsplash.mp3");
+    m_sounds["bossDown"] = LoadSoundMem("data/Sound/SE/bossDown.mp3");
+    m_sounds["waveSE"] = LoadSoundMem("data/Sound/SE/waveSE.mp3");
 
 	// サウンド名のリスト
     const std::vector<std::string> soundNames = {
@@ -86,7 +93,14 @@ void SoundManager::Init()
         "hitSE",
         "playerHit",
         "yarareSE",
-        "heal"
+        "heal",
+        "setSword",
+        "wolfSlash",
+        "wolfAirSlash",
+        "bearsplash",
+        "bossDown",
+        "waveSE"
+
 	};
 	
 	//BGmの音量設定

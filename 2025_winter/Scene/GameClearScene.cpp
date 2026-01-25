@@ -184,6 +184,7 @@ void GameClearScene::NormalUpdate(Input& input)
 		{
 			//大砲に乗るアニメーション
 			m_pCannon->CannonTransForm();
+		
 			//m_pPlayer = nullptr;
 			m_pPlayer->ChangeVel() = Vec2{ 0.0f,0.0f };//速度を0にする
 
@@ -193,6 +194,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	//大砲から発射する処理
 	if (isCannon)
 	{
+		m_pCannon->TakeCannon();
 		if (input.IsTriggered("Jump") || input.IsTriggered("Attack"))
 		{
 			isFlying = true;
@@ -299,6 +301,7 @@ void GameClearScene::NormalUpdate(Input& input)
 	}
 	if (isFlying)//順位によって止まる位置を変える
 	{
+		m_pCannon->FireCannon();
 		//減速処理
 		ToArrivedAtGoal();
 		m_pPlayer->AnimFrameUpdate();
@@ -710,7 +713,7 @@ float GameClearScene::offsetY(int index)
 	int startDelay = index * 8;   // 文字ごとの遅延
 	int moveFrame = 30;          // 動く時間
 	int waitFrame = 30;          // 止まる時間
-	int cycle = moveFrame + waitFrame;
+	int cycle = moveFrame + waitFrame;//60
 
 
 

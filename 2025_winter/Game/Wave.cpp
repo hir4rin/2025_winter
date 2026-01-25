@@ -1,6 +1,7 @@
 ﻿#include "Wave.h"
 #include "DxLib.h"
 #include "Camera.h"
+#include "Application.h"
 #include <cassert>
 
 namespace
@@ -34,6 +35,7 @@ Wave::Wave(const Vec2& pos):
 {
 	m_handle = LoadGraph("data/Game/WaterEffect.png");
 	assert(m_handle >= 0);
+	Application::GetInstance().GetSoundManager().PlaySE("waveSE");
 }
 
 Wave::~Wave()
