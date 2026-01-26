@@ -89,6 +89,8 @@ Fish::Fish(Vec2 pos,int num):
 	m_hp = 150;
 
 	m_colRect.SetCenter(1000, 0, 0, 0);
+	//音を鳴らす
+	Application::GetInstance().GetSoundManager().PlaySE("bearsplash");
 }
 
 Fish::Fish(Vec2 pos, int num, int hp, FishState state):
@@ -512,6 +514,9 @@ void Fish::Draw(Camera& camera)
 			charaIdy = kWalkNumY;
 			drawY = kCharaHeight / 5.0f;
 			srcY = kCharaHeight;
+			break;
+		case FishState::knockback:
+			drawY = kCharaHeight / 5.0f;
 			break;
 		case FishState::Dead:
 			charaIdx = (m_animFrame / kDeadDuration) % kDeadNum;

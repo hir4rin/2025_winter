@@ -11,24 +11,26 @@ namespace
 	constexpr int ScreenWidth = 1920;
 	constexpr int ScreenHeight = 1080;
 
+	constexpr int marginX = 100;//最後の調整用の幅間
+
 	const float topPos = ScreenHeight * 0.75;//カメラにも置いた
 	//UIの下部分
 	const float bottomUI = ScreenHeight - 50;
 
 	//HP,SCOREバーの下地の右側の座標
-	const float firstRightX = ScreenWidth * 0.5 * 6 / 5;
+	const float firstRightX = ScreenWidth * 0.5 * 5 / 5 + marginX;
 	//HPバーの左側座標
-	const float leftHpX = ScreenWidth * 0.5 * 3 / 5;
+	const float leftHpX = ScreenWidth * 0.5 * 3 / 5 + marginX;
 	//HPバーの右側座標(左側座標からどれくらい伸ばすか)
-	const float rightHpX = ScreenWidth * 0.5 * 24 / 100;
+	const float rightHpX = ScreenWidth * 0.5 * 24 / 100;//表示用割合
 	//hpの表示用の割合
 	const float hpScale = rightHpX / 100;
 
 
 	//変身のデザイン
-	const float secondRightX = ScreenWidth * 0.5 * 8 / 5;
+	const float secondRightX = ScreenWidth * 0.5 * 6.5 / 5+ marginX;
 	//残機数
-	const float thirdRihtX = ScreenWidth - 50;
+	const float thirdRihtX = ScreenWidth - 400+ marginX;
 
 	//BossUI
 	constexpr float ktopOffset = 100.0f;
@@ -160,7 +162,7 @@ void StageUI::Draw(Camera& camera)
 	//UIの下のバーの部分
 	DrawBox(0, topPos, ScreenWidth, ScreenHeight, GetColor(255, 170, 80), true);
 	//HP,SCOREバーの下地
-	DrawBox(50, topPos + 20, firstRightX, bottomUI, col, true);
+	DrawBox(300, topPos + 22, firstRightX, bottomUI, col, true);
 
 	//HPバー
 	DrawBox(leftHpX, topPos + 62, leftHpX + 100 * hpScale, topPos + 105, GetColor(0, 0, 0), true);//下地の黒部分
@@ -170,20 +172,20 @@ void StageUI::Draw(Camera& camera)
 		kHpBarW * 0, kHpBarH * 0,//切り取り左上
 		kHpBarW, kHpBarH,//切り取りの幅
 		kHpBarScale, 0, m_hpHandle, true);
-	DrawStringToHandle(360, topPos + 60, " Player : ", GetColor(0, 0, 0), m_fontHandle);
+	DrawStringToHandle(360+ marginX, topPos + 58, " Player : ", GetColor(0, 0, 0), m_fontHandle);
 
 	//変身のデザイン
-	DrawBox(firstRightX + 50, topPos + 20, secondRightX, bottomUI, col, true);//幅200
+	DrawBox(firstRightX + 50, topPos + 22, secondRightX, bottomUI, col, true);//幅200
 	CopyDesign();
 	//残機数
-	DrawBox(secondRightX + 50, topPos + 80, thirdRihtX, bottomUI, col, true);//幅120
-	DrawRectRotaGraph(secondRightX + 100, topPos + 170,
+	DrawBox(secondRightX + 50, topPos + 22, thirdRihtX, bottomUI, col, true);//幅120
+	DrawRectRotaGraph(secondRightX + 100, topPos + 140,
 		kPlayerCutW * m_pPlayer->GetAnimIdx(), kPlayerCutH * 1,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, 0, m_pPlayer->GetHandle(), true);
 
 	std::string text = "× " + std::to_string(m_playerLife);//残機数表示用テキスト
-	DrawStringToHandle(secondRightX + 160, topPos + 140, text.c_str(), GetColor(0, 0, 0), m_fontHandle);
+	DrawStringToHandle(secondRightX + 160, topPos + 110, text.c_str(), GetColor(0, 0, 0), m_fontHandle);
 
 	if (camera.isBoss)
 	{
@@ -196,7 +198,7 @@ void StageUI::Draw(Camera& camera)
 			kHpBossBarW * 0, kHpBossBarH * 0,//切り取り左上
 			kHpBossBarW, kHpBossBarH,//切り取りの幅
 			kHpBossBarScale, 0, m_bossHpHandle, true);
-		DrawStringToHandle(360, topPos + 57 + ktopOffset, "Boss : ", GetColor(0, 0, 0), m_fontHandle);
+		DrawStringToHandle(360+ marginX, topPos + 56 + ktopOffset, "Boss : ", GetColor(0, 0, 0), m_fontHandle);
 	}
 	if (camera.isFish)
 	{
@@ -208,7 +210,7 @@ void StageUI::Draw(Camera& camera)
 			kHpBossBarW * 0, kHpBossBarH * 0,//切り取り左上
 			kHpBossBarW, kHpBossBarH,//切り取りの幅
 			kHpBossBarScale, 0, m_bossHpHandle, true);
-		DrawStringToHandle(360, topPos + 57 + ktopOffset, "Fishers : ", GetColor(0, 0, 0), m_fontHandle);
+		DrawStringToHandle(360+ marginX, topPos + 56 + ktopOffset, "Fishers : ", GetColor(0, 0, 0), m_fontHandle);
 	}
 	if (camera.isBearWolf)
 	{
@@ -220,7 +222,7 @@ void StageUI::Draw(Camera& camera)
 			kHpBossBarW * 0, kHpBossBarH * 0,//切り取り左上
 			kHpBossBarW, kHpBossBarH,//切り取りの幅
 			kHpBossBarScale, 0, m_bossHpHandle, true);
-		DrawStringToHandle(280, topPos + 57 + ktopOffset, "Bear&Wolf : ", GetColor(0, 0, 0), m_fontHandle);
+		DrawStringToHandle(280+ marginX, topPos + 56 + ktopOffset, "Bear&Wolf : ", GetColor(0, 0, 0), m_fontHandle);
 	}
 
 	//フォントサイズを元に戻す(元は16)
@@ -291,7 +293,7 @@ float StageUI::GetTopX()
 void StageUI::CopyDesign()
 {
 
-	Vec2 UIPos = { firstRightX + 200,topPos + 120 };
+	Vec2 UIPos = { firstRightX + 170,topPos + 120 };
 	switch (m_displayType)
 	{
 	case PlayerType::Normal:

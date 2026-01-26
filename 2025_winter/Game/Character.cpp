@@ -87,12 +87,12 @@ void Character::BossUpdate()
 	//重力処理
 	Gravity();
 
-	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 2.0f);
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 1.7f);
 
 	Rect chipRect;//当たったマップチップの矩形
 	CheckHitMap(chipRect);
 	//当たり判定の再設定
-	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 2.0f);
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kCharaSize * 1.5f, kCharaSize * 1.7f);
 
 	if (m_isGround)
 	{

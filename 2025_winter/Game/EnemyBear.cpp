@@ -632,10 +632,10 @@ void EnemyBear::Attack1()
 	attackTimer--;
 
 	//攻撃判定をセット
-	float attackWidth = 200.0f;
-	float attackHeight = 200.0f;
+	float attackWidth = 100.0f;
+	float attackHeight = 150.0f;
 	float offsetY = 100.0f;
-	m_attack1Rect.SetLT(m_pos.x - attackWidth / 2, m_pos.y - offsetY, attackWidth, attackHeight);
+	m_attack1Rect.SetLT(m_pos.x + m_isRight ? 50 : -50+attackWidth, m_pos.y - offsetY, attackWidth, attackHeight);
 
 
 	if ((m_animframe / kAttackDuration) % 3 == 0)

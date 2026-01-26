@@ -163,6 +163,8 @@ Effect::Effect(Vec2 pos,std::string name,bool dir):
 Effect::~Effect()
 {
 	DeleteGraph(m_handle);
+	//前の残っているのを止める
+	StopEffekseer2DEffect(playingEffectHandle);
 	DeleteEffekseerEffect(m_spawnEfHandle);
 }
 

@@ -220,7 +220,7 @@ void EnemyWolf::Draw(Camera& camera)
 		enemy_cut_w * charaIdx, enemy_cut_h * charaIdy,//切り取り左上
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f, m_handle, true, false);
-		if (isAttack)
+		if (isAttack && m_attackP ==  WolfAttackPattern::Attack1)
 		{
 
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x - marginX,
@@ -238,7 +238,7 @@ void EnemyWolf::Draw(Camera& camera)
 		enemy_cut_w, enemy_cut_h,//切り取りの幅
 		enemy_scale, 0.0f,
 			m_handle, true, true);
-		if (isAttack)
+		if (isAttack && m_attackP == WolfAttackPattern::Attack1)
 		{
 			DrawRectRotaGraph(m_pos.x + camera.drawOffset.x + drawX + m_drawoffset.x + marginX,
 			m_pos.y + camera.drawOffset.y + drawY + m_drawoffset.y- marginY,
@@ -285,6 +285,7 @@ void EnemyWolf::HitBossDamage(int damage)
 		m_animframe = 0;
 		charaIdx = 0;
 		charaIdy = 0;
+		isAttack = false;
 	}
 }
 
