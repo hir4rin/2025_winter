@@ -19,7 +19,7 @@ void ItemFactory::Update(Bg* bg)
 {
 	
 
-	if (m_frame % 300 == 0)
+	if (m_frame % 600 == 0)
 	{
 		auto item = std::make_shared<Item>(std::shared_ptr<EnemyWizard>());//新しくアイテムを生成
 		auto item2 = std::make_shared<Item>(std::shared_ptr<EnemyRider>());//新しくアイテムを生成

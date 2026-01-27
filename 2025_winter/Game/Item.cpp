@@ -43,7 +43,7 @@ namespace
 
 Item::Item(std::shared_ptr<EnemyWizard> _enemywiz):
 	m_aliveFrame(30),
-	m_initAliveFrame(300)
+	m_initAliveFrame(600)
 {
 	//m_handle = LoadGraph("data/Game/ItemWizard.png");
 	m_handle = LoadGraph("data/Game/frozenItem.png");
@@ -55,7 +55,7 @@ Item::Item(std::shared_ptr<EnemyWizard> _enemywiz):
 }
 Item::Item(std::shared_ptr<EnemyRider> _enemyRiders):
 	m_aliveFrame(30),
-	m_initAliveFrame(300)
+	m_initAliveFrame(600)
 {
 	m_handle = LoadGraph("data/Game/burningItem.png");
 	assert(m_handle >= 0);
@@ -66,7 +66,7 @@ Item::Item(std::shared_ptr<EnemyRider> _enemyRiders):
 }
 Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers):
 	m_aliveFrame(30),
-	m_initAliveFrame(300)
+	m_initAliveFrame(600)
 {
 	m_handle = LoadGraph("data/Game/arrowItem.png");
 	assert(m_handle >= 0);
