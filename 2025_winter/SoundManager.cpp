@@ -203,7 +203,7 @@ void SoundManager::SetBgmVolume(int volume)
 {
     m_displayBgm = volume;
     int i = m_displayBgm * kVolumeMax / kDisplayMax;
-    if (i >= 100)i = 100;
+    if (i >= 255)i = 255;
     m_masterVolume = i;
     ChangeVolumeSoundMem(m_masterVolume, m_currentBgm);
 }
@@ -211,9 +211,9 @@ void SoundManager::SetBgmVolume(int volume)
 void SoundManager::SetSEVolume(int volume)
 {
     m_displaySE = volume;
-    int i = m_displaySE * kVolumeMax / kDisplayMax;
-    if (i >= 100)i = 100;
-    m_masterVolume = i;
+    int i = m_displaySE * kVolumeMax / kDisplayMax * 1.4f;//ちょっと大きくする
+    if (i >= 255)i = 255;
+    m_masterVolume2 = i;
     //SEを流す
     PlaySE("cursor");
 }
