@@ -141,6 +141,8 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(6600.0f,520.0f), false });//崖上三連単
 		//-----------------------------------------------------------------
 
+		m_pPotions.push_back(std::make_shared<Potion>(Vec2(3011.0f, 992.0f)));
+
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 		m_pBg = new Bg(m_pPlayer, 3);
 		m_doors = std::make_shared< Door>(Vec2{ 6879,928 });
@@ -208,6 +210,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_enemySpawns.push_back({ EnemyType::Wizard,EnemyState::Normal, Vec2(4952.0f,200.0f), false });
 
 		//------------------------------------------------------------------
+		m_pPotions.push_back(std::make_shared<Potion>(Vec2(1848.0f, 554.0f)));
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 
@@ -246,7 +249,6 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 	{
 		//Bgm
 		Application::GetInstance().GetSoundManager().PlayBgm("bgmBearWolf");
-
 		//
 		m_pBear = std::make_shared<EnemyBear>();
 		m_pWolf = std::make_shared<EnemyWolf>();
@@ -684,8 +686,6 @@ void GameScene::CheckArrowHit()
 		//矢とどの方向で当たったかどうか
 		if (!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
-		//SE再生
-		Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 		e_arrow->m_hitPlayer = nullptr;
 
 	}
@@ -699,8 +699,6 @@ void GameScene::CheckArrowHit()
 		//矢とどの方向で当たったかどうか
 		if (!m_pPlayer->CheckStar())OnShake();
 		m_pPlayer->DamageHit(isLeft);
-		//SE再生
-		Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 		e_shot->m_hitPlayer = nullptr;
 
 	}
@@ -715,8 +713,6 @@ void GameScene::CheckArrowHit()
 			//矢とどの方向で当たったかどうか
 			if (!m_pPlayer->CheckStar())OnShake();
 			m_pPlayer->DamageHit(isLeft);
-			//SE再生
-			Application::GetInstance().GetSoundManager().PlaySE("playerHit");
 			it = nullptr;
 		}
 
@@ -1788,6 +1784,32 @@ void GameScene::CheckHitFrozen()
 				m_pEnemyArchers.erase(m_pEnemyArchers.begin() + i);
 				//カメラシェイク
 				HitShake();
+			}
+
+		}
+	}
+	for (int i = (int)m_pEnemyArrows.size() - 1; i >= 0; i--)//敵の矢
+	{
+		//プレイヤーが攻撃状態かつ攻撃アニメーションの特定フレーム以降の当たり判定をチェック
+		if (m_pPlayer->GetState() == PlayerState::Attack && m_pPlayer->GetAnimIdx() > 0)
+		{
+			auto& e = m_pEnemyArrows[i];
+			if (e == nullptr)continue;
+
+			bool isHitFrozen = m_pPlayer->GetColFrozenRect().IsCollision(e->GetColRect());
+			//矢の処理は別の場所(CheckhitArrow)
+
+
+			if (isHitFrozen)
+			{
+				//ここに敵が攻撃されたときの処理を書く
+				m_pFrozens.push_back(std::make_shared<Frozen>(e));//ペンギンの氷と同じサイズ
+				//インスタンスを消す
+				m_pEnemyArrows.erase(m_pEnemyArrows.begin() + i);
+				//カメラシェイク
+				HitShake();
+				//SE再生
+				Application::GetInstance().GetSoundManager().PlaySE("hitSE");
 			}
 
 		}

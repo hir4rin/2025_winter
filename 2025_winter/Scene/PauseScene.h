@@ -58,8 +58,10 @@ private:
 	int m_frame2;//【】を動かすようのタイマー
 	int m_displayBGM;
 	int m_displaySE;
-	float m_volumeRate = 255.0f / 100.0f;//100で割って、255をかける
-	float m_seRate = 1.4f;
+	//float m_volumeRate = 2.55f;//100で割って、255をかける//255/100
+
+	//float m_seRate = 1.4f;
+	float m_seRate = 1.0f;//設定してからまた直すときにずれがだんだん生じてしまったので、いったんやめる
 
 };
 

@@ -19,6 +19,9 @@ constexpr int yes_no_dialig_no = 1;		// yesnodialogでno
 
 constexpr int kScreenWidth = 1920;
 constexpr int kScreenHeight = 1080;
+//音量変換
+//constexpr int kVolumeMax = 255;
+//constexpr int kDisplayMax = 100;
 }
 
 void PauseScene::AppearUpdate(Input& input)
@@ -192,7 +195,7 @@ void PauseScene::VolumeSetUpdate(Input& input)
 			m_displayBGM -= 5;
 			if (m_displayBGM <= 0)m_displayBGM = 0;
 			//BGMセット
-			Application::GetInstance().GetSoundManager().SetBgmVolume(m_displayBGM * m_volumeRate);
+			Application::GetInstance().GetSoundManager().SetBgmVolume(m_displayBGM);
 		}
 		if (selectIndex_ == 1)//SE
 		{
@@ -201,7 +204,7 @@ void PauseScene::VolumeSetUpdate(Input& input)
 			int bet = m_displaySE * m_seRate;
 			if (bet <= 0)bet = 0;
 			//SEセット
-			Application::GetInstance().GetSoundManager().SetSEVolume(bet * m_volumeRate);
+			Application::GetInstance().GetSoundManager().SetSEVolume(bet );
 		}
 	}
 	if (input.IsTriggered("right"))
@@ -211,7 +214,7 @@ void PauseScene::VolumeSetUpdate(Input& input)
 			m_displayBGM += 5;
 			if (m_displayBGM >= 100)m_displayBGM = 100;
 			//BGMセット
-			Application::GetInstance().GetSoundManager().SetBgmVolume(m_displayBGM * m_volumeRate);
+			Application::GetInstance().GetSoundManager().SetBgmVolume(m_displayBGM );
 		}
 		if (selectIndex_ == 1)//SE
 		{
@@ -220,7 +223,7 @@ void PauseScene::VolumeSetUpdate(Input& input)
 			int bet = m_displaySE * m_seRate;
 			if (bet >= 100)bet = 100;
 			//SEセット
-			Application::GetInstance().GetSoundManager().SetSEVolume(bet * m_volumeRate);
+			Application::GetInstance().GetSoundManager().SetSEVolume(bet);
 		}
 	}
 	if (input.IsTriggered("ok") || input.IsTriggered("Jump"))
@@ -512,8 +515,8 @@ PauseScene::PauseScene(SceneController& controller) :
 	//フォントの生成
 	m_fontHandle = CreateFontToHandle("x10y12pxDonguriDuel", 48, 6, -1);
 	//音量
-	m_displayBGM = (Application::GetInstance().GetSoundManager().GetBgmVolume()) / m_volumeRate;
-	m_displaySE = (Application::GetInstance().GetSoundManager().GetBgmVolume()) / m_volumeRate;
+	m_displayBGM = (Application::GetInstance().GetSoundManager().GetBgmVolume());
+	m_displaySE = (Application::GetInstance().GetSoundManager().GetSEVolume());
 	menuList_ = {
 		"ゲームにもどる",
 		//"キーコンフィグ",
@@ -563,8 +566,8 @@ PauseScene::PauseScene(SceneController& controller) :
 			//デフォルトに戻す処理
 			m_displayBGM = 50;
 			m_displaySE = 50;
-			Application::GetInstance().GetSoundManager().SetBgmVolume(m_displayBGM * m_volumeRate);
-			Application::GetInstance().GetSoundManager().SetSEVolume(m_displayBGM * m_volumeRate);
+			Application::GetInstance().GetSoundManager().SetBgmVolume(m_displayBGM );
+			Application::GetInstance().GetSoundManager().SetSEVolume(m_displaySE);
 			update_ = &PauseScene::ConfigUpdate;
 			draw_ = &PauseScene::ConfigDraw;
 			return;

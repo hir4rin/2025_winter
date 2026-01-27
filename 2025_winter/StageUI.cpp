@@ -77,9 +77,9 @@ StageUI::StageUI(SceneController& controller) :
 	m_bossHp(100),
 	m_displayBossHp(100),
 	m_bossFishHp(100),
-	m_displayBossFishHp(100),
+	m_displayBossFishHp(0),
 	m_BearWolfHp(100),
-	m_displayBearWolfhp(100),
+	m_displayBearWolfhp(0),
 	m_fontHandle(-1),
 	m_pPlayer(std::make_shared<Player>(PlayerType::Normal, 100, Vec2(secondRightX + 100, topPos + 100),2, controller.GetEffekseerResourceManager()))
 {
@@ -179,7 +179,7 @@ void StageUI::Draw(Camera& camera)
 	CopyDesign();
 	//残機数
 	DrawBox(secondRightX + 50, topPos + 22, thirdRihtX, bottomUI, col, true);//幅120
-	DrawRectRotaGraph(secondRightX + 100, topPos + 140,
+	DrawRectRotaGraph(secondRightX + 90, topPos + 140,
 		kPlayerCutW * m_pPlayer->GetAnimIdx(), kPlayerCutH * 1,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, 0, m_pPlayer->GetHandle(), true);

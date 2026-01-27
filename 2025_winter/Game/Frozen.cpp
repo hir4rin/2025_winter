@@ -4,6 +4,7 @@
 #include "EnemyWizard.h"
 #include "EnemyRider.h"
 #include "EnemyArcher.h"
+#include "EnemyArrow.h"
 #include "BossShot.h"
 #include "Salmon.h"
 #include <cassert>
@@ -42,6 +43,13 @@ Frozen::Frozen(std::shared_ptr<EnemyArcher> _enemyArchers)
 	assert(m_handle >= 0);
 
 	m_pos = _enemyArchers->GetPos();
+}
+Frozen::Frozen(std::shared_ptr<EnemyArrow> _enemyArrows)
+{
+	m_handle = LoadGraph("data/Game/exp ice.png");
+	assert(m_handle >= 0);
+
+	m_pos = _enemyArrows->GetPos();
 }
 
 Frozen::Frozen(std::shared_ptr<BossShot> _bossShot)

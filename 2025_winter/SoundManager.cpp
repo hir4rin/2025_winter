@@ -3,6 +3,13 @@
 #include <cassert>
 
 
+namespace
+{
+    //音量変換
+    constexpr int kVolumeMax = 255;
+    constexpr int kDisplayMax = 100;
+
+}
 
 void SoundManager::Init()
 {
@@ -24,7 +31,7 @@ void SoundManager::Init()
 	m_sounds["ok"] = LoadSoundMem("data/Sound/SE/ok.mp3");
 	m_sounds["ok2"] = LoadSoundMem("data/Sound/SE/ok2.mp3");
 	m_sounds["openDoor"] = LoadSoundMem("data/Sound/SE/openDoor.mp3");
-	m_sounds["iceMove"] = LoadSoundMem("data/Sound/SE/IceMove.mp3");
+	m_sounds["iceMove"] = LoadSoundMem("data/Sound/SE/IceMove.wav");
 	m_sounds["cursor"] = LoadSoundMem("data/Sound/SE/cursor.mp3");
 	m_sounds["cursorError"] = LoadSoundMem("data/Sound/SE/cursorError.mp3");
 	m_sounds["bom"] = LoadSoundMem("data/Sound/SE/Bom.mp3");
@@ -54,6 +61,8 @@ void SoundManager::Init()
     m_sounds["bearsplash"] = LoadSoundMem("data/Sound/SE/bearsplash.mp3");
     m_sounds["bossDown"] = LoadSoundMem("data/Sound/SE/bossDown.mp3");
     m_sounds["waveSE"] = LoadSoundMem("data/Sound/SE/waveSE.mp3");
+    m_sounds["droppedSE"] = LoadSoundMem("data/Sound/SE/IceMove.mp3");
+    m_sounds["hpStartSE"] = LoadSoundMem("data/Sound/SE/hpStartSE.mp3");
 
 	// サウンド名のリスト
     const std::vector<std::string> soundNames = {
@@ -99,7 +108,8 @@ void SoundManager::Init()
         "wolfAirSlash",
         "bearsplash",
         "bossDown",
-        "waveSE"
+        "waveSE",
+        "droppedSE"
 
 	};
 	
@@ -191,13 +201,19 @@ void SoundManager::StopSE(const std::string& name)
 
 void SoundManager::SetBgmVolume(int volume)
 {
-    m_masterVolume = volume;
+    m_displayBgm = volume;
+    int i = m_displayBgm * kVolumeMax / kDisplayMax;
+    if (i >= 100)i = 100;
+    m_masterVolume = i;
     ChangeVolumeSoundMem(m_masterVolume, m_currentBgm);
 }
 
 void SoundManager::SetSEVolume(int volume)
 {
-    m_masterVolume2 = volume;
+    m_displaySE = volume;
+    int i = m_displaySE * kVolumeMax / kDisplayMax;
+    if (i >= 100)i = 100;
+    m_masterVolume = i;
     //SEを流す
     PlaySE("cursor");
 }

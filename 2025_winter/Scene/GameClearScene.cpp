@@ -385,7 +385,7 @@ void GameClearScene::FadeOutUpdate(Input&)
 	}
 
 	//NormalDraw();
-	if (m_frame++ >= fade_interval * 10)
+	if (m_frame++ >= fade_interval * 2.5)
 	{
 		//delete m_pCharacter;
 		delete m_pBg;
@@ -441,11 +441,11 @@ void GameClearScene::NormalDraw()
 			m_pCannon->GetPos().y + camera.drawOffset.y - margin + 50,//上
 		GetColor(0, 255, 0), true);
 		//ゲージの枠
-		DrawBox(m_pCannon->GetPos().x + camera.drawOffset.x + margin + m_gaugeleftX,//左
+		DrawBoxAA(m_pCannon->GetPos().x + camera.drawOffset.x + margin + m_gaugeleftX,//左
 		m_pCannon->GetPos().y + camera.drawOffset.y - margin,//下
 		m_pCannon->GetPos().x + camera.drawOffset.x + margin + m_gaugerightX,//右
 			m_pCannon->GetPos().y + camera.drawOffset.y - margin + 50,//上
-		GetColor(255, 255, 0), false);
+		GetColor(0, 0, 0), false,5.0f);
 
 	}
 

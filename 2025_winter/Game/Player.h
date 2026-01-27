@@ -150,7 +150,7 @@ public:
 	/// </summary>
 	/// <param name="anim"></param>
 	void AnimSelect(const Anim& anim);//アニメーション
-	void SetCopyCool() { m_copyCoolTime = 30; }//変身のコピークールタイム
+	void SetCopyCool() { m_copyCoolTime = 20; }//変身のコピークールタイム
 public:
 	//着地イベント
 	std::vector<std::function<void()>> onLandEvents;
@@ -273,8 +273,6 @@ private:
 	
 	const int arrowTime = 30;//発射クールタイム
 
-	
-
 	float burningTime = 9.0f;  //バーニングの移動時間
 	float burningTimer = 0.0f;
 
@@ -305,7 +303,7 @@ private:
 	//ダッシュ中かどうか
 	bool m_isDash;
 		//2回押しの猶予時間
-		const float doubleTapThreshold = 30.0f;
+		const float doubleTapThreshold = 20.0f;
 public:
 //ゲームおーばー用
 	void GameOverUpdate();

@@ -9,20 +9,33 @@ namespace
 {
 	const Vec2 kInitPos = { 600.0f,100.0f };//初期位置
 	constexpr float kCharaSize = 64.0f;//キャラクターサイズ
-	constexpr int kFrozenCutW = 798;
-	constexpr int kFrozenCutH = 864;
+	//カードの時のconstexpr
+	/*constexpr int kFrozenCutW = 798;
+	constexpr int kFrozenCutH = 864;*/
 	//constexpr int kFrozenCutW = 100;
 	//constexpr int kFrozenCutH = 100;
-	constexpr int burning_cut_w = 992;
-	constexpr int burning_cut_h = 1072;
-	constexpr int arrow_cut_w = 848;
-	constexpr int arrow_cut_h = 1264;
-	constexpr float  kFrozenScale = 0.1f;
-	constexpr float  burning_scale = 0.1f;
-	constexpr float  arrow_scale = 0.07f;
+	/*constexpr int burning_cut_w = 992;
+	constexpr int burning_cut_h = 1072;*/
+	/*constexpr int arrow_cut_w = 848;
+	constexpr int arrow_cut_h = 1264;*/
+	//大きさ
+	constexpr float  kFrozenScale = 1.0f;
+	constexpr float  burning_scale = 1.0f;
+	constexpr float  arrow_scale = 1.0f;
+	//frozenItem
+	constexpr int kFrozenCutW = 64;
+	constexpr int kFrozenCutH = 64;
+	//arrowItem
+	constexpr int arrow_cut_w = 64;
+	constexpr int arrow_cut_h = 64;
+	//burningItem
+	constexpr int burning_cut_w = 64;
+	constexpr int burning_cut_h = 64;
 
 
 	constexpr float kMaxAngle = 46.0f;
+
+	constexpr float kdrawY = 10.0f;
 }
 
 
@@ -33,7 +46,7 @@ Item::Item(std::shared_ptr<EnemyWizard> _enemywiz):
 	m_initAliveFrame(300)
 {
 	//m_handle = LoadGraph("data/Game/ItemWizard.png");
-	m_handle = LoadGraph("data/Game/FrozenCard.png");
+	m_handle = LoadGraph("data/Game/frozenItem.png");
 	assert(m_handle >= 0);
 
 	m_pos = kInitPos;
@@ -44,7 +57,7 @@ Item::Item(std::shared_ptr<EnemyRider> _enemyRiders):
 	m_aliveFrame(30),
 	m_initAliveFrame(300)
 {
-	m_handle = LoadGraph("data/Game/BurningCardRE.png");
+	m_handle = LoadGraph("data/Game/burningItem.png");
 	assert(m_handle >= 0);
 
 	m_pos = kInitPos;
@@ -55,7 +68,7 @@ Item::Item(std::shared_ptr<EnemyArcher> _enemyArchers):
 	m_aliveFrame(30),
 	m_initAliveFrame(300)
 {
-	m_handle = LoadGraph("data/Game/ArrowCardRE.png");
+	m_handle = LoadGraph("data/Game/arrowItem.png");
 	assert(m_handle >= 0);
 
 	m_pos = kInitPos;
@@ -101,21 +114,21 @@ void Item::Draw(Camera& camera)
 
 	if (m_state == ItemState::Burning)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y- kdrawY,
 		burning_cut_w * 0, burning_cut_h * 0,//切り取り左上
 		burning_cut_w, burning_cut_h,//切り取りの幅
 		burning_scale, 0.0f, m_handle, true);
 	}
 	else if (m_state == ItemState::Frozen)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y - kdrawY,
 		kFrozenCutW * 0, kFrozenCutH * 0,//切り取り左上
 		kFrozenCutW, kFrozenCutH,//切り取りの幅
 		kFrozenScale, 0.0f, m_handle, true);
 	}
 	else if (m_state == ItemState::Archer)
 	{
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y,
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x, m_pos.y + camera.drawOffset.y - kdrawY,
 		arrow_cut_w * 0, arrow_cut_h * 0,//切り取り左上
 		arrow_cut_w, arrow_cut_h,//切り取りの幅
 		arrow_scale, 0.0f, m_handle, true);

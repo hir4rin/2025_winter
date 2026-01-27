@@ -15,7 +15,7 @@ FishersManager::FishersManager(const Vec2& startPos, int dir):
 	m_isfusion(false),
 	m_publicHp(100)
 {
-
+	
 }
 
 FishersManager::~FishersManager()
@@ -171,6 +171,8 @@ void FishersManager::Update(Bg* bg)
 			m_pFishers.push_back(std::make_shared<Fish >(Vec2 {ReleasePos.x - 100,ReleasePos.y}, 1, 50, FishState::Release));
 			m_pFishers.push_back(std::make_shared<Fish >(Vec2{ ReleasePos.x,ReleasePos.y }, 2, 50, FishState::Release));
 			m_pFishers.push_back(std::make_shared<Fish >(Vec2{ ReleasePos.x + 100,ReleasePos.y }, 3, 50, FishState::Release));
+			//SE
+			Application::GetInstance().GetSoundManager().PlaySE("droppedSE");
 
 			m_fishIndex++;
 			m_triSpawn = false;

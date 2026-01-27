@@ -4,7 +4,8 @@
 
 
 ItemFactory::ItemFactory(std::vector<std::shared_ptr<Item>>& pItems):
-	m_pItems(pItems)
+	m_pItems(pItems),
+	m_frame(0)
 {
 	
 }
