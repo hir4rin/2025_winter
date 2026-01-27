@@ -11,28 +11,47 @@
 #include "Player.h"
 #include "Camera.h"
 #include <cassert>
+#include <string>
 
 namespace
 {
-	const float kArrowWidth = 32.0f;//Arrowの幅
-	const float kArrowHeight = 32.0f;//Arrowの高さ
+	const float kColWidth = 32.0f;//Arrowの幅
+	const float kColHeight = 32.0f;//Arrowの高さ
+
+	const float kArrowWidth = 100.0f;//Arrowの幅
+	const float kArrowHeight = 100.0f;//Arrowの高さ
+
+	constexpr float kScale = 1.0f;
+	
 }
 
 Arrow::Arrow():
 	isAlive(true),
 	m_dir(1,0),
-	m_playerdir(false)
+	m_playerdir(false),
+	m_count(0)
 	
 {
-	m_handle = LoadGraph("data/Game/Arrow.png");
-	assert(m_handle >= 0);
+	//m_handle = LoadGraph("data/Game/Arrow.png");
+	for (int x = 0; x < 30; x++)
+	{
+		std::string path = "data/Game/Arrow/1/1_" + std::to_string(x) + ".png";
+		m_handle[x] = LoadGraph(path.c_str());
+	}
+	for (int i = 0; i < 30; i++)
+	{
+		assert(m_handle[i] >= 0);
+	}
 
 
 }
 
 Arrow::~Arrow()
 {
-	DeleteGraph(m_handle);
+	for (int i = 0; i < 30; i++)
+	{
+		DeleteGraph(m_handle[i]);
+	}
 }
 void Arrow::Init()
 {
@@ -41,7 +60,7 @@ void Arrow::Init()
 void Arrow::Update()
 {
 	//当たり判定をセット
-	m_colRect.SetCenter(m_pos.x, m_pos.y, kArrowWidth, kArrowHeight);
+	m_colRect.SetCenter(m_pos.x, m_pos.y, kColWidth, kColHeight);
 	
 
 
@@ -187,31 +206,32 @@ void Arrow::Draw()
 	
 	
 	
-		// 弾を描画する
-		const float shotHalfW = kCharaSize * 0.5f;
-		const float shotHalfH = kCharaSize * 0.5f;
-		DrawRotaGraph3(static_cast<int>(m_pos.x),
-			static_cast<int>(m_pos.y),
-			static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
-			kScale, 1.0f,
-			0.0f, m_handle,
-			true, m_playerdir ? false : true);
+		//// 弾を描画する
+		//const float shotHalfW = kCharaSize * 0.5f;
+		//const float shotHalfH = kCharaSize * 0.5f;
+		//DrawRotaGraph3(static_cast<int>(m_pos.x),
+		//	static_cast<int>(m_pos.y),
+		//	static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
+		//	kScale, 1.0f,
+		//	0.0f, m_handle,
+		//	true, m_playerdir ? false : true);
 	
 
 
 }
 void Arrow::Draw(Camera& camera)
 {
-	
+	m_count = (m_count + 1) % 30;
 	
 		// 弾を描画する
 		const float shotHalfW = kCharaSize * 0.5f;
 		const float shotHalfH = kCharaSize * 0.5f;
-		DrawRotaGraph3(static_cast<int>(m_pos.x)+ camera.drawOffset.x,
+		DrawRectRotaGraph(static_cast<int>(m_pos.x)+ camera.drawOffset.x,
 			static_cast<int>(m_pos.y) + camera.drawOffset.y,
-			static_cast<int>(shotHalfW), static_cast<int>(shotHalfH),
-			kScale, 1.0f,
-			0.0f, m_handle,
+			kArrowWidth*0, kArrowWidth*0,
+			kArrowWidth,kArrowHeight,
+			kScale, 0.0f,
+			m_handle[m_count],
 			true, m_playerdir ? false : true);
 	
 #ifdef _DEBUG

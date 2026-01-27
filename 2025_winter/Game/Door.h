@@ -36,6 +36,9 @@ private:
 	Vec2 m_pos;
 	int m_handle;
 	int m_starHandle=-1;
+	int m_swordH[18];
+	int m_count;//剣のハンドル用
+	int m_countFrame = 0;//剣のハンドルカウント用
 	Rect m_colRect;
 	int targetStage;//どのステージへ行くか
 	Vec2 spawnPos;//移動先での出現位置

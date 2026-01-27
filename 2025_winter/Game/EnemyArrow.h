@@ -31,8 +31,11 @@ private:
 	const float m_speed = 10;
 	float	AliveLimitX = 5000.0f;
 	const int kCharaSize = 32;
+	int m_handle[30];
+	int m_count;//handle用
 
 
-	const float kScale = 3;
+
+	
 };
 

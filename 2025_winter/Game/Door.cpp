@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "Camera.h"
 #include <cassert>
+#include <string>
 
 namespace
 {
@@ -19,11 +20,16 @@ namespace
 	constexpr int kStarHeight = 32;
 	constexpr float kStarScale = 2.0f;
 	constexpr int kStarNum = 13;
+	//武器庫
+	constexpr int kswordWidth = 128;
+	constexpr int kswordHeight = 128;
+	constexpr float kswordSkale = 0.4f;
 }
 
 Door::Door(Vec2 pos):
 	m_frame(0),
-	m_pos(pos)
+	m_pos(pos),
+	m_count(0)
 {
 	m_handle = LoadGraph("data/doors.png");
 	assert(m_handle >= 0);
@@ -34,7 +40,8 @@ Door::Door(Vec2 pos):
 
 Door::Door(Vec2 pos,StageID id):
 	m_frame(0),
-	m_pos(pos)
+	m_pos(pos),
+	m_count(0)
 {
 	
 	m_handle = LoadGraph("data/doors.png");
@@ -49,12 +56,18 @@ Door::Door(Vec2 pos, StageID id, int num):
 	m_frame(0),
 	m_bossFrame(0),
 	m_pos(pos),
-	m_starHandle(-1)
+	m_starHandle(-1),
+	m_count(0)
 {
 	m_handle = LoadGraph("data/doors.png");
 	m_starHandle = LoadGraph("data/Game/StarPoint.png");
 	assert(m_handle >= 0);
 	assert(m_starHandle >= 0);
+	for (int i = 0; i < 9; i++)
+	{
+		std::string path = "data/Game/Sword/2/frame" + std::to_string(i) + ".png";
+			m_swordH[i] = LoadGraph(path.c_str());
+	}
 
 	charaIdx = 0;
 	charaIdy = 0;
@@ -193,14 +206,16 @@ void Door::StarDraw(Camera& camera)
 		SetDrawBright(255, 255, 255);
 		break;
 	case 5:
-			// 青くする
-		SetDrawBright(150, 255, 150); // 回復・草
+		m_countFrame++;
+		m_count = m_countFrame /8 % 9;
+			//武器庫
+		//SetDrawBright(150, 255, 150); // 回復・草
 		//星
-		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x,
-			m_pos.y + camera.drawOffset.y - kCharaHeight * kDoorScale * 1.0f / 2.0f - 20,
-			kStarWidth * starIdx, kStarHeight * 0,//切り取り左上
-			kStarWidth, kStarHeight,//切り取りの幅
-			kStarScale, 0.0f, m_starHandle, true, false);
+		DrawRectRotaGraph(m_pos.x + camera.drawOffset.x+2,
+			m_pos.y + camera.drawOffset.y - kCharaHeight * kDoorScale * 1.0f / 2.0f - 15,
+			kswordWidth * 0, kswordHeight * 0,//切り取り左上
+			kswordWidth, kswordHeight,//切り取りの幅
+			kswordSkale, 0.0f, m_swordH[m_count], true, false);
 		// 描画色を元に戻す
 		SetDrawBright(255, 255, 255);
 		break;

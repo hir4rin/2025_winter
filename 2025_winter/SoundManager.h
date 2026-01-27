@@ -30,8 +30,8 @@ public:
 private:
 	std::unordered_map<std::string, int> m_sounds;
 	//内部的なもの
-	int m_masterVolume = 128;//255が最大
-	int m_masterVolume2 = 128;//255が最大
+	int m_masterVolume = 32;//255が最大
+	int m_masterVolume2 = 32;//255が最大
 	//見た目用
 	int m_displayBgm = 50;//100が最大
 	int m_displaySE = 50;//100が最大
