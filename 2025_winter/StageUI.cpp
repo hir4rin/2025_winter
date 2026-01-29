@@ -178,8 +178,8 @@ void StageUI::Draw(Camera& camera)
 	DrawBox(firstRightX + 50, topPos + 22, secondRightX, bottomUI, col, true);//幅200
 	CopyDesign();
 	//残機数
-	DrawBox(secondRightX + 50, topPos + 22, thirdRihtX, bottomUI, col, true);//幅120
-	DrawRectRotaGraph(secondRightX + 90, topPos + 140,
+	DrawBox(secondRightX + 35, topPos + 22, thirdRihtX, bottomUI, col, true);//幅120
+	DrawRectRotaGraph(secondRightX + 90, topPos + 135,
 		kPlayerCutW * m_pPlayer->GetAnimIdx(), kPlayerCutH * 1,//切り取り左上
 		kPlayerCutW, kPlayerCutH,//切り取りの幅
 		kPlayerScale, 0, m_pPlayer->GetHandle(), true);

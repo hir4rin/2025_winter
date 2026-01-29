@@ -402,8 +402,6 @@ void Fish::Draw(Camera& camera)
 {
 	
 	//描画開始位Y(画面座標)
-
-
 	if (m_num == 4)//スペシャルフィッシュのとき
 	{
 		//描画位置を上げる
@@ -443,6 +441,9 @@ void Fish::Draw(Camera& camera)
 			charaIdy = kWalkNumY;
 			drawY = kSPHeight / 2.0f;
 			srcY = kSPHeight;
+			break;
+		case FishState::knockback:
+			drawY = kSPHeight / 2.0f;
 			break;
 		case FishState::Dead:
 			/*charaIdx = (m_animFrame / kDeadDuration) % kDeadNum;

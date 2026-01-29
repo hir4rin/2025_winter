@@ -115,8 +115,7 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,800 }, Life, controller.GetEffekseerResourceManager());
 
 		m_pBg = new Bg(m_pPlayer, 2);
-		//m_doors = std::make_shared< Door>(Vec2{ 400,850 });
-		m_doors = std::make_shared< Door>(Vec2{ 6300,850 });
+		m_doors = std::make_shared< Door>(Vec2{ 6300,864 });
 	}
 		break;
 	case 3://ステージ1_3
@@ -335,6 +334,8 @@ GameScene::GameScene(SceneController& controller, int stageNum, PlayerType type,
 		Application::GetInstance().GetSoundManager().PlayBgm("bgmWeaponSelectScene");
 		m_pItemFactory = std::make_shared<ItemFactory>(m_pItems);
 		m_pPlayer = std::make_shared<Player>(type, hp, Vec2{ 100,864 }, Life, controller.GetEffekseerResourceManager());
+		m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 500,800 }, TutorialPhase::CopyOut, controller.GetEffekseerResourceManager()));
+		m_tutorialManagers.push_back(std::make_shared<TutorialManager>(Vec2{ 300,800 }, TutorialPhase::Copy, controller.GetEffekseerResourceManager()));
 		m_pBg = new Bg(m_pPlayer, 11);
 		m_doors = std::make_shared< Door>(Vec2{ 100,864 });
 	}
