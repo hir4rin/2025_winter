@@ -504,7 +504,7 @@ void Bg::BgHSetDraw(Camera& camera, int handle, float rate)
 	float scaleX = static_cast<float>(kScreenSizeWidth) / bgSize.width;
 	float scaleY = static_cast<float>(kScreenSizeHeight * rateY) / bgSize.height;
 
-	float scale = max(scaleX, scaleY);
+	float scale = std::max(scaleX, scaleY);
 
 	//ループ処理
 	float drawWidth = bgSize.width * scale;
