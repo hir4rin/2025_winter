@@ -44,7 +44,7 @@ void Input::Update()
 {
     // まず現在の入力情報を取得
     char keyState[256];
-    GetHitKeyStateAll(keyState);//生のキーボード情報
+    GetHitKeyStateAll(keyState);//生のキーボード情報//この関数が入力を全部とってくる(keyStateに入れてる)
     int padState = GetJoypadInputState(DX_INPUT_PAD1);//生のPAD1情報
     lastInputData_ = inputData_;//直前のフレームを更新(前のフレーム情報をコピー)
 
